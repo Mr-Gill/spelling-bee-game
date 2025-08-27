@@ -83,6 +83,10 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
         { label: "Example TSV", file: "example.tsv" }
     ];
     const [selectedBundledList, setSelectedBundledList] = useState("");
+    
+    // from codex/extend-setupscreen-for-individual-game-mode
+    const [students, setStudents] = useState([]);
+    const [studentName, setStudentName] = useState("");
 
     const addTeam = () => {
         setTeams([...teams, { name: "", lives: 5 }]);
@@ -97,6 +101,24 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
             i === index ? { ...team, name } : team
         );
         setTeams(newTeams);
+    };
+
+    const addStudent = () => {
+        if (studentName.trim()) {
+            setStudents([...students, { name: studentName.trim(), lives: 5 }]);
+            setStudentName("");
+        }
+    };
+
+    const removeStudent = (index) => {
+        setStudents(students.filter((_, i) => i !== index));
+    };
+
+    const updateStudentName = (index, name) => {
+        const newStudents = students.map((student, i) => 
+            i === index ? { ...student, name } : student
+        );
+        setStudents(newStudents);
     };
 
     const parseWordList = (content) => {
@@ -167,10 +189,25 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
 
     const handleStart = () => {
-        const trimmedTeams = teams.map(team => ({ ...team, name: team.name.trim() })).filter(team => team.name !== "");
-        if (trimmedTeams.length < 2) {
-            setError("Please enter names for at least two teams.");
-            return;
+        // Validate based on the selected game mode
+        if (gameMode === 'team') {
+            const trimmedTeams = teams.map(team => ({ ...team, name: team.name.trim() })).filter(team => team.name !== "");
+            if (trimmedTeams.length < 2) {
+                setError("Please enter names for at least two teams.");
+                return;
+            }
+            // Use the trimmed teams list
+            const config = { participants: trimmedTeams, gameMode, timerDuration };
+            onStartGame(config);
+        } else { // Individual mode
+            const trimmedStudents = students.map(student => ({ ...student, name: student.name.trim() })).filter(student => student.name !== "");
+            if (trimmedStudents.length < 2) {
+                setError("Please enter names for at least two students.");
+                return;
+            }
+            // Use the trimmed students list
+            const config = { participants: trimmedStudents, gameMode, timerDuration };
+            onStartGame(config);
         }
         setError("");
         
@@ -180,9 +217,6 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
             finalWords = [...finalWords, ...extraWords];
         }
         onAddCustomWords(finalWords);
-        
-        const config = { teams: trimmedTeams, gameMode, timerDuration };
-        onStartGame(config);
     };
 
     return (
@@ -191,6 +225,96 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 <div className="text-center mb-12">
                     <h1 className="text-6xl font-bold mb-4 text-yellow-300">🏆 SPELLING BEE CHAMPIONSHIP</h1>
                     <p className="text-2xl">Get ready to spell your way to victory!</p>
+                </div>
+
+                {/* Game mode selection UI */}
+                <div className="mb-8">
+                    <h2 className="text-3xl font-bold mb-4 text-center">Select Game Mode</h2>
+                    <div className="flex justify-center gap-4">
+                        <button
+                            onClick={() => setGameMode('team')}
+                            className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'team' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}
+                        >
+                            Team
+                        </button>
+                        <button
+                            onClick={() => setGameMode('individual')}
+                            className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'individual' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}
+                        >
+                            Individual
+                        </button>
+                    </div>
+                </div>
+
+                {/* Participant setup section based on mode */}
+                <div className="bg-white/10 p-6 rounded-lg mb-8">
+                    <h2 className="text-2xl font-bold mb-4">{gameMode === 'team' ? 'Teams' : 'Students'}</h2>
+                    {gameMode === 'team' ? (
+                        <>
+                            {teams.map((team, index) => (
+                                <div key={index} className="flex items-center gap-2 mb-2">
+                                    <input
+                                        type="text"
+                                        value={team.name}
+                                        onChange={(e) => updateTeamName(index, e.target.value)}
+                                        placeholder={`Team ${index + 1} Name`}
+                                        className="flex-grow p-2 rounded-md bg-white/20 text-white"
+                                    />
+                                    {teams.length > 1 && (
+                                        <button
+                                            onClick={() => removeTeam(index)}
+                                            className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded"
+                                        >
+                                            Remove
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+                            <button
+                                onClick={addTeam}
+                                className="mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded"
+                            >
+                                Add Team
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <div className="flex gap-4 mb-4">
+                                <input
+                                    type="text"
+                                    value={studentName}
+                                    onChange={(e) => setStudentName(e.target.value)}
+                                    className="flex-grow p-2 rounded-md bg-white/20 text-white"
+                                    placeholder="Student name"
+                                />
+                                <button
+                                    onClick={addStudent}
+                                    className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold"
+                                >
+                                    Add
+                                </button>
+                            </div>
+                            {students.map((student, index) => (
+                                <div key={index} className="flex items-center gap-2 mb-2">
+                                    <input
+                                        type="text"
+                                        value={student.name}
+                                        onChange={(e) => updateStudentName(index, e.target.value)}
+                                        placeholder="Student name"
+                                        className="flex-grow p-2 rounded-md bg-white/20 text-white"
+                                    />
+                                    {students.length > 1 && (
+                                        <button
+                                            onClick={() => removeStudent(index)}
+                                            className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded"
+                                        >
+                                            Remove
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+                        </>
+                    )}
                 </div>
 
                 {/* Custom Word List Section */}
@@ -254,52 +378,6 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                     </div>
                 )}
                 
-                {/* Team setup section */}
-                <div className="bg-white/10 p-6 rounded-lg mb-8">
-                    <h2 className="text-2xl font-bold mb-4">Teams</h2>
-                    {teams.map((team, index) => (
-                        <div key={index} className="flex items-center gap-2 mb-2">
-                            <input
-                                type="text"
-                                value={team.name}
-                                onChange={(e) => updateTeamName(index, e.target.value)}
-                                placeholder={`Team ${index + 1} Name`}
-                                className="flex-grow p-2 rounded-md bg-white/20 text-white"
-                            />
-                            {teams.length > 1 && (
-                                <button
-                                    onClick={() => removeTeam(index)}
-                                    className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded"
-                                >
-                                    Remove
-                                </button>
-                            )}
-                        </div>
-                    ))}
-                    <button
-                        onClick={addTeam}
-                        className="mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded"
-                    >
-                        Add Team
-                    </button>
-                </div>
-
-                {/* Timer selection UI */}
-                <div className="mb-8">
-                    <h2 className="text-3xl font-bold mb-4 text-center">Select Timer Duration</h2>
-                    <div className="flex justify-center gap-4">
-                        {[15, 30, 45, 60].map(time => (
-                            <button
-                                key={time}
-                                onClick={() => setTimerDuration(time)}
-                                className={`px-6 py-3 rounded-lg text-xl font-bold ${timerDuration === time ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}
-                            >
-                                {time}s
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
                 {error && <p className="text-red-300 text-center mb-4">{error}</p>}
                 <button onClick={handleStart} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-8">
                     START GAME
@@ -310,10 +388,11 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
 };
 
 const GameScreen = ({ config, onEndGame }) => {
-    const [teams, setTeams] = useState(config.teams);
-    const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
+    const [participants, setParticipants] = useState(config.participants);
+    const [currentParticipantIndex, setCurrentParticipantIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
+    const isTeamMode = config.gameMode === 'team';
     const [showWord, setShowWord] = useState(true);
     const [inputValue, setInputValue] = useState("");
     const [feedback, setFeedback] = useState({ message: "", type: "" });
@@ -327,8 +406,8 @@ const GameScreen = ({ config, onEndGame }) => {
         review: []
     });
     const [currentDifficulty, setCurrentDifficulty] = useState('easy');
-    const [attemptedTeams, setAttemptedTeams] = useState(new Set());
-    const [missedWords, setMissedWords] = useState([]); // from codex branch
+    const [attemptedParticipants, setAttemptedParticipants] = useState(new Set());
+    const [missedWords, setMissedWords] = useState([]);
 
     // Timer effect
     useEffect(() => {
@@ -373,43 +452,43 @@ const GameScreen = ({ config, onEndGame }) => {
             setCurrentDifficulty(nextDifficulty);
             setCurrentWord(nextWord);
             setTimeLeft(config.timerDuration);
-            setAttemptedTeams(new Set());
+            setAttemptedParticipants(new Set());
         } else {
-            const activeTeams = teams.filter(t => t.lives > 0);
-            onEndGame({ winner: activeTeams.length === 1 ? activeTeams[0] : null, teams });
+            const activeParticipants = participants.filter(p => p.lives > 0);
+            onEndGame({ winner: activeParticipants.length === 1 ? activeParticipants[0] : null, participants });
         }
     };
 
     const nextTurn = () => {
-        setCurrentTeamIndex(prevIndex => (prevIndex + 1) % teams.length);
+        setCurrentParticipantIndex(prevIndex => (prevIndex + 1) % participants.length);
     };
 
     const handleIncorrectAttempt = () => {
         setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
-        setMissedWords(prev => [...prev, currentWord]); // from codex branch
-        const updatedTeams = teams.map((team, index) => {
-            if (index === currentTeamIndex) {
-                return { ...team, lives: team.lives - 1 };
+        setMissedWords(prev => [...prev, currentWord]);
+        const updatedParticipants = participants.map((p, index) => {
+            if (index === currentParticipantIndex) {
+                return { ...p, lives: p.lives - 1 };
             }
-            return team;
+            return p;
         });
-        setTeams(updatedTeams);
+        setParticipants(updatedParticipants);
         setInputValue("");
         
-        const newAttempted = new Set(attemptedTeams);
-        newAttempted.add(currentTeamIndex);
+        const newAttempted = new Set(attemptedParticipants);
+        newAttempted.add(currentParticipantIndex);
 
         setTimeout(() => {
             setFeedback({ message: "", type: "" });
-            if (newAttempted.size >= teams.length) {
-                // All teams had a turn, move to next word and put current word in review
+            if (newAttempted.size >= participants.length) {
+                // All participants had a turn, move to next word and put current word in review
                 setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
-                setAttemptedTeams(new Set());
+                setAttemptedParticipants(new Set());
                 selectNextWord();
                 nextTurn();
             } else {
-                // Move to the next team's turn with the same word
-                setAttemptedTeams(newAttempted);
+                // Move to the next participant's turn with the same word
+                setAttemptedParticipants(newAttempted);
                 nextTurn();
                 setTimeLeft(config.timerDuration);
             }
@@ -440,7 +519,7 @@ const GameScreen = ({ config, onEndGame }) => {
         clearInterval(timerRef.current);
         setFeedback({ message: "Word Skipped", type: "info" });
         setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
-        setAttemptedTeams(new Set());
+        setAttemptedParticipants(new Set());
         
         setTimeout(() => {
             setFeedback({ message: "", type: "" });
@@ -450,15 +529,14 @@ const GameScreen = ({ config, onEndGame }) => {
         }, 1500);
     };
 
-    // from codex branch
     const onEndGameWithMissedWords = () => {
         const lessonKey = new Date().toISOString().split('T')[0];
         const stored = JSON.parse(localStorage.getItem('missedWordsCollection') || '{}');
         const existing = stored[lessonKey] || [];
         stored[lessonKey] = [...existing, ...missedWords];
         localStorage.setItem('missedWordsCollection', JSON.stringify(stored));
-        const activeTeams = teams.filter(t => t.lives > 0);
-        onEndGame({ winner: activeTeams.length === 1 ? activeTeams[0] : null, teams });
+        const activeParticipants = participants.filter(p => p.lives > 0);
+        onEndGame({ winner: activeParticipants.length === 1 ? activeParticipants[0] : null, participants, gameMode: config.gameMode });
     };
 
     useEffect(() => {
@@ -467,21 +545,21 @@ const GameScreen = ({ config, onEndGame }) => {
 
     // Check for game over condition
     useEffect(() => {
-        if (!teams || teams.length === 0) return;
-        const activeTeams = teams.filter(t => t.lives > 0);
-        if (activeTeams.length <= 1) {
+        if (!participants || participants.length === 0) return;
+        const activeParticipants = participants.filter(p => p.lives > 0);
+        if (activeParticipants.length <= 1) {
             onEndGameWithMissedWords();
         }
-    }, [teams, onEndGame]);
+    }, [participants, onEndGame]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
-            {/* Team Lives Display */}
+            {/* Participant Lives Display */}
             <div className="absolute top-8 left-8 flex gap-8">
-                {teams.map((team, index) => (
+                {participants.map((p, index) => (
                     <div key={index} className="text-center">
-                        <div className="text-2xl font-bold">{team.name}</div>
-                        <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(team.lives)}</div>
+                        <div className="text-2xl font-bold">{p.name}</div>
+                        <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(p.lives)}</div>
                     </div>
                 ))}
             </div>
@@ -501,7 +579,7 @@ const GameScreen = ({ config, onEndGame }) => {
 
             {currentWord && (
                 <div className="w-full max-w-4xl text-center">
-                    <h2 className="text-4xl font-bold mb-4">Word for Team: {teams[currentTeamIndex]?.name || 'Team'}</h2>
+                    <h2 className="text-4xl font-bold mb-4">Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}</h2>
                     <div className="relative mb-8 pt-10">
                         {showWord && (
                             <div className="inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg">
@@ -554,10 +632,10 @@ const ResultsScreen = ({ results, onRestart }) => {
 
             <div className="bg-white/10 p-8 rounded-lg w-full max-w-md">
                 <h3 className="text-3xl font-bold mb-4">Final Scores</h3>
-                {results && results.teams.map((team, index) => (
+                {results && results.participants.map((p, index) => (
                     <div key={index} className="flex justify-between items-center text-2xl mb-2">
-                        <span>{team.name}</span>
-                        <span className="font-bold text-yellow-300">{team.lives} lives remaining</span>
+                        <span>{p.name}</span>
+                        <span className="font-bold text-yellow-300">{p.lives} lives remaining</span>
                     </div>
                 ))}
             </div>
