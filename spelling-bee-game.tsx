@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom/client';
 import { Users, BookOpen, Play, Volume2, Globe, RotateCcw, SkipForward } from 'lucide-react';
 
 const wordDatabase = {
@@ -133,4 +134,12 @@ const ResultsScreen = ({ results, onRestart }) => {
     );
 };
 
-export default SpellingBeeGame;
+const container = document.getElementById('root');
+if (container) {
+    const root = ReactDOM.createRoot(container);
+    root.render(
+        <React.StrictMode>
+            <SpellingBeeGame />
+        </React.StrictMode>
+    );
+}
