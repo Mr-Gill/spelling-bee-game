@@ -102,6 +102,7 @@ const GameScreen = ({ config, onEndGame }) => {
 
     // Check for game over condition
     useEffect(() => {
+        if (!teams || teams.length === 0) return;
         const activeTeams = teams.filter(t => t.lives > 0);
         if (activeTeams.length <= 1) {
             onEndGame({ winner: activeTeams[0], teams });
@@ -123,7 +124,7 @@ const ResultsScreen = ({ results, onRestart }) => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center">
             <h1 className="text-5xl font-bold mb-4">Game Over!</h1>
-            {results.winner && <h2 className="text-3xl text-yellow-300">Winner: {results.winner.name}</h2>}
+            {results && results.winner && <h2 className="text-3xl text-yellow-300">Winner: {results.winner.name}</h2>}
             {/* Display scores and other results */}
             <button onClick={onRestart} className="mt-8 bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-xl text-xl font-semibold">
                 Play Again
