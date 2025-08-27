@@ -6,7 +6,7 @@
   "scripts": {
     "start": "python -m http.server 8000",
     "serve": "npx serve .",
-    "build": "echo 'No build process required - this is a client-side application'",
+    "build": "npx esbuild spelling-bee-game.tsx --bundle --outfile=app.js --jsx=automatic --external:react --external:lucide-react",
     "test": "echo 'No tests configured yet'",
     "deploy": "gh-pages -d ."
   },
@@ -33,6 +33,7 @@
   },
   "homepage": "https://yourusername.github.io/interactive-spelling-bee/",
   "devDependencies": {
+    "esbuild": "^0.25.9",
     "gh-pages": "^6.0.0",
     "serve": "^14.2.1"
   },

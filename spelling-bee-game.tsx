@@ -1023,39 +1023,6 @@ const SpellingBeeGame = () => {
             </div>
           </div>
 
-          {/* Current Team/Student */}
-          <div className={`${currentTeam.color} backdrop-blur rounded-xl p-8 mb-8 text-center text-white shadow-2xl border-4 border-yellow-300`}>
-            <h2 className="text-5xl font-bold mb-4">
-              {currentTeam.name}'s Turn
-            </h2>
-            <div className="flex justify-center items-center gap-8 text-2xl">
-              <div>Lives: {'❤️'.repeat(Math.min(currentTeam.lives, 10))}{currentTeam.lives > 10 ? `+${currentTeam.lives - 10}` : ''}</div>
-              <div>Score: {currentTeam.wordsCorrect}/{currentTeam.wordsAttempted}</div>
-            </div>
-            {gameMode === 'individual' && currentTeam.lives <= 2 && (
-              <div className="mt-2 text-lg text-yellow-200 animate-pulse">
-                ⚠️ Low Lives - Be Careful!
-              </div>
-            )}
-          </div>
-
-          {/* Word Information */}
-  // Game Playing Screen
-  if (gameState === 'playing') {
-    const currentTeam = teams[currentTeamIndex];
-    
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-yellow-300 mb-2">SPELLING BEE - {currentDifficulty.toUpperCase()}</h1>
-            <div className="text-xl">Round {round} | Active {gameMode === 'individual' ? 'Students' : 'Teams'}: {teams.filter(t => t.lives > 0).length}</div>
-            <div className="text-lg text-yellow-200">
-              📚 {selectedWordList === 'default' ? 'Default Word List' : `Custom: ${selectedWordList}`}
-            </div>
-          </div>
-
           {/* Timer */}
           <div className="text-center mb-6">
             <div className={`text-6xl font-bold ${timeLeft <= 10 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
@@ -1256,60 +1223,6 @@ const SpellingBeeGame = () => {
     );
   }
 
-  // Results Screen
-  if (gameState === 'results') {
-    const sortedTeams = [...teams].sort((a, b) => {
-      if (b.lives !== a.lives) return b.lives - a.lives;
-      return b.wordsCorrect - a.wordsCorrect;
-    });
-
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-600 to-blue-700 p-8 text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-6xl font-bold mb-8 text-yellow-300">🏆 FINAL RESULTS</h1>
-          
-          <div className="space-y-6 mb-8">
-            {sortedTeams.map((team, index) => (
-              <div
-                key={index}
-                className={`p-6 rounded-xl flex justify-between items-center text-white ${
-                  index === 0
-                    ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-2xl shadow-2xl border-4 border-yellow-300'
-                    : team.color + ' text-xl'
-                }`}
-              >
-                <div className="flex items-center gap-6">
-                  <span className="text-4xl">
-                    {index === 0 ? '👑' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅'}
-                  </span>
-                  <div>
-                    <div className="font-bold text-2xl">{team.name}</div>
-                    <div className="text-lg opacity-90">
-                      {index === 0 ? 'CHAMPION!' : index === 1 ? 'Runner-up' : index === 2 ? 'Third Place' : `${index + 1}th Place`}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-xl font-bold">Lives: {team.lives}</div>
-                  <div className="text-lg">Score: {team.wordsCorrect}/{team.wordsAttempted}</div>
-                  <div className="text-sm opacity-80">
-                    {team.wordsAttempted > 0 ? `${Math.round((team.wordsCorrect / team.wordsAttempted) * 100)}% accuracy` : '0% accuracy'}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <button
-            onClick={resetGame}
-            className="bg-yellow-300 hover:bg-yellow-400 text-black px-8 py-4 rounded-xl text-2xl font-bold transition-colors"
-          >
-            Play Again
-          </button>
-        </div>
-      </div>
-    );
-  }
 };
 
 export default SpellingBeeGame;
