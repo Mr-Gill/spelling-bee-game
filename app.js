@@ -75,6 +75,7 @@
       setCurrentWord(selectRandomWord("easy"));
     }, []);
     (0, import_react.useEffect)(() => {
+      if (!teams || teams.length === 0) return;
       const activeTeams = teams.filter((t) => t.lives > 0);
       if (activeTeams.length <= 1) {
         onEndGame({ winner: activeTeams[0], teams });
@@ -88,7 +89,7 @@
   var ResultsScreen = ({ results, onRestart }) => {
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-5xl font-bold mb-4", children: "Game Over!" }),
-      results.winner && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", { className: "text-3xl text-yellow-300", children: [
+      results && results.winner && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", { className: "text-3xl text-yellow-300", children: [
         "Winner: ",
         results.winner.name
       ] }),
