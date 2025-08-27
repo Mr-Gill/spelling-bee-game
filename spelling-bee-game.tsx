@@ -70,6 +70,22 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [gameMode, setGameMode] = useState("team");
     const [timerDuration, setTimerDuration] = useState(30);
     const [customWordListText, setCustomWordListText] = useState("");
+    const [error, setError] = useState("");
+
+    const addTeam = () => {
+        setTeams([...teams, { name: "", lives: 5 }]);
+    };
+
+    const removeTeam = (index) => {
+        setTeams(teams.filter((_, i) => i !== index));
+    };
+
+    const updateTeamName = (index, name) => {
+        const newTeams = teams.map((team, i) =>
+            i === index ? { ...team, name } : team
+        );
+        setTeams(newTeams);
+    };
 
     const parseWordList = (content) => {
         try {
@@ -124,7 +140,13 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     }, [customWordListText]);
 
     const handleStart = () => {
-        const config = { teams, gameMode, timerDuration };
+        const trimmedTeams = teams.map(team => ({ ...team, name: team.name.trim() })).filter(team => team.name !== "");
+        if (trimmedTeams.length < 2) {
+            setError("Please enter names for at least two teams.");
+            return;
+        }
+        setError("");
+        const config = { teams: trimmedTeams, gameMode, timerDuration };
         onStartGame(config);
     };
 
@@ -169,6 +191,36 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                     </div>
                 </div>
 
+                {/* Team setup section */}
+                <div className="bg-white/10 p-6 rounded-lg mb-8">
+                    <h2 className="text-2xl font-bold mb-4">Teams</h2>
+                    {teams.map((team, index) => (
+                        <div key={index} className="flex items-center gap-2 mb-2">
+                            <input
+                                type="text"
+                                value={team.name}
+                                onChange={(e) => updateTeamName(index, e.target.value)}
+                                placeholder={`Team ${index + 1} Name`}
+                                className="flex-grow p-2 rounded-md bg-white/20 text-white"
+                            />
+                            {teams.length > 1 && (
+                                <button
+                                    onClick={() => removeTeam(index)}
+                                    className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded"
+                                >
+                                    Remove
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                    <button
+                        onClick={addTeam}
+                        className="mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded"
+                    >
+                        Add Team
+                    </button>
+                </div>
+
                 {/* Timer selection UI */}
                 <div className="mb-8">
                     <h2 className="text-3xl font-bold mb-4 text-center">Select Timer Duration</h2>
@@ -185,7 +237,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                     </div>
                 </div>
 
-                {/* All the setup UI goes here */}
+                {error && <p className="text-red-300 text-center mb-4">{error}</p>}
                 <button onClick={handleStart} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-8">
                     START GAME
                 </button>
