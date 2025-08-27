@@ -19,9 +19,23 @@ const SpellingBeeGame = () => {
     const [gameState, setGameState] = useState("setup");
     const [gameConfig, setGameConfig] = useState(null);
     const [gameResults, setGameResults] = useState(null);
+    const [customWords, setCustomWords] = useState({ easy: [], medium: [], tricky: [] });
+
+    const handleAddCustomWords = (newWords) => {
+        // Simple difficulty assignment based on word length for now
+        const easy = newWords.filter(w => w.word.length <= 5);
+        const medium = newWords.filter(w => w.word.length > 5 && w.word.length <= 8);
+        const tricky = newWords.filter(w => w.word.length > 8);
+        setCustomWords({ easy, medium, tricky });
+    };
 
     const handleStartGame = (config) => {
-        setGameConfig(config);
+        const finalWordDatabase = {
+            easy: [...wordDatabase.easy, ...customWords.easy],
+            medium: [...wordDatabase.medium, ...customWords.medium],
+            tricky: [...wordDatabase.tricky, ...customWords.tricky],
+        };
+        setGameConfig({ ...config, wordDatabase: finalWordDatabase });
         setGameState("playing");
     };
 
@@ -37,7 +51,7 @@ const SpellingBeeGame = () => {
     };
 
     if (gameState === "setup") {
-        return <SetupScreen onStartGame={handleStartGame} />;
+        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} />;
     }
     if (gameState === "playing") {
         return <GameScreen config={gameConfig} onEndGame={handleEndGame} />;
@@ -48,18 +62,69 @@ const SpellingBeeGame = () => {
     return null;
 };
 
-const SetupScreen = ({ onStartGame }) => {
-    // Mock teams data for now, as there's no UI to add them yet.
+const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [teams, setTeams] = useState([
         { name: "Team Alpha", lives: 5 },
         { name: "Team Beta", lives: 5 }
     ]);
     const [gameMode, setGameMode] = useState("team");
     const [timerDuration, setTimerDuration] = useState(30);
-    // ... other setup states
+    const [customWordListText, setCustomWordListText] = useState("");
+
+    const parseWordList = (content) => {
+        try {
+            // Try parsing as JSON first
+            const parsed = JSON.parse(content);
+            if (Array.isArray(parsed)) {
+                onAddCustomWords(parsed);
+                return;
+            }
+        } catch (e) {
+            // Not a valid JSON array, try parsing as TSV
+        }
+
+        // Parse as CSV or TSV
+        const lines = content.trim().split('\n');
+        if (lines.length < 2) return; // Need at least a header and one data row
+
+        const headerLine = lines[0];
+        const delimiter = headerLine.includes(',') ? ',' : '\t';
+
+        const headers = headerLine.split(delimiter).map(h => h.trim());
+        const words = lines.slice(1).map(line => {
+            // Basic CSV parsing - doesn't handle commas inside quotes.
+            // For this application, it's a reasonable starting point.
+            const values = line.split(delimiter);
+            const wordObj = {};
+            headers.forEach((header, index) => {
+                wordObj[header] = values[index] ? values[index].trim() : "";
+            });
+            return wordObj;
+        });
+        onAddCustomWords(words);
+    };
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                setCustomWordListText(content);
+                parseWordList(content);
+            };
+            reader.readAsText(file);
+        }
+    };
+
+    useEffect(() => {
+        if(customWordListText) {
+            parseWordList(customWordListText)
+        }
+    }, [customWordListText]);
 
     const handleStart = () => {
-        const config = { teams, gameMode, timerDuration /* ... other configs */ };
+        const config = { teams, gameMode, timerDuration };
         onStartGame(config);
     };
 
@@ -69,6 +134,39 @@ const SetupScreen = ({ onStartGame }) => {
                 <div className="text-center mb-12">
                     <h1 className="text-6xl font-bold mb-4 text-yellow-300">🏆 SPELLING BEE CHAMPIONSHIP</h1>
                     <p className="text-2xl">Get ready to spell your way to victory!</p>
+                </div>
+
+                {/* Custom Word List Section */}
+                <div className="bg-white/10 p-6 rounded-lg mb-8">
+                    <h2 className="text-2xl font-bold mb-4">Add Custom Word List</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label htmlFor="file-upload" className="block text-lg font-medium mb-2">Upload File</label>
+                            <p className="text-sm text-gray-300 mb-2">Upload a JSON or TSV file.</p>
+                            <input
+                                id="file-upload"
+                                type="file"
+                                accept=".json,.tsv,.txt,.csv"
+                                onChange={handleFileChange}
+                                className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-300 file:text-black hover:file:bg-yellow-400"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="paste-area" className="block text-lg font-medium mb-2">Or Paste Spreadsheet Data</label>
+                            <p className="text-sm text-gray-300 mb-2">Paste data from Excel or Google Sheets (tab-separated).</p>
+                            <textarea
+                                id="paste-area"
+                                rows="4"
+                                value={customWordListText}
+                                onChange={(e) => setCustomWordListText(e.target.value)}
+                                className="w-full p-2 rounded-md bg-white/20 text-white"
+                                placeholder="Paste your tab-separated values here..."
+                            ></textarea>
+                        </div>
+                    </div>
+                    <div className="mt-4 text-sm text-gray-300">
+                        <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `sentence`, `prefixSuffix`, `pronunciation`. The difficulty will be determined by word length.</p>
+                    </div>
                 </div>
 
                 {/* Timer selection UI */}
