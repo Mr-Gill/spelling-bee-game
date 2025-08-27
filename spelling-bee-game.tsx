@@ -199,6 +199,7 @@ const GameScreen = ({ config, onEndGame }) => {
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
+    const [showWord, setShowWord] = useState(true);
     // ... other game states
 
     // Timer effect
@@ -303,6 +304,19 @@ const GameScreen = ({ config, onEndGame }) => {
             {currentWord && (
                 <div className="w-full max-w-4xl text-center">
                     <h2 className="text-4xl font-bold mb-4">Word for Team: {teams[currentTeamIndex]?.name || 'Team'}</h2>
+                    <div className="relative mb-8 pt-10">
+                        {showWord && (
+                            <div className="inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg">
+                                {currentWord.word}
+                            </div>
+                        )}
+                        <button
+                            onClick={() => setShowWord(!showWord)}
+                            className="absolute top-0 right-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+                        >
+                            {showWord ? 'Hide Word' : 'Show Word'}
+                        </button>
+                    </div>
                     <div className="bg-white/10 p-6 rounded-lg mb-8">
                         <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
                         <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
