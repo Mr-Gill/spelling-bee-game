@@ -64,8 +64,8 @@ const SpellingBeeGame = () => {
 
 const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [teams, setTeams] = useState([
-        { name: "Team Alpha", lives: 5 },
-        { name: "Team Beta", lives: 5 }
+        { name: "Team Alpha", lives: 5, points: 1 },
+        { name: "Team Beta", lives: 5, points: 1 }
     ]);
     const [gameMode, setGameMode] = useState("team");
     const [timerDuration, setTimerDuration] = useState(30);
@@ -124,7 +124,12 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     }, [customWordListText]);
 
     const handleStart = () => {
-        const config = { teams, gameMode, timerDuration };
+        const normalizedTeams = teams.map(team => ({
+            // Ensure every team starts with at least 1 point
+            ...team,
+            points: team.points ?? 1,
+        }));
+        const config = { teams: normalizedTeams, gameMode, timerDuration };
         onStartGame(config);
     };
 
@@ -199,7 +204,9 @@ const GameScreen = ({ config, onEndGame }) => {
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
-    // ... other game states
+    const initialHints = { definition: false, origin: false, sentence: false, syllables: false };
+    const [revealedHints, setRevealedHints] = useState(initialHints);
+    const [isHelpOpen, setIsHelpOpen] = useState(false);
 
     // Timer effect
     useEffect(() => {
@@ -214,15 +221,14 @@ const GameScreen = ({ config, onEndGame }) => {
         const words = wordDatabase[difficulty] || wordDatabase.easy;
         const word = words[Math.floor(Math.random() * words.length)];
         setTimeLeft(config.timerDuration); // Reset timer when a new word is selected
+        setRevealedHints(initialHints);
+        setIsHelpOpen(false);
         return word;
     };
 
     const skipWord = () => {
-        // Logic for skipping a word
-        // For example, select a new word and move to the next turn
         const newWord = selectRandomWord('easy'); // or current difficulty
         setCurrentWord(newWord);
-        // maybe penalize the team
         nextTurn();
     };
 
@@ -254,6 +260,13 @@ const GameScreen = ({ config, onEndGame }) => {
 
         if (isCorrect) {
             setFeedback({ message: "Correct!", type: "success" });
+            const updatedTeams = teams.map((team, index) => {
+                if (index === currentTeamIndex) {
+                    return { ...team, points: team.points + 1 };
+                }
+                return team;
+            });
+            setTeams(updatedTeams);
         } else {
             setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
             const updatedTeams = teams.map((team, index) => {
@@ -275,6 +288,18 @@ const GameScreen = ({ config, onEndGame }) => {
         }, 2000);
     };
 
+    const buyHint = (hintKey, cost) => {
+        if (revealedHints[hintKey]) return;
+        const currentTeam = teams[currentTeamIndex];
+        if (currentTeam.points < cost) return;
+        const updatedTeams = teams.map((team, index) =>
+            index === currentTeamIndex ? { ...team, points: team.points - cost } : team
+        );
+        setTeams(updatedTeams);
+        setRevealedHints(prev => ({ ...prev, [hintKey]: true }));
+        setIsHelpOpen(false);
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
             {/* Team Lives Display */}
@@ -282,6 +307,7 @@ const GameScreen = ({ config, onEndGame }) => {
                 {teams.map((team, index) => (
                     <div key={index} className="text-center">
                         <div className="text-2xl font-bold">{team.name}</div>
+                        <div className="text-yellow-300 font-bold">⭐ {team.points}</div>
                         <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(team.lives)}</div>
                     </div>
                 ))}
@@ -302,12 +328,24 @@ const GameScreen = ({ config, onEndGame }) => {
 
             {currentWord && (
                 <div className="w-full max-w-4xl text-center">
-                    <h2 className="text-4xl font-bold mb-4">Word for Team: {teams[currentTeamIndex]?.name || 'Team'}</h2>
-                    <div className="bg-white/10 p-6 rounded-lg mb-8">
-                        <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
-                        <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
-                        <p className="text-xl"><strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"</p>
-                    </div>
+                    <h2 className="text-4xl font-bold mb-2">{currentWord.word}</h2>
+                    <p className="mb-4">Team: {teams[currentTeamIndex]?.name || 'Team'}</p>
+                    {(revealedHints.definition || revealedHints.origin || revealedHints.sentence || revealedHints.syllables) && (
+                        <div className="bg-white/10 p-6 rounded-lg mb-8 text-left">
+                            {revealedHints.definition && (
+                                <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
+                            )}
+                            {revealedHints.origin && (
+                                <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
+                            )}
+                            {revealedHints.sentence && (
+                                <p className="text-xl mb-2"><strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"</p>
+                            )}
+                            {revealedHints.syllables && (
+                                <p className="text-xl"><strong className="text-yellow-300">Syllables:</strong> {currentWord.syllables}</p>
+                            )}
+                        </div>
+                    )}
                     <div className="flex gap-4 justify-center">
                         <input
                             type="text"
@@ -323,9 +361,53 @@ const GameScreen = ({ config, onEndGame }) => {
                 </div>
             )}
 
+            <button onClick={() => setIsHelpOpen(true)} className="absolute bottom-8 left-8 bg-blue-500 hover:bg-blue-600 p-4 rounded-lg text-xl">
+                Help Shop
+            </button>
+
             <button onClick={skipWord} className="absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl">
                 <SkipForward size={24} />
             </button>
+
+            {isHelpOpen && (
+                <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
+                    <div className="bg-white text-black p-6 rounded-lg w-80 text-center">
+                        <h3 className="text-2xl font-bold mb-4">Help Shop</h3>
+                        <p className="mb-4">Points: {teams[currentTeamIndex]?.points}</p>
+                        <div className="space-y-2">
+                            <button
+                                onClick={() => buyHint('definition', 1)}
+                                disabled={revealedHints.definition || teams[currentTeamIndex].points < 1}
+                                className="w-full bg-yellow-300 px-4 py-2 rounded disabled:opacity-50"
+                            >
+                                Definition (-1)
+                            </button>
+                            <button
+                                onClick={() => buyHint('origin', 1)}
+                                disabled={revealedHints.origin || teams[currentTeamIndex].points < 1}
+                                className="w-full bg-yellow-300 px-4 py-2 rounded disabled:opacity-50"
+                            >
+                                Origin (-1)
+                            </button>
+                            <button
+                                onClick={() => buyHint('sentence', 1)}
+                                disabled={revealedHints.sentence || teams[currentTeamIndex].points < 1}
+                                className="w-full bg-yellow-300 px-4 py-2 rounded disabled:opacity-50"
+                            >
+                                Sentence (-1)
+                            </button>
+                            <button
+                                onClick={() => buyHint('syllables', 1)}
+                                disabled={revealedHints.syllables || teams[currentTeamIndex].points < 1}
+                                className="w-full bg-yellow-300 px-4 py-2 rounded disabled:opacity-50"
+                            >
+                                Syllables (-1)
+                            </button>
+                        </div>
+                        <button onClick={() => setIsHelpOpen(false)} className="mt-4 text-blue-500">Close</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
@@ -345,7 +427,7 @@ const ResultsScreen = ({ results, onRestart }) => {
                 {results && results.teams.map((team, index) => (
                     <div key={index} className="flex justify-between items-center text-2xl mb-2">
                         <span>{team.name}</span>
-                        <span className="font-bold text-yellow-300">{team.lives} lives remaining</span>
+                        <span className="font-bold text-yellow-300">{team.points} pts | {team.lives} lives</span>
                     </div>
                 ))}
             </div>
