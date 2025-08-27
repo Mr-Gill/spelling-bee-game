@@ -64,8 +64,8 @@ const SpellingBeeGame = () => {
 
 const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [teams, setTeams] = useState([
-        { name: "Team Alpha", lives: 5 },
-        { name: "Team Beta", lives: 5 }
+        { name: "Team Alpha", lives: 5, points: 0, streak: 0 },
+        { name: "Team Beta", lives: 5, points: 0, streak: 0 }
     ]);
     const [gameMode, setGameMode] = useState("team");
     const [timerDuration, setTimerDuration] = useState(30);
@@ -124,7 +124,11 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     }, [customWordListText]);
 
     const handleStart = () => {
-        const config = { teams, gameMode, timerDuration };
+        const config = {
+            teams: teams.map(t => ({ ...t, points: 0, streak: 0 })),
+            gameMode,
+            timerDuration
+        };
         onStartGame(config);
     };
 
@@ -210,17 +214,19 @@ const GameScreen = ({ config, onEndGame }) => {
         return () => clearInterval(timer);
     }, [currentWord, timeLeft]);
 
-    const selectRandomWord = (difficulty) => {
-        const words = wordDatabase[difficulty] || wordDatabase.easy;
+    const selectRandomWord = () => {
+        const difficulties = Object.keys(config.wordDatabase);
+        const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
+        const words = config.wordDatabase[difficulty] || config.wordDatabase.easy;
         const word = words[Math.floor(Math.random() * words.length)];
         setTimeLeft(config.timerDuration); // Reset timer when a new word is selected
-        return word;
+        return { ...word, difficulty };
     };
 
     const skipWord = () => {
         // Logic for skipping a word
         // For example, select a new word and move to the next turn
-        const newWord = selectRandomWord('easy'); // or current difficulty
+        const newWord = selectRandomWord();
         setCurrentWord(newWord);
         // maybe penalize the team
         nextTurn();
@@ -231,7 +237,7 @@ const GameScreen = ({ config, onEndGame }) => {
     };
 
     useEffect(() => {
-        setCurrentWord(selectRandomWord('easy'));
+        setCurrentWord(selectRandomWord());
     }, []);
 
     // Check for game over condition
@@ -254,11 +260,27 @@ const GameScreen = ({ config, onEndGame }) => {
 
         if (isCorrect) {
             setFeedback({ message: "Correct!", type: "success" });
+            const updatedTeams = teams.map((team, index) => {
+                if (index === currentTeamIndex) {
+                    const multipliers = { easy: 1, medium: 2, tricky: 3 };
+                    const basePoints = 10;
+                    const multiplier = multipliers[currentWord.difficulty] || 1;
+                    const bonus = team.streak * 5;
+                    const pointsEarned = basePoints * multiplier + bonus;
+                    return {
+                        ...team,
+                        points: team.points + pointsEarned,
+                        streak: team.streak + 1
+                    };
+                }
+                return team;
+            });
+            setTeams(updatedTeams);
         } else {
             setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
             const updatedTeams = teams.map((team, index) => {
                 if (index === currentTeamIndex) {
-                    return { ...team, lives: team.lives - 1 };
+                    return { ...team, lives: team.lives - 1, streak: 0 };
                 }
                 return team;
             });
@@ -269,7 +291,7 @@ const GameScreen = ({ config, onEndGame }) => {
         setTimeout(() => {
             setFeedback({ message: "", type: "" });
             setInputValue("");
-            const newWord = selectRandomWord('easy'); // or current difficulty
+            const newWord = selectRandomWord();
             setCurrentWord(newWord);
             nextTurn();
         }, 2000);
@@ -283,6 +305,7 @@ const GameScreen = ({ config, onEndGame }) => {
                     <div key={index} className="text-center">
                         <div className="text-2xl font-bold">{team.name}</div>
                         <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(team.lives)}</div>
+                        <div className="text-xl font-bold text-green-400">{team.points} pts</div>
                     </div>
                 ))}
             </div>
@@ -343,9 +366,12 @@ const ResultsScreen = ({ results, onRestart }) => {
             <div className="bg-white/10 p-8 rounded-lg w-full max-w-md">
                 <h3 className="text-3xl font-bold mb-4">Final Scores</h3>
                 {results && results.teams.map((team, index) => (
-                    <div key={index} className="flex justify-between items-center text-2xl mb-2">
-                        <span>{team.name}</span>
-                        <span className="font-bold text-yellow-300">{team.lives} lives remaining</span>
+                    <div key={index} className="text-2xl mb-4">
+                        <div className="flex justify-between items-center">
+                            <span>{team.name}</span>
+                            <span className="font-bold text-yellow-300">{team.points} pts</span>
+                        </div>
+                        <div className="text-lg text-gray-300">{team.lives} lives remaining</div>
                     </div>
                 ))}
             </div>
