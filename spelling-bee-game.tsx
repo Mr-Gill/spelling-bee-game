@@ -199,7 +199,15 @@ const GameScreen = ({ config, onEndGame }) => {
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
-    // ... other game states
+    const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
+    const [wordQueues, setWordQueues] = useState({
+        easy: shuffleArray(config.wordDatabase.easy),
+        medium: shuffleArray(config.wordDatabase.medium),
+        tricky: shuffleArray(config.wordDatabase.tricky),
+        review: []
+    });
+    const [currentDifficulty, setCurrentDifficulty] = useState('easy');
+    const [attemptedTeams, setAttemptedTeams] = useState(new Set());
 
     // Timer effect
     useEffect(() => {
@@ -210,19 +218,42 @@ const GameScreen = ({ config, onEndGame }) => {
         return () => clearInterval(timer);
     }, [currentWord, timeLeft]);
 
-    const selectRandomWord = (difficulty) => {
-        const words = wordDatabase[difficulty] || wordDatabase.easy;
-        const word = words[Math.floor(Math.random() * words.length)];
-        setTimeLeft(config.timerDuration); // Reset timer when a new word is selected
-        return word;
+    const difficultyOrder = ['easy', 'medium', 'tricky', 'review'];
+
+    const selectNextWord = () => {
+        let index = difficultyOrder.indexOf(currentDifficulty);
+        let nextWord = null;
+        let nextDifficulty = currentDifficulty;
+
+        while (index < difficultyOrder.length) {
+            const diff = difficultyOrder[index];
+            const queue = wordQueues[diff];
+            if (queue.length > 0) {
+                nextWord = queue[0];
+                setWordQueues(prev => ({
+                    ...prev,
+                    [diff]: prev[diff].slice(1)
+                }));
+                nextDifficulty = diff;
+                break;
+            }
+            index++;
+        }
+
+        if (nextWord) {
+            setCurrentDifficulty(nextDifficulty);
+            setCurrentWord(nextWord);
+            setTimeLeft(config.timerDuration);
+            setAttemptedTeams(new Set());
+        } else {
+            const activeTeams = teams.filter(t => t.lives > 0);
+            onEndGame({ winner: activeTeams.length === 1 ? activeTeams[0] : null, teams });
+        }
     };
 
     const skipWord = () => {
-        // Logic for skipping a word
-        // For example, select a new word and move to the next turn
-        const newWord = selectRandomWord('easy'); // or current difficulty
-        setCurrentWord(newWord);
-        // maybe penalize the team
+        setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+        selectNextWord();
         nextTurn();
     };
 
@@ -231,7 +262,7 @@ const GameScreen = ({ config, onEndGame }) => {
     };
 
     useEffect(() => {
-        setCurrentWord(selectRandomWord('easy'));
+        selectNextWord();
     }, []);
 
     // Check for game over condition
@@ -251,12 +282,13 @@ const GameScreen = ({ config, onEndGame }) => {
         if (!currentWord) return;
 
         const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
+        let updatedTeams = teams;
 
         if (isCorrect) {
             setFeedback({ message: "Correct!", type: "success" });
         } else {
             setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
-            const updatedTeams = teams.map((team, index) => {
+            updatedTeams = teams.map((team, index) => {
                 if (index === currentTeamIndex) {
                     return { ...team, lives: team.lives - 1 };
                 }
@@ -265,13 +297,28 @@ const GameScreen = ({ config, onEndGame }) => {
             setTeams(updatedTeams);
         }
 
-        // Clear input and feedback after a short delay, then move to the next turn
+        const newAttempted = new Set(attemptedTeams);
+        newAttempted.add(currentTeamIndex);
+
+        // Clear input and feedback after a short delay, then process next steps
         setTimeout(() => {
             setFeedback({ message: "", type: "" });
             setInputValue("");
-            const newWord = selectRandomWord('easy'); // or current difficulty
-            setCurrentWord(newWord);
-            nextTurn();
+
+            if (isCorrect) {
+                setAttemptedTeams(new Set());
+                selectNextWord();
+                nextTurn();
+            } else if (newAttempted.size >= teams.length) {
+                setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+                setAttemptedTeams(new Set());
+                selectNextWord();
+                nextTurn();
+            } else {
+                setAttemptedTeams(newAttempted);
+                setTimeLeft(config.timerDuration);
+                nextTurn();
+            }
         }, 2000);
     };
 
