@@ -195,10 +195,13 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
 };
 
 const GameScreen = ({ config, onEndGame }) => {
-    const [teams, setTeams] = useState(config.teams);
+    const [teams, setTeams] = useState(
+        config.teams.map(t => ({ ...t, attempted: 0, correct: 0 }))
+    );
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
+    const [startTime] = useState(Date.now());
     // ... other game states
 
     // Timer effect
@@ -218,11 +221,15 @@ const GameScreen = ({ config, onEndGame }) => {
     };
 
     const skipWord = () => {
-        // Logic for skipping a word
-        // For example, select a new word and move to the next turn
+        setTeams(prev =>
+            prev.map((team, idx) =>
+                idx === currentTeamIndex
+                    ? { ...team, attempted: team.attempted + 1 }
+                    : team
+            )
+        );
         const newWord = selectRandomWord('easy'); // or current difficulty
         setCurrentWord(newWord);
-        // maybe penalize the team
         nextTurn();
     };
 
@@ -239,9 +246,23 @@ const GameScreen = ({ config, onEndGame }) => {
         if (!teams || teams.length === 0) return;
         const activeTeams = teams.filter(t => t.lives > 0);
         if (activeTeams.length <= 1) {
-            onEndGame({ winner: activeTeams[0], teams });
+            const endTime = Date.now();
+            const finalTeams = teams.map(team => ({
+                ...team,
+                accuracy:
+                    team.attempted > 0
+                        ? (team.correct / team.attempted) * 100
+                        : 0,
+            }));
+            onEndGame({
+                winner: activeTeams[0] || null,
+                teams: finalTeams,
+                startTime,
+                endTime,
+                duration: Math.round((endTime - startTime) / 1000),
+            });
         }
-    }, [teams, onEndGame]);
+    }, [teams, onEndGame, startTime]);
 
 
     const [inputValue, setInputValue] = useState("");
@@ -250,19 +271,28 @@ const GameScreen = ({ config, onEndGame }) => {
     const handleSpellingSubmit = () => {
         if (!currentWord) return;
 
-        const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
+        const isCorrect =
+            inputValue.trim().toLowerCase() ===
+            currentWord.word.toLowerCase();
+
+        setTeams(prev =>
+            prev.map((team, index) => {
+                if (index === currentTeamIndex) {
+                    return {
+                        ...team,
+                        attempted: team.attempted + 1,
+                        correct: team.correct + (isCorrect ? 1 : 0),
+                        lives: isCorrect ? team.lives : team.lives - 1,
+                    };
+                }
+                return team;
+            })
+        );
 
         if (isCorrect) {
             setFeedback({ message: "Correct!", type: "success" });
         } else {
             setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
-            const updatedTeams = teams.map((team, index) => {
-                if (index === currentTeamIndex) {
-                    return { ...team, lives: team.lives - 1 };
-                }
-                return team;
-            });
-            setTeams(updatedTeams);
         }
 
         // Clear input and feedback after a short delay, then move to the next turn
@@ -331,6 +361,16 @@ const GameScreen = ({ config, onEndGame }) => {
 };
 
 const ResultsScreen = ({ results, onRestart }) => {
+    const handleExport = () => {
+        const dataStr =
+            "data:text/json;charset=utf-8," +
+            encodeURIComponent(JSON.stringify(results, null, 2));
+        const anchor = document.createElement("a");
+        anchor.href = dataStr;
+        anchor.download = "spelling-bee-results.json";
+        anchor.click();
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center">
             <h1 className="text-6xl font-bold mb-4 text-yellow-300">🏆 Game Over! 🏆</h1>
@@ -340,19 +380,39 @@ const ResultsScreen = ({ results, onRestart }) => {
                 <h2 className="text-4xl mb-8">It's a draw!</h2>
             )}
 
+            {results?.duration && (
+                <div className="text-2xl mb-6">Game Duration: {results.duration} seconds</div>
+            )}
+
             <div className="bg-white/10 p-8 rounded-lg w-full max-w-md">
                 <h3 className="text-3xl font-bold mb-4">Final Scores</h3>
-                {results && results.teams.map((team, index) => (
-                    <div key={index} className="flex justify-between items-center text-2xl mb-2">
-                        <span>{team.name}</span>
-                        <span className="font-bold text-yellow-300">{team.lives} lives remaining</span>
-                    </div>
-                ))}
+                {results &&
+                    results.teams.map((team, index) => (
+                        <div key={index} className="text-left text-xl mb-3">
+                            <div className="font-bold">{team.name}</div>
+                            <div className="text-yellow-300">
+                                {team.correct}/{team.attempted} correct (
+                                {team.accuracy.toFixed(0)}%) - {team.lives} lives
+                                remaining
+                            </div>
+                        </div>
+                    ))}
             </div>
 
-            <button onClick={onRestart} className="mt-12 bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold">
-                Play Again
-            </button>
+            <div className="flex gap-6 mt-12">
+                <button
+                    onClick={handleExport}
+                    className="bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold"
+                >
+                    Export Results
+                </button>
+                <button
+                    onClick={onRestart}
+                    className="bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold"
+                >
+                    Play Again
+                </button>
+            </div>
         </div>
     );
 };
