@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npx serve dist",
     "serve": "npx serve dist",
-    "build": "rm -rf dist && mkdir dist && cp index.html style.css dist/ && npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic",
+    "build": "node build.js",
     "watch": "npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --watch",
     "test": "echo 'No tests configured yet'",
     "predeploy": "npm run build",
