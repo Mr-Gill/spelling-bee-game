@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Users, BookOpen, Play, Volume2, Globe, RotateCcw, SkipForward } from 'lucide-react';
 
+// The wordDatabase remains unchanged
 const wordDatabase = {
     easy: [
         { word: "friend", syllables: "friend (1 syllable)", definition: "A person you like and know well", origin: "Old English 'freond', from Germanic root meaning 'to love'", sentence: "My best friend and I love to play together.", prefixSuffix: "Base word with no prefix or suffix", pronunciation: "FREND" },
@@ -70,6 +71,22 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [gameMode, setGameMode] = useState("team");
     const [timerDuration, setTimerDuration] = useState(30);
     const [customWordListText, setCustomWordListText] = useState("");
+    const [error, setError] = useState("");
+
+    const addTeam = () => {
+        setTeams([...teams, { name: "", lives: 5 }]);
+    };
+
+    const removeTeam = (index) => {
+        setTeams(teams.filter((_, i) => i !== index));
+    };
+
+    const updateTeamName = (index, name) => {
+        const newTeams = teams.map((team, i) =>
+            i === index ? { ...team, name } : team
+        );
+        setTeams(newTeams);
+    };
 
     const parseWordList = (content) => {
         try {
@@ -124,7 +141,13 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     }, [customWordListText]);
 
     const handleStart = () => {
-        const config = { teams, gameMode, timerDuration };
+        const trimmedTeams = teams.map(team => ({ ...team, name: team.name.trim() })).filter(team => team.name !== "");
+        if (trimmedTeams.length < 2) {
+            setError("Please enter names for at least two teams.");
+            return;
+        }
+        setError("");
+        const config = { teams: trimmedTeams, gameMode, timerDuration };
         onStartGame(config);
     };
 
@@ -169,6 +192,36 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                     </div>
                 </div>
 
+                {/* Team setup section */}
+                <div className="bg-white/10 p-6 rounded-lg mb-8">
+                    <h2 className="text-2xl font-bold mb-4">Teams</h2>
+                    {teams.map((team, index) => (
+                        <div key={index} className="flex items-center gap-2 mb-2">
+                            <input
+                                type="text"
+                                value={team.name}
+                                onChange={(e) => updateTeamName(index, e.target.value)}
+                                placeholder={`Team ${index + 1} Name`}
+                                className="flex-grow p-2 rounded-md bg-white/20 text-white"
+                            />
+                            {teams.length > 1 && (
+                                <button
+                                    onClick={() => removeTeam(index)}
+                                    className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded"
+                                >
+                                    Remove
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                    <button
+                        onClick={addTeam}
+                        className="mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded"
+                    >
+                        Add Team
+                    </button>
+                </div>
+
                 {/* Timer selection UI */}
                 <div className="mb-8">
                     <h2 className="text-3xl font-bold mb-4 text-center">Select Timer Duration</h2>
@@ -185,7 +238,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                     </div>
                 </div>
 
-                {/* All the setup UI goes here */}
+                {error && <p className="text-red-300 text-center mb-4">{error}</p>}
                 <button onClick={handleStart} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-8">
                     START GAME
                 </button>
@@ -199,6 +252,11 @@ const GameScreen = ({ config, onEndGame }) => {
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
+    const [showWord, setShowWord] = useState(true);
+    const [inputValue, setInputValue] = useState("");
+    const [feedback, setFeedback] = useState({ message: "", type: "" });
+    const timerRef = useRef(null);
+
     const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
     const [wordQueues, setWordQueues] = useState({
         easy: shuffleArray(config.wordDatabase.easy),
@@ -211,13 +269,21 @@ const GameScreen = ({ config, onEndGame }) => {
 
     // Timer effect
     useEffect(() => {
-        if (!currentWord || timeLeft <= 0) return;
-        const timer = setInterval(() => {
-            setTimeLeft(prevTime => prevTime - 1);
+        if (!currentWord) return;
+        timerRef.current = setInterval(() => {
+            setTimeLeft(prevTime => {
+                if (prevTime <= 1) {
+                    clearInterval(timerRef.current);
+                    handleIncorrectAttempt();
+                    return 0;
+                }
+                return prevTime - 1;
+            });
         }, 1000);
-        return () => clearInterval(timer);
-    }, [currentWord, timeLeft]);
 
+        return () => clearInterval(timerRef.current);
+    }, [currentWord]);
+    
     const difficultyOrder = ['easy', 'medium', 'tricky', 'review'];
 
     const selectNextWord = () => {
@@ -251,14 +317,73 @@ const GameScreen = ({ config, onEndGame }) => {
         }
     };
 
-    const skipWord = () => {
-        setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
-        selectNextWord();
-        nextTurn();
+    const nextTurn = () => {
+        setCurrentTeamIndex(prevIndex => (prevIndex + 1) % teams.length);
     };
 
-    const nextTurn = () => {
-        setCurrentTeamIndex((currentTeamIndex + 1) % teams.length);
+    const handleIncorrectAttempt = () => {
+        setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
+        const updatedTeams = teams.map((team, index) => {
+            if (index === currentTeamIndex) {
+                return { ...team, lives: team.lives - 1 };
+            }
+            return team;
+        });
+        setTeams(updatedTeams);
+        setInputValue("");
+        
+        const newAttempted = new Set(attemptedTeams);
+        newAttempted.add(currentTeamIndex);
+
+        setTimeout(() => {
+            setFeedback({ message: "", type: "" });
+            if (newAttempted.size >= teams.length) {
+                // All teams had a turn, move to next word and put current word in review
+                setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+                setAttemptedTeams(new Set());
+                selectNextWord();
+                nextTurn();
+            } else {
+                // Move to the next team's turn with the same word
+                setAttemptedTeams(newAttempted);
+                nextTurn();
+                setTimeLeft(config.timerDuration);
+            }
+        }, 2000);
+    };
+    
+    const handleSpellingSubmit = () => {
+        if (!currentWord) return;
+        clearInterval(timerRef.current);
+
+        const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
+
+        if (isCorrect) {
+            setFeedback({ message: "Correct! 🎉", type: "success" });
+            setTimeout(() => {
+                setFeedback({ message: "", type: "" });
+                setInputValue("");
+                selectNextWord();
+                nextTurn();
+            }, 2000);
+            return;
+        }
+
+        handleIncorrectAttempt();
+    };
+
+    const skipWord = () => {
+        clearInterval(timerRef.current);
+        setFeedback({ message: "Word Skipped", type: "info" });
+        setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+        setAttemptedTeams(new Set());
+        
+        setTimeout(() => {
+            setFeedback({ message: "", type: "" });
+            setInputValue("");
+            selectNextWord();
+            nextTurn();
+        }, 1500);
     };
 
     useEffect(() => {
@@ -274,54 +399,6 @@ const GameScreen = ({ config, onEndGame }) => {
         }
     }, [teams, onEndGame]);
 
-
-    const [inputValue, setInputValue] = useState("");
-    const [feedback, setFeedback] = useState({ message: "", type: "" });
-
-    const handleSpellingSubmit = () => {
-        if (!currentWord) return;
-
-        const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
-        let updatedTeams = teams;
-
-        if (isCorrect) {
-            setFeedback({ message: "Correct!", type: "success" });
-        } else {
-            setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
-            updatedTeams = teams.map((team, index) => {
-                if (index === currentTeamIndex) {
-                    return { ...team, lives: team.lives - 1 };
-                }
-                return team;
-            });
-            setTeams(updatedTeams);
-        }
-
-        const newAttempted = new Set(attemptedTeams);
-        newAttempted.add(currentTeamIndex);
-
-        // Clear input and feedback after a short delay, then process next steps
-        setTimeout(() => {
-            setFeedback({ message: "", type: "" });
-            setInputValue("");
-
-            if (isCorrect) {
-                setAttemptedTeams(new Set());
-                selectNextWord();
-                nextTurn();
-            } else if (newAttempted.size >= teams.length) {
-                setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
-                setAttemptedTeams(new Set());
-                selectNextWord();
-                nextTurn();
-            } else {
-                setAttemptedTeams(newAttempted);
-                setTimeLeft(config.timerDuration);
-                nextTurn();
-            }
-        }, 2000);
-    };
-
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
             {/* Team Lives Display */}
@@ -336,7 +413,7 @@ const GameScreen = ({ config, onEndGame }) => {
 
             {/* Feedback Message */}
             {feedback.message && (
-                <div className={`absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${feedback.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`}>
+                <div className={`absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${feedback.type === 'success' ? 'bg-green-500' : feedback.type === 'error' ? 'bg-red-500' : 'bg-blue-500'}`}>
                     {feedback.message}
                 </div>
             )}
@@ -350,6 +427,19 @@ const GameScreen = ({ config, onEndGame }) => {
             {currentWord && (
                 <div className="w-full max-w-4xl text-center">
                     <h2 className="text-4xl font-bold mb-4">Word for Team: {teams[currentTeamIndex]?.name || 'Team'}</h2>
+                    <div className="relative mb-8 pt-10">
+                        {showWord && (
+                            <div className="inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg">
+                                {currentWord.word}
+                            </div>
+                        )}
+                        <button
+                            onClick={() => setShowWord(!showWord)}
+                            className="absolute top-0 right-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+                        >
+                            {showWord ? 'Hide Word' : 'Show Word'}
+                        </button>
+                    </div>
                     <div className="bg-white/10 p-6 rounded-lg mb-8">
                         <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
                         <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
