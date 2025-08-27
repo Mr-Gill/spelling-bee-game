@@ -58,7 +58,7 @@ Teams earn points for correct answers and can spend them on:
    - Select main branch and / (root) folder
    - Save changes
 
-Your game will be live at: `[https://squidgyg.github.io/spelling-bee-game/]`
+Your game will be live at: `(https://squidgyg.github.io/spelling-bee-game/)`
 
 ### Local Development
 1. Download all files to a folder
