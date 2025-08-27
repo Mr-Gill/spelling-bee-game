@@ -189,6 +189,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
 
     const handleStart = () => {
+        let finalParticipants;
         // Validate based on the selected game mode
         if (gameMode === 'team') {
             const trimmedTeams = teams.map(team => ({ ...team, name: team.name.trim() })).filter(team => team.name !== "");
@@ -196,19 +197,16 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 setError("Please enter names for at least two teams.");
                 return;
             }
-            // Use the trimmed teams list
-            const config = { participants: trimmedTeams, gameMode, timerDuration };
-            onStartGame(config);
+            finalParticipants = trimmedTeams.map(t => ({ ...t, attempted: 0, correct: 0 }));
         } else { // Individual mode
             const trimmedStudents = students.map(student => ({ ...student, name: student.name.trim() })).filter(student => student.name !== "");
             if (trimmedStudents.length < 2) {
                 setError("Please enter names for at least two students.");
                 return;
             }
-            // Use the trimmed students list
-            const config = { participants: trimmedStudents, gameMode, timerDuration };
-            onStartGame(config);
+            finalParticipants = trimmedStudents.map(s => ({ ...s, attempted: 0, correct: 0 }));
         }
+        
         setError("");
         
         let finalWords = parsedCustomWords;
@@ -217,6 +215,9 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
             finalWords = [...finalWords, ...extraWords];
         }
         onAddCustomWords(finalWords);
+        
+        const config = { participants: finalParticipants, gameMode, timerDuration };
+        onStartGame(config);
     };
 
     return (
@@ -388,7 +389,10 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
 };
 
 const GameScreen = ({ config, onEndGame }) => {
-    const [participants, setParticipants] = useState(config.participants);
+    // Correctly initialize participants with stat-tracking properties
+    const [participants, setParticipants] = useState(
+        config.participants.map(p => ({ ...p, attempted: 0, correct: 0 }))
+    );
     const [currentParticipantIndex, setCurrentParticipantIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
@@ -397,6 +401,7 @@ const GameScreen = ({ config, onEndGame }) => {
     const [inputValue, setInputValue] = useState("");
     const [feedback, setFeedback] = useState({ message: "", type: "" });
     const timerRef = useRef(null);
+    const [startTime] = useState(Date.now());
 
     const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
     const [wordQueues, setWordQueues] = useState({
@@ -500,6 +505,21 @@ const GameScreen = ({ config, onEndGame }) => {
         clearInterval(timerRef.current);
 
         const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
+
+        // Update statistics for the current participant
+        setParticipants(prev =>
+            prev.map((p, index) => {
+                if (index === currentParticipantIndex) {
+                    return {
+                        ...p,
+                        attempted: p.attempted + 1,
+                        correct: p.correct + (isCorrect ? 1 : 0),
+                        lives: isCorrect ? p.lives : p.lives - 1,
+                    };
+                }
+                return p;
+            })
+        );
 
         if (isCorrect) {
             setFeedback({ message: "Correct! 🎉", type: "success" });
@@ -621,6 +641,16 @@ const GameScreen = ({ config, onEndGame }) => {
 };
 
 const ResultsScreen = ({ results, onRestart }) => {
+    const handleExport = () => {
+        const dataStr =
+            "data:text/json;charset=utf-8," +
+            encodeURIComponent(JSON.stringify(results, null, 2));
+        const anchor = document.createElement("a");
+        anchor.href = dataStr;
+        anchor.download = "spelling-bee-results.json";
+        anchor.click();
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center">
             <h1 className="text-6xl font-bold mb-4 text-yellow-300">🏆 Game Over! 🏆</h1>
@@ -630,19 +660,38 @@ const ResultsScreen = ({ results, onRestart }) => {
                 <h2 className="text-4xl mb-8">It's a draw!</h2>
             )}
 
+            {results?.duration && (
+                <div className="text-2xl mb-6">Game Duration: {results.duration} seconds</div>
+            )}
+
             <div className="bg-white/10 p-8 rounded-lg w-full max-w-md">
                 <h3 className="text-3xl font-bold mb-4">Final Scores</h3>
                 {results && results.participants.map((p, index) => (
-                    <div key={index} className="flex justify-between items-center text-2xl mb-2">
-                        <span>{p.name}</span>
-                        <span className="font-bold text-yellow-300">{p.lives} lives remaining</span>
+                    <div key={index} className="text-left text-xl mb-3">
+                        <div className="font-bold">{p.name}</div>
+                        <div className="text-yellow-300">
+                            {p.correct}/{p.attempted} correct (
+                            {(p.correct / p.attempted * 100).toFixed(0)}%) - {p.lives} lives
+                            remaining
+                        </div>
                     </div>
                 ))}
             </div>
 
-            <button onClick={onRestart} className="mt-12 bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold">
-                Play Again
-            </button>
+            <div className="flex gap-6 mt-12">
+                <button
+                    onClick={handleExport}
+                    className="bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold"
+                >
+                    Export Results
+                </button>
+                <button
+                    onClick={onRestart}
+                    className="bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold"
+                >
+                    Play Again
+                </button>
+            </div>
         </div>
     );
 };
