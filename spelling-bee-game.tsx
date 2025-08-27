@@ -199,6 +199,7 @@ const GameScreen = ({ config, onEndGame }) => {
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
+    const [failedAttempts, setFailedAttempts] = useState(0);
     // ... other game states
 
     // Timer effect
@@ -214,6 +215,7 @@ const GameScreen = ({ config, onEndGame }) => {
         const words = wordDatabase[difficulty] || wordDatabase.easy;
         const word = words[Math.floor(Math.random() * words.length)];
         setTimeLeft(config.timerDuration); // Reset timer when a new word is selected
+        setFailedAttempts(0);
         return word;
     };
 
@@ -254,24 +256,37 @@ const GameScreen = ({ config, onEndGame }) => {
 
         if (isCorrect) {
             setFeedback({ message: "Correct!", type: "success" });
-        } else {
-            setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
-            const updatedTeams = teams.map((team, index) => {
-                if (index === currentTeamIndex) {
-                    return { ...team, lives: team.lives - 1 };
-                }
-                return team;
-            });
-            setTeams(updatedTeams);
+            setTimeout(() => {
+                setFeedback({ message: "", type: "" });
+                setInputValue("");
+                const newWord = selectRandomWord('easy'); // or current difficulty
+                setCurrentWord(newWord);
+                nextTurn();
+            }, 2000);
+            return;
         }
+
+        setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
+        const updatedTeams = teams.map((team, index) => {
+            if (index === currentTeamIndex) {
+                return { ...team, lives: team.lives - 1 };
+            }
+            return team;
+        });
+        setTeams(updatedTeams);
+
+        const newAttemptCount = failedAttempts + 1;
 
         // Clear input and feedback after a short delay, then move to the next turn
         setTimeout(() => {
             setFeedback({ message: "", type: "" });
             setInputValue("");
-            const newWord = selectRandomWord('easy'); // or current difficulty
-            setCurrentWord(newWord);
             nextTurn();
+            if (newAttemptCount >= teams.length) {
+                setCurrentWord(selectRandomWord('easy')); // or current difficulty
+            } else {
+                setFailedAttempts(newAttemptCount);
+            }
         }, 2000);
     };
 
