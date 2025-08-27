@@ -6,10 +6,11 @@
   "scripts": {
     "start": "python -m http.server 8000",
     "serve": "npx serve .",
-    "build": "npx esbuild spelling-bee-game.tsx --bundle --outfile=app.js --jsx=automatic --external:react --external:lucide-react",
+    "build": "rm -rf dist && mkdir dist && cp index.html style.css dist/ && npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --external:react --external:lucide-react",
     "watch": "npx esbuild spelling-bee-game.tsx --bundle --outfile=app.js --jsx=automatic --external:react --external:lucide-react --watch",
     "test": "echo 'No tests configured yet'",
-    "deploy": "gh-pages -d ."
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "repository": {
     "type": "git",
