@@ -201,6 +201,42 @@ const GameScreen = ({ config, onEndGame }) => {
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
     // ... other game states
 
+    // Simple audio utility for short sound effects
+    const playBeep = (frequency: number, duration = 200) => {
+        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+        oscillator.frequency.value = frequency;
+        oscillator.start();
+        oscillator.stop(ctx.currentTime + duration / 1000);
+    };
+
+    const playSound = (type: 'correct' | 'incorrect' | 'warning') => {
+        switch (type) {
+            case 'correct':
+                playBeep(800, 150);
+                break;
+            case 'incorrect':
+                playBeep(200, 300);
+                break;
+            case 'warning':
+                playBeep(500, 100);
+                break;
+        }
+    };
+
+    const pronounce = (wordObj: any) => {
+        if (!wordObj) return;
+        const synth = window.speechSynthesis;
+        synth.cancel();
+        const utterWord = new SpeechSynthesisUtterance(wordObj.word);
+        const utterSentence = new SpeechSynthesisUtterance(wordObj.sentence);
+        synth.speak(utterWord);
+        synth.speak(utterSentence);
+    };
+
     // Timer effect
     useEffect(() => {
         if (!currentWord || timeLeft <= 0) return;
@@ -209,6 +245,13 @@ const GameScreen = ({ config, onEndGame }) => {
         }, 1000);
         return () => clearInterval(timer);
     }, [currentWord, timeLeft]);
+
+    // Play warning sound as timer approaches zero
+    useEffect(() => {
+        if (timeLeft > 0 && timeLeft <= 5) {
+            playSound('warning');
+        }
+    }, [timeLeft]);
 
     const selectRandomWord = (difficulty) => {
         const words = wordDatabase[difficulty] || wordDatabase.easy;
@@ -254,8 +297,10 @@ const GameScreen = ({ config, onEndGame }) => {
 
         if (isCorrect) {
             setFeedback({ message: "Correct!", type: "success" });
+            playSound('correct');
         } else {
             setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
+            playSound('incorrect');
             const updatedTeams = teams.map((team, index) => {
                 if (index === currentTeamIndex) {
                     return { ...team, lives: team.lives - 1 };
@@ -303,6 +348,14 @@ const GameScreen = ({ config, onEndGame }) => {
             {currentWord && (
                 <div className="w-full max-w-4xl text-center">
                     <h2 className="text-4xl font-bold mb-4">Word for Team: {teams[currentTeamIndex]?.name || 'Team'}</h2>
+                    <div className="flex items-center justify-center gap-4 mb-4">
+                        <h3 className="text-3xl font-bold">{currentWord.word}</h3>
+                        <button
+                            onClick={() => pronounce(currentWord)}
+                            className="p-2 rounded-full bg-blue-500 hover:bg-blue-600">
+                            <Volume2 size={24} />
+                        </button>
+                    </div>
                     <div className="bg-white/10 p-6 rounded-lg mb-8">
                         <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
                         <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
