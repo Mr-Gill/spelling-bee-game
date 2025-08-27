@@ -210,8 +210,8 @@ const GameScreen = ({ config, onEndGame }) => {
         return () => clearInterval(timer);
     }, [currentWord, timeLeft]);
 
-    const selectRandomWord = (difficulty) => {
-        const words = wordDatabase[difficulty] || wordDatabase.easy;
+    const selectRandomWord = (difficulty = 'easy') => {
+        const words = config.wordDatabase[difficulty] || config.wordDatabase.easy;
         const word = words[Math.floor(Math.random() * words.length)];
         setTimeLeft(config.timerDuration); // Reset timer when a new word is selected
         return word;
@@ -220,7 +220,7 @@ const GameScreen = ({ config, onEndGame }) => {
     const skipWord = () => {
         // Logic for skipping a word
         // For example, select a new word and move to the next turn
-        const newWord = selectRandomWord('easy'); // or current difficulty
+        const newWord = selectRandomWord(); // or current difficulty
         setCurrentWord(newWord);
         // maybe penalize the team
         nextTurn();
@@ -231,7 +231,7 @@ const GameScreen = ({ config, onEndGame }) => {
     };
 
     useEffect(() => {
-        setCurrentWord(selectRandomWord('easy'));
+        setCurrentWord(selectRandomWord());
     }, []);
 
     // Check for game over condition
@@ -269,7 +269,7 @@ const GameScreen = ({ config, onEndGame }) => {
         setTimeout(() => {
             setFeedback({ message: "", type: "" });
             setInputValue("");
-            const newWord = selectRandomWord('easy'); // or current difficulty
+            const newWord = selectRandomWord(); // or current difficulty
             setCurrentWord(newWord);
             nextTurn();
         }, 2000);
