@@ -70,13 +70,16 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [gameMode, setGameMode] = useState("team");
     const [timerDuration, setTimerDuration] = useState(30);
     const [customWordListText, setCustomWordListText] = useState("");
+    const [parsedCustomWords, setParsedCustomWords] = useState([]);
+    const [missedWordsCollection, setMissedWordsCollection] = useState({});
+    const [includeMissedWords, setIncludeMissedWords] = useState(false);
 
     const parseWordList = (content) => {
         try {
             // Try parsing as JSON first
             const parsed = JSON.parse(content);
             if (Array.isArray(parsed)) {
-                onAddCustomWords(parsed);
+                setParsedCustomWords(parsed);
                 return;
             }
         } catch (e) {
@@ -101,7 +104,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
             });
             return wordObj;
         });
-        onAddCustomWords(words);
+        setParsedCustomWords(words);
     };
 
     const handleFileChange = (event) => {
@@ -123,7 +126,20 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
         }
     }, [customWordListText]);
 
+    useEffect(() => {
+        const stored = JSON.parse(localStorage.getItem('missedWordsCollection') || '{}');
+        setMissedWordsCollection(stored);
+    }, []);
+
+    const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
+
     const handleStart = () => {
+        let finalWords = parsedCustomWords;
+        if (includeMissedWords) {
+            const extraWords = Object.values(missedWordsCollection).flat();
+            finalWords = [...finalWords, ...extraWords];
+        }
+        onAddCustomWords(finalWords);
         const config = { teams, gameMode, timerDuration };
         onStartGame(config);
     };
@@ -169,6 +185,19 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                     </div>
                 </div>
 
+                {missedWordCount > 0 && (
+                    <div className="bg-white/10 p-4 rounded-lg mb-8">
+                        <label className="flex items-center space-x-3">
+                            <input
+                                type="checkbox"
+                                checked={includeMissedWords}
+                                onChange={(e) => setIncludeMissedWords(e.target.checked)}
+                            />
+                            <span>Include {missedWordCount} missed words from previous sessions</span>
+                        </label>
+                    </div>
+                )}
+
                 {/* Timer selection UI */}
                 <div className="mb-8">
                     <h2 className="text-3xl font-bold mb-4 text-center">Select Timer Duration</h2>
@@ -199,6 +228,7 @@ const GameScreen = ({ config, onEndGame }) => {
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
+    const [missedWords, setMissedWords] = useState([]);
     // ... other game states
 
     // Timer effect
@@ -239,9 +269,14 @@ const GameScreen = ({ config, onEndGame }) => {
         if (!teams || teams.length === 0) return;
         const activeTeams = teams.filter(t => t.lives > 0);
         if (activeTeams.length <= 1) {
+            const lessonKey = new Date().toISOString().split('T')[0];
+            const stored = JSON.parse(localStorage.getItem('missedWordsCollection') || '{}');
+            const existing = stored[lessonKey] || [];
+            stored[lessonKey] = [...existing, ...missedWords];
+            localStorage.setItem('missedWordsCollection', JSON.stringify(stored));
             onEndGame({ winner: activeTeams[0], teams });
         }
-    }, [teams, onEndGame]);
+    }, [teams, onEndGame, missedWords]);
 
 
     const [inputValue, setInputValue] = useState("");
@@ -256,6 +291,7 @@ const GameScreen = ({ config, onEndGame }) => {
             setFeedback({ message: "Correct!", type: "success" });
         } else {
             setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
+            setMissedWords(prev => [...prev, currentWord]);
             const updatedTeams = teams.map((team, index) => {
                 if (index === currentTeamIndex) {
                     return { ...team, lives: team.lives - 1 };
