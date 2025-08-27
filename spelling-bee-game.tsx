@@ -65,8 +65,8 @@ const SpellingBeeGame = () => {
 
 const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [teams, setTeams] = useState([
-        { name: "Team Alpha", lives: 5 },
-        { name: "Team Beta", lives: 5 }
+        { name: "Team Alpha", lives: 5, points: 0 },
+        { name: "Team Beta", lives: 5, points: 0 }
     ]);
     const [gameMode, setGameMode] = useState("team");
     const [timerDuration, setTimerDuration] = useState(30);
@@ -89,7 +89,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [studentName, setStudentName] = useState("");
 
     const addTeam = () => {
-        setTeams([...teams, { name: "", lives: 5 }]);
+        setTeams([...teams, { name: "", lives: 5, points: 0 }]);
     };
 
     const removeTeam = (index) => {
@@ -105,7 +105,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
 
     const addStudent = () => {
         if (studentName.trim()) {
-            setStudents([...students, { name: studentName.trim(), lives: 5 }]);
+            setStudents([...students, { name: studentName.trim(), lives: 5, points: 0 }]);
             setStudentName("");
         }
     };
@@ -402,6 +402,8 @@ const GameScreen = ({ config, onEndGame }) => {
     const [feedback, setFeedback] = useState({ message: "", type: "" });
     const timerRef = useRef(null);
     const [startTime] = useState(Date.now());
+    const [revealedLetters, setRevealedLetters] = useState([]); // for hangman/vowel reveals
+    const [extraAttempt, setExtraAttempt] = useState(false); // friend substitution
 
     const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
     const [wordQueues, setWordQueues] = useState({
@@ -429,7 +431,7 @@ const GameScreen = ({ config, onEndGame }) => {
         }, 1000);
 
         return () => clearInterval(timerRef.current);
-    }, [currentWord]);
+    }, [currentWord, timeLeft]);
     
     const difficultyOrder = ['easy', 'medium', 'tricky', 'review'];
 
@@ -458,6 +460,8 @@ const GameScreen = ({ config, onEndGame }) => {
             setCurrentWord(nextWord);
             setTimeLeft(config.timerDuration);
             setAttemptedParticipants(new Set());
+            setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false)); // from codex branch
+            setExtraAttempt(false); // from codex branch
         } else {
             const activeParticipants = participants.filter(p => p.lives > 0);
             onEndGame({ winner: activeParticipants.length === 1 ? activeParticipants[0] : null, participants });
@@ -469,6 +473,14 @@ const GameScreen = ({ config, onEndGame }) => {
     };
 
     const handleIncorrectAttempt = () => {
+        if (extraAttempt) {
+            setFeedback({ message: "Incorrect. You still have one more attempt!", type: "error" });
+            setExtraAttempt(false);
+            setInputValue("");
+            setTimeLeft(config.timerDuration);
+            return;
+        }
+        
         setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
         setMissedWords(prev => [...prev, currentWord]);
         const updatedParticipants = participants.map((p, index) => {
@@ -500,6 +512,48 @@ const GameScreen = ({ config, onEndGame }) => {
         }, 2000);
     };
     
+    const spendPoints = (participantIndex, cost) => {
+        setParticipants(prev =>
+            prev.map((p, index) => {
+                if (index === participantIndex) {
+                    return { ...p, points: p.points - cost };
+                }
+                return p;
+            })
+        );
+    };
+
+    const handleHangmanReveal = () => {
+        const cost = 5;
+        if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+        spendPoints(currentParticipantIndex, cost);
+        const unrevealed = revealedLetters
+            .map((rev, idx) => (!rev ? idx : null))
+            .filter((idx) => idx !== null);
+        if (unrevealed.length === 0) return;
+        const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+        const newRevealed = [...revealedLetters];
+        newRevealed[randomIndex] = true;
+        setRevealedLetters(newRevealed);
+    };
+
+    const handleVowelReveal = () => {
+        const cost = 3;
+        if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+        spendPoints(currentParticipantIndex, cost);
+        const newRevealed = currentWord.word.split('').map((letter, idx) => {
+            return revealedLetters[idx] || 'aeiou'.includes(letter.toLowerCase());
+        });
+        setRevealedLetters(newRevealed);
+    };
+
+    const handleFriendSubstitution = () => {
+        const cost = 4;
+        if (participants[currentParticipantIndex].points < cost) return;
+        spendPoints(currentParticipantIndex, cost);
+        setExtraAttempt(true);
+    };
+
     const handleSpellingSubmit = () => {
         if (!currentWord) return;
         clearInterval(timerRef.current);
@@ -515,6 +569,7 @@ const GameScreen = ({ config, onEndGame }) => {
                         attempted: p.attempted + 1,
                         correct: p.correct + (isCorrect ? 1 : 0),
                         lives: isCorrect ? p.lives : p.lives - 1,
+                        points: isCorrect ? p.points + 1 : p.points,
                     };
                 }
                 return p;
@@ -556,7 +611,11 @@ const GameScreen = ({ config, onEndGame }) => {
         stored[lessonKey] = [...existing, ...missedWords];
         localStorage.setItem('missedWordsCollection', JSON.stringify(stored));
         const activeParticipants = participants.filter(p => p.lives > 0);
-        onEndGame({ winner: activeParticipants.length === 1 ? activeParticipants[0] : null, participants, gameMode: config.gameMode });
+        const finalParticipants = participants.map(p => ({
+            ...p,
+            accuracy: p.attempted > 0 ? (p.correct / p.attempted) * 100 : 0,
+        }));
+        onEndGame({ winner: activeParticipants.length === 1 ? activeParticipants[0] : null, participants: finalParticipants, gameMode: config.gameMode, duration: Math.round((Date.now() - startTime) / 1000) });
     };
 
     useEffect(() => {
@@ -580,6 +639,7 @@ const GameScreen = ({ config, onEndGame }) => {
                     <div key={index} className="text-center">
                         <div className="text-2xl font-bold">{p.name}</div>
                         <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(p.lives)}</div>
+                        <div className="text-lg text-yellow-300 mt-1">Pts: {p.points}</div>
                     </div>
                 ))}
             </div>
@@ -614,6 +674,13 @@ const GameScreen = ({ config, onEndGame }) => {
                         </button>
                     </div>
                     <div className="bg-white/10 p-6 rounded-lg mb-8">
+                        {revealedLetters.some(r => r) && (
+                            <p className="text-3xl font-mono mb-4">
+                                {currentWord.word.split('').map((letter, idx) => (
+                                    revealedLetters[idx] ? letter : '_'
+                                )).join(' ')}
+                            </p>
+                        )}
                         <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
                         <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
                         <p className="text-xl"><strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"</p>
@@ -628,6 +695,30 @@ const GameScreen = ({ config, onEndGame }) => {
                         />
                         <button onClick={handleSpellingSubmit} className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg text-2xl font-bold">
                             Submit
+                        </button>
+                    </div>
+
+                    <div className="mt-6 flex justify-center gap-4">
+                        <button
+                            onClick={handleHangmanReveal}
+                            disabled={participants[currentParticipantIndex].points < 5 || isTeamMode === false}
+                            className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+                        >
+                            Hangman Reveal (-5)
+                        </button>
+                        <button
+                            onClick={handleVowelReveal}
+                            disabled={participants[currentParticipantIndex].points < 3 || isTeamMode === false}
+                            className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+                        >
+                            Vowel Reveal (-3)
+                        </button>
+                        <button
+                            onClick={handleFriendSubstitution}
+                            disabled={participants[currentParticipantIndex].points < 4 || isTeamMode === false}
+                            className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+                        >
+                            Friend Sub (-4)
                         </button>
                     </div>
                 </div>
@@ -672,7 +763,7 @@ const ResultsScreen = ({ results, onRestart }) => {
                         <div className="text-yellow-300">
                             {p.correct}/{p.attempted} correct (
                             {(p.correct / p.attempted * 100).toFixed(0)}%) - {p.lives} lives
-                            remaining
+                            remaining - {p.points} points
                         </div>
                     </div>
                 ))}
