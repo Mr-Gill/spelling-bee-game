@@ -64,8 +64,8 @@ const SpellingBeeGame = () => {
 
 const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [teams, setTeams] = useState([
-        { name: "Team Alpha", lives: 5 },
-        { name: "Team Beta", lives: 5 }
+        { name: "Team Alpha", lives: 5, points: 0 },
+        { name: "Team Beta", lives: 5, points: 0 }
     ]);
     const [gameMode, setGameMode] = useState("team");
     const [timerDuration, setTimerDuration] = useState(30);
@@ -199,7 +199,8 @@ const GameScreen = ({ config, onEndGame }) => {
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
-    // ... other game states
+    const [revealedLetters, setRevealedLetters] = useState([]); // for hangman/vowel reveals
+    const [extraAttempt, setExtraAttempt] = useState(false); // friend substitution
 
     // Timer effect
     useEffect(() => {
@@ -214,6 +215,8 @@ const GameScreen = ({ config, onEndGame }) => {
         const words = wordDatabase[difficulty] || wordDatabase.easy;
         const word = words[Math.floor(Math.random() * words.length)];
         setTimeLeft(config.timerDuration); // Reset timer when a new word is selected
+        setRevealedLetters(Array.from({ length: word.word.length }, () => false));
+        setExtraAttempt(false);
         return word;
     };
 
@@ -224,6 +227,47 @@ const GameScreen = ({ config, onEndGame }) => {
         setCurrentWord(newWord);
         // maybe penalize the team
         nextTurn();
+    };
+
+    const spendPoints = (teamIndex, cost) => {
+        const updated = teams.map((team, index) => {
+            if (index === teamIndex) {
+                return { ...team, points: team.points - cost };
+            }
+            return team;
+        });
+        setTeams(updated);
+    };
+
+    const handleHangmanReveal = () => {
+        const cost = 5;
+        if (teams[currentTeamIndex].points < cost || !currentWord) return;
+        spendPoints(currentTeamIndex, cost);
+        const unrevealed = revealedLetters
+            .map((rev, idx) => (!rev ? idx : null))
+            .filter((idx) => idx !== null);
+        if (unrevealed.length === 0) return;
+        const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+        const newRevealed = [...revealedLetters];
+        newRevealed[randomIndex] = true;
+        setRevealedLetters(newRevealed);
+    };
+
+    const handleVowelReveal = () => {
+        const cost = 3;
+        if (teams[currentTeamIndex].points < cost || !currentWord) return;
+        spendPoints(currentTeamIndex, cost);
+        const newRevealed = currentWord.word.split('').map((letter, idx) => {
+            return revealedLetters[idx] || 'aeiou'.includes(letter.toLowerCase());
+        });
+        setRevealedLetters(newRevealed);
+    };
+
+    const handleFriendSubstitution = () => {
+        const cost = 4;
+        if (teams[currentTeamIndex].points < cost) return;
+        spendPoints(currentTeamIndex, cost);
+        setExtraAttempt(true);
     };
 
     const nextTurn = () => {
@@ -254,7 +298,23 @@ const GameScreen = ({ config, onEndGame }) => {
 
         if (isCorrect) {
             setFeedback({ message: "Correct!", type: "success" });
+            const updatedTeams = teams.map((team, index) => {
+                if (index === currentTeamIndex) {
+                    return { ...team, points: team.points + 1 };
+                }
+                return team;
+            });
+            setTeams(updatedTeams);
         } else {
+            if (extraAttempt) {
+                setFeedback({ message: "Incorrect. Friend may try again!", type: "error" });
+                setExtraAttempt(false);
+                setTimeout(() => {
+                    setFeedback({ message: "", type: "" });
+                    setInputValue("");
+                }, 2000);
+                return;
+            }
             setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
             const updatedTeams = teams.map((team, index) => {
                 if (index === currentTeamIndex) {
@@ -283,6 +343,7 @@ const GameScreen = ({ config, onEndGame }) => {
                     <div key={index} className="text-center">
                         <div className="text-2xl font-bold">{team.name}</div>
                         <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(team.lives)}</div>
+                        <div className="text-lg text-yellow-300 mt-1">Pts: {team.points}</div>
                     </div>
                 ))}
             </div>
@@ -304,6 +365,13 @@ const GameScreen = ({ config, onEndGame }) => {
                 <div className="w-full max-w-4xl text-center">
                     <h2 className="text-4xl font-bold mb-4">Word for Team: {teams[currentTeamIndex]?.name || 'Team'}</h2>
                     <div className="bg-white/10 p-6 rounded-lg mb-8">
+                        {revealedLetters.some(r => r) && (
+                            <p className="text-3xl font-mono mb-4">
+                                {currentWord.word.split('').map((letter, idx) => (
+                                    revealedLetters[idx] ? letter : '_'
+                                )).join(' ')}
+                            </p>
+                        )}
                         <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
                         <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
                         <p className="text-xl"><strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"</p>
@@ -318,6 +386,30 @@ const GameScreen = ({ config, onEndGame }) => {
                         />
                         <button onClick={handleSpellingSubmit} className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg text-2xl font-bold">
                             Submit
+                        </button>
+                    </div>
+
+                    <div className="mt-6 flex justify-center gap-4">
+                        <button
+                            onClick={handleHangmanReveal}
+                            disabled={teams[currentTeamIndex].points < 5}
+                            className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+                        >
+                            Hangman Reveal (-5)
+                        </button>
+                        <button
+                            onClick={handleVowelReveal}
+                            disabled={teams[currentTeamIndex].points < 3}
+                            className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+                        >
+                            Vowel Reveal (-3)
+                        </button>
+                        <button
+                            onClick={handleFriendSubstitution}
+                            disabled={teams[currentTeamIndex].points < 4}
+                            className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+                        >
+                            Friend Sub (-4)
                         </button>
                     </div>
                 </div>
@@ -345,7 +437,7 @@ const ResultsScreen = ({ results, onRestart }) => {
                 {results && results.teams.map((team, index) => (
                     <div key={index} className="flex justify-between items-center text-2xl mb-2">
                         <span>{team.name}</span>
-                        <span className="font-bold text-yellow-300">{team.lives} lives remaining</span>
+                        <span className="font-bold text-yellow-300">{team.lives} lives / {team.points} pts</span>
                     </div>
                 ))}
             </div>
