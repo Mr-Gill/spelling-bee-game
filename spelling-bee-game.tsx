@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Users, BookOpen, Play, Volume2, Globe, RotateCcw, SkipForward } from 'lucide-react';
 
+// The wordDatabase remains unchanged
 const wordDatabase = {
     easy: [
         { word: "friend", syllables: "friend (1 syllable)", definition: "A person you like and know well", origin: "Old English 'freond', from Germanic root meaning 'to love'", sentence: "My best friend and I love to play together.", prefixSuffix: "Base word with no prefix or suffix", pronunciation: "FREND" },
@@ -251,38 +252,97 @@ const GameScreen = ({ config, onEndGame }) => {
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
-    const [showWord, setShowWord] = useState(true);
-    // ... other game states
+    const [failedAttempts, setFailedAttempts] = useState(0); // From codex branch
+    const [showWord, setShowWord] = useState(true); // From main branch
+    const [inputValue, setInputValue] = useState("");
+    const [feedback, setFeedback] = useState({ message: "", type: "" });
+    const timerRef = useRef(null);
 
     // Timer effect
     useEffect(() => {
-        if (!currentWord || timeLeft <= 0) return;
-        const timer = setInterval(() => {
-            setTimeLeft(prevTime => prevTime - 1);
+        if (!currentWord) return;
+        timerRef.current = setInterval(() => {
+            setTimeLeft(prevTime => {
+                if (prevTime <= 1) {
+                    clearInterval(timerRef.current);
+                    handleIncorrectAttempt();
+                    return 0;
+                }
+                return prevTime - 1;
+            });
         }, 1000);
-        return () => clearInterval(timer);
-    }, [currentWord, timeLeft]);
+
+        return () => clearInterval(timerRef.current);
+    }, [currentWord]);
 
     const selectRandomWord = (difficulty = 'easy') => {
         const words = config.wordDatabase[difficulty] || config.wordDatabase.easy;
         const word = words[Math.floor(Math.random() * words.length)];
         setTimeLeft(config.timerDuration); // Reset timer when a new word is selected
+        setFailedAttempts(0);
         return word;
     };
 
-    const skipWord = () => {
-        // Logic for skipping a word
-        // For example, select a new word and move to the next turn
-        const newWord = selectRandomWord(); // or current difficulty
-        setCurrentWord(newWord);
-        // maybe penalize the team
-        nextTurn();
-    };
-
     const nextTurn = () => {
-        setCurrentTeamIndex((currentTeamIndex + 1) % teams.length);
+        setCurrentTeamIndex(prevIndex => (prevIndex + 1) % teams.length);
     };
 
+    const handleIncorrectAttempt = () => {
+        setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
+        const updatedTeams = teams.map((team, index) => {
+            if (index === currentTeamIndex) {
+                return { ...team, lives: team.lives - 1 };
+            }
+            return team;
+        });
+        setTeams(updatedTeams);
+        setInputValue("");
+        
+        setTimeout(() => {
+            setFeedback({ message: "", type: "" });
+            nextTurn();
+            // Check if all teams have had a failed attempt on this word
+            const newFailedAttempts = failedAttempts + 1;
+            if (newFailedAttempts >= teams.length) {
+                setCurrentWord(selectRandomWord('easy')); // or current difficulty
+                setFailedAttempts(0);
+            } else {
+                setFailedAttempts(newFailedAttempts);
+            }
+        }, 2000);
+    };
+
+    const handleSpellingSubmit = () => {
+        if (!currentWord) return;
+        clearInterval(timerRef.current);
+
+        const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
+
+        if (isCorrect) {
+            setFeedback({ message: "Correct! 🎉", type: "success" });
+            setTimeout(() => {
+                setFeedback({ message: "", type: "" });
+                setInputValue("");
+                setCurrentWord(selectRandomWord('easy')); // or current difficulty
+                nextTurn();
+            }, 2000);
+            return;
+        }
+
+        handleIncorrectAttempt();
+    };
+
+    const skipWord = () => {
+        clearInterval(timerRef.current);
+        setFeedback({ message: "Word Skipped", type: "info" });
+        setTimeout(() => {
+            setFeedback({ message: "", type: "" });
+            setInputValue("");
+            setCurrentWord(selectRandomWord());
+            nextTurn();
+        }, 1500);
+    };
+    
     useEffect(() => {
         setCurrentWord(selectRandomWord());
     }, []);
@@ -295,38 +355,6 @@ const GameScreen = ({ config, onEndGame }) => {
             onEndGame({ winner: activeTeams[0], teams });
         }
     }, [teams, onEndGame]);
-
-
-    const [inputValue, setInputValue] = useState("");
-    const [feedback, setFeedback] = useState({ message: "", type: "" });
-
-    const handleSpellingSubmit = () => {
-        if (!currentWord) return;
-
-        const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
-
-        if (isCorrect) {
-            setFeedback({ message: "Correct!", type: "success" });
-        } else {
-            setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
-            const updatedTeams = teams.map((team, index) => {
-                if (index === currentTeamIndex) {
-                    return { ...team, lives: team.lives - 1 };
-                }
-                return team;
-            });
-            setTeams(updatedTeams);
-        }
-
-        // Clear input and feedback after a short delay, then move to the next turn
-        setTimeout(() => {
-            setFeedback({ message: "", type: "" });
-            setInputValue("");
-            const newWord = selectRandomWord(); // or current difficulty
-            setCurrentWord(newWord);
-            nextTurn();
-        }, 2000);
-    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
@@ -342,7 +370,7 @@ const GameScreen = ({ config, onEndGame }) => {
 
             {/* Feedback Message */}
             {feedback.message && (
-                <div className={`absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${feedback.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`}>
+                <div className={`absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${feedback.type === 'success' ? 'bg-green-500' : feedback.type === 'error' ? 'bg-red-500' : 'bg-blue-500'}`}>
                     {feedback.message}
                 </div>
             )}
