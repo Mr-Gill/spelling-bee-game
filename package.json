@@ -1,0 +1,47 @@
+{
+  "name": "interactive-spelling-bee",
+  "version": "1.0.0",
+  "description": "A comprehensive, classroom-ready spelling bee game with rich educational content and advanced features",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "build": "echo 'No build process required - this is a client-side application'",
+    "test": "echo 'No tests configured yet'",
+    "deploy": "gh-pages -d ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/interactive-spelling-bee.git"
+  },
+  "keywords": [
+    "education",
+    "spelling",
+    "classroom",
+    "phonics",
+    "game",
+    "interactive",
+    "teaching",
+    "learning",
+    "vocabulary",
+    "spelling-bee"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/interactive-spelling-bee/issues"
+  },
+  "homepage": "https://yourusername.github.io/interactive-spelling-bee/",
+  "devDependencies": {
+    "gh-pages": "^6.0.0",
+    "serve": "^14.2.1"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
