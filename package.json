@@ -4,12 +4,13 @@
   "description": "A comprehensive, classroom-ready spelling bee game with rich educational content and advanced features",
   "main": "index.html",
   "scripts": {
-    "start": "python -m http.server 8000",
-    "serve": "npx serve .",
-    "build": "npx esbuild spelling-bee-game.tsx --bundle --outfile=app.js --jsx=automatic --external:react --external:lucide-react",
-    "watch": "npx esbuild spelling-bee-game.tsx --bundle --outfile=app.js --jsx=automatic --external:react --external:lucide-react --watch",
+    "start": "npx serve dist",
+    "serve": "npx serve dist",
+    "build": "node build.js",
+    "watch": "npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --watch",
     "test": "echo 'No tests configured yet'",
-    "deploy": "gh-pages -d ."
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "repository": {
     "type": "git",
@@ -36,6 +37,9 @@
   "devDependencies": {
     "esbuild": "^0.25.9",
     "gh-pages": "^6.0.0",
+    "lucide-react": "^0.542.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "serve": "^14.2.1"
   },
   "browserslist": [
