@@ -70,6 +70,12 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [gameMode, setGameMode] = useState("team");
     const [timerDuration, setTimerDuration] = useState(30);
     const [customWordListText, setCustomWordListText] = useState("");
+    const bundledWordLists = [
+        { label: "Example JSON", file: "example.json" },
+        { label: "Example CSV", file: "example.csv" },
+        { label: "Example TSV", file: "example.tsv" }
+    ];
+    const [selectedBundledList, setSelectedBundledList] = useState("");
 
     const parseWordList = (content) => {
         try {
@@ -111,11 +117,18 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
             reader.onload = (e) => {
                 const content = e.target.result;
                 setCustomWordListText(content);
-                parseWordList(content);
             };
             reader.readAsText(file);
         }
     };
+
+    useEffect(() => {
+        if (selectedBundledList) {
+            fetch(`wordlists/${selectedBundledList}`)
+                .then(res => res.text())
+                .then(text => setCustomWordListText(text));
+        }
+    }, [selectedBundledList]);
 
     useEffect(() => {
         if(customWordListText) {
@@ -139,6 +152,20 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 {/* Custom Word List Section */}
                 <div className="bg-white/10 p-6 rounded-lg mb-8">
                     <h2 className="text-2xl font-bold mb-4">Add Custom Word List</h2>
+                    <div className="mb-6">
+                        <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">Choose Bundled Word List</label>
+                        <select
+                            id="bundled-list"
+                            value={selectedBundledList}
+                            onChange={(e) => setSelectedBundledList(e.target.value)}
+                            className="w-full p-2 rounded-md bg-white/20 text-white"
+                        >
+                            <option value="">-- Select a list --</option>
+                            {bundledWordLists.map(list => (
+                                <option key={list.file} value={list.file}>{list.label}</option>
+                            ))}
+                        </select>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label htmlFor="file-upload" className="block text-lg font-medium mb-2">Upload File</label>
