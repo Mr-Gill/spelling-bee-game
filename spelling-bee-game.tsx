@@ -70,6 +70,15 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [gameMode, setGameMode] = useState("team");
     const [timerDuration, setTimerDuration] = useState(30);
     const [customWordListText, setCustomWordListText] = useState("");
+    const [students, setStudents] = useState([]);
+    const [studentName, setStudentName] = useState("");
+
+    const addStudent = () => {
+        if (studentName.trim()) {
+            setStudents([...students, { name: studentName.trim(), lives: 5 }]);
+            setStudentName("");
+        }
+    };
 
     const parseWordList = (content) => {
         try {
@@ -124,7 +133,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     }, [customWordListText]);
 
     const handleStart = () => {
-        const config = { teams, gameMode, timerDuration };
+        const config = { teams: gameMode === 'team' ? teams : students, gameMode, timerDuration };
         onStartGame(config);
     };
 
@@ -185,6 +194,51 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                     </div>
                 </div>
 
+                {/* Game mode selection UI */}
+                <div className="mb-8">
+                    <h2 className="text-3xl font-bold mb-4 text-center">Select Game Mode</h2>
+                    <div className="flex justify-center gap-4">
+                        <button
+                            onClick={() => setGameMode('team')}
+                            className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'team' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}
+                        >
+                            Team
+                        </button>
+                        <button
+                            onClick={() => setGameMode('individual')}
+                            className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'individual' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}
+                        >
+                            Individual
+                        </button>
+                    </div>
+                </div>
+
+                {gameMode === 'individual' && (
+                    <div className="bg-white/10 p-6 rounded-lg mb-8">
+                        <h2 className="text-2xl font-bold mb-4">Add Students</h2>
+                        <div className="flex gap-4 mb-4">
+                            <input
+                                type="text"
+                                value={studentName}
+                                onChange={(e) => setStudentName(e.target.value)}
+                                className="flex-grow p-2 rounded-md bg-white/20 text-white"
+                                placeholder="Student name"
+                            />
+                            <button
+                                onClick={addStudent}
+                                className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold"
+                            >
+                                Add
+                            </button>
+                        </div>
+                        <ul>
+                            {students.map((s, idx) => (
+                                <li key={idx} className="mb-2">{s.name}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
                 {/* All the setup UI goes here */}
                 <button onClick={handleStart} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-8">
                     START GAME
@@ -195,10 +249,11 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
 };
 
 const GameScreen = ({ config, onEndGame }) => {
-    const [teams, setTeams] = useState(config.teams);
-    const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
+    const [participants, setParticipants] = useState(config.teams);
+    const [currentParticipantIndex, setCurrentParticipantIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
+    const isTeamMode = config.gameMode === 'team';
     // ... other game states
 
     // Timer effect
@@ -211,7 +266,7 @@ const GameScreen = ({ config, onEndGame }) => {
     }, [currentWord, timeLeft]);
 
     const selectRandomWord = (difficulty) => {
-        const words = wordDatabase[difficulty] || wordDatabase.easy;
+        const words = config.wordDatabase[difficulty] || config.wordDatabase.easy;
         const word = words[Math.floor(Math.random() * words.length)];
         setTimeLeft(config.timerDuration); // Reset timer when a new word is selected
         return word;
@@ -227,7 +282,7 @@ const GameScreen = ({ config, onEndGame }) => {
     };
 
     const nextTurn = () => {
-        setCurrentTeamIndex((currentTeamIndex + 1) % teams.length);
+        setCurrentParticipantIndex((currentParticipantIndex + 1) % participants.length);
     };
 
     useEffect(() => {
@@ -236,12 +291,12 @@ const GameScreen = ({ config, onEndGame }) => {
 
     // Check for game over condition
     useEffect(() => {
-        if (!teams || teams.length === 0) return;
-        const activeTeams = teams.filter(t => t.lives > 0);
-        if (activeTeams.length <= 1) {
-            onEndGame({ winner: activeTeams[0], teams });
+        if (!participants || participants.length === 0) return;
+        const activeParticipants = participants.filter(p => p.lives > 0);
+        if (activeParticipants.length <= 1) {
+            onEndGame({ winner: activeParticipants[0], participants, gameMode: config.gameMode });
         }
-    }, [teams, onEndGame]);
+    }, [participants, onEndGame, config.gameMode]);
 
 
     const [inputValue, setInputValue] = useState("");
@@ -256,13 +311,13 @@ const GameScreen = ({ config, onEndGame }) => {
             setFeedback({ message: "Correct!", type: "success" });
         } else {
             setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
-            const updatedTeams = teams.map((team, index) => {
-                if (index === currentTeamIndex) {
-                    return { ...team, lives: team.lives - 1 };
+            const updatedParticipants = participants.map((p, index) => {
+                if (index === currentParticipantIndex) {
+                    return { ...p, lives: p.lives - 1 };
                 }
-                return team;
+                return p;
             });
-            setTeams(updatedTeams);
+            setParticipants(updatedParticipants);
         }
 
         // Clear input and feedback after a short delay, then move to the next turn
@@ -277,12 +332,12 @@ const GameScreen = ({ config, onEndGame }) => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
-            {/* Team Lives Display */}
+            {/* Participant Lives Display */}
             <div className="absolute top-8 left-8 flex gap-8">
-                {teams.map((team, index) => (
+                {participants.map((p, index) => (
                     <div key={index} className="text-center">
-                        <div className="text-2xl font-bold">{team.name}</div>
-                        <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(team.lives)}</div>
+                        <div className="text-2xl font-bold">{p.name}</div>
+                        <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(p.lives)}</div>
                     </div>
                 ))}
             </div>
@@ -302,7 +357,7 @@ const GameScreen = ({ config, onEndGame }) => {
 
             {currentWord && (
                 <div className="w-full max-w-4xl text-center">
-                    <h2 className="text-4xl font-bold mb-4">Word for Team: {teams[currentTeamIndex]?.name || 'Team'}</h2>
+                    <h2 className="text-4xl font-bold mb-4">Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}</h2>
                     <div className="bg-white/10 p-6 rounded-lg mb-8">
                         <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
                         <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
@@ -342,10 +397,10 @@ const ResultsScreen = ({ results, onRestart }) => {
 
             <div className="bg-white/10 p-8 rounded-lg w-full max-w-md">
                 <h3 className="text-3xl font-bold mb-4">Final Scores</h3>
-                {results && results.teams.map((team, index) => (
+                {results && results.participants.map((p, index) => (
                     <div key={index} className="flex justify-between items-center text-2xl mb-2">
-                        <span>{team.name}</span>
-                        <span className="font-bold text-yellow-300">{team.lives} lives remaining</span>
+                        <span>{p.name}</span>
+                        <span className="font-bold text-yellow-300">{p.lives} lives remaining</span>
                     </div>
                 ))}
             </div>
