@@ -71,6 +71,9 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [gameMode, setGameMode] = useState("team");
     const [timerDuration, setTimerDuration] = useState(30);
     const [customWordListText, setCustomWordListText] = useState("");
+    const [parsedCustomWords, setParsedCustomWords] = useState([]); // From codex branch
+    const [missedWordsCollection, setMissedWordsCollection] = useState({}); // From codex branch
+    const [includeMissedWords, setIncludeMissedWords] = useState(false); // From codex branch
     const [error, setError] = useState("");
 
     const addTeam = () => {
@@ -93,7 +96,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
             // Try parsing as JSON first
             const parsed = JSON.parse(content);
             if (Array.isArray(parsed)) {
-                onAddCustomWords(parsed);
+                setParsedCustomWords(parsed);
                 return;
             }
         } catch (e) {
@@ -118,7 +121,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
             });
             return wordObj;
         });
-        onAddCustomWords(words);
+        setParsedCustomWords(words);
     };
 
     const handleFileChange = (event) => {
@@ -140,6 +143,14 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
         }
     }, [customWordListText]);
 
+    // From codex branch
+    useEffect(() => {
+        const stored = JSON.parse(localStorage.getItem('missedWordsCollection') || '{}');
+        setMissedWordsCollection(stored);
+    }, []);
+
+    const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
+
     const handleStart = () => {
         const trimmedTeams = teams.map(team => ({ ...team, name: team.name.trim() })).filter(team => team.name !== "");
         if (trimmedTeams.length < 2) {
@@ -147,6 +158,14 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
             return;
         }
         setError("");
+        
+        let finalWords = parsedCustomWords;
+        if (includeMissedWords) {
+            const extraWords = Object.values(missedWordsCollection).flat();
+            finalWords = [...finalWords, ...extraWords];
+        }
+        onAddCustomWords(finalWords);
+        
         const config = { teams: trimmedTeams, gameMode, timerDuration };
         onStartGame(config);
     };
@@ -192,6 +211,20 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                     </div>
                 </div>
 
+                {/* New Feature: Include missed words */}
+                {missedWordCount > 0 && (
+                    <div className="bg-white/10 p-4 rounded-lg mb-8">
+                        <label className="flex items-center space-x-3">
+                            <input
+                                type="checkbox"
+                                checked={includeMissedWords}
+                                onChange={(e) => setIncludeMissedWords(e.target.checked)}
+                            />
+                            <span>Include {missedWordCount} missed words from previous sessions</span>
+                        </label>
+                    </div>
+                )}
+                
                 {/* Team setup section */}
                 <div className="bg-white/10 p-6 rounded-lg mb-8">
                     <h2 className="text-2xl font-bold mb-4">Teams</h2>
@@ -266,6 +299,7 @@ const GameScreen = ({ config, onEndGame }) => {
     });
     const [currentDifficulty, setCurrentDifficulty] = useState('easy');
     const [attemptedTeams, setAttemptedTeams] = useState(new Set());
+    const [missedWords, setMissedWords] = useState([]); // from codex branch
 
     // Timer effect
     useEffect(() => {
@@ -323,6 +357,7 @@ const GameScreen = ({ config, onEndGame }) => {
 
     const handleIncorrectAttempt = () => {
         setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
+        setMissedWords(prev => [...prev, currentWord]); // from codex branch
         const updatedTeams = teams.map((team, index) => {
             if (index === currentTeamIndex) {
                 return { ...team, lives: team.lives - 1 };
@@ -386,6 +421,17 @@ const GameScreen = ({ config, onEndGame }) => {
         }, 1500);
     };
 
+    // from codex branch
+    const onEndGameWithMissedWords = () => {
+        const lessonKey = new Date().toISOString().split('T')[0];
+        const stored = JSON.parse(localStorage.getItem('missedWordsCollection') || '{}');
+        const existing = stored[lessonKey] || [];
+        stored[lessonKey] = [...existing, ...missedWords];
+        localStorage.setItem('missedWordsCollection', JSON.stringify(stored));
+        const activeTeams = teams.filter(t => t.lives > 0);
+        onEndGame({ winner: activeTeams.length === 1 ? activeTeams[0] : null, teams });
+    };
+
     useEffect(() => {
         selectNextWord();
     }, []);
@@ -395,7 +441,7 @@ const GameScreen = ({ config, onEndGame }) => {
         if (!teams || teams.length === 0) return;
         const activeTeams = teams.filter(t => t.lives > 0);
         if (activeTeams.length <= 1) {
-            onEndGame({ winner: activeTeams[0], teams });
+            onEndGameWithMissedWords();
         }
     }, [teams, onEndGame]);
 
