@@ -252,11 +252,20 @@ const GameScreen = ({ config, onEndGame }) => {
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
-    const [failedAttempts, setFailedAttempts] = useState(0); // From codex branch
-    const [showWord, setShowWord] = useState(true); // From main branch
+    const [showWord, setShowWord] = useState(true);
     const [inputValue, setInputValue] = useState("");
     const [feedback, setFeedback] = useState({ message: "", type: "" });
     const timerRef = useRef(null);
+
+    const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
+    const [wordQueues, setWordQueues] = useState({
+        easy: shuffleArray(config.wordDatabase.easy),
+        medium: shuffleArray(config.wordDatabase.medium),
+        tricky: shuffleArray(config.wordDatabase.tricky),
+        review: []
+    });
+    const [currentDifficulty, setCurrentDifficulty] = useState('easy');
+    const [attemptedTeams, setAttemptedTeams] = useState(new Set());
 
     // Timer effect
     useEffect(() => {
@@ -274,13 +283,38 @@ const GameScreen = ({ config, onEndGame }) => {
 
         return () => clearInterval(timerRef.current);
     }, [currentWord]);
+    
+    const difficultyOrder = ['easy', 'medium', 'tricky', 'review'];
 
-    const selectRandomWord = (difficulty = 'easy') => {
-        const words = config.wordDatabase[difficulty] || config.wordDatabase.easy;
-        const word = words[Math.floor(Math.random() * words.length)];
-        setTimeLeft(config.timerDuration); // Reset timer when a new word is selected
-        setFailedAttempts(0);
-        return word;
+    const selectNextWord = () => {
+        let index = difficultyOrder.indexOf(currentDifficulty);
+        let nextWord = null;
+        let nextDifficulty = currentDifficulty;
+
+        while (index < difficultyOrder.length) {
+            const diff = difficultyOrder[index];
+            const queue = wordQueues[diff];
+            if (queue.length > 0) {
+                nextWord = queue[0];
+                setWordQueues(prev => ({
+                    ...prev,
+                    [diff]: prev[diff].slice(1)
+                }));
+                nextDifficulty = diff;
+                break;
+            }
+            index++;
+        }
+
+        if (nextWord) {
+            setCurrentDifficulty(nextDifficulty);
+            setCurrentWord(nextWord);
+            setTimeLeft(config.timerDuration);
+            setAttemptedTeams(new Set());
+        } else {
+            const activeTeams = teams.filter(t => t.lives > 0);
+            onEndGame({ winner: activeTeams.length === 1 ? activeTeams[0] : null, teams });
+        }
     };
 
     const nextTurn = () => {
@@ -298,20 +332,26 @@ const GameScreen = ({ config, onEndGame }) => {
         setTeams(updatedTeams);
         setInputValue("");
         
+        const newAttempted = new Set(attemptedTeams);
+        newAttempted.add(currentTeamIndex);
+
         setTimeout(() => {
             setFeedback({ message: "", type: "" });
-            nextTurn();
-            // Check if all teams have had a failed attempt on this word
-            const newFailedAttempts = failedAttempts + 1;
-            if (newFailedAttempts >= teams.length) {
-                setCurrentWord(selectRandomWord('easy')); // or current difficulty
-                setFailedAttempts(0);
+            if (newAttempted.size >= teams.length) {
+                // All teams had a turn, move to next word and put current word in review
+                setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+                setAttemptedTeams(new Set());
+                selectNextWord();
+                nextTurn();
             } else {
-                setFailedAttempts(newFailedAttempts);
+                // Move to the next team's turn with the same word
+                setAttemptedTeams(newAttempted);
+                nextTurn();
+                setTimeLeft(config.timerDuration);
             }
         }, 2000);
     };
-
+    
     const handleSpellingSubmit = () => {
         if (!currentWord) return;
         clearInterval(timerRef.current);
@@ -323,7 +363,7 @@ const GameScreen = ({ config, onEndGame }) => {
             setTimeout(() => {
                 setFeedback({ message: "", type: "" });
                 setInputValue("");
-                setCurrentWord(selectRandomWord('easy')); // or current difficulty
+                selectNextWord();
                 nextTurn();
             }, 2000);
             return;
@@ -335,16 +375,19 @@ const GameScreen = ({ config, onEndGame }) => {
     const skipWord = () => {
         clearInterval(timerRef.current);
         setFeedback({ message: "Word Skipped", type: "info" });
+        setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+        setAttemptedTeams(new Set());
+        
         setTimeout(() => {
             setFeedback({ message: "", type: "" });
             setInputValue("");
-            setCurrentWord(selectRandomWord());
+            selectNextWord();
             nextTurn();
         }, 1500);
     };
-    
+
     useEffect(() => {
-        setCurrentWord(selectRandomWord());
+        selectNextWord();
     }, []);
 
     // Check for game over condition
