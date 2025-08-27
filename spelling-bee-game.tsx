@@ -48,12 +48,17 @@ const SpellingBeeGame = () => {
 };
 
 const SetupScreen = ({ onStartGame }) => {
-    const [teams, setTeams] = useState([]);
+    // Mock teams data for now, as there's no UI to add them yet.
+    const [teams, setTeams] = useState([
+        { name: "Team Alpha", lives: 5 },
+        { name: "Team Beta", lives: 5 }
+    ]);
     const [gameMode, setGameMode] = useState("team");
+    const [timerDuration, setTimerDuration] = useState(30);
     // ... other setup states
 
     const handleStart = () => {
-        const config = { teams, gameMode /* ... other configs */ };
+        const config = { teams, gameMode, timerDuration /* ... other configs */ };
         onStartGame(config);
     };
 
@@ -64,8 +69,25 @@ const SetupScreen = ({ onStartGame }) => {
                     <h1 className="text-6xl font-bold mb-4 text-yellow-300">🏆 SPELLING BEE CHAMPIONSHIP</h1>
                     <p className="text-2xl">Get ready to spell your way to victory!</p>
                 </div>
+
+                {/* Timer selection UI */}
+                <div className="mb-8">
+                    <h2 className="text-3xl font-bold mb-4 text-center">Select Timer Duration</h2>
+                    <div className="flex justify-center gap-4">
+                        {[15, 30, 45, 60].map(time => (
+                            <button
+                                key={time}
+                                onClick={() => setTimerDuration(time)}
+                                className={`px-6 py-3 rounded-lg text-xl font-bold ${timerDuration === time ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}
+                            >
+                                {time}s
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 {/* All the setup UI goes here */}
-                <button onClick={handleStart} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">
+                <button onClick={handleStart} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-8">
                     START GAME
                 </button>
             </div>
@@ -77,10 +99,23 @@ const GameScreen = ({ config, onEndGame }) => {
     const [teams, setTeams] = useState(config.teams);
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState(null);
+    const [timeLeft, setTimeLeft] = useState(config.timerDuration);
     // ... other game states
 
+    // Timer effect
+    useEffect(() => {
+        if (!currentWord || timeLeft <= 0) return;
+        const timer = setInterval(() => {
+            setTimeLeft(prevTime => prevTime - 1);
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [currentWord, timeLeft]);
+
     const selectRandomWord = (difficulty) => {
-        // ... logic to select a word
+        const words = wordDatabase[difficulty] || wordDatabase.easy;
+        const word = words[Math.floor(Math.random() * words.length)];
+        setTimeLeft(config.timerDuration); // Reset timer when a new word is selected
+        return word;
     };
 
     const skipWord = () => {
@@ -110,11 +145,87 @@ const GameScreen = ({ config, onEndGame }) => {
     }, [teams, onEndGame]);
 
 
+    const [inputValue, setInputValue] = useState("");
+    const [feedback, setFeedback] = useState({ message: "", type: "" });
+
+    const handleSpellingSubmit = () => {
+        if (!currentWord) return;
+
+        const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
+
+        if (isCorrect) {
+            setFeedback({ message: "Correct!", type: "success" });
+        } else {
+            setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
+            const updatedTeams = teams.map((team, index) => {
+                if (index === currentTeamIndex) {
+                    return { ...team, lives: team.lives - 1 };
+                }
+                return team;
+            });
+            setTeams(updatedTeams);
+        }
+
+        // Clear input and feedback after a short delay, then move to the next turn
+        setTimeout(() => {
+            setFeedback({ message: "", type: "" });
+            setInputValue("");
+            const newWord = selectRandomWord('easy'); // or current difficulty
+            setCurrentWord(newWord);
+            nextTurn();
+        }, 2000);
+    };
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white">
-            {/* All the game UI, passing props down to smaller components */}
-            <button onClick={skipWord} className="bg-orange-500 hover:bg-orange-600 p-2 rounded-lg">
-                <SkipForward /> Skip Word
+        <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
+            {/* Team Lives Display */}
+            <div className="absolute top-8 left-8 flex gap-8">
+                {teams.map((team, index) => (
+                    <div key={index} className="text-center">
+                        <div className="text-2xl font-bold">{team.name}</div>
+                        <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(team.lives)}</div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Feedback Message */}
+            {feedback.message && (
+                <div className={`absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${feedback.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`}>
+                    {feedback.message}
+                </div>
+            )}
+
+            {/* Timer Display */}
+            <div className="absolute top-8 right-8 text-center">
+                <div className={`text-6xl font-bold ${timeLeft <= 10 ? 'text-red-500' : 'text-yellow-300'}`}>{timeLeft}</div>
+                <div className="text-lg">seconds left</div>
+            </div>
+
+            {currentWord && (
+                <div className="w-full max-w-4xl text-center">
+                    <h2 className="text-4xl font-bold mb-4">Word for Team: {teams[currentTeamIndex]?.name || 'Team'}</h2>
+                    <div className="bg-white/10 p-6 rounded-lg mb-8">
+                        <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
+                        <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
+                        <p className="text-xl"><strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"</p>
+                    </div>
+                    <div className="flex gap-4 justify-center">
+                        <input
+                            type="text"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            className="text-2xl p-4 rounded-lg bg-white/20 border-2 border-transparent focus:border-yellow-300 focus:outline-none w-1/2"
+                            placeholder="Type the word here..."
+                        />
+                        <button onClick={handleSpellingSubmit} className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg text-2xl font-bold">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            <button onClick={skipWord} className="absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl">
+                <SkipForward size={24} />
             </button>
         </div>
     );
@@ -122,11 +233,25 @@ const GameScreen = ({ config, onEndGame }) => {
 
 const ResultsScreen = ({ results, onRestart }) => {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center">
-            <h1 className="text-5xl font-bold mb-4">Game Over!</h1>
-            {results && results.winner && <h2 className="text-3xl text-yellow-300">Winner: {results.winner.name}</h2>}
-            {/* Display scores and other results */}
-            <button onClick={onRestart} className="mt-8 bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-xl text-xl font-semibold">
+        <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center">
+            <h1 className="text-6xl font-bold mb-4 text-yellow-300">🏆 Game Over! 🏆</h1>
+            {results && results.winner ? (
+                <h2 className="text-4xl mb-8">Winner: {results.winner.name}</h2>
+            ) : (
+                <h2 className="text-4xl mb-8">It's a draw!</h2>
+            )}
+
+            <div className="bg-white/10 p-8 rounded-lg w-full max-w-md">
+                <h3 className="text-3xl font-bold mb-4">Final Scores</h3>
+                {results && results.teams.map((team, index) => (
+                    <div key={index} className="flex justify-between items-center text-2xl mb-2">
+                        <span>{team.name}</span>
+                        <span className="font-bold text-yellow-300">{team.lives} lives remaining</span>
+                    </div>
+                ))}
+            </div>
+
+            <button onClick={onRestart} className="mt-12 bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold">
                 Play Again
             </button>
         </div>

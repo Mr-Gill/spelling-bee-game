@@ -10,6 +10,18 @@
   var import_react = __require("react");
   var import_lucide_react = __require("lucide-react");
   var import_jsx_runtime = __require("react/jsx-runtime");
+  var wordDatabase = {
+    easy: [
+      { word: "friend", syllables: "friend (1 syllable)", definition: "A person you like and know well", origin: "Old English 'freond', from Germanic root meaning 'to love'", sentence: "My best friend and I love to play together.", prefixSuffix: "Base word with no prefix or suffix", pronunciation: "FREND" },
+      { word: "happy", syllables: "hap-py (2 syllables)", definition: "Feeling or showing pleasure and contentment", origin: "Middle English 'happy', from 'hap' meaning luck or fortune", sentence: "The children were happy to see the circus.", prefixSuffix: "Base word 'hap' + suffix '-py'", pronunciation: "HAP-ee" }
+    ],
+    medium: [
+      { word: "necessary", syllables: "nec-es-sar-y (4 syllables)", definition: "Required to be done or achieved; essential", origin: "Latin 'necessarius', from 'necesse' meaning unavoidable", sentence: "It is necessary to study hard for the test.", prefixSuffix: "Base 'necess' + suffix '-ary'", pronunciation: "NES-uh-ser-ee" }
+    ],
+    tricky: [
+      { word: "chrysanthemum", syllables: "chry-san-the-mum (4 syllables)", definition: "A type of flower with many thin petals", origin: "Greek 'chrysos' (gold) + 'anthemon' (flower)", sentence: "The chrysanthemum bloomed beautifully in autumn.", prefixSuffix: "Greek compound: chryso- (gold) + -anthemum (flower)", pronunciation: "kri-SAN-thuh-mum" }
+    ]
+  };
   var SpellingBeeGame = () => {
     const [gameState, setGameState] = (0, import_react.useState)("setup");
     const [gameConfig, setGameConfig] = (0, import_react.useState)(null);
@@ -39,12 +51,17 @@
     return null;
   };
   var SetupScreen = ({ onStartGame }) => {
-    const [teams, setTeams] = (0, import_react.useState)([]);
+    const [teams, setTeams] = (0, import_react.useState)([
+      { name: "Team Alpha", lives: 5 },
+      { name: "Team Beta", lives: 5 }
+    ]);
     const [gameMode, setGameMode] = (0, import_react.useState)("team");
+    const [timerDuration, setTimerDuration] = (0, import_react.useState)(30);
     const handleStart = () => {
       const config = {
         teams,
-        gameMode
+        gameMode,
+        timerDuration
         /* ... other configs */
       };
       onStartGame(config);
@@ -54,14 +71,41 @@
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300", children: "\u{1F3C6} SPELLING BEE CHAMPIONSHIP" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-2xl", children: "Get ready to spell your way to victory!" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: handleStart, className: "w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold", children: "START GAME" })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mb-8", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-3xl font-bold mb-4 text-center", children: "Select Timer Duration" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "flex justify-center gap-4", children: [15, 30, 45, 60].map((time) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+          "button",
+          {
+            onClick: () => setTimerDuration(time),
+            className: `px-6 py-3 rounded-lg text-xl font-bold ${timerDuration === time ? "bg-yellow-300 text-black" : "bg-blue-500 hover:bg-blue-400"}`,
+            children: [
+              time,
+              "s"
+            ]
+          },
+          time
+        )) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: handleStart, className: "w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-8", children: "START GAME" })
     ] }) });
   };
   var GameScreen = ({ config, onEndGame }) => {
     const [teams, setTeams] = (0, import_react.useState)(config.teams);
     const [currentTeamIndex, setCurrentTeamIndex] = (0, import_react.useState)(0);
     const [currentWord, setCurrentWord] = (0, import_react.useState)(null);
+    const [timeLeft, setTimeLeft] = (0, import_react.useState)(config.timerDuration);
+    (0, import_react.useEffect)(() => {
+      if (!currentWord || timeLeft <= 0) return;
+      const timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1e3);
+      return () => clearInterval(timer);
+    }, [currentWord, timeLeft]);
     const selectRandomWord = (difficulty) => {
+      const words = wordDatabase[difficulty] || wordDatabase.easy;
+      const word = words[Math.floor(Math.random() * words.length)];
+      setTimeLeft(config.timerDuration);
+      return word;
     };
     const skipWord = () => {
       const newWord = selectRandomWord("easy");
@@ -81,19 +125,99 @@
         onEndGame({ winner: activeTeams[0], teams });
       }
     }, [teams, onEndGame]);
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: skipWord, className: "bg-orange-500 hover:bg-orange-600 p-2 rounded-lg", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.SkipForward, {}),
-      " Skip Word"
-    ] }) });
+    const [inputValue, setInputValue] = (0, import_react.useState)("");
+    const [feedback, setFeedback] = (0, import_react.useState)({ message: "", type: "" });
+    const handleSpellingSubmit = () => {
+      if (!currentWord) return;
+      const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
+      if (isCorrect) {
+        setFeedback({ message: "Correct!", type: "success" });
+      } else {
+        setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
+        const updatedTeams = teams.map((team, index) => {
+          if (index === currentTeamIndex) {
+            return { ...team, lives: team.lives - 1 };
+          }
+          return team;
+        });
+        setTeams(updatedTeams);
+      }
+      setTimeout(() => {
+        setFeedback({ message: "", type: "" });
+        setInputValue("");
+        const newWord = selectRandomWord("easy");
+        setCurrentWord(newWord);
+        nextTurn();
+      }, 2e3);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute top-8 left-8 flex gap-8", children: teams.map((team, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-center", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-2xl font-bold", children: team.name }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-4xl font-bold text-yellow-300", children: "\u2764\uFE0F".repeat(team.lives) })
+      ] }, index)) }),
+      feedback.message && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${feedback.type === "success" ? "bg-green-500" : "bg-red-500"}`, children: feedback.message }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "absolute top-8 right-8 text-center", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `text-6xl font-bold ${timeLeft <= 10 ? "text-red-500" : "text-yellow-300"}`, children: timeLeft }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-lg", children: "seconds left" })
+      ] }),
+      currentWord && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "w-full max-w-4xl text-center", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", { className: "text-4xl font-bold mb-4", children: [
+          "Word for Team: ",
+          teams[currentTeamIndex]?.name || "Team"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { className: "text-2xl mb-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-yellow-300", children: "Definition:" }),
+            " ",
+            currentWord.definition
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { className: "text-xl mb-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-yellow-300", children: "Origin:" }),
+            " ",
+            currentWord.origin
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { className: "text-xl", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-yellow-300", children: "In a sentence:" }),
+            ' "',
+            currentWord.sentence,
+            '"'
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex gap-4 justify-center", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "input",
+            {
+              type: "text",
+              value: inputValue,
+              onChange: (e) => setInputValue(e.target.value),
+              className: "text-2xl p-4 rounded-lg bg-white/20 border-2 border-transparent focus:border-yellow-300 focus:outline-none w-1/2",
+              placeholder: "Type the word here..."
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: handleSpellingSubmit, className: "bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg text-2xl font-bold", children: "Submit" })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: skipWord, className: "absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.SkipForward, { size: 24 }) })
+    ] });
   };
   var ResultsScreen = ({ results, onRestart }) => {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-5xl font-bold mb-4", children: "Game Over!" }),
-      results && results.winner && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", { className: "text-3xl text-yellow-300", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300", children: "\u{1F3C6} Game Over! \u{1F3C6}" }),
+      results && results.winner ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", { className: "text-4xl mb-8", children: [
         "Winner: ",
         results.winner.name
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-4xl mb-8", children: "It's a draw!" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-3xl font-bold mb-4", children: "Final Scores" }),
+        results && results.teams.map((team, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex justify-between items-center text-2xl mb-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: team.name }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "font-bold text-yellow-300", children: [
+            team.lives,
+            " lives remaining"
+          ] })
+        ] }, index))
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: onRestart, className: "mt-8 bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-xl text-xl font-semibold", children: "Play Again" })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: onRestart, className: "mt-12 bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold", children: "Play Again" })
     ] });
   };
   var spelling_bee_game_default = SpellingBeeGame;
