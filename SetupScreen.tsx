@@ -2,6 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Word, Participant, GameConfig } from './types';
 import { fetchDailyWordList, getStreakInfo } from './DailyChallenge';
 
+// Gather available music styles from the audio directory.  esbuild's
+// `import.meta.glob` is used to collect all MP3 files and extract the style
+// names from files matching "It's a Spelling Bee! (Style).mp3".
+const musicFileImports = import.meta.glob('./audio/*.mp3', {
+  eager: true,
+  as: 'url',
+});
+const musicStyles = Object.keys(musicFileImports)
+  .filter(path => path.includes("It's a Spelling Bee!"))
+  .map(path => {
+    const match = path.match(/It's a Spelling Bee! \((.+)\)\.mp3$/);
+    return match ? match[1] : path;
+  });
+
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
   onAddCustomWords: (words: Word[]) => void;
@@ -44,6 +58,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     return saved !== null ? saved === 'true' : true;
   });
   const [effectsEnabled, setEffectsEnabled] = useState(true);
+  const [musicStyle, setMusicStyle] = useState<string>(() => {
+    const saved = localStorage.getItem('musicStyle');
+    return saved ?? 'Funk';
+  });
+  const [musicVolume, setMusicVolume] = useState<number>(() => {
+    const saved = localStorage.getItem('musicVolume');
+    return saved !== null ? parseFloat(saved) : 1;
+  });
   const [initialDifficulty, setInitialDifficulty] = useState(0);
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState('light');
@@ -88,6 +110,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   useEffect(() => {
     localStorage.setItem('soundEnabled', String(soundEnabled));
   }, [soundEnabled]);
+  useEffect(() => {
+    localStorage.setItem('musicStyle', musicStyle);
+  }, [musicStyle]);
+  useEffect(() => {
+    localStorage.setItem('musicVolume', String(musicVolume));
+  }, [musicVolume]);
 
   // All participant and word list handling functions remain here...
   const createParticipant = (name: string, difficulty: number): Participant => ({
@@ -104,7 +132,20 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   });
 
   const handleStart = () => {
-    // Standard game start logic...
+    const config: GameConfig = {
+      participants: gameMode === 'team' ? teams : students,
+      gameMode,
+      timerDuration,
+      skipPenaltyType,
+      skipPenaltyValue,
+      soundEnabled,
+      effectsEnabled,
+      difficultyLevel: initialDifficulty,
+      progressionSpeed,
+      musicStyle,
+      musicVolume,
+    } as GameConfig;
+    onStartGame(config);
   };
 
   const handleDailyChallenge = async () => {
@@ -122,6 +163,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         effectsEnabled,
         difficultyLevel: initialDifficulty,
         progressionSpeed,
+        musicStyle,
+        musicVolume,
         dailyChallenge: true,
       } as GameConfig;
       onStartGame(config);
@@ -151,6 +194,36 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             <option value="dark">Dark</option>
             <option value="honeycomb">Honeycomb</option>
           </select>
+        </div>
+
+        <div className="bg-white/10 p-6 rounded-lg mb-8">
+          <h2 className="text-2xl font-bold mb-4">Music 🎵</h2>
+          <div className="mb-4">
+            <label className="block mb-2">Style</label>
+            <select
+              value={musicStyle}
+              onChange={e => setMusicStyle(e.target.value)}
+              className="p-2 rounded-md bg-white/20 text-white"
+            >
+              {musicStyles.map(style => (
+                <option key={style} value={style}>
+                  {style}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block mb-2">Volume: {Math.round(musicVolume * 100)}%</label>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              value={musicVolume}
+              onChange={e => setMusicVolume(parseFloat(e.target.value))}
+              className="w-full"
+            />
+          </div>
         </div>
 
         {/* Other UI sections... */}
