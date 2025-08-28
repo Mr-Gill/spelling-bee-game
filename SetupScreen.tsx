@@ -28,6 +28,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const [students, setStudents] = useState<Participant[]>([]);
   const [studentName, setStudentName] = useState('');
+  const [skipPenaltyType, setSkipPenaltyType] = useState<'lives' | 'points'>('lives');
+  const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
 
   const addTeam = () => {
     setTeams([...teams, { name: '', lives: 5, points: 0, streak: 0, attempted: 0, correct: 0 }]);
@@ -157,7 +159,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
     onAddCustomWords(finalWords);
 
-    const config: GameConfig = { participants: finalParticipants, gameMode, timerDuration } as GameConfig;
+    const config: GameConfig = {
+      participants: finalParticipants,
+      gameMode,
+      timerDuration,
+      skipPenaltyType,
+      skipPenaltyValue
+    } as GameConfig;
     onStartGame(config);
   };
 
@@ -249,6 +257,27 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               ))}
             </>
           )}
+        </div>
+
+        <div className="bg-white/10 p-6 rounded-lg mb-8">
+          <h2 className="text-2xl font-bold mb-4">Skip Penalty</h2>
+          <div className="flex gap-4">
+            <select
+              value={skipPenaltyType}
+              onChange={e => setSkipPenaltyType(e.target.value as 'lives' | 'points')}
+              className="p-2 rounded-md bg-white/20 text-white"
+            >
+              <option value="lives">Lives</option>
+              <option value="points">Points</option>
+            </select>
+            <input
+              type="number"
+              min={0}
+              value={skipPenaltyValue}
+              onChange={e => setSkipPenaltyValue(Number(e.target.value))}
+              className="p-2 rounded-md bg-white/20 text-white w-24"
+            />
+          </div>
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
