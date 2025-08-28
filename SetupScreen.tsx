@@ -11,7 +11,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     {
       name: 'Team Alpha',
       lives: 5,
-      points: 0,
+      points: 1,
       streak: 0,
       attempted: 0,
       correct: 0,
@@ -21,7 +21,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     {
       name: 'Team Beta',
       lives: 5,
-      points: 0,
+      points: 1,
       streak: 0,
       attempted: 0,
       correct: 0,
@@ -58,7 +58,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       {
         name: '',
         lives: 5,
-        points: 0,
+        points: 1,
         streak: 0,
         attempted: 0,
         correct: 0,
@@ -84,7 +84,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         {
           name: studentName.trim(),
           lives: 5,
-          points: 0,
+          points: 1,
           streak: 0,
           attempted: 0,
           correct: 0,
@@ -185,7 +185,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         attempted: 0,
         correct: 0,
         wordsAttempted: 0,
-        wordsCorrect: 0
+        wordsCorrect: 0,
+        points: t.points
       }));
     } else {
       const trimmedStudents = students
@@ -200,7 +201,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         attempted: 0,
         correct: 0,
         wordsAttempted: 0,
-        wordsCorrect: 0
+        wordsCorrect: 0,
+        points: s.points
       }));
     }
 
