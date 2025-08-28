@@ -50,6 +50,17 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart }) => 
         ))}
       </div>
 
+      {results.missedWords && results.missedWords.length > 0 && (
+        <div className="bg-white/10 p-8 rounded-lg w-full max-w-md mt-8">
+          <h3 className="text-3xl font-bold mb-4">Missed Words</h3>
+          {results.missedWords.map((w, index) => (
+            <div key={index} className="text-left text-xl mb-2">
+              <span className="font-bold">{w.word}</span> - {w.definition}
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="flex gap-6 mt-12">
         <button
           onClick={handleExport}

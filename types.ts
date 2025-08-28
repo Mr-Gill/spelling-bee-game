@@ -38,4 +38,5 @@ export interface GameResults {
   participants: Participant[];
   gameMode: 'team' | 'individual';
   duration: number;
+  missedWords: Word[];
 }
