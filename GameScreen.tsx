@@ -8,7 +8,7 @@ import letterCorrectSoundFile from './audio/letter-correct.mp3';
 import letterWrongSoundFile from './audio/letter-wrong.mp3';
 import shopSoundFile from './audio/shop.mp3';
 import loseLifeSoundFile from './audio/lose-life.mp3';
-import { launchConfetti } from './utils/confetti';
+import { launchConfetti } from './confetti';
 import { speak } from './utils/tts';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 
@@ -376,7 +376,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         correctAudio.current.currentTime = 0;
         correctAudio.current.play();
       }
-      if (config.effectsEnabled) {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (config.effectsEnabled && !prefersReducedMotion) {
         launchConfetti();
       }
       setFeedback({ message: 'Correct! 🎉', type: 'success' });
