@@ -182,7 +182,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 setError("Please enter names for at least two teams.");
                 return;
             }
-            const startingPoints = 1; // Starting points for each team
+            const startingPoints = 1;
             finalParticipants = trimmedTeams.map(t => ({
                 ...t,
                 points: startingPoints,
@@ -195,7 +195,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 setError("Please enter names for at least two students.");
                 return;
             }
-            const startingPoints = 1; // Starting points for each student
+            const startingPoints = 1;
             finalParticipants = trimmedStudents.map(s => ({
                 ...s,
                 points: startingPoints,
@@ -524,6 +524,7 @@ const GameScreen = ({ config, onEndGame }) => {
         const cost = 5;
         if (currentParticipant.points < cost || !currentWord) return;
         spendPoints(currentParticipantIndex, cost);
+        setShowWord(false);
         const unrevealed = revealedLetters
             .map((rev, idx) => (!rev ? idx : null))
             .filter((idx) => idx !== null);
@@ -538,6 +539,7 @@ const GameScreen = ({ config, onEndGame }) => {
         const cost = 3;
         if (currentParticipant.points < cost || !currentWord) return;
         spendPoints(currentParticipantIndex, cost);
+        setShowWord(false);
         const newRevealed = currentWord.word.split('').map((letter, idx) => {
             return revealedLetters[idx] || 'aeiou'.includes(letter.toLowerCase());
         });
@@ -546,9 +548,11 @@ const GameScreen = ({ config, onEndGame }) => {
 
     const handleFriendSubstitution = () => {
         const cost = 4;
-        if (currentParticipant.points < cost) return;
+        if (extraAttempt || currentParticipant.points < cost) return;
         spendPoints(currentParticipantIndex, cost);
         setExtraAttempt(true);
+        setTimeLeft(config.timerDuration);
+        setFeedback({ message: "Teammate substitution activated!", type: "info" });
     };
 
     const handleSpellingSubmit = () => {
@@ -717,7 +721,7 @@ const GameScreen = ({ config, onEndGame }) => {
                         </button>
                         <button
                             onClick={handleFriendSubstitution}
-                            disabled={currentParticipant.points < 4 || isTeamMode === false}
+                            disabled={currentParticipant.points < 4 || isTeamMode === false || extraAttempt}
                             className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
                         >
                             Friend Sub (-4)
