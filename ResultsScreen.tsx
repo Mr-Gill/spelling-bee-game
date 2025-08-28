@@ -1,5 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { GameResults, LeaderboardEntry } from './types';
+import applauseSoundFile from './audio/applause.mp3';
+import { launchConfetti } from './utils/confetti';
 
 interface ResultsScreenProps {
   results: GameResults;
@@ -8,7 +10,10 @@ interface ResultsScreenProps {
 }
 
 const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onViewLeaderboard }) => {
+  const applauseAudio = useRef<HTMLAudioElement>(new Audio(applauseSoundFile));
+
   useEffect(() => {
+    // Update the leaderboard with the new scores
     const stored: LeaderboardEntry[] = JSON.parse(localStorage.getItem('leaderboard') || '[]');
     const newEntries: LeaderboardEntry[] = results.participants.map(p => ({
       name: p.name,
@@ -22,6 +27,14 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
       
     localStorage.setItem('leaderboard', JSON.stringify(updated));
   }, [results]);
+
+  useEffect(() => {
+    // Play sound and show confetti if there's a winner
+    if (results.winner) {
+      applauseAudio.current.play();
+      launchConfetti();
+    }
+  }, [results.winner]);
 
   const handleExport = () => {
     const dataStr =
@@ -61,7 +74,6 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
             <div className="font-bold">{p.name}</div>
             <div className="text-yellow-300">
               {p.wordsCorrect}/{p.wordsAttempted} correct (
-              {Math.round((p.wordsCorrect / p.wordsAttempted) * 100)}%) - {p.lives} lives remaining - {p.points} points
               {p.wordsAttempted > 0
                 ? Math.round((p.wordsCorrect / p.wordsAttempted) * 100)
                 : 0}
