@@ -4,6 +4,7 @@ import { GameConfig, Word, Participant, GameResults, GameState } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
 import timeoutSoundFile from './audio/timeout.mp3';
+import { launchConfetti } from './utils/confetti';
 import { speak } from './utils/tts';
 
 interface GameScreenProps {
@@ -268,6 +269,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     );
 
     if (isCorrect) {
+      launchConfetti();
       correctAudio.current.currentTime = 0;
       correctAudio.current.play();
       setFeedback({ message: 'Correct! 🎉', type: 'success' });
