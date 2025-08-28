@@ -50,7 +50,6 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [revealedLetters, setRevealedLetters] = useState<boolean[]>([]);
   const [extraAttempt, setExtraAttempt] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [showHint, setShowHint] = useState(false);
 
   const correctAudio = useRef<HTMLAudioElement>(new Audio(correctSoundFile));
   const wrongAudio = useRef<HTMLAudioElement>(new Audio(wrongSoundFile));
@@ -243,6 +242,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
     const guess = letters.join('').trim().toLowerCase();
     const isCorrect = guess === currentWord.word.toLowerCase();
+    const shouldCountWord = isCorrect || !extraAttempt;
 
     setParticipants(prev =>
       prev.map((p, index) => {
@@ -257,8 +257,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             ...p,
             attempted: p.attempted + 1,
             correct: p.correct + (isCorrect ? 1 : 0),
-            wordsAttempted: p.wordsAttempted + 1,
-            wordsCorrect: p.wordsCorrect + (isCorrect ? 1 : 0),
+            wordsAttempted: p.wordsAttempted + (shouldCountWord ? 1 : 0),
+            wordsCorrect: p.wordsCorrect + (shouldCountWord && isCorrect ? 1 : 0),
             lives: isCorrect ? p.lives : p.lives - 1,
             points: isCorrect ? p.points + pointsEarned : p.points,
             streak: isCorrect ? p.streak + 1 : 0
@@ -313,20 +313,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     setParticipants(prev =>
       prev.map((p, index) => {
         if (index === currentParticipantIndex) {
-          if (config.skipPenaltyType === 'lives') {
-            return {
-              ...p,
-              lives: p.lives - config.skipPenaltyValue,
-              streak: 0,
-              wordsAttempted: p.wordsAttempted + 1
-            };
-          }
-          return {
+          const updated = {
             ...p,
-            points: p.points - config.skipPenaltyValue,
             streak: 0,
             wordsAttempted: p.wordsAttempted + 1
           };
+          if (config.skipPenaltyType === 'lives') {
+            return { ...updated, lives: p.lives - config.skipPenaltyValue };
+          }
+          return { ...updated, points: p.points - config.skipPenaltyValue };
         }
         return p;
       })
@@ -350,8 +345,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     const activeParticipants = participants.filter(p => p.lives > 0);
     const finalParticipants = participants.map(p => ({
       ...p,
-      accuracy:
-        p.wordsAttempted > 0 ? (p.wordsCorrect / p.wordsAttempted) * 100 : 0
+      accuracy: p.wordsAttempted > 0 ? (p.wordsCorrect / p.wordsAttempted) * 100 : 0
     }));
     onEndGame({
       winner: activeParticipants.length === 1 ? activeParticipants[0] : null,

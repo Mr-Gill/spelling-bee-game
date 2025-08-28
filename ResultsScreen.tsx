@@ -61,6 +61,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
             <div className="font-bold">{p.name}</div>
             <div className="text-yellow-300">
               {p.wordsCorrect}/{p.wordsAttempted} correct (
+              {Math.round((p.wordsCorrect / p.wordsAttempted) * 100)}%) - {p.lives} lives remaining - {p.points} points
               {p.wordsAttempted > 0
                 ? Math.round((p.wordsCorrect / p.wordsAttempted) * 100)
                 : 0}
