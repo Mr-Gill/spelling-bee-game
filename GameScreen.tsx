@@ -4,6 +4,7 @@ import { GameConfig, Word, Participant, GameResults } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
 import timeoutSoundFile from './audio/timeout.mp3';
+import shopSoundFile from './audio/shop.mp3';
 import loseLifeSoundFile from './audio/lose-life.mp3';
 import { launchConfetti } from './utils/confetti';
 import { speak } from './utils/tts';
@@ -61,6 +62,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const correctAudio = React.useRef<HTMLAudioElement>(new Audio(correctSoundFile));
   const wrongAudio = React.useRef<HTMLAudioElement>(new Audio(wrongSoundFile));
   const timeoutAudio = React.useRef<HTMLAudioElement>(new Audio(timeoutSoundFile));
+  const shopAudio = React.useRef<HTMLAudioElement>(new Audio(shopSoundFile));
   const loseLifeAudio = React.useRef<HTMLAudioElement>(new Audio(loseLifeSoundFile));
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -259,6 +261,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         return p;
       })
     );
+    if (config.soundEnabled) {
+      shopAudio.current.currentTime = 0;
+      shopAudio.current.play();
+    }
   };
 
   const handleHangmanReveal = () => {
