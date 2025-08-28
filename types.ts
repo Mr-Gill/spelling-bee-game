@@ -2,6 +2,7 @@ export interface Word {
   word: string;
   syllables: string;
   definition: string;
+  example: string;
   origin: string;
   example: string;
   prefixSuffix?: string;
@@ -15,6 +16,8 @@ export interface Participant {
   streak: number;
   attempted: number;
   correct: number;
+  wordsAttempted: number;
+  wordsCorrect: number;
   accuracy?: number;
 }
 
@@ -31,6 +34,8 @@ export interface GameConfig {
   wordDatabase: WordDatabase;
   skipPenaltyType: 'lives' | 'points';
   skipPenaltyValue: number;
+  difficultyLevel: number;
+  progressionSpeed: number;
 }
 
 export interface GameResults {
@@ -39,4 +44,14 @@ export interface GameResults {
   gameMode: 'team' | 'individual';
   duration: number;
   missedWords: Word[];
+}
+
+export interface GameState {
+  difficultyLevel: number;
+}
+
+export interface LeaderboardEntry {
+  name: string;
+  score: number;
+  date: string;
 }
