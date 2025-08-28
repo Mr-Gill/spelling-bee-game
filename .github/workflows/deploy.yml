@@ -20,10 +20,14 @@ jobs:
           node-version: '18'
 
       - name: Install Dependencies
-        run: npm install
+        run: |
+          set -euxo pipefail
+          npm ci
 
       - name: Build
-        run: npm run build
+        run: |
+          set -euxo pipefail
+          npm run build
 
       - name: Adjust paths for GitHub Pages
         run: |
