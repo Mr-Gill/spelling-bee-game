@@ -23,9 +23,15 @@ fs.copyFileSync('service-worker.js', path.join(distDir, 'service-worker.js'));
 fs.copyFileSync('words.json', path.join(distDir, 'words.json'));
 fs.copyFileSync('leaderboard.json', path.join(distDir, 'leaderboard.json'));
 fs.cpSync('icons', path.join(distDir, 'icons'), { recursive: true });
+
+if (fs.existsSync('avatars')) {
+    fs.cpSync('avatars', path.join(distDir, 'avatars'), { recursive: true });
+} // <-- The missing brace was added here
+
 if (fs.existsSync('img')) {
-    fs.cpSync('img', path.join(distDir, 'img'), { recursive: true });
+  fs.cpSync('img', path.join(distDir, 'img'), { recursive: true });
 }
+
 fs.cpSync('audio', path.join(distDir, 'audio'), { recursive: true });
 
 // Copy wordlists directory
@@ -53,7 +59,6 @@ esbuild.build({
   outfile: 'dist/app.js',
   format: 'esm',
   jsx: 'automatic',
-  // Add these lines to handle different file types
   loader: {
     '.svg': 'file',
     '.mp3': 'file',
