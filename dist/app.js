@@ -69,14 +69,14 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [missedWordsCollection, setMissedWordsCollection] = useState({});
     const [includeMissedWords, setIncludeMissedWords] = useState(false);
     const [error, setError] = useState("");
-    
+
     const bundledWordLists = [
         { label: "Example JSON", file: "example.json" },
         { label: "Example CSV", file: "example.csv" },
         { label: "Example TSV", file: "example.tsv" }
     ];
     const [selectedBundledList, setSelectedBundledList] = useState("");
-    
+
     const [students, setStudents] = useState([]);
     const [studentName, setStudentName] = useState("");
 
@@ -107,7 +107,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     };
 
     const updateStudentName = (index, name) => {
-        const newStudents = students.map((student, i) => 
+        const newStudents = students.map((student, i) =>
             i === index ? { ...student, name } : student
         );
         setStudents(newStudents);
@@ -152,7 +152,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
             reader.readAsText(file);
         }
     };
-    
+
     useEffect(() => {
         if (selectedBundledList) {
             fetch(`wordlists/${selectedBundledList}`)
@@ -199,16 +199,16 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 correct: 0,
             }));
         }
-        
+
         setError("");
-        
+
         let finalWords = parsedCustomWords;
         if (includeMissedWords) {
             const extraWords = Object.values(missedWordsCollection).flat();
             finalWords = [...finalWords, ...extraWords];
         }
         onAddCustomWords(finalWords);
-        
+
         const config = { participants: finalParticipants, gameMode, timerDuration };
         onStartGame(config);
     };
@@ -367,9 +367,9 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                         </label>
                     </div>
                 )}
-                
+
                 {error && <p className="text-red-300 text-center mb-4">{error}</p>}
-                
+
                 <div className="mb-8">
                     <h2 className="text-3xl font-bold mb-4 text-center">Select Timer Duration</h2>
                     <div className="flex justify-center gap-4">
@@ -384,7 +384,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                         ))}
                     </div>
                 </div>
-                
+
                 <button onClick={handleStart} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-8">
                     START GAME
                 </button>
@@ -410,6 +410,11 @@ const GameScreen = ({ config, onEndGame }) => {
     const [revealedLetters, setRevealedLetters] = useState([]);
     const [extraAttempt, setExtraAttempt] = useState(false);
     const [isHelpOpen, setIsHelpOpen] = useState(false);
+    const [revealedHints, setRevealedHints] = useState({
+        syllables: false,
+        prefixSuffix: false,
+        pronunciation: false
+    });
 
     const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
     const [wordQueues, setWordQueues] = useState({
@@ -436,7 +441,7 @@ const GameScreen = ({ config, onEndGame }) => {
         }, 1000);
         return () => clearInterval(timerRef.current);
     }, [currentWord]);
-    
+
     const difficultyOrder = ['easy', 'medium', 'tricky', 'review'];
 
     const selectNextWord = () => {
@@ -467,6 +472,7 @@ const GameScreen = ({ config, onEndGame }) => {
             setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
             setExtraAttempt(false);
             setIsHelpOpen(false);
+            setRevealedHints({ syllables: false, prefixSuffix: false, pronunciation: false });
         } else {
             onEndGameWithMissedWords();
         }
@@ -519,7 +525,7 @@ const GameScreen = ({ config, onEndGame }) => {
             }
         }, 2000);
     };
-    
+
     const spendPoints = (participantIndex, cost) => {
         setParticipants(prev =>
             prev.map((p, index) => {
@@ -559,11 +565,32 @@ const GameScreen = ({ config, onEndGame }) => {
 
     const handleFriendSubstitution = () => {
         const cost = 4;
-        if (extraAttempt || currentParticipant.points < cost) return;
+        if (currentParticipant.points < cost || extraAttempt) return;
         spendPoints(currentParticipantIndex, cost);
         setExtraAttempt(true);
         setTimeLeft(config.timerDuration);
         setFeedback({ message: "Teammate substitution activated!", type: "info" });
+    };
+
+    const handleRevealSyllables = () => {
+        const cost = 2;
+        if (currentParticipant.points < cost || !currentWord) return;
+        spendPoints(currentParticipantIndex, cost);
+        setRevealedHints((prev) => ({ ...prev, syllables: true }));
+    };
+
+    const handleRevealPrefixSuffix = () => {
+        const cost = 2;
+        if (currentParticipant.points < cost || !currentWord) return;
+        spendPoints(currentParticipantIndex, cost);
+        setRevealedHints((prev) => ({ ...prev, prefixSuffix: true }));
+    };
+
+    const handleRevealPronunciation = () => {
+        const cost = 2;
+        if (currentParticipant.points < cost || !currentWord) return;
+        spendPoints(currentParticipantIndex, cost);
+        setRevealedHints((prev) => ({ ...prev, pronunciation: true }));
     };
 
     const handleSpellingSubmit = () => {
@@ -611,7 +638,7 @@ const GameScreen = ({ config, onEndGame }) => {
         setFeedback({ message: "Word Skipped", type: "info" });
         setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
         setAttemptedParticipants(new Set());
-        
+
         setTimeout(() => {
             setFeedback({ message: "", type: "" });
             setInputValue("");
@@ -645,11 +672,6 @@ const GameScreen = ({ config, onEndGame }) => {
             onEndGameWithMissedWords();
         }
     }, [participants, onEndGame]);
-
-    const buyHint = (hintKey, cost) => {
-        // The hints logic from the other branch is for the old UI, which is being replaced.
-        // The point-spending logic has been integrated into the new 'help shop' functions.
-    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
@@ -700,7 +722,16 @@ const GameScreen = ({ config, onEndGame }) => {
                         )}
                         <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
                         <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
-                        <p className="text-xl"><strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"</p>
+                        <p className="text-xl mb-2"><strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"</p>
+                        {revealedHints.syllables && (
+                            <p className="text-xl mb-2"><strong className="text-yellow-300">Syllables:</strong> {currentWord.syllables}</p>
+                        )}
+                        {revealedHints.prefixSuffix && (
+                            <p className="text-xl mb-2"><strong className="text-yellow-300">Prefix/Suffix:</strong> {currentWord.prefixSuffix}</p>
+                        )}
+                        {revealedHints.pronunciation && (
+                            <p className="text-xl"><strong className="text-yellow-300">Pronunciation:</strong> {currentWord.pronunciation}</p>
+                        )}
                     </div>
                     <div className="flex gap-4 justify-center">
                         <input
@@ -714,36 +745,75 @@ const GameScreen = ({ config, onEndGame }) => {
                             Submit
                         </button>
                     </div>
+                </div>
+            )}
 
-                    <div className="mt-6 flex justify-center gap-4">
+            <button
+                onClick={() => setIsHelpOpen(true)}
+                className="absolute bottom-8 left-8 bg-yellow-500 hover:bg-yellow-600 p-4 rounded-lg text-black"
+            >
+                <BookOpen size={24} />
+            </button>
+
+            <button onClick={skipWord} className="absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl">
+                <SkipForward size={24} />
+            </button>
+
+            {isHelpOpen && (
+                <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-10">
+                    <div className="bg-white text-black p-6 rounded-lg w-full max-w-sm text-center space-y-2">
+                        <h3 className="text-2xl font-bold mb-2">Help Shop</h3>
                         <button
                             onClick={handleHangmanReveal}
                             disabled={currentParticipant.points < 5 || isTeamMode === false}
-                            className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+                            className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
                         >
                             Hangman Reveal (-5)
                         </button>
                         <button
                             onClick={handleVowelReveal}
                             disabled={currentParticipant.points < 3 || isTeamMode === false}
-                            className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+                            className="w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded disabled:opacity-50"
                         >
                             Vowel Reveal (-3)
                         </button>
                         <button
                             onClick={handleFriendSubstitution}
                             disabled={currentParticipant.points < 4 || isTeamMode === false || extraAttempt}
-                            className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+                            className="w-full bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded disabled:opacity-50"
                         >
                             Friend Sub (-4)
+                        </button>
+                        <button
+                            onClick={handleRevealSyllables}
+                            disabled={revealedHints.syllables || currentParticipant.points < 2}
+                            className="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded disabled:opacity-50"
+                        >
+                            Reveal Syllables (-2)
+                        </button>
+                        <button
+                            onClick={handleRevealPrefixSuffix}
+                            disabled={revealedHints.prefixSuffix || currentParticipant.points < 2}
+                            className="w-full bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded disabled:opacity-50"
+                        >
+                            Reveal Prefix/Suffix (-2)
+                        </button>
+                        <button
+                            onClick={handleRevealPronunciation}
+                            disabled={revealedHints.pronunciation || currentParticipant.points < 2}
+                            className="w-full bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded disabled:opacity-50"
+                        >
+                            Reveal Pronunciation (-2)
+                        </button>
+                        <button
+                            onClick={() => setIsHelpOpen(false)}
+                            className="w-full mt-2 bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded"
+                        >
+                            Close
                         </button>
                     </div>
                 </div>
             )}
-
-            <button onClick={skipWord} className="absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl">
-                <SkipForward size={24} />
-            </button>
         </div>
     );
 };
