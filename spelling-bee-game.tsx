@@ -57,9 +57,10 @@ const SpellingBeeGame = () => {
 };
 
 const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
+    const [startingPoints, setStartingPoints] = useState(1);
     const [teams, setTeams] = useState([
-        { name: "Team Alpha", lives: 5, points: 0, streak: 0 },
-        { name: "Team Beta", lives: 5, points: 0, streak: 0 }
+        { name: "Team Alpha", lives: 5, points: startingPoints, streak: 0 },
+        { name: "Team Beta", lives: 5, points: startingPoints, streak: 0 }
     ]);
     const [gameMode, setGameMode] = useState("team");
     const [timerDuration, setTimerDuration] = useState(30);
@@ -80,7 +81,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [studentName, setStudentName] = useState("");
 
     const addTeam = () => {
-        setTeams([...teams, { name: "", lives: 5, points: 0, streak: 0 }]);
+        setTeams([...teams, { name: "", lives: 5, points: startingPoints, streak: 0 }]);
     };
 
     const removeTeam = (index) => {
@@ -96,7 +97,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
 
     const addStudent = () => {
         if (studentName.trim()) {
-            setStudents([...students, { name: studentName.trim(), lives: 5, points: 0, streak: 0 }]);
+            setStudents([...students, { name: studentName.trim(), lives: 5, points: startingPoints, streak: 0 }]);
             setStudentName("");
         }
     };
@@ -106,11 +107,16 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     };
 
     const updateStudentName = (index, name) => {
-        const newStudents = students.map((student, i) => 
+        const newStudents = students.map((student, i) =>
             i === index ? { ...student, name } : student
         );
         setStudents(newStudents);
     };
+
+    useEffect(() => {
+        setTeams(prev => prev.map(team => ({ ...team, points: startingPoints })));
+        setStudents(prev => prev.map(student => ({ ...student, points: startingPoints })));
+    }, [startingPoints]);
 
     const parseWordList = (content) => {
         try {
@@ -233,6 +239,16 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
 
                 <div className="bg-white/10 p-6 rounded-lg mb-8">
                     <h2 className="text-2xl font-bold mb-4">{gameMode === 'team' ? 'Teams' : 'Students'}</h2>
+                    <div className="mb-4">
+                        <label className="block text-lg font-medium mb-2">Starting Points</label>
+                        <input
+                            type="number"
+                            min="0"
+                            value={startingPoints}
+                            onChange={(e) => setStartingPoints(parseInt(e.target.value) || 0)}
+                            className="p-2 rounded-md bg-white/20 text-white w-32"
+                        />
+                    </div>
                     {gameMode === 'team' ? (
                         <>
                             {teams.map((team, index) => (
