@@ -42,6 +42,7 @@ Transform your spelling lessons into engaging, interactive competitions that stu
 - **Help Shop System** - Strategic point-based assistance options
 - **Incorrect Word Tracking** - Identify challenging words for future lessons
 - **Sound Effects** - Audio feedback for correct/incorrect answers
+- **Pronunciation Display** - Phonetic guides shown alongside the word
 - **Dynamic Scoring** - Players start with 1 point and earn more with difficulty multipliers and streak bonuses
 
 ---
@@ -51,7 +52,7 @@ Transform your spelling lessons into engaging, interactive competitions that stu
 ### 🔍 **Comprehensive Word Analysis**
 - **📖 Definition** - Clear, age-appropriate explanations
 - **🗣️ Pronunciation** - Audio playback and phonetic guides
-- **📊 Syllables** - Complete syllable breakdowns (e.g., "but-ter-fly (3 syllables)")
+- **📊 Syllables** - Complete syllable breakdowns (e.g., ["but", "ter", "fly"])
 - **🌍 Etymology** - Word origins and historical development
 - **🧩 Morphology** - Prefix, suffix, and root word analysis
 - **📝 Example Sentences** - Contextual usage with audio playback
@@ -116,7 +117,7 @@ open index.html
    ```json
    {
      "word": "example",
-     "syllables": "ex-am-ple (3 syllables)",
+     "syllables": ["ex", "am", "ple"],
      "definition": "A thing characteristic of its kind",
      "origin": "Latin 'exemplum' meaning sample",
       "example": "This is a good example of the format.",
