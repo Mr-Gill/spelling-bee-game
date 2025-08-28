@@ -1,7 +1,7 @@
 [
   {
     "word": "apple",
-    "syllables": "ap-ple",
+    "syllables": ["ap", "ple"],
     "definition": "a fruit",
     "origin": "Old English",
     "example": "She ate an apple.",
@@ -10,7 +10,7 @@
   },
   {
     "word": "banana",
-    "syllables": "ba-na-na",
+    "syllables": ["ba", "na", "na"],
     "definition": "another fruit",
     "origin": "Wolof",
     "example": "Bananas are yellow.",
