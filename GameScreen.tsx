@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SkipForward } from 'lucide-react';
-import { GameConfig, Word, Participant, GameResults } from './types';
+import { GameConfig, Word, Participant, GameResults, GameState } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
 import timeoutSoundFile from './audio/timeout.mp3';
@@ -22,10 +22,13 @@ interface WordQueues {
   review: Word[];
 }
 
+const difficultyOrder: Array<'easy' | 'medium' | 'tricky' | 'review'> = ['easy', 'medium', 'tricky', 'review'];
+
 const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [participants, setParticipants] = useState<Participant[]>(
     config.participants.map(p => ({ ...p, attempted: 0, correct: 0 }))
   );
+  const [gameState, setGameState] = useState<GameState>({ difficultyLevel: config.difficultyLevel });
   const [currentParticipantIndex, setCurrentParticipantIndex] = useState(0);
   const [currentWord, setCurrentWord] = useState<Word | null>(null);
   const [timeLeft, setTimeLeft] = useState(config.timerDuration);
@@ -50,7 +53,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     tricky: shuffleArray(config.wordDatabase.tricky),
     review: []
   });
-  const [currentDifficulty, setCurrentDifficulty] = useState<'easy' | 'medium' | 'tricky' | 'review'>('easy');
+  const [currentDifficulty, setCurrentDifficulty] = useState<'easy' | 'medium' | 'tricky' | 'review'>(
+    difficultyOrder[Math.min(config.difficultyLevel, difficultyOrder.length - 1)]
+  );
   const [attemptedParticipants, setAttemptedParticipants] = useState<Set<number>>(new Set());
   const [missedWords, setMissedWords] = useState<Word[]>([]);
 
@@ -100,12 +105,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentWord, letters]);
 
-  const difficultyOrder: Array<'easy' | 'medium' | 'tricky' | 'review'> = ['easy', 'medium', 'tricky', 'review'];
-
-  const selectNextWord = () => {
-    let index = difficultyOrder.indexOf(currentDifficulty);
+  const selectNextWord = (level: number = gameState.difficultyLevel) => {
+    let index = Math.min(level, difficultyOrder.length - 1);
     let nextWord: Word | null = null;
-    let nextDifficulty = currentDifficulty;
+    let nextDifficulty = difficultyOrder[index];
 
     while (index < difficultyOrder.length) {
       const diff = difficultyOrder[index];
@@ -256,9 +259,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       correctAudio.current.play();
       setFeedback({ message: 'Correct! 🎉', type: 'success' });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
+      const newLevel = gameState.difficultyLevel + config.progressionSpeed;
+      setGameState(prev => ({ ...prev, difficultyLevel: newLevel }));
       setTimeout(() => {
         setFeedback({ message: '', type: '' });
-        selectNextWord();
+        selectNextWord(newLevel);
         nextTurn();
       }, 2000);
       return;
