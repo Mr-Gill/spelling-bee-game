@@ -2,7 +2,7 @@
   "easy": [
     {
       "word": "friend",
-      "syllables": "friend (1 syllable)",
+      "syllables": ["friend"],
       "definition": "A person you like and know well",
       "origin": "Old English 'freond', from Germanic root meaning 'to love'",
       "example": "My best friend and I love to play together.",
@@ -11,7 +11,7 @@
     },
     {
       "word": "happy",
-      "syllables": "hap-py (2 syllables)",
+      "syllables": ["hap", "py"],
       "definition": "Feeling or showing pleasure and contentment",
       "origin": "Middle English 'happy', from 'hap' meaning luck or fortune",
       "example": "The children were happy to see the circus.",
@@ -22,7 +22,7 @@
   "medium": [
     {
       "word": "necessary",
-      "syllables": "nec-es-sar-y (4 syllables)",
+      "syllables": ["nec", "es", "sar", "y"],
       "definition": "Required to be done or achieved; essential",
       "origin": "Latin 'necessarius', from 'necesse' meaning unavoidable",
       "example": "It is necessary to study hard for the test.",
@@ -33,7 +33,7 @@
   "tricky": [
     {
       "word": "chrysanthemum",
-      "syllables": "chry-san-the-mum (4 syllables)",
+      "syllables": ["chry", "san", "the", "mum"],
       "definition": "A type of flower with many thin petals",
       "origin": "Greek 'chrysos' (gold) + 'anthemon' (flower)",
       "example": "The chrysanthemum bloomed beautifully in autumn.",
