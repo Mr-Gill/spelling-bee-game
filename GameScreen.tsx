@@ -31,6 +31,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [timeLeft, setTimeLeft] = useState(config.timerDuration);
   const isTeamMode = config.gameMode === 'team';
   const [showWord, setShowWord] = useState(true);
+  const [showHint, setShowHint] = useState(false);
   const [letters, setLetters] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<Feedback>({ message: '', type: '' });
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -396,15 +397,22 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
                   .join(' ')}
               </p>
             )}
-            <p className="text-2xl mb-2">
-              <strong className="text-yellow-300">Definition:</strong> {currentWord.definition}
-            </p>
-            <p className="text-xl mb-2">
-              <strong className="text-yellow-300">Origin:</strong> {currentWord.origin}
-            </p>
-            <p className="text-xl">
-              <strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"
-            </p>
+            {showHint && (
+              <>
+                <p className="text-2xl mb-2">
+                  <strong className="text-yellow-300">Definition:</strong> {currentWord.definition}
+                </p>
+                <p className="text-xl">
+                  <strong className="text-yellow-300">Example:</strong> "{currentWord.example}"
+                </p>
+              </>
+            )}
+            <button
+              onClick={() => setShowHint(!showHint)}
+              className="mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+            >
+              {showHint ? 'Hide Hint' : 'Show Hint'}
+            </button>
           </div>
           <div className="flex gap-2 justify-center mb-4">
             {letters.map((letter, idx) => (
