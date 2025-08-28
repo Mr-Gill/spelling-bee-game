@@ -1,5 +1,13 @@
 import React from 'react';
-import { SkipForward } from 'lucide-react';
+import {
+  SkipForward,
+  BookOpen,
+  Globe,
+  MessageCircle,
+  Skull,
+  Asterisk,
+  Users
+} from 'lucide-react';
 import { GameConfig, Word, Participant, GameResults } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
@@ -623,9 +631,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
                     setShowDefinition(true);
                   }}
                   disabled={participants[currentParticipantIndex].points < 1}
-                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50 flex items-center gap-2"
                 >
-                  Buy Definition (-1)
+                  <BookOpen className="h-4 w-4" aria-hidden="true" />
+                  <span>Buy Definition (-1)</span>
                 </button>
               )}
               {!showOrigin && (
@@ -636,9 +645,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
                     setShowOrigin(true);
                   }}
                   disabled={participants[currentParticipantIndex].points < 1}
-                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50 flex items-center gap-2"
                 >
-                  Buy Origin (-1)
+                  <Globe className="h-4 w-4" aria-hidden="true" />
+                  <span>Buy Origin (-1)</span>
                 </button>
               )}
               {!showSentence && (
@@ -649,9 +659,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
                     setShowSentence(true);
                   }}
                   disabled={participants[currentParticipantIndex].points < 1}
-                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50 flex items-center gap-2"
                 >
-                  Buy Sentence (-1)
+                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                  <span>Buy Sentence (-1)</span>
                 </button>
               )}
             </div>
@@ -682,23 +693,26 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             <button
               onClick={handleHangmanReveal}
               disabled={participants[currentParticipantIndex].points < 5 || isTeamMode === false}
-              className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+              className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg flex items-center gap-2"
             >
-              Hangman Reveal (-5)
+              <Skull className="h-4 w-4" aria-hidden="true" />
+              <span>Hangman Reveal (-5)</span>
             </button>
             <button
               onClick={handleVowelReveal}
               disabled={participants[currentParticipantIndex].points < 3 || isTeamMode === false}
-              className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+              className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg flex items-center gap-2"
             >
-              Vowel Reveal (-3)
+              <Asterisk className="h-4 w-4" aria-hidden="true" />
+              <span>Vowel Reveal (-3)</span>
             </button>
             <button
               onClick={handleFriendSubstitution}
               disabled={participants[currentParticipantIndex].points < 4 || isTeamMode === false}
-              className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+              className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg flex items-center gap-2"
             >
-              Friend Sub (-4)
+              <Users className="h-4 w-4" aria-hidden="true" />
+              <span>Friend Sub (-4)</span>
             </button>
           </div>
         </div>
