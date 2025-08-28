@@ -152,12 +152,6 @@ body {
     }
 }
 
-@media (max-width: 640px) {
-    .w-1\/2 {
-        width: 100%;
-    }
-}
-
 @media (max-width: 480px) {
     .text-4xl {
         font-size: 2rem;
@@ -169,6 +163,12 @@ body {
     
     .p-8 {
         padding: 1rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .w-1\/2 {
+        width: 100%;
     }
 }
 
