@@ -76,7 +76,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [gameMode, setGameMode] = useState("team");
     const handleStart = () => {
         const config = {
-            participants: [{ name: "Team 1", lives: 5, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0 }, { name: "Team 2", lives: 5, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0 }],
+            participants: [{ name: "Team 1", lives: 5, points: 1, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0 }, { name: "Team 2", lives: 5, points: 1, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0 }],
             gameMode,
             timerDuration: 30,
             skipPenaltyType: 'lives',
