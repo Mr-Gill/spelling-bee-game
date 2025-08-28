@@ -12,6 +12,7 @@ export interface Participant {
   name: string;
   lives: number;
   points: number;
+  difficultyLevel: number;
   streak: number;
   attempted: number;
   correct: number;
@@ -45,10 +46,6 @@ export interface GameResults {
   gameMode: 'team' | 'individual';
   duration: number;
   missedWords: Word[];
-}
-
-export interface GameState {
-  difficultyLevel: number;
 }
 
 export interface LeaderboardEntry {

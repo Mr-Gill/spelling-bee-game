@@ -1,6 +1,6 @@
-import React, 'react';
+import React from 'react';
 import { SkipForward } from 'lucide-react';
-import { GameConfig, Word, Participant, GameResults, GameState } from './types';
+import { GameConfig, Word, Participant, GameResults } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
 import timeoutSoundFile from './audio/timeout.mp3';
@@ -36,12 +36,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       wordsCorrect: 0
     }))
   );
-  const [gameState, setGameState] = React.useState<GameState>({ difficultyLevel: config.difficultyLevel });
   const [currentParticipantIndex, setCurrentParticipantIndex] = React.useState(0);
   const [currentWord, setCurrentWord] = React.useState<Word | null>(null);
   const [timeLeft, setTimeLeft] = React.useState(config.timerDuration);
   const isTeamMode = config.gameMode === 'team';
   const [showWord, setShowWord] = React.useState(true);
+  const [showHint, setShowHint] = React.useState(false);
+  const [usedHint, setUsedHint] = React.useState(false);
   const [showDefinition, setShowDefinition] = React.useState(false);
   const [showOrigin, setShowOrigin] = React.useState(false);
   const [showSentence, setShowSentence] = React.useState(false);
@@ -118,7 +119,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentWord, letters]);
 
-  const selectNextWord = (level: number = gameState.difficultyLevel) => {
+  const selectNextWord = (level: number) => {
     let index = Math.min(level, difficultyOrder.length - 1);
     let nextWord: Word | null = null;
     let nextDifficulty = difficultyOrder[index];
@@ -146,6 +147,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
       setExtraAttempt(false);
       setIsHelpOpen(false);
+      setShowHint(false);
+      setUsedHint(false);
       setShowDefinition(false);
       setShowOrigin(false);
       setShowSentence(false);
@@ -173,7 +176,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     if (currentWord) setMissedWords(prev => [...prev, currentWord]);
     const updatedParticipants = participants.map((p, index) => {
       if (index === currentParticipantIndex) {
-        return { ...p, lives: p.lives - 1, streak: 0 };
+        return {
+          ...p,
+          lives: p.lives - 1,
+          streak: 0,
+          difficultyLevel: Math.max(0, p.difficultyLevel - config.progressionSpeed)
+        };
       }
       return p;
     });
@@ -190,10 +198,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
           setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
         }
         setAttemptedParticipants(new Set());
-        selectNextWord();
+        const nextIndex = (currentParticipantIndex + 1) % participants.length;
+        selectNextWord(updatedParticipants[nextIndex].difficultyLevel);
         nextTurn();
       } else {
         setAttemptedParticipants(newAttempted);
+        setUsedHint(false);
         nextTurn();
         setTimeLeft(config.timerDuration);
       }
@@ -215,6 +225,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     const cost = 5;
     if (participants[currentParticipantIndex].points < cost || !currentWord) return;
     spendPoints(currentParticipantIndex, cost);
+    setUsedHint(true);
     const unrevealed = revealedLetters
       .map((rev, idx) => (!rev ? idx : null))
       .filter(idx => idx !== null) as number[];
@@ -229,6 +240,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     const cost = 3;
     if (participants[currentParticipantIndex].points < cost || !currentWord) return;
     spendPoints(currentParticipantIndex, cost);
+    setUsedHint(true);
     const newRevealed = currentWord.word.split('').map((letter, idx) => {
       return revealedLetters[idx] || 'aeiou'.includes(letter.toLowerCase());
     });
@@ -240,6 +252,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     if (participants[currentParticipantIndex].points < cost) return;
     spendPoints(currentParticipantIndex, cost);
     setExtraAttempt(true);
+    setUsedHint(true);
   };
 
   const handleSpellingSubmit = () => {
@@ -249,6 +262,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     const guess = letters.join('').trim().toLowerCase();
     const isCorrect = guess === currentWord.word.toLowerCase();
     const shouldCountWord = isCorrect || !extraAttempt;
+    const nextIndex = (currentParticipantIndex + 1) % participants.length;
+    const nextDifficulty = participants[nextIndex].difficultyLevel;
 
     setParticipants(prev =>
       prev.map((p, index) => {
@@ -265,9 +280,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             correct: p.correct + (isCorrect ? 1 : 0),
             wordsAttempted: p.wordsAttempted + (shouldCountWord ? 1 : 0),
             wordsCorrect: p.wordsCorrect + (shouldCountWord && isCorrect ? 1 : 0),
-            lives: isCorrect ? p.lives : p.lives - 1,
             points: isCorrect ? p.points + pointsEarned : p.points,
-            streak: isCorrect ? p.streak + 1 : 0
+            streak: isCorrect ? p.streak + 1 : 0,
+            difficultyLevel: isCorrect
+              ? usedHint
+                ? p.difficultyLevel
+                : p.difficultyLevel + config.progressionSpeed
+              : p.difficultyLevel
           };
         }
         return p;
@@ -284,11 +303,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       }
       setFeedback({ message: 'Correct! 🎉', type: 'success' });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
-      const newLevel = gameState.difficultyLevel + config.progressionSpeed;
-      setGameState(prev => ({ ...prev, difficultyLevel: newLevel }));
       setTimeout(() => {
         setFeedback({ message: '', type: '' });
-        selectNextWord(newLevel);
+        selectNextWord(nextDifficulty);
         nextTurn();
       }, 2000);
       return;
@@ -339,11 +356,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       })
     );
     setAttemptedParticipants(new Set());
+    const nextIndex = (currentParticipantIndex + 1) % participants.length;
+    const nextDifficulty = participants[nextIndex].difficultyLevel;
 
     setTimeout(() => {
       setFeedback({ message: '', type: '' });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
-      selectNextWord();
+      selectNextWord(nextDifficulty);
       nextTurn();
     }, 1500);
   };
@@ -369,7 +388,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   };
 
   React.useEffect(() => {
-    selectNextWord();
+    selectNextWord(participants[0].difficultyLevel);
   }, []);
 
   React.useEffect(() => {
@@ -444,6 +463,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
                 <strong className="text-yellow-300">Definition:</strong> {currentWord.definition}
               </p>
             )}
+            <button
+              onClick={() => {
+                setShowHint(!showHint);
+                if (!showHint) setUsedHint(true);
+              }}
+              className="mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+            >
+              {showHint ? 'Hide Hint' : 'Show Hint'}
+            </button>
             {showOrigin && (
               <p className="text-xl mb-2">
                 <strong className="text-yellow-300">Origin:</strong> {currentWord.origin}
