@@ -164,6 +164,29 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const handleStart = () => {
     // handleStart logic remains here...
   };
+
+  const startSessionChallenge = async () => {
+    try {
+      const randomList = bundledWordLists[Math.floor(Math.random() * bundledWordLists.length)];
+      const response = await fetch(`wordlists/${randomList.file}`);
+      const words: Word[] = await response.json();
+      const wordDatabase = { easy: words, medium: words, tricky: words };
+      onStartGame({
+        participants: gameMode === 'team' ? teams : students,
+        gameMode,
+        timerDuration,
+        wordDatabase,
+        skipPenaltyType,
+        skipPenaltyValue,
+        soundEnabled,
+        effectsEnabled,
+        difficultyLevel: initialDifficulty,
+        progressionSpeed,
+      });
+    } catch {
+      setError('Failed to load session challenge.');
+    }
+  };
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-8 text-white">
@@ -229,7 +252,21 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           {/* Word List UI remains here... */}
         </div>
 
-        {/* Start Game Button and other elements remain here... */}
+        <div className="flex gap-4">
+          <button
+            onClick={handleStart}
+            className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded"
+          >
+            Start Game
+          </button>
+          <button
+            onClick={startSessionChallenge}
+            className="bg-yellow-500 hover:bg-yellow-600 px-6 py-3 rounded"
+          >
+            Session Challenge
+          </button>
+        </div>
+        {error && <div className="mt-4 text-red-400">{error}</div>}
       </div>
     </div>
   );

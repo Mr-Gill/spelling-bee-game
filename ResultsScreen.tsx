@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GameResults, GameConfig, LeaderboardEntry } from './types';
 import applauseSoundFile from './audio/applause.mp3';
 import { launchConfetti } from './confetti';
@@ -12,6 +12,9 @@ interface ResultsScreenProps {
 
 const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestart, onViewLeaderboard }) => {
   const applauseAudio = useRef<HTMLAudioElement>(new Audio(applauseSoundFile));
+  const totalScore = results.participants.reduce((sum, p) => sum + p.points, 0);
+  const [bestClassScore, setBestClassScore] = useState(0);
+  const [isBestScore, setIsBestScore] = useState(false);
 
   useEffect(() => {
     // Update the leaderboard with the new scores
@@ -29,6 +32,21 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
       
     localStorage.setItem('leaderboard', JSON.stringify(updated));
   }, [results]);
+
+  useEffect(() => {
+    const history: { date: string; score: number }[] = JSON.parse(localStorage.getItem('sessionHistory') || '[]');
+    history.push({ date: new Date().toISOString(), score: totalScore });
+    localStorage.setItem('sessionHistory', JSON.stringify(history));
+
+    const storedBest = Number(localStorage.getItem('bestClassScore') || '0');
+    if (totalScore > storedBest) {
+      localStorage.setItem('bestClassScore', String(totalScore));
+      setBestClassScore(totalScore);
+      setIsBestScore(true);
+    } else {
+      setBestClassScore(storedBest);
+    }
+  }, [totalScore]);
 
   useEffect(() => {
     // Play sound and show confetti if there's a winner and effects are enabled
@@ -73,6 +91,14 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
       {results?.duration && (
         <div className="text-2xl mb-6">Game Duration: {results.duration} seconds</div>
       )}
+
+      <div className="text-xl mb-4">
+        Session Score: {totalScore}
+      </div>
+      <div className="text-xl mb-8">
+        Best Class Score: {bestClassScore}
+        {isBestScore && <span className="text-green-400 font-bold ml-2">New High Score!</span>}
+      </div>
 
       <div className="text-5xl mb-4">🏆</div>
 
