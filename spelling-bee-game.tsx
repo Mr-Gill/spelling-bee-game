@@ -65,8 +65,8 @@ const SpellingBeeGame = () => {
 
 const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [teams, setTeams] = useState([
-        { name: "Team Alpha", lives: 5, points: 0 },
-        { name: "Team Beta", lives: 5, points: 0 }
+        { name: "Team Alpha", lives: 5, points: 0, streak: 0 },
+        { name: "Team Beta", lives: 5, points: 0, streak: 0 }
     ]);
     const [gameMode, setGameMode] = useState("team");
     const [timerDuration, setTimerDuration] = useState(30);
@@ -76,7 +76,6 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [includeMissedWords, setIncludeMissedWords] = useState(false);
     const [error, setError] = useState("");
     
-    // from codex/create-wordlists-directory-and-setupscreen-dropdown
     const bundledWordLists = [
         { label: "Example JSON", file: "example.json" },
         { label: "Example CSV", file: "example.csv" },
@@ -84,12 +83,11 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     ];
     const [selectedBundledList, setSelectedBundledList] = useState("");
     
-    // from codex/extend-setupscreen-for-individual-game-mode
     const [students, setStudents] = useState([]);
     const [studentName, setStudentName] = useState("");
 
     const addTeam = () => {
-        setTeams([...teams, { name: "", lives: 5, points: 0 }]);
+        setTeams([...teams, { name: "", lives: 5, points: 0, streak: 0 }]);
     };
 
     const removeTeam = (index) => {
@@ -105,7 +103,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
 
     const addStudent = () => {
         if (studentName.trim()) {
-            setStudents([...students, { name: studentName.trim(), lives: 5, points: 0 }]);
+            setStudents([...students, { name: studentName.trim(), lives: 5, points: 0, streak: 0 }]);
             setStudentName("");
         }
     };
@@ -166,7 +164,6 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
         }
     };
     
-    // from codex/create-wordlists-directory-and-setupscreen-dropdown
     useEffect(() => {
         if (selectedBundledList) {
             fetch(`wordlists/${selectedBundledList}`)
@@ -402,8 +399,8 @@ const GameScreen = ({ config, onEndGame }) => {
     const [feedback, setFeedback] = useState({ message: "", type: "" });
     const timerRef = useRef(null);
     const [startTime] = useState(Date.now());
-    const [revealedLetters, setRevealedLetters] = useState([]); // for hangman/vowel reveals
-    const [extraAttempt, setExtraAttempt] = useState(false); // friend substitution
+    const [revealedLetters, setRevealedLetters] = useState([]);
+    const [extraAttempt, setExtraAttempt] = useState(false);
 
     const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
     const [wordQueues, setWordQueues] = useState({
@@ -431,7 +428,7 @@ const GameScreen = ({ config, onEndGame }) => {
         }, 1000);
 
         return () => clearInterval(timerRef.current);
-    }, [currentWord, timeLeft]);
+    }, [currentWord]);
     
     const difficultyOrder = ['easy', 'medium', 'tricky', 'review'];
 
@@ -460,8 +457,8 @@ const GameScreen = ({ config, onEndGame }) => {
             setCurrentWord(nextWord);
             setTimeLeft(config.timerDuration);
             setAttemptedParticipants(new Set());
-            setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false)); // from codex branch
-            setExtraAttempt(false); // from codex branch
+            setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
+            setExtraAttempt(false);
         } else {
             const activeParticipants = participants.filter(p => p.lives > 0);
             onEndGame({ winner: activeParticipants.length === 1 ? activeParticipants[0] : null, participants });
@@ -564,12 +561,20 @@ const GameScreen = ({ config, onEndGame }) => {
         setParticipants(prev =>
             prev.map((p, index) => {
                 if (index === currentParticipantIndex) {
+                    // from codex/add-points-field-and-scoring-system
+                    const multipliers = { easy: 1, medium: 2, tricky: 3 };
+                    const basePoints = 10;
+                    const multiplier = multipliers[currentWord.difficulty] || 1;
+                    const bonus = p.streak * 5;
+                    const pointsEarned = basePoints * multiplier + bonus;
+                    
                     return {
                         ...p,
                         attempted: p.attempted + 1,
                         correct: p.correct + (isCorrect ? 1 : 0),
                         lives: isCorrect ? p.lives : p.lives - 1,
-                        points: isCorrect ? p.points + 1 : p.points,
+                        points: isCorrect ? p.points + pointsEarned : p.points,
+                        streak: isCorrect ? p.streak + 1 : 0,
                     };
                 }
                 return p;
@@ -639,7 +644,7 @@ const GameScreen = ({ config, onEndGame }) => {
                     <div key={index} className="text-center">
                         <div className="text-2xl font-bold">{p.name}</div>
                         <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(p.lives)}</div>
-                        <div className="text-lg text-yellow-300 mt-1">Pts: {p.points}</div>
+                        <div className="text-xl font-bold text-green-400">{p.points} pts</div>
                     </div>
                 ))}
             </div>
