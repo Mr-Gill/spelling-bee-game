@@ -4,6 +4,8 @@ import { GameConfig, Word, Participant, GameResults } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
 import timeoutSoundFile from './audio/timeout.mp3';
+import letterCorrectSoundFile from './audio/letter-correct.mp3';
+import letterWrongSoundFile from './audio/letter-wrong.mp3';
 import shopSoundFile from './audio/shop.mp3';
 import loseLifeSoundFile from './audio/lose-life.mp3';
 import { launchConfetti } from './utils/confetti';
@@ -62,6 +64,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const correctAudio = React.useRef<HTMLAudioElement>(new Audio(correctSoundFile));
   const wrongAudio = React.useRef<HTMLAudioElement>(new Audio(wrongSoundFile));
   const timeoutAudio = React.useRef<HTMLAudioElement>(new Audio(timeoutSoundFile));
+  const letterCorrectAudio = React.useRef<HTMLAudioElement>(new Audio(letterCorrectSoundFile));
+  const letterWrongAudio = React.useRef<HTMLAudioElement>(new Audio(letterWrongSoundFile));
   const shopAudio = React.useRef<HTMLAudioElement>(new Audio(shopSoundFile));
   const loseLifeAudio = React.useRef<HTMLAudioElement>(new Audio(loseLifeSoundFile));
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
@@ -121,22 +125,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!currentWord || isPaused) return;
       if (/^[a-zA-Z]$/.test(e.key)) {
-        setLetters(prev => {
-          const index = prev.findIndex(l => l === '');
-          if (index === -1) return prev;
-          const newLetters = [...prev];
-          newLetters[index] = e.key;
-          return newLetters;
-        });
+        typeLetter(e.key);
       } else if (e.key === 'Backspace') {
-        setLetters(prev => {
-          const reverseIndex = [...prev].reverse().findIndex(l => l !== '');
-          if (reverseIndex === -1) return prev;
-          const index = prev.length - 1 - reverseIndex;
-          const newLetters = [...prev];
-          newLetters[index] = '';
-          return newLetters;
-        });
+        handleVirtualBackspace();
       } else if (e.key === 'Enter') {
         handleSpellingSubmit();
       }
@@ -313,14 +304,28 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     });
   };
 
-  const handleVirtualLetter = (letter: string) => {
+  const typeLetter = (letter: string) => {
+    if (!currentWord) return;
     setLetters(prev => {
       const index = prev.findIndex(l => l === '');
       if (index === -1) return prev;
       const newLetters = [...prev];
       newLetters[index] = letter;
+      if (config.soundEnabled) {
+        const isCorrectLetter =
+          currentWord.word[index].toLowerCase() === letter.toLowerCase();
+        const audio = isCorrectLetter
+          ? letterCorrectAudio.current
+          : letterWrongAudio.current;
+        audio.currentTime = 0;
+        audio.play();
+      }
       return newLetters;
     });
+  };
+
+  const handleVirtualLetter = (letter: string) => {
+    typeLetter(letter);
   };
 
   const handleVirtualBackspace = () => {
