@@ -19692,7 +19692,6 @@ var SkipForward = createLucideIcon("skip-forward", __iconNode);
 
 // spelling-bee-game.tsx
 var import_jsx_runtime = __toESM(require_jsx_runtime());
-var import_react3 = __toESM(require_react());
 var SpellingBeeGame = () => {
   const [gameState, setGameState] = (0, import_react3.useState)("setup");
   const [gameConfig, setGameConfig] = (0, import_react3.useState)(null);
@@ -19727,7 +19726,7 @@ var SpellingBeeGame = () => {
     setGameResults(null);
   };
   if (gameState === "setup") {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SetupScreen, { onStartGame: handleStartGame, onAddCustomWords: handleAddCustomWords, wordDatabase });
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SetupScreen, { onStartGame: handleStartGame, onAddCustomWords: handleAddCustomWords });
   }
   if (gameState === "playing") {
     return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(GameScreen, { config: gameConfig, onEndGame: handleEndGame });
@@ -19737,10 +19736,10 @@ var SpellingBeeGame = () => {
   }
   return null;
 };
-var SetupScreen = ({ onStartGame, onAddCustomWords, wordDatabase }) => {
+var SetupScreen = ({ onStartGame, onAddCustomWords }) => {
   const [teams, setTeams] = (0, import_react3.useState)([
-    { name: "Team Alpha", lives: 5 },
-    { name: "Team Beta", lives: 5 }
+    { name: "Team Alpha", lives: 5, points: 0, streak: 0 },
+    { name: "Team Beta", lives: 5, points: 0, streak: 0 }
   ]);
   const [gameMode, setGameMode] = (0, import_react3.useState)("team");
   const [timerDuration, setTimerDuration] = (0, import_react3.useState)(30);
@@ -19758,7 +19757,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, wordDatabase }) => {
   const [students, setStudents] = (0, import_react3.useState)([]);
   const [studentName, setStudentName] = (0, import_react3.useState)("");
   const addTeam = () => {
-    setTeams([...teams, { name: "", lives: 5 }]);
+    setTeams([...teams, { name: "", lives: 5, points: 0, streak: 0 }]);
   };
   const removeTeam = (index) => {
     setTeams(teams.filter((_, i) => i !== index));
@@ -19771,7 +19770,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, wordDatabase }) => {
   };
   const addStudent = () => {
     if (studentName.trim()) {
-      setStudents([...students, { name: studentName.trim(), lives: 5 }]);
+      setStudents([...students, { name: studentName.trim(), lives: 5, points: 0, streak: 0 }]);
       setStudentName("");
     }
   };
@@ -19794,8 +19793,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, wordDatabase }) => {
     } catch (e) {
     }
     const lines = content.trim().split("\n");
-    if (lines.length < 2)
-      return;
+    if (lines.length < 2) return;
     const headerLine = lines[0];
     const delimiter = headerLine.includes(",") ? "," : "	";
     const headers = headerLine.split(delimiter).map((h) => h.trim());
@@ -19836,35 +19834,35 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, wordDatabase }) => {
   }, []);
   const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
   const handleStart = () => {
-    let participantsArray = [];
+    let finalParticipants;
     if (gameMode === "team") {
       const trimmedTeams = teams.map((team) => ({ ...team, name: team.name.trim() })).filter((team) => team.name !== "");
       if (trimmedTeams.length < 2) {
         setError("Please enter names for at least two teams.");
         return;
       }
-      participantsArray = trimmedTeams;
+      finalParticipants = trimmedTeams.map((t) => ({ ...t, attempted: 0, correct: 0 }));
     } else {
       const trimmedStudents = students.map((student) => ({ ...student, name: student.name.trim() })).filter((student) => student.name !== "");
       if (trimmedStudents.length < 2) {
         setError("Please enter names for at least two students.");
         return;
       }
-      participantsArray = trimmedStudents;
+      finalParticipants = trimmedStudents.map((s) => ({ ...s, attempted: 0, correct: 0 }));
     }
     setError("");
-    let finalWords = [...parsedCustomWords];
+    let finalWords = parsedCustomWords;
     if (includeMissedWords) {
       const extraWords = Object.values(missedWordsCollection).flat();
       finalWords = [...finalWords, ...extraWords];
     }
     onAddCustomWords(finalWords);
-    const config = { participants: participantsArray, gameMode, timerDuration };
+    const config = { participants: finalParticipants, gameMode, timerDuration };
     onStartGame(config);
   };
   return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-8 text-white", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "max-w-7xl mx-auto", children: [
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-center mb-12", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300", children: "🏆 SPELLING BEE CHAMPIONSHIP" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300", children: "\u{1F3C6} SPELLING BEE CHAMPIONSHIP" }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-2xl", children: "Get ready to spell your way to victory!" })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mb-8", children: [
@@ -20032,26 +20030,13 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, wordDatabase }) => {
       ] })
     ] }) }),
     error && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-red-300 text-center mb-4", children: error }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "mb-8", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-3xl font-bold mb-4 text-center", children: "Select Timer Duration" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "flex justify-center gap-4", children: [15, 30, 45, 60].map((time) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-        "button",
-        {
-          onClick: () => setTimerDuration(time),
-          className: `px-6 py-3 rounded-lg text-xl font-bold ${timerDuration === time ? "bg-yellow-300 text-black" : "bg-blue-500 hover:bg-blue-400"}`,
-          children: [
-            time,
-            "s"
-          ]
-        },
-        time
-      )) })
-    ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: handleStart, className: "w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-8", children: "START GAME" })
   ] }) });
 };
 var GameScreen = ({ config, onEndGame }) => {
-  const [participants, setParticipants] = (0, import_react3.useState)(config.participants);
+  const [participants, setParticipants] = (0, import_react3.useState)(
+    config.participants.map((p) => ({ ...p, attempted: 0, correct: 0 }))
+  );
   const [currentParticipantIndex, setCurrentParticipantIndex] = (0, import_react3.useState)(0);
   const [currentWord, setCurrentWord] = (0, import_react3.useState)(null);
   const [timeLeft, setTimeLeft] = (0, import_react3.useState)(config.timerDuration);
@@ -20060,6 +20045,10 @@ var GameScreen = ({ config, onEndGame }) => {
   const [inputValue, setInputValue] = (0, import_react3.useState)("");
   const [feedback, setFeedback] = (0, import_react3.useState)({ message: "", type: "" });
   const timerRef = (0, import_react3.useRef)(null);
+  const [startTime] = (0, import_react3.useState)(Date.now());
+  const [revealedLetters, setRevealedLetters] = (0, import_react3.useState)([]);
+  const [extraAttempt, setExtraAttempt] = (0, import_react3.useState)(false);
+  const [isHelpOpen, setIsHelpOpen] = (0, import_react3.useState)(false);
   const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
   const [wordQueues, setWordQueues] = (0, import_react3.useState)({
     easy: shuffleArray(config.wordDatabase.easy),
@@ -20071,8 +20060,7 @@ var GameScreen = ({ config, onEndGame }) => {
   const [attemptedParticipants, setAttemptedParticipants] = (0, import_react3.useState)(/* @__PURE__ */ new Set());
   const [missedWords, setMissedWords] = (0, import_react3.useState)([]);
   (0, import_react3.useEffect)(() => {
-    if (!currentWord)
-      return;
+    if (!currentWord) return;
     timerRef.current = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
@@ -20109,8 +20097,10 @@ var GameScreen = ({ config, onEndGame }) => {
       setCurrentWord(nextWord);
       setTimeLeft(config.timerDuration);
       setAttemptedParticipants(/* @__PURE__ */ new Set());
+      setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
+      setExtraAttempt(false);
+      setIsHelpOpen(false);
     } else {
-      const activeParticipants = participants.filter((p) => p.lives > 0);
       onEndGameWithMissedWords();
     }
   };
@@ -20118,11 +20108,18 @@ var GameScreen = ({ config, onEndGame }) => {
     setCurrentParticipantIndex((prevIndex) => (prevIndex + 1) % participants.length);
   };
   const handleIncorrectAttempt = () => {
+    if (extraAttempt) {
+      setFeedback({ message: "Incorrect. You still have one more attempt!", type: "error" });
+      setExtraAttempt(false);
+      setInputValue("");
+      setTimeLeft(config.timerDuration);
+      return;
+    }
     setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
     setMissedWords((prev) => [...prev, currentWord]);
     const updatedParticipants = participants.map((p, index) => {
       if (index === currentParticipantIndex) {
-        return { ...p, lives: p.lives - 1 };
+        return { ...p, lives: p.lives - 1, streak: 0 };
       }
       return p;
     });
@@ -20144,13 +20141,68 @@ var GameScreen = ({ config, onEndGame }) => {
       }
     }, 2e3);
   };
+  const spendPoints = (participantIndex, cost) => {
+    setParticipants(
+      (prev) => prev.map((p, index) => {
+        if (index === participantIndex) {
+          return { ...p, points: p.points - cost };
+        }
+        return p;
+      })
+    );
+  };
+  const handleHangmanReveal = () => {
+    const cost = 5;
+    if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+    spendPoints(currentParticipantIndex, cost);
+    const unrevealed = revealedLetters.map((rev, idx) => !rev ? idx : null).filter((idx) => idx !== null);
+    if (unrevealed.length === 0) return;
+    const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+    const newRevealed = [...revealedLetters];
+    newRevealed[randomIndex] = true;
+    setRevealedLetters(newRevealed);
+  };
+  const handleVowelReveal = () => {
+    const cost = 3;
+    if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+    spendPoints(currentParticipantIndex, cost);
+    const newRevealed = currentWord.word.split("").map((letter, idx) => {
+      return revealedLetters[idx] || "aeiou".includes(letter.toLowerCase());
+    });
+    setRevealedLetters(newRevealed);
+  };
+  const handleFriendSubstitution = () => {
+    const cost = 4;
+    if (participants[currentParticipantIndex].points < cost) return;
+    spendPoints(currentParticipantIndex, cost);
+    setExtraAttempt(true);
+  };
   const handleSpellingSubmit = () => {
-    if (!currentWord)
-      return;
+    if (!currentWord) return;
     clearInterval(timerRef.current);
     const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
+    setParticipants(
+      (prev) => prev.map((p, index) => {
+        if (index === currentParticipantIndex) {
+          const multipliers = { easy: 1, medium: 2, tricky: 3 };
+          const basePoints = 10;
+          const multiplier = multipliers[currentDifficulty] || 1;
+          const bonus = p.streak * 5;
+          const pointsEarned = basePoints * multiplier + bonus;
+          return {
+            ...p,
+            attempted: p.attempted + 1,
+            correct: p.correct + (isCorrect ? 1 : 0),
+            lives: isCorrect ? p.lives : p.lives - 1,
+            points: isCorrect ? p.points + pointsEarned : p.points,
+            streak: isCorrect ? p.streak + 1 : 0
+          };
+        }
+        return p;
+      })
+    );
     if (isCorrect) {
-      setFeedback({ message: "Correct! 🎉", type: "success" });
+      setFeedback({ message: "Correct! \u{1F389}", type: "success" });
       setTimeout(() => {
         setFeedback({ message: "", type: "" });
         setInputValue("");
@@ -20180,23 +20232,32 @@ var GameScreen = ({ config, onEndGame }) => {
     stored[lessonKey] = [...existing, ...missedWords];
     localStorage.setItem("missedWordsCollection", JSON.stringify(stored));
     const activeParticipants = participants.filter((p) => p.lives > 0);
-    onEndGame({ winner: activeParticipants.length === 1 ? activeParticipants[0] : null, participants, gameMode: config.gameMode });
+    const finalParticipants = participants.map((p) => ({
+      ...p,
+      accuracy: p.attempted > 0 ? p.correct / p.attempted * 100 : 0
+    }));
+    onEndGame({ winner: activeParticipants.length === 1 ? activeParticipants[0] : null, participants: finalParticipants, gameMode: config.gameMode, duration: Math.round((Date.now() - startTime) / 1e3) });
   };
   (0, import_react3.useEffect)(() => {
     selectNextWord();
   }, []);
   (0, import_react3.useEffect)(() => {
-    if (!participants || participants.length === 0)
-      return;
+    if (!participants || participants.length === 0) return;
     const activeParticipants = participants.filter((p) => p.lives > 0);
     if (activeParticipants.length <= 1) {
       onEndGameWithMissedWords();
     }
   }, [participants, onEndGame]);
+  const buyHint = (hintKey, cost) => {
+  };
   return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center", children: [
     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute top-8 left-8 flex gap-8", children: participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-center", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-2xl font-bold", children: p.name }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-4xl font-bold text-yellow-300", children: "❤️".repeat(p.lives) })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-4xl font-bold text-yellow-300", children: "\u2764\uFE0F".repeat(p.lives) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-xl font-bold text-green-400", children: [
+        p.points,
+        " pts"
+      ] })
     ] }, index)) }),
     feedback.message && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${feedback.type === "success" ? "bg-green-500" : feedback.type === "error" ? "bg-red-500" : "bg-blue-500"}`, children: feedback.message }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "absolute top-8 right-8 text-center", children: [
@@ -20222,6 +20283,7 @@ var GameScreen = ({ config, onEndGame }) => {
         )
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8", children: [
+        revealedLetters.some((r) => r) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-3xl font-mono mb-4", children: currentWord.word.split("").map((letter, idx) => revealedLetters[idx] ? letter : "_").join(" ") }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { className: "text-2xl mb-2", children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-yellow-300", children: "Definition:" }),
           " ",
@@ -20251,39 +20313,104 @@ var GameScreen = ({ config, onEndGame }) => {
           }
         ),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: handleSpellingSubmit, className: "bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg text-2xl font-bold", children: "Submit" })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mt-6 flex justify-center gap-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          "button",
+          {
+            onClick: handleHangmanReveal,
+            disabled: participants[currentParticipantIndex].points < 5 || isTeamMode === false,
+            className: "bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg",
+            children: "Hangman Reveal (-5)"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          "button",
+          {
+            onClick: handleVowelReveal,
+            disabled: participants[currentParticipantIndex].points < 3 || isTeamMode === false,
+            className: "bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg",
+            children: "Vowel Reveal (-3)"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          "button",
+          {
+            onClick: handleFriendSubstitution,
+            disabled: participants[currentParticipantIndex].points < 4 || isTeamMode === false,
+            className: "bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg",
+            children: "Friend Sub (-4)"
+          }
+        )
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: skipWord, className: "absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl", children: "Skip" })
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: skipWord, className: "absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SkipForward, { size: 24 }) })
   ] });
 };
 var ResultsScreen = ({ results, onRestart }) => {
-  const { participants, winner, gameMode } = results;
-  const isTeamMode = gameMode === "team";
+  const handleExport = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(results, null, 2));
+    const anchor = document.createElement("a");
+    anchor.href = dataStr;
+    anchor.download = "spelling-bee-results.json";
+    anchor.click();
+  };
   const getWinnerMessage = () => {
+    const { winner, participants } = results;
     if (winner) {
       return `Winner: ${winner.name}`;
     }
-    const activeParticipants = participants.filter(p => p.lives > 0);
+    const activeParticipants = participants.filter((p) => p.lives > 0);
     if (activeParticipants.length > 1) {
-      const names = activeParticipants.map(p => p.name).join(' and ');
+      const names = activeParticipants.map((p) => p.name).join(" and ");
       return `It's a draw between ${names}!`;
     }
     return "No one wins this round!";
   };
   return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300", children: "🏆 Game Over! 🏆" }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300", children: "\u{1F3C6} Game Over! \u{1F3C6}" }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-4xl mb-8", children: getWinnerMessage() }),
+    results?.duration && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-2xl mb-6", children: [
+      "Game Duration: ",
+      results.duration,
+      " seconds"
+    ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-3xl font-bold mb-4", children: "Final Scores" }),
-      participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex justify-between items-center text-2xl mb-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: p.name }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "font-bold text-yellow-300", children: [
+      results && results.participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-left text-xl mb-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "font-bold", children: p.name }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-yellow-300", children: [
+          p.correct,
+          "/",
+          p.attempted,
+          " correct (",
+          (p.correct / p.attempted * 100).toFixed(0),
+          "%) - ",
           p.lives,
-          " lives remaining"
+          " lives remaining - ",
+          p.points,
+          " points"
         ] })
       ] }, index))
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: onRestart, className: "mt-12 bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold", children: "Play Again" })
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex gap-6 mt-12", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+        "button",
+        {
+          onClick: handleExport,
+          className: "bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold",
+          children: "Export Results"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+        "button",
+        {
+          onClick: onRestart,
+          className: "bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold",
+          children: "Play Again"
+        }
+      )
+    ] })
   ] });
 };
 var container = document.getElementById("root");
@@ -20293,7 +20420,6 @@ if (container) {
     /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react3.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SpellingBeeGame, {}) })
   );
 }
-
 /*! Bundled license information:
 
 react/cjs/react.development.js:
