@@ -1,15 +1,16 @@
 import React, { useEffect, useRef } from 'react';
-import { GameResults, LeaderboardEntry } from './types';
+import { GameResults, GameConfig, LeaderboardEntry } from './types';
 import applauseSoundFile from './audio/applause.mp3';
 import { launchConfetti } from './utils/confetti';
 
 interface ResultsScreenProps {
   results: GameResults;
+  config: GameConfig;
   onRestart: () => void;
   onViewLeaderboard: () => void;
 }
 
-const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onViewLeaderboard }) => {
+const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestart, onViewLeaderboard }) => {
   const applauseAudio = useRef<HTMLAudioElement>(new Audio(applauseSoundFile));
 
   useEffect(() => {
@@ -29,12 +30,16 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
   }, [results]);
 
   useEffect(() => {
-    // Play sound and show confetti if there's a winner
+    // Play sound and show confetti if there's a winner and effects are enabled
     if (results.winner) {
-      applauseAudio.current.play();
-      launchConfetti();
+      if (config.soundEnabled) {
+        applauseAudio.current.play();
+      }
+      if (config.effectsEnabled) {
+        launchConfetti();
+      }
     }
-  }, [results.winner]);
+  }, [results.winner, config.soundEnabled, config.effectsEnabled]);
 
   const handleExport = () => {
     const dataStr =

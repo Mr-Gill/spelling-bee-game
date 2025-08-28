@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, 'react';
 import { SkipForward } from 'lucide-react';
 import { GameConfig, Word, Participant, GameResults, GameState } from './types';
 import correctSoundFile from './audio/correct.mp3';
@@ -27,7 +27,7 @@ interface WordQueues {
 const difficultyOrder: Array<'easy' | 'medium' | 'tricky' | 'review'> = ['easy', 'medium', 'tricky', 'review'];
 
 const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
-  const [participants, setParticipants] = useState<Participant[]>(
+  const [participants, setParticipants] = React.useState<Participant[]>(
     config.participants.map(p => ({
       ...p,
       attempted: 0,
@@ -36,45 +36,47 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       wordsCorrect: 0
     }))
   );
-  const [gameState, setGameState] = useState<GameState>({ difficultyLevel: config.difficultyLevel });
-  const [currentParticipantIndex, setCurrentParticipantIndex] = useState(0);
-  const [currentWord, setCurrentWord] = useState<Word | null>(null);
-  const [timeLeft, setTimeLeft] = useState(config.timerDuration);
+  const [gameState, setGameState] = React.useState<GameState>({ difficultyLevel: config.difficultyLevel });
+  const [currentParticipantIndex, setCurrentParticipantIndex] = React.useState(0);
+  const [currentWord, setCurrentWord] = React.useState<Word | null>(null);
+  const [timeLeft, setTimeLeft] = React.useState(config.timerDuration);
   const isTeamMode = config.gameMode === 'team';
-  const [showWord, setShowWord] = useState(true);
-  const [showHint, setShowHint] = useState(false);
-  const [letters, setLetters] = useState<string[]>([]);
-  const [feedback, setFeedback] = useState<Feedback>({ message: '', type: '' });
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const [startTime] = useState(Date.now());
-  const [revealedLetters, setRevealedLetters] = useState<boolean[]>([]);
-  const [extraAttempt, setExtraAttempt] = useState(false);
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [showWord, setShowWord] = React.useState(true);
+  const [showHint, setShowHint] = React.useState(false);
+  const [letters, setLetters] = React.useState<string[]>([]);
+  const [feedback, setFeedback] = React.useState<Feedback>({ message: '', type: '' });
+  const timerRef = React.useRef<NodeJS.Timeout | null>(null);
+  const [startTime] = React.useState(Date.now());
+  const [revealedLetters, setRevealedLetters] = React.useState<boolean[]>([]);
+  const [extraAttempt, setExtraAttempt] = React.useState(false);
+  const [isHelpOpen, setIsHelpOpen] = React.useState(false);
 
-  const correctAudio = useRef<HTMLAudioElement>(new Audio(correctSoundFile));
-  const wrongAudio = useRef<HTMLAudioElement>(new Audio(wrongSoundFile));
-  const timeoutAudio = useRef<HTMLAudioElement>(new Audio(timeoutSoundFile));
+  const correctAudio = React.useRef<HTMLAudioElement>(new Audio(correctSoundFile));
+  const wrongAudio = React.useRef<HTMLAudioElement>(new Audio(wrongSoundFile));
+  const timeoutAudio = React.useRef<HTMLAudioElement>(new Audio(timeoutSoundFile));
 
   const shuffleArray = (arr: Word[]) => [...arr].sort(() => Math.random() - 0.5);
-  const [wordQueues, setWordQueues] = useState<WordQueues>({
+  const [wordQueues, setWordQueues] = React.useState<WordQueues>({
     easy: shuffleArray(config.wordDatabase.easy),
     medium: shuffleArray(config.wordDatabase.medium),
     tricky: shuffleArray(config.wordDatabase.tricky),
     review: []
   });
-  const [currentDifficulty, setCurrentDifficulty] = useState<'easy' | 'medium' | 'tricky' | 'review'>(
+  const [currentDifficulty, setCurrentDifficulty] = React.useState<'easy' | 'medium' | 'tricky' | 'review'>(
     difficultyOrder[Math.min(config.difficultyLevel, difficultyOrder.length - 1)]
   );
-  const [attemptedParticipants, setAttemptedParticipants] = useState<Set<number>>(new Set());
-  const [missedWords, setMissedWords] = useState<Word[]>([]);
+  const [attemptedParticipants, setAttemptedParticipants] = React.useState<Set<number>>(new Set());
+  const [missedWords, setMissedWords] = React.useState<Word[]>([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!currentWord) return;
     timerRef.current = setInterval(() => {
       setTimeLeft(prevTime => {
         if (prevTime <= 1) {
-          timeoutAudio.current.currentTime = 0;
-          timeoutAudio.current.play();
+          if (config.soundEnabled) {
+            timeoutAudio.current.currentTime = 0;
+            timeoutAudio.current.play();
+          }
           clearInterval(timerRef.current as NodeJS.Timeout);
           handleIncorrectAttempt();
           return 0;
@@ -83,9 +85,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       });
     }, 1000);
     return () => clearInterval(timerRef.current as NodeJS.Timeout);
-  }, [currentWord]);
+  }, [currentWord, config.soundEnabled]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!currentWord) return;
       if (/^[a-zA-Z]$/.test(e.key)) {
@@ -269,9 +271,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     );
 
     if (isCorrect) {
-      launchConfetti();
-      correctAudio.current.currentTime = 0;
-      correctAudio.current.play();
+      if (config.soundEnabled) {
+        correctAudio.current.currentTime = 0;
+        correctAudio.current.play();
+      }
+      if (config.effectsEnabled) {
+        launchConfetti();
+      }
       setFeedback({ message: 'Correct! 🎉', type: 'success' });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
       const newLevel = gameState.difficultyLevel + config.progressionSpeed;
@@ -284,8 +290,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       return;
     }
 
-    wrongAudio.current.currentTime = 0;
-    wrongAudio.current.play();
+    if (config.soundEnabled) {
+      wrongAudio.current.currentTime = 0;
+      wrongAudio.current.play();
+    }
     handleIncorrectAttempt();
   };
 
@@ -356,11 +364,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     });
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     selectNextWord();
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!participants || participants.length === 0) return;
     const activeParticipants = participants.filter(p => p.lives > 0);
     if (activeParticipants.length <= 1) {

@@ -61,7 +61,7 @@ const SpellingBeeGame = () => {
         return <GameScreen config={gameConfig} onEndGame={handleEndGame} />;
     }
     if (gameState === "results") {
-        return <ResultsScreen results={gameResults} onRestart={handleRestart} onViewLeaderboard={handleViewLeaderboard} />;
+        return <ResultsScreen results={gameResults} config={gameConfig} onRestart={handleRestart} onViewLeaderboard={handleViewLeaderboard} />;
     }
     if (gameState === "leaderboard") {
         return <LeaderboardScreen onBack={handleBackToSetup} />;
@@ -76,9 +76,15 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [gameMode, setGameMode] = useState("team");
     const handleStart = () => {
         const config = {
-            participants: [{ name: "Team 1" }, { name: "Team 2" }],
+            participants: [{ name: "Team 1", lives: 5, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0 }, { name: "Team 2", lives: 5, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0 }],
             gameMode,
-            // ... other config options
+            timerDuration: 30,
+            skipPenaltyType: 'lives',
+            skipPenaltyValue: 1,
+            soundEnabled: true,
+            effectsEnabled: true,
+            difficultyLevel: 0,
+            progressionSpeed: 1
         };
         onStartGame(config);
     };
@@ -100,13 +106,13 @@ const GameScreen = ({ config, onEndGame }) => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
             <h1 className="text-4xl text-center">Playing Game...</h1>
-            <button onClick={() => onEndGame({ participants: [], winner: null })} className="bg-red-500 p-4 mt-4">End Game</button>
+            <button onClick={() => onEndGame({ participants: config.participants, winner: config.participants[0], duration: 120, missedWords: [] })} className="bg-red-500 p-4 mt-4">End Game</button>
         </div>
     );
 };
 
 // --- Results Screen Component ---
-const ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
+const ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
     useEffect(() => {
         const stored = JSON.parse(localStorage.getItem('leaderboard') || '[]');
         const newEntries = results.participants.map(p => ({

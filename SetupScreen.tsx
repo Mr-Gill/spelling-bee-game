@@ -30,7 +30,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
   ]);
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
-  const [timerDuration] = useState(30);
+  const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
   const [parsedCustomWords, setParsedCustomWords] = useState<Word[]>([]);
   const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, Word[]>>({});
@@ -48,9 +48,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [studentName, setStudentName] = useState('');
   const [skipPenaltyType, setSkipPenaltyType] = useState<'lives' | 'points'>('lives');
   const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [effectsEnabled, setEffectsEnabled] = useState(true);
   const [initialDifficulty, setInitialDifficulty] = useState(0);
   const [progressionSpeed, setProgressionSpeed] = useState(1);
-
   const addTeam = () => {
     setTeams([
       ...teams,
@@ -218,6 +219,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       timerDuration,
       skipPenaltyType,
       skipPenaltyValue,
+      soundEnabled,
+      effectsEnabled,
       difficultyLevel: initialDifficulty,
       progressionSpeed
     } as GameConfig;
@@ -361,6 +364,26 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               />
             </div>
           </div>
+        </div>
+
+        <div className="bg-white/10 p-6 rounded-lg mb-8">
+            <h2 className="text-2xl font-bold mb-4">Audio & Effects</h2>
+            <label className="flex items-center space-x-3 mb-2">
+                <input
+                type="checkbox"
+                checked={soundEnabled}
+                onChange={e => setSoundEnabled(e.target.checked)}
+                />
+                <span>Enable Sound</span>
+            </label>
+            <label className="flex items-center space-x-3">
+                <input
+                type="checkbox"
+                checked={effectsEnabled}
+                onChange={e => setEffectsEnabled(e.target.checked)}
+                />
+                <span>Enable Visual Effects</span>
+            </label>
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
