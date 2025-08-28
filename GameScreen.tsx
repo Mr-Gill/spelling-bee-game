@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SkipForward } from 'lucide-react';
 import { GameConfig, Word, Participant, GameResults } from './types';
+import correctSoundFile from './audio/correct.mp3';
+import wrongSoundFile from './audio/wrong.mp3';
+import timeoutSoundFile from './audio/timeout.mp3';
 
 interface GameScreenProps {
   config: GameConfig;
@@ -36,6 +39,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [extraAttempt, setExtraAttempt] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
+  const correctAudio = useRef<HTMLAudioElement>(new Audio(correctSoundFile));
+  const wrongAudio = useRef<HTMLAudioElement>(new Audio(wrongSoundFile));
+  const timeoutAudio = useRef<HTMLAudioElement>(new Audio(timeoutSoundFile));
+
   const shuffleArray = (arr: Word[]) => [...arr].sort(() => Math.random() - 0.5);
   const [wordQueues, setWordQueues] = useState<WordQueues>({
     easy: shuffleArray(config.wordDatabase.easy),
@@ -52,6 +59,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     timerRef.current = setInterval(() => {
       setTimeLeft(prevTime => {
         if (prevTime <= 1) {
+          timeoutAudio.current.currentTime = 0;
+          timeoutAudio.current.play();
           clearInterval(timerRef.current as NodeJS.Timeout);
           handleIncorrectAttempt();
           return 0;
@@ -212,6 +221,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     );
 
     if (isCorrect) {
+      correctAudio.current.currentTime = 0;
+      correctAudio.current.play();
       setFeedback({ message: 'Correct! 🎉', type: 'success' });
       setTimeout(() => {
         setFeedback({ message: '', type: '' });
@@ -222,6 +233,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       return;
     }
 
+    wrongAudio.current.currentTime = 0;
+    wrongAudio.current.play();
     handleIncorrectAttempt();
   };
 
