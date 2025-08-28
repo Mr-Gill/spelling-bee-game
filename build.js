@@ -21,6 +21,7 @@ fs.copyFileSync('style.css', path.join(distDir, 'style.css'));
 fs.copyFileSync('manifest.webmanifest', path.join(distDir, 'manifest.webmanifest'));
 fs.copyFileSync('service-worker.js', path.join(distDir, 'service-worker.js'));
 fs.copyFileSync('words.json', path.join(distDir, 'words.json'));
+fs.copyFileSync('leaderboard.json', path.join(distDir, 'leaderboard.json'));
 fs.cpSync('icons', path.join(distDir, 'icons'), { recursive: true });
 
 // Copy wordlists directory

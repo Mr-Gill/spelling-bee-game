@@ -8,8 +8,26 @@ interface SetupScreenProps {
 
 const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords }) => {
   const [teams, setTeams] = useState<Participant[]>([
-    { name: 'Team Alpha', lives: 5, points: 0, streak: 0, attempted: 0, correct: 0 },
-    { name: 'Team Beta', lives: 5, points: 0, streak: 0, attempted: 0, correct: 0 }
+    {
+      name: 'Team Alpha',
+      lives: 5,
+      points: 0,
+      streak: 0,
+      attempted: 0,
+      correct: 0,
+      wordsAttempted: 0,
+      wordsCorrect: 0
+    },
+    {
+      name: 'Team Beta',
+      lives: 5,
+      points: 0,
+      streak: 0,
+      attempted: 0,
+      correct: 0,
+      wordsAttempted: 0,
+      wordsCorrect: 0
+    }
   ]);
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [timerDuration] = useState(30);
@@ -30,9 +48,23 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [studentName, setStudentName] = useState('');
   const [skipPenaltyType, setSkipPenaltyType] = useState<'lives' | 'points'>('lives');
   const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
+  const [initialDifficulty, setInitialDifficulty] = useState(0);
+  const [progressionSpeed, setProgressionSpeed] = useState(1);
 
   const addTeam = () => {
-    setTeams([...teams, { name: '', lives: 5, points: 0, streak: 0, attempted: 0, correct: 0 }]);
+    setTeams([
+      ...teams,
+      {
+        name: '',
+        lives: 5,
+        points: 0,
+        streak: 0,
+        attempted: 0,
+        correct: 0,
+        wordsAttempted: 0,
+        wordsCorrect: 0
+      }
+    ]);
   };
 
   const removeTeam = (index: number) => {
@@ -48,7 +80,16 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     if (studentName.trim()) {
       setStudents([
         ...students,
-        { name: studentName.trim(), lives: 5, points: 0, streak: 0, attempted: 0, correct: 0 }
+        {
+          name: studentName.trim(),
+          lives: 5,
+          points: 0,
+          streak: 0,
+          attempted: 0,
+          correct: 0,
+          wordsAttempted: 0,
+          wordsCorrect: 0
+        }
       ]);
       setStudentName('');
     }
@@ -138,7 +179,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         setError('Please enter names for at least two teams.');
         return;
       }
-      finalParticipants = trimmedTeams.map(t => ({ ...t, attempted: 0, correct: 0 }));
+      finalParticipants = trimmedTeams.map(t => ({
+        ...t,
+        attempted: 0,
+        correct: 0,
+        wordsAttempted: 0,
+        wordsCorrect: 0
+      }));
     } else {
       const trimmedStudents = students
         .map(student => ({ ...student, name: student.name.trim() }))
@@ -147,7 +194,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         setError('Please enter names for at least two students.');
         return;
       }
-      finalParticipants = trimmedStudents.map(s => ({ ...s, attempted: 0, correct: 0 }));
+      finalParticipants = trimmedStudents.map(s => ({
+        ...s,
+        attempted: 0,
+        correct: 0,
+        wordsAttempted: 0,
+        wordsCorrect: 0
+      }));
     }
 
     setError('');
@@ -164,7 +217,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       gameMode,
       timerDuration,
       skipPenaltyType,
-      skipPenaltyValue
+      skipPenaltyValue,
+      difficultyLevel: initialDifficulty,
+      progressionSpeed
     } as GameConfig;
     onStartGame(config);
   };
@@ -281,6 +336,34 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
+          <h2 className="text-2xl font-bold mb-4">Difficulty Settings</h2>
+          <div className="flex gap-4">
+            <div>
+              <label className="block mb-2">Initial Difficulty</label>
+              <select
+                value={initialDifficulty}
+                onChange={e => setInitialDifficulty(Number(e.target.value))}
+                className="p-2 rounded-md bg-white/20 text-white"
+              >
+                <option value={0}>Easy</option>
+                <option value={1}>Medium</option>
+                <option value={2}>Tricky</option>
+              </select>
+            </div>
+            <div>
+              <label className="block mb-2">Progression Speed</label>
+              <input
+                type="number"
+                min={1}
+                value={progressionSpeed}
+                onChange={e => setProgressionSpeed(Number(e.target.value))}
+                className="p-2 rounded-md bg-white/20 text-white w-24"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white/10 p-6 rounded-lg mb-8">
           <h2 className="text-2xl font-bold mb-4">Add Custom Word List</h2>
           <div className="mb-6">
             <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">
@@ -331,7 +414,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           </div>
           <div className="mt-4 text-sm text-gray-300">
             <p>
-              <strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `sentence`,
+              <strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`,
               `prefixSuffix`, `pronunciation`. The difficulty will be determined by word length.
             </p>
           </div>

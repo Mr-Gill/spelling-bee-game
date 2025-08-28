@@ -9,9 +9,21 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
 
   useEffect(() => {
-    const stored: LeaderboardEntry[] = JSON.parse(localStorage.getItem('leaderboard') || '[]');
-    const sorted = stored.sort((a, b) => b.score - a.score).slice(0, 10);
-    setEntries(sorted);
+    const storedData = localStorage.getItem('leaderboard');
+    if (storedData) {
+      const parsedEntries: LeaderboardEntry[] = JSON.parse(storedData);
+      const sorted = parsedEntries.sort((a, b) => b.score - a.score).slice(0, 10);
+      setEntries(sorted);
+    } else {
+      // Fallback to a default leaderboard if nothing is in storage
+      fetch('leaderboard.json')
+        .then(res => res.json())
+        .then((data: LeaderboardEntry[]) => {
+          const sorted = data.sort((a, b) => b.score - a.score).slice(0, 10);
+          setEntries(sorted);
+        })
+        .catch(err => console.error("Could not load default leaderboard", err));
+    }
   }, []);
 
   return (
@@ -21,17 +33,19 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
         {entries.length === 0 ? (
           <div className="text-xl">No scores yet.</div>
         ) : (
-          entries.map((e, index) => (
-            <div key={index} className="flex justify-between text-xl mb-2">
-              <span className="font-bold">{index + 1}. {e.name}</span>
-              <span className="text-yellow-300">{e.score}</span>
-            </div>
-          ))
+          <ol className="text-xl space-y-2">
+            {entries.map((entry, index) => (
+              <li key={index} className="flex justify-between py-1">
+                <span className="font-bold">{index + 1}. {entry.name}</span>
+                <span className="text-yellow-300">{entry.score}</span>
+              </li>
+            ))}
+          </ol>
         )}
       </div>
       <button
         onClick={onBack}
-        className="mt-8 bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-xl text-2xl font-bold"
+        className="mt-8 bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-xl text-2xl font-bold block mx-auto"
       >
         Back
       </button>

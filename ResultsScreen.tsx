@@ -15,11 +15,14 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
       score: p.points,
       date: new Date().toISOString(),
     }));
+    
     const updated = [...stored, ...newEntries]
       .sort((a, b) => b.score - a.score)
-      .slice(0, 10);
+      .slice(0, 10); // Keep only the top 10 scores
+      
     localStorage.setItem('leaderboard', JSON.stringify(updated));
   }, [results]);
+
   const handleExport = () => {
     const dataStr =
       'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(results, null, 2));
@@ -57,7 +60,11 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
           <div key={index} className="text-left text-xl mb-3">
             <div className="font-bold">{p.name}</div>
             <div className="text-yellow-300">
-              {p.correct}/{p.attempted} correct ({(p.correct / p.attempted * 100).toFixed(0)}%) - {p.lives} lives remaining - {p.points} points
+              {p.wordsCorrect}/{p.wordsAttempted} correct (
+              {p.wordsAttempted > 0
+                ? Math.round((p.wordsCorrect / p.wordsAttempted) * 100)
+                : 0}
+              %) - {p.lives} lives remaining - {p.points} points
             </div>
           </div>
         ))}
@@ -74,7 +81,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
         </div>
       )}
 
-      <div className="flex gap-6 mt-12">
+      <div className="flex gap-6 mt-12 flex-wrap justify-center">
         <button
           onClick={handleExport}
           className="bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold"
