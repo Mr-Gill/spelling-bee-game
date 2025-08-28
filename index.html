@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Interactive Spelling Bee Championship</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icons/icon.svg">
+    <link rel="stylesheet" href="/spelling-bee-game/style.css">
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="module" src="/spelling-bee-game/app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js');
+            });
+        }
+    </script>
+    <script>
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            if (target instanceof HTMLButtonElement) {
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                target.classList.add('btn-bounce');
+                target.addEventListener('animationend', () => {
+                    target.classList.remove('btn-bounce');
+                }, { once: true });
+            }
+        });
+    </script>
+</body>
+</html>
