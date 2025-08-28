@@ -65,6 +65,8 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const [timerDuration, setTimerDuration] = useState(30);
     const [customWordListText, setCustomWordListText] = useState("");
     const [parsedCustomWords, setParsedCustomWords] = useState([]);
+    const [wordListError, setWordListError] = useState("");
+    const [rowErrors, setRowErrors] = useState([]);
     const [missedWordsCollection, setMissedWordsCollection] = useState({});
     const [includeMissedWords, setIncludeMissedWords] = useState(false);
     const [error, setError] = useState("");
@@ -113,31 +115,63 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     };
 
     const parseWordList = (content) => {
+        setWordListError("");
+        setRowErrors([]);
+        const requiredFields = ["word", "definition"];
+
         try {
             const parsed = JSON.parse(content);
             if (Array.isArray(parsed)) {
-                setParsedCustomWords(parsed);
+                const rowIssues = [];
+                const valid = parsed.filter((row, idx) => {
+                    const missing = requiredFields.filter(f => !row[f]);
+                    if (missing.length) {
+                        rowIssues.push(`Row ${idx + 1} missing ${missing.join(', ')}`);
+                        return false;
+                    }
+                    return true;
+                });
+                setRowErrors(rowIssues);
+                setParsedCustomWords(valid);
                 return;
             }
         } catch (e) {
         }
 
         const lines = content.trim().split('\n');
-        if (lines.length < 2) return;
+        if (lines.length < 2) {
+            setWordListError("Word list must include a header row and at least one data row.");
+            setParsedCustomWords([]);
+            return;
+        }
 
         const headerLine = lines[0];
         const delimiter = headerLine.includes(',') ? ',' : '\t';
 
         const headers = headerLine.split(delimiter).map(h => h.trim());
-        const words = lines.slice(1).map(line => {
+        const missingHeaders = requiredFields.filter(h => !headers.includes(h));
+        if (missingHeaders.length) {
+            setWordListError(`Missing required columns: ${missingHeaders.join(', ')}`);
+            setParsedCustomWords([]);
+            return;
+        }
+
+        const rowIssues = [];
+        const words = lines.slice(1).map((line, index) => {
             const values = line.split(delimiter);
             const wordObj = {};
-            headers.forEach((header, index) => {
-                wordObj[header] = values[index] ? values[index].trim() : "";
+            headers.forEach((header, idx) => {
+                wordObj[header] = values[idx] ? values[idx].trim() : "";
             });
+            const missing = requiredFields.filter(f => !wordObj[f]);
+            if (missing.length) {
+                rowIssues.push(`Row ${index + 2} missing ${missing.join(', ')}`);
+            }
             return wordObj;
         });
-        setParsedCustomWords(words);
+        setRowErrors(rowIssues);
+        const validWords = words.filter(w => requiredFields.every(f => w[f]));
+        setParsedCustomWords(validWords);
     };
 
     const handleFileChange = (event) => {
@@ -161,8 +195,12 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     }, [selectedBundledList]);
 
     useEffect(() => {
-        if(customWordListText) {
-            parseWordList(customWordListText)
+        if (customWordListText) {
+            parseWordList(customWordListText);
+        } else {
+            setParsedCustomWords([]);
+            setWordListError("");
+            setRowErrors([]);
         }
     }, [customWordListText]);
 
@@ -345,6 +383,32 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                     <div className="mt-4 text-sm text-gray-300">
                         <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `sentence`, `prefixSuffix`, `pronunciation`. The difficulty will be determined by word length.</p>
                     </div>
+                    {wordListError && (
+                        <p className="text-red-300 mt-4">{wordListError}</p>
+                    )}
+                    {rowErrors.length > 0 && (
+                        <div className="mt-4 text-yellow-200 text-sm">
+                            <p className="font-semibold">Rows with issues:</p>
+                            <ul className="list-disc list-inside">
+                                {rowErrors.map((err, i) => (
+                                    <li key={i}>{err}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                    {parsedCustomWords.length > 0 && (
+                        <div className="mt-4 text-sm text-gray-300">
+                            <p className="font-semibold mb-2">Preview:</p>
+                            <ul className="list-disc list-inside">
+                                {parsedCustomWords.slice(0, 5).map((w, i) => (
+                                    <li key={i}><span className="text-white font-semibold">{w.word}</span> - {w.definition}</li>
+                                ))}
+                            </ul>
+                            {parsedCustomWords.length > 5 && (
+                                <p className="mt-2">...and {parsedCustomWords.length - 5} more</p>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {missedWordCount > 0 && (
