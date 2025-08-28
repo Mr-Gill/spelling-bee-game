@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { GameResults, GameConfig, LeaderboardEntry } from './types';
 import applauseSoundFile from './audio/applause.mp3';
 import { launchConfetti } from './confetti';
+import beeImg from './img/avatars/bee.svg';
 
 interface ResultsScreenProps {
   results: GameResults;
@@ -81,9 +82,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
         {results && results.participants.map((p, index) => (
           <div key={index} className="text-left text-xl mb-3">
             <div className="flex items-center gap-2">
-              {p.avatar && (
-                <img src={p.avatar} alt={`${p.name} avatar`} className="w-6 h-6 rounded-full" />
-              )}
+              <img src={p.avatar || beeImg} alt={`${p.name} avatar`} className="w-6 h-6 rounded-full" />
               <div className="font-bold">{p.name}</div>
             </div>
             <div className="text-yellow-300">

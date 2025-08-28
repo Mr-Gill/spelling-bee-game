@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Word, Participant, GameConfig } from './types';
+import beeImg from './img/avatars/bee.svg';
+import bookImg from './img/avatars/book.svg';
+import trophyImg from './img/avatars/trophy.svg';
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
@@ -7,18 +10,15 @@ interface SetupScreenProps {
 }
 
 const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords }) => {
-  const avatarOptions = [
-    { label: '🐝 Bee', src: 'avatars/bee.svg' },
-    { label: '📘 Book', src: 'avatars/book.svg' },
-    { label: '🏆 Trophy', src: 'avatars/trophy.svg' }
-  ];
+  const avatars = [beeImg, bookImg, trophyImg];
 
-  const defaultTeams: Participant[] = [
-    { name: 'Team Alpha', lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: avatarOptions[0].src },
-    { name: 'Team Beta', lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: avatarOptions[1].src }
-  ];
+  const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
-  const [teams, setTeams] = useState<Participant[]>(defaultTeams);
+  const getDefaultTeams = (): Participant[] => [
+    { name: 'Team Alpha', lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
+    { name: 'Team Beta', lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
+  ];
+  const [teams, setTeams] = useState<Participant[]>(getDefaultTeams());
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
@@ -57,14 +57,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     if (savedTeams) {
       try {
         const parsed: Participant[] = JSON.parse(savedTeams);
-        setTeams(parsed.map(t => ({ avatar: avatarOptions[0].src, ...t })));
+        setTeams(parsed.map(t => ({ ...t, avatar: t.avatar || getRandomAvatar() })));
       } catch {}
     }
     const savedStudents = localStorage.getItem('students');
     if (savedStudents) {
       try {
         const parsed: Participant[] = JSON.parse(savedStudents);
-        setStudents(parsed.map(s => ({ avatar: avatarOptions[0].src, ...s })));
+        setStudents(parsed.map(s => ({ ...s, avatar: s.avatar || getRandomAvatar() })));
       } catch {}
     }
     const savedTheme = localStorage.getItem('theme');
@@ -93,7 +93,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const clearRoster = () => {
     localStorage.removeItem('teams');
     localStorage.removeItem('students');
-    setTeams(defaultTeams);
+    setTeams(getDefaultTeams());
     setStudents([]);
   };
 
@@ -107,7 +107,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     correct: 0,
     wordsAttempted: 0,
     wordsCorrect: 0,
-    avatar: avatarOptions[0].src
+    avatar: getRandomAvatar()
   });
 
   const addTeam = () => updateTeams([...teams, createParticipant('', 0)]);
@@ -115,11 +115,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const updateTeamName = (index: number, name: string) => {
     const newTeams = teams.map((team, i) => (i === index ? { ...team, name } : team));
-    updateTeams(newTeams);
-  };
-
-  const updateTeamAvatar = (index: number, avatar: string) => {
-    const newTeams = teams.map((team, i) => (i === index ? { ...team, avatar } : team));
     updateTeams(newTeams);
   };
 
@@ -134,11 +129,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const updateStudentName = (index: number, name: string) => {
     const newStudents = students.map((student, i) => (i === index ? { ...student, name } : student));
-    updateStudents(newStudents);
-  };
-
-  const updateStudentAvatar = (index: number, avatar: string) => {
-    const newStudents = students.map((student, i) => (i === index ? { ...student, avatar } : student));
     updateStudents(newStudents);
   };
 
@@ -176,12 +166,22 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             <>
               {teams.map((team, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
-                  <img src={team.avatar || avatarOptions[0].src} alt="avatar" className="w-8 h-8 rounded-full" />
-                  <input type="text" value={team.name} onChange={e => updateTeamName(index, e.target.value)} placeholder={`Team ${index + 1} Name`} className="flex-grow p-2 rounded-md bg-white/20 text-white" />
-                  <select value={team.avatar} onChange={e => updateTeamAvatar(index, e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
-                    {avatarOptions.map(a => (<option key={a.src} value={a.src}>{a.label}</option>))}
-                  </select>
-                  {teams.length > 1 && (<button onClick={() => removeTeam(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
+                  <img src={team.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                  <input
+                    type="text"
+                    value={team.name}
+                    onChange={e => updateTeamName(index, e.target.value)}
+                    placeholder={`Team ${index + 1} Name`}
+                    className="flex-grow p-2 rounded-md bg-white/20 text-white"
+                  />
+                  {teams.length > 1 && (
+                    <button
+                      onClick={() => removeTeam(index)}
+                      className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded"
+                    >
+                      Remove
+                    </button>
+                  )}
                 </div>
               ))}
               <button onClick={addTeam} className="mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded">Add Team</button>
@@ -191,12 +191,22 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               {/* Single and Bulk Student Add UI remains here... */}
               {students.map((student, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
-                  <img src={student.avatar || avatarOptions[0].src} alt="avatar" className="w-8 h-8 rounded-full" />
-                  <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
-                  <select value={student.avatar} onChange={e => updateStudentAvatar(index, e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
-                    {avatarOptions.map(a => (<option key={a.src} value={a.src}>{a.label}</option>))}
-                  </select>
-                  {students.length > 1 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
+                  <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                  <input
+                    type="text"
+                    value={student.name}
+                    onChange={e => updateStudentName(index, e.target.value)}
+                    placeholder="Student name"
+                    className="flex-grow p-2 rounded-md bg-white/20 text-white"
+                  />
+                  {students.length > 1 && (
+                    <button
+                      onClick={() => removeStudent(index)}
+                      className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded"
+                    >
+                      Remove
+                    </button>
+                  )}
                 </div>
               ))}
             </>
