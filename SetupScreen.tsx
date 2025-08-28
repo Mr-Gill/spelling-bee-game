@@ -72,7 +72,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
     localStorage.setItem('teacherMode', String(teacherMode));
   }, [teacherMode]);
-
+  
   useEffect(() => {
     const savedTeams = localStorage.getItem('teams');
     if (savedTeams) try { setTeams(JSON.parse(savedTeams).map((t: Participant) => ({ ...t, avatar: t.avatar || getRandomAvatar() }))); } catch {}

@@ -38,6 +38,7 @@ export interface GameConfig {
   skipPenaltyValue: number;
   soundEnabled: boolean;
   effectsEnabled: boolean;
+
   musicStyle: string;
   musicVolume: number;
   difficultyLevel: number;
