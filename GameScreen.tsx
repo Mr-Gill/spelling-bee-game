@@ -8,8 +8,9 @@ import letterCorrectSoundFile from './audio/letter-correct.mp3';
 import letterWrongSoundFile from './audio/letter-wrong.mp3';
 import shopSoundFile from './audio/shop.mp3';
 import loseLifeSoundFile from './audio/lose-life.mp3';
-import { launchConfetti } from './utils/confetti';
+import { launchConfetti } from './confetti';
 import { speak } from './utils/tts';
+import useSound from './utils/useSound';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 
 // Interface definitions remain the same...
@@ -55,13 +56,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [isHelpOpen, setIsHelpOpen] = React.useState(false);
   const [isPaused, setIsPaused] = React.useState(false);
 
-  const correctAudio = React.useRef<HTMLAudioElement>(new Audio(correctSoundFile));
-  const wrongAudio = React.useRef<HTMLAudioElement>(new Audio(wrongSoundFile));
-  const timeoutAudio = React.useRef<HTMLAudioElement>(new Audio(timeoutSoundFile));
-  const letterCorrectAudio = React.useRef<HTMLAudioElement>(new Audio(letterCorrectSoundFile));
-  const letterWrongAudio = React.useRef<HTMLAudioElement>(new Audio(letterWrongSoundFile));
-  const shopAudio = React.useRef<HTMLAudioElement>(new Audio(shopSoundFile));
-  const loseLifeAudio = React.useRef<HTMLAudioElement>(new Audio(loseLifeSoundFile));
+  const playCorrect = useSound(correctSoundFile, config.soundEnabled);
+  const playWrong = useSound(wrongSoundFile, config.soundEnabled);
+  const playTimeout = useSound(timeoutSoundFile, config.soundEnabled);
+  const playLetterCorrect = useSound(letterCorrectSoundFile, config.soundEnabled);
+  const playLetterWrong = useSound(letterWrongSoundFile, config.soundEnabled);
+  const playShop = useSound(shopSoundFile, config.soundEnabled);
+  const playLoseLife = useSound(loseLifeSoundFile, config.soundEnabled);
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
 
   const shuffleArray = (arr: Word[]) => [...arr].sort(() => Math.random() - 0.5);
@@ -90,10 +91,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     timerRef.current = setInterval(() => {
       setTimeLeft(prevTime => {
         if (prevTime <= 1) {
-          if (config.soundEnabled) {
-            timeoutAudio.current.currentTime = 0;
-            timeoutAudio.current.play();
-          }
+          playTimeout();
           clearInterval(timerRef.current as NodeJS.Timeout);
           handleIncorrectAttempt();
           return 0;
@@ -217,10 +215,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     });
     setParticipants(updatedParticipants);
 
-    if (config.soundEnabled) {
-      loseLifeAudio.current.currentTime = 0;
-      loseLifeAudio.current.play();
-    }
+    playLoseLife();
     if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
 
     const newAttempted = new Set(attemptedParticipants);
@@ -254,10 +249,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         return p;
       })
     );
-    if (config.soundEnabled) {
-      shopAudio.current.currentTime = 0;
-      shopAudio.current.play();
-    }
+    playShop();
   };
 
   const handleHangmanReveal = () => {
@@ -325,12 +317,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       if (index === -1) return prev;
       const newLetters = [...prev];
       newLetters[index] = letter;
-      if (config.soundEnabled) {
-        const isCorrectLetter = currentWord.word[index].toLowerCase() === letter.toLowerCase();
-        const audio = isCorrectLetter ? letterCorrectAudio.current : letterWrongAudio.current;
-        audio.currentTime = 0;
-        audio.play();
-      }
+      const isCorrectLetter = currentWord.word[index].toLowerCase() === letter.toLowerCase();
+      const play = isCorrectLetter ? playLetterCorrect : playLetterWrong;
+      play();
       return newLetters;
     });
   };
@@ -397,6 +386,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         correctAudio.current.currentTime = 0;
         correctAudio.current.play();
       }
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (config.effectsEnabled && !prefersReducedMotion) {
+      playCorrect();
       if (config.effectsEnabled) {
         launchConfetti();
       }
@@ -409,10 +401,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         nextTurn();
       }, 2000);
     } else {
-      if (config.soundEnabled) {
-        wrongAudio.current.currentTime = 0;
-        wrongAudio.current.play();
-      }
+      playWrong();
       handleIncorrectAttempt();
     }
   };
@@ -435,9 +424,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     });
     setParticipants(updatedParticipants);
 
-    if (isLivesPenalty && config.soundEnabled) {
-      loseLifeAudio.current.currentTime = 0;
-      loseLifeAudio.current.play();
+    if (isLivesPenalty) {
+      playLoseLife();
     }
     setFeedback({ message: `Word Skipped (${deduction})`, type: 'info' });
     if (currentWord) {
@@ -481,7 +469,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     }
   }, []);
 
-  React.useEffect(() => {
+React.useEffect(() => {
     if (!participants || participants.length === 0) return;
     const activeParticipants = participants.filter(p => p.lives > 0);
     if (activeParticipants.length <= 1) {
@@ -502,7 +490,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
           {toast}
         </div>
       )}
-      <div className="absolute top-8 left-8 flex gap-8">
+      <div className="absolute top-8 left-8 flex gap-8 items-center">
+        <img src="img/bee.svg" alt="Bee icon" className="w-12 h-12" />
         {participants.map((p, index) => (
           <div key={index} className="text-center">
             <div className="text-2xl font-bold">{p.name}</div>
@@ -511,7 +500,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
           </div>
         ))}
       </div>
-
+      
       {feedback.message && (
         <div className={`absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${
           feedback.type === 'success' ? 'bg-green-500' : feedback.type === 'error' ? 'bg-red-500' : 'bg-blue-500'
@@ -534,6 +523,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
       {currentWord && (
         <div className="w-full max-w-4xl text-center">
+          <img src="img/books.svg" alt="Book icon" className="w-10 h-10 mx-auto mb-4" />
           <h2 className="text-4xl font-bold mb-4">
             Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
           </h2>
@@ -714,6 +704,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             onLetter={handleVirtualLetter}
             onBackspace={handleVirtualBackspace}
             onSubmit={handleSpellingSubmit}
+            soundEnabled={config.soundEnabled}
           />
 
           <div className="mt-6 flex justify-center gap-4">

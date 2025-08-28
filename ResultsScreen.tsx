@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { GameResults, GameConfig, LeaderboardEntry } from './types';
 import applauseSoundFile from './audio/applause.mp3';
-import { launchConfetti } from './utils/confetti';
+import { launchConfetti } from './confetti';
 
 interface ResultsScreenProps {
   results: GameResults;
@@ -35,7 +35,8 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
       if (config.soundEnabled) {
         applauseAudio.current.play();
       }
-      if (config.effectsEnabled) {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (config.effectsEnabled && !prefersReducedMotion) {
         launchConfetti();
       }
     }
