@@ -506,6 +506,8 @@ const GameScreen = ({ config, onEndGame }) => {
         const cost = 5;
         if (participants[currentParticipantIndex].points < cost || !currentWord) return;
         spendPoints(currentParticipantIndex, cost);
+        // Ensure the word is hidden so the reveal has meaning
+        setShowWord(false);
         const unrevealed = revealedLetters
             .map((rev, idx) => (!rev ? idx : null))
             .filter((idx) => idx !== null);
@@ -520,6 +522,8 @@ const GameScreen = ({ config, onEndGame }) => {
         const cost = 3;
         if (participants[currentParticipantIndex].points < cost || !currentWord) return;
         spendPoints(currentParticipantIndex, cost);
+        // Hide the word and reveal all vowels
+        setShowWord(false);
         const newRevealed = currentWord.word.split('').map((letter, idx) => {
             return revealedLetters[idx] || 'aeiou'.includes(letter.toLowerCase());
         });
@@ -528,9 +532,12 @@ const GameScreen = ({ config, onEndGame }) => {
 
     const handleFriendSubstitution = () => {
         const cost = 4;
-        if (participants[currentParticipantIndex].points < cost) return;
+        if (extraAttempt || participants[currentParticipantIndex].points < cost) return;
         spendPoints(currentParticipantIndex, cost);
+        // Grant the team a fresh attempt and timer
         setExtraAttempt(true);
+        setTimeLeft(config.timerDuration);
+        setFeedback({ message: "Teammate substitution activated!", type: "info" });
     };
 
     const handleSpellingSubmit = () => {
@@ -701,7 +708,7 @@ const GameScreen = ({ config, onEndGame }) => {
                         </button>
                         <button
                             onClick={handleFriendSubstitution}
-                            disabled={participants[currentParticipantIndex].points < 4 || isTeamMode === false}
+                            disabled={participants[currentParticipantIndex].points < 4 || isTeamMode === false || extraAttempt}
                             className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
                         >
                             Friend Sub (-4)
