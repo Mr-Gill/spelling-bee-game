@@ -9,15 +9,20 @@ interface ResultsScreenProps {
 
 const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onViewLeaderboard }) => {
   useEffect(() => {
-    const existing: LeaderboardEntry[] = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+    const stored: LeaderboardEntry[] = JSON.parse(localStorage.getItem('leaderboard') || '[]');
     const newEntries: LeaderboardEntry[] = results.participants.map(p => ({
       name: p.name,
       score: p.points,
       date: new Date().toISOString(),
     }));
-    const updated = [...existing, ...newEntries].sort((a, b) => b.score - a.score);
+    
+    const updated = [...stored, ...newEntries]
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10); // Keep only the top 10 scores
+      
     localStorage.setItem('leaderboard', JSON.stringify(updated));
   }, [results]);
+
   const handleExport = () => {
     const dataStr =
       'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(results, null, 2));

@@ -2,7 +2,6 @@ export interface Word {
   word: string;
   syllables: string;
   definition: string;
-  example: string;
   origin: string;
   example: string;
   prefixSuffix?: string;
