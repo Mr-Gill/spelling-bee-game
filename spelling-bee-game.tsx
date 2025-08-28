@@ -2,28 +2,21 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Users, BookOpen, Play, Volume2, Globe, RotateCcw, SkipForward } from 'lucide-react';
 
-// The wordDatabase remains unchanged
-const wordDatabase = {
-    easy: [
-        { word: "friend", syllables: "friend (1 syllable)", definition: "A person you like and know well", origin: "Old English 'freond', from Germanic root meaning 'to love'", sentence: "My best friend and I love to play together.", prefixSuffix: "Base word with no prefix or suffix", pronunciation: "FREND" },
-        { word: "happy", syllables: "hap-py (2 syllables)", definition: "Feeling or showing pleasure and contentment", origin: "Middle English 'happy', from 'hap' meaning luck or fortune", sentence: "The children were happy to see the circus.", prefixSuffix: "Base word 'hap' + suffix '-py'", pronunciation: "HAP-ee" },
-    ],
-    medium: [
-        { word: "necessary", syllables: "nec-es-sar-y (4 syllables)", definition: "Required to be done or achieved; essential", origin: "Latin 'necessarius', from 'necesse' meaning unavoidable", sentence: "It is necessary to study hard for the test.", prefixSuffix: "Base 'necess' + suffix '-ary'", pronunciation: "NES-uh-ser-ee" },
-    ],
-    tricky: [
-        { word: "chrysanthemum", syllables: "chry-san-the-mum (4 syllables)", definition: "A type of flower with many thin petals", origin: "Greek 'chrysos' (gold) + 'anthemon' (flower)", sentence: "The chrysanthemum bloomed beautifully in autumn.", prefixSuffix: "Greek compound: chryso- (gold) + -anthemum (flower)", pronunciation: "kri-SAN-thuh-mum" },
-    ],
-};
-
 const SpellingBeeGame = () => {
     const [gameState, setGameState] = useState("setup");
     const [gameConfig, setGameConfig] = useState(null);
     const [gameResults, setGameResults] = useState(null);
     const [customWords, setCustomWords] = useState({ easy: [], medium: [], tricky: [] });
+    const [wordDatabase, setWordDatabase] = useState({ easy: [], medium: [], tricky: [] });
+
+    useEffect(() => {
+        fetch('words.json')
+            .then(res => res.json())
+            .then(data => setWordDatabase(data))
+            .catch(err => console.error('Failed to load word list', err));
+    }, []);
 
     const handleAddCustomWords = (newWords) => {
-        // Simple difficulty assignment based on word length for now
         const easy = newWords.filter(w => w.word.length <= 5);
         const medium = newWords.filter(w => w.word.length > 5 && w.word.length <= 8);
         const tricky = newWords.filter(w => w.word.length > 8);
@@ -121,27 +114,22 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
 
     const parseWordList = (content) => {
         try {
-            // Try parsing as JSON first
             const parsed = JSON.parse(content);
             if (Array.isArray(parsed)) {
                 setParsedCustomWords(parsed);
                 return;
             }
         } catch (e) {
-            // Not a valid JSON array, try parsing as TSV
         }
 
-        // Parse as CSV or TSV
         const lines = content.trim().split('\n');
-        if (lines.length < 2) return; // Need at least a header and one data row
+        if (lines.length < 2) return;
 
         const headerLine = lines[0];
         const delimiter = headerLine.includes(',') ? ',' : '\t';
 
         const headers = headerLine.split(delimiter).map(h => h.trim());
         const words = lines.slice(1).map(line => {
-            // Basic CSV parsing - doesn't handle commas inside quotes.
-            // For this application, it's a reasonable starting point.
             const values = line.split(delimiter);
             const wordObj = {};
             headers.forEach((header, index) => {
@@ -187,7 +175,6 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
 
     const handleStart = () => {
         let finalParticipants;
-        // Validate based on the selected game mode
         if (gameMode === 'team') {
             const trimmedTeams = teams.map(team => ({ ...team, name: team.name.trim() })).filter(team => team.name !== "");
             if (trimmedTeams.length < 2) {
@@ -195,7 +182,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 return;
             }
             finalParticipants = trimmedTeams.map(t => ({ ...t, attempted: 0, correct: 0 }));
-        } else { // Individual mode
+        } else {
             const trimmedStudents = students.map(student => ({ ...student, name: student.name.trim() })).filter(student => student.name !== "");
             if (trimmedStudents.length < 2) {
                 setError("Please enter names for at least two students.");
@@ -225,7 +212,6 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                     <p className="text-2xl">Get ready to spell your way to victory!</p>
                 </div>
 
-                {/* Game mode selection UI */}
                 <div className="mb-8">
                     <h2 className="text-3xl font-bold mb-4 text-center">Select Game Mode</h2>
                     <div className="flex justify-center gap-4">
@@ -244,7 +230,6 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                     </div>
                 </div>
 
-                {/* Participant setup section based on mode */}
                 <div className="bg-white/10 p-6 rounded-lg mb-8">
                     <h2 className="text-2xl font-bold mb-4">{gameMode === 'team' ? 'Teams' : 'Students'}</h2>
                     {gameMode === 'team' ? (
@@ -315,7 +300,6 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                     )}
                 </div>
 
-                {/* Custom Word List Section */}
                 <div className="bg-white/10 p-6 rounded-lg mb-8">
                     <h2 className="text-2xl font-bold mb-4">Add Custom Word List</h2>
                     <div className="mb-6">
@@ -362,7 +346,6 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                     </div>
                 </div>
 
-                {/* New Feature: Include missed words */}
                 {missedWordCount > 0 && (
                     <div className="bg-white/10 p-4 rounded-lg mb-8">
                         <label className="flex items-center space-x-3">
@@ -377,6 +360,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 )}
                 
                 {error && <p className="text-red-300 text-center mb-4">{error}</p>}
+                
                 <button onClick={handleStart} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-8">
                     START GAME
                 </button>
@@ -386,7 +370,6 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
 };
 
 const GameScreen = ({ config, onEndGame }) => {
-    // Correctly initialize participants with stat-tracking properties
     const [participants, setParticipants] = useState(
         config.participants.map(p => ({ ...p, attempted: 0, correct: 0 }))
     );
@@ -413,7 +396,6 @@ const GameScreen = ({ config, onEndGame }) => {
     const [attemptedParticipants, setAttemptedParticipants] = useState(new Set());
     const [missedWords, setMissedWords] = useState([]);
 
-    // Timer effect
     useEffect(() => {
         if (!currentWord) return;
         timerRef.current = setInterval(() => {
@@ -426,7 +408,6 @@ const GameScreen = ({ config, onEndGame }) => {
                 return prevTime - 1;
             });
         }, 1000);
-
         return () => clearInterval(timerRef.current);
     }, [currentWord]);
     
@@ -460,8 +441,7 @@ const GameScreen = ({ config, onEndGame }) => {
             setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
             setExtraAttempt(false);
         } else {
-            const activeParticipants = participants.filter(p => p.lives > 0);
-            onEndGame({ winner: activeParticipants.length === 1 ? activeParticipants[0] : null, participants });
+            onEndGameWithMissedWords();
         }
     };
 
@@ -482,7 +462,7 @@ const GameScreen = ({ config, onEndGame }) => {
         setMissedWords(prev => [...prev, currentWord]);
         const updatedParticipants = participants.map((p, index) => {
             if (index === currentParticipantIndex) {
-                return { ...p, lives: p.lives - 1 };
+                return { ...p, lives: p.lives - 1, streak: 0 };
             }
             return p;
         });
@@ -495,13 +475,11 @@ const GameScreen = ({ config, onEndGame }) => {
         setTimeout(() => {
             setFeedback({ message: "", type: "" });
             if (newAttempted.size >= participants.length) {
-                // All participants had a turn, move to next word and put current word in review
                 setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
                 setAttemptedParticipants(new Set());
                 selectNextWord();
                 nextTurn();
             } else {
-                // Move to the next participant's turn with the same word
                 setAttemptedParticipants(newAttempted);
                 nextTurn();
                 setTimeLeft(config.timerDuration);
@@ -557,14 +535,12 @@ const GameScreen = ({ config, onEndGame }) => {
 
         const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
 
-        // Update statistics for the current participant
         setParticipants(prev =>
             prev.map((p, index) => {
                 if (index === currentParticipantIndex) {
-                    // from codex/add-points-field-and-scoring-system
                     const multipliers = { easy: 1, medium: 2, tricky: 3 };
                     const basePoints = 10;
-                    const multiplier = multipliers[currentWord.difficulty] || 1;
+                    const multiplier = multipliers[currentDifficulty] || 1;
                     const bonus = p.streak * 5;
                     const pointsEarned = basePoints * multiplier + bonus;
                     
@@ -627,7 +603,6 @@ const GameScreen = ({ config, onEndGame }) => {
         selectNextWord();
     }, []);
 
-    // Check for game over condition
     useEffect(() => {
         if (!participants || participants.length === 0) return;
         const activeParticipants = participants.filter(p => p.lives > 0);
@@ -638,7 +613,6 @@ const GameScreen = ({ config, onEndGame }) => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
-            {/* Participant Lives Display */}
             <div className="absolute top-8 left-8 flex gap-8">
                 {participants.map((p, index) => (
                     <div key={index} className="text-center">
@@ -649,14 +623,12 @@ const GameScreen = ({ config, onEndGame }) => {
                 ))}
             </div>
 
-            {/* Feedback Message */}
             {feedback.message && (
                 <div className={`absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${feedback.type === 'success' ? 'bg-green-500' : feedback.type === 'error' ? 'bg-red-500' : 'bg-blue-500'}`}>
                     {feedback.message}
                 </div>
             )}
 
-            {/* Timer Display */}
             <div className="absolute top-8 right-8 text-center">
                 <div className={`text-6xl font-bold ${timeLeft <= 10 ? 'text-red-500' : 'text-yellow-300'}`}>{timeLeft}</div>
                 <div className="text-lg">seconds left</div>
@@ -747,14 +719,23 @@ const ResultsScreen = ({ results, onRestart }) => {
         anchor.click();
     };
 
+    const getWinnerMessage = () => {
+        const { winner, participants, gameMode } = results;
+        if (winner) {
+            return `Winner: ${winner.name}`;
+        }
+        const activeParticipants = participants.filter(p => p.lives > 0);
+        if (activeParticipants.length > 1) {
+            const names = activeParticipants.map(p => p.name).join(' and ');
+            return `It's a draw between ${names}!`;
+        }
+        return "No one wins this round!";
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center">
             <h1 className="text-6xl font-bold mb-4 text-yellow-300">🏆 Game Over! 🏆</h1>
-            {results && results.winner ? (
-                <h2 className="text-4xl mb-8">Winner: {results.winner.name}</h2>
-            ) : (
-                <h2 className="text-4xl mb-8">It's a draw!</h2>
-            )}
+            <h2 className="text-4xl mb-8">{getWinnerMessage()}</h2>
 
             {results?.duration && (
                 <div className="text-2xl mb-6">Game Duration: {results.duration} seconds</div>

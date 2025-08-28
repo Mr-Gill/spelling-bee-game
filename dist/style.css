@@ -152,6 +152,12 @@ body {
     }
 }
 
+@media (max-width: 640px) {
+    .w-1\/2 {
+        width: 100%;
+    }
+}
+
 @media (max-width: 480px) {
     .text-4xl {
         font-size: 2rem;

@@ -166,6 +166,12 @@ body {
     }
 }
 
+@media (max-width: 640px) {
+    .w-1\/2 {
+        width: 100%;
+    }
+}
+
 /* Print styles */
 @media print {
     .no-print {
