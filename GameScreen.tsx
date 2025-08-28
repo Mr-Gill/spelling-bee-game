@@ -320,25 +320,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
   const skipWord = () => {
     clearInterval(timerRef.current as NodeJS.Timeout);
-
-    const penalty = 2;
-    let deduction = '';
-    const updatedParticipants = participants.map((p, index) => {
-      if (index === currentParticipantIndex) {
-        if (p.points >= penalty) {
-          deduction = `-${penalty} pts`;
-          return { ...p, points: p.points - penalty };
-        }
-        deduction = '-1 life';
-        return { ...p, lives: p.lives - 1 };
-      }
-      return p;
-    });
-    setParticipants(updatedParticipants);
-    setFeedback({ message: `Word Skipped (${deduction})`, type: 'info' });
-    if (currentWord) {
-      setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
-    }
+    const isLivesPenalty = config.skipPenaltyType === 'lives';
+    const deduction = isLivesPenalty
+      ? `-${config.skipPenaltyValue} life${config.skipPenaltyValue > 1 ? 's' : ''}`
+      : `-${config.skipPenaltyValue} pts`;
     setParticipants(prev =>
       prev.map((p, index) => {
         if (index === currentParticipantIndex) {
@@ -347,14 +332,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             streak: 0,
             wordsAttempted: p.wordsAttempted + 1
           };
-          if (config.skipPenaltyType === 'lives') {
-            return { ...updated, lives: p.lives - config.skipPenaltyValue };
-          }
-          return { ...updated, points: p.points - config.skipPenaltyValue };
+          return isLivesPenalty
+            ? { ...updated, lives: p.lives - config.skipPenaltyValue }
+            : { ...updated, points: p.points - config.skipPenaltyValue };
         }
         return p;
       })
     );
+    setFeedback({ message: `Word Skipped (${deduction})`, type: 'info' });
+    if (currentWord) {
+      setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+    }
     setAttemptedParticipants(new Set());
     const nextIndex = (currentParticipantIndex + 1) % participants.length;
     const nextDifficulty = participants[nextIndex].difficultyLevel;
