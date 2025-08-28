@@ -232,6 +232,25 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 </div>
 
                 <div className="bg-white/10 p-6 rounded-lg mb-8">
+                    <h2 className="text-2xl font-bold mb-4">Timer Duration (seconds)</h2>
+                    <input
+                        type="number"
+                        min={5}
+                        max={120}
+                        value={timerDuration}
+                        onChange={(e) => {
+                            const value = parseInt(e.target.value, 10);
+                            if (!isNaN(value)) {
+                                const clamped = Math.min(Math.max(value, 5), 120);
+                                setTimerDuration(clamped);
+                            }
+                        }}
+                        className="w-full p-2 rounded-md bg-white/20 text-white"
+                    />
+                    <p className="text-sm mt-2">Enter a value between 5 and 120 seconds.</p>
+                </div>
+
+                <div className="bg-white/10 p-6 rounded-lg mb-8">
                     <h2 className="text-2xl font-bold mb-4">{gameMode === 'team' ? 'Teams' : 'Students'}</h2>
                     {gameMode === 'team' ? (
                         <>
