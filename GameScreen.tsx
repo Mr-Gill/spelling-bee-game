@@ -6,6 +6,7 @@ import wrongSoundFile from './audio/wrong.mp3';
 import timeoutSoundFile from './audio/timeout.mp3';
 import { launchConfetti } from './utils/confetti';
 import { speak } from './utils/tts';
+import OnScreenKeyboard from './components/OnScreenKeyboard';
 
 interface GameScreenProps {
   config: GameConfig;
@@ -253,6 +254,27 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     spendPoints(currentParticipantIndex, cost);
     setExtraAttempt(true);
     setUsedHint(true);
+  };
+
+  const handleVirtualLetter = (letter: string) => {
+    setLetters(prev => {
+      const index = prev.findIndex(l => l === '');
+      if (index === -1) return prev;
+      const newLetters = [...prev];
+      newLetters[index] = letter;
+      return newLetters;
+    });
+  };
+
+  const handleVirtualBackspace = () => {
+    setLetters(prev => {
+      const reverseIndex = [...prev].reverse().findIndex(l => l !== '');
+      if (reverseIndex === -1) return prev;
+      const index = prev.length - 1 - reverseIndex;
+      const newLetters = [...prev];
+      newLetters[index] = '';
+      return newLetters;
+    });
   };
 
   const handleSpellingSubmit = () => {
@@ -540,14 +562,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
               </div>
             ))}
           </div>
-          <div className="flex gap-4 justify-center">
-            <button
-              onClick={handleSpellingSubmit}
-              className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg text-2xl font-bold"
-            >
-              Submit
-            </button>
-          </div>
+          <OnScreenKeyboard
+            onLetter={handleVirtualLetter}
+            onBackspace={handleVirtualBackspace}
+            onSubmit={handleSpellingSubmit}
+          />
 
           <div className="mt-6 flex justify-center gap-4">
             <button
