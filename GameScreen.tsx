@@ -28,7 +28,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [timeLeft, setTimeLeft] = useState(config.timerDuration);
   const isTeamMode = config.gameMode === 'team';
   const [showWord, setShowWord] = useState(true);
-  const [inputValue, setInputValue] = useState('');
+  const [letters, setLetters] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<Feedback>({ message: '', type: '' });
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [startTime] = useState(Date.now());
@@ -62,6 +62,35 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     return () => clearInterval(timerRef.current as NodeJS.Timeout);
   }, [currentWord]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!currentWord) return;
+      if (/^[a-zA-Z]$/.test(e.key)) {
+        setLetters(prev => {
+          const index = prev.findIndex(l => l === '');
+          if (index === -1) return prev;
+          const newLetters = [...prev];
+          newLetters[index] = e.key;
+          return newLetters;
+        });
+      } else if (e.key === 'Backspace') {
+        setLetters(prev => {
+          const reverseIndex = [...prev].reverse().findIndex(l => l !== '');
+          if (reverseIndex === -1) return prev;
+          const index = prev.length - 1 - reverseIndex;
+          const newLetters = [...prev];
+          newLetters[index] = '';
+          return newLetters;
+        });
+      } else if (e.key === 'Enter') {
+        handleSpellingSubmit();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentWord, letters]);
+
   const difficultyOrder: Array<'easy' | 'medium' | 'tricky' | 'review'> = ['easy', 'medium', 'tricky', 'review'];
 
   const selectNextWord = () => {
@@ -92,6 +121,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
       setExtraAttempt(false);
       setIsHelpOpen(false);
+      setLetters(Array.from({ length: nextWord.word.length }, () => ''));
     } else {
       onEndGameWithMissedWords();
     }
@@ -105,7 +135,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     if (extraAttempt) {
       setFeedback({ message: 'Incorrect. You still have one more attempt!', type: 'error' });
       setExtraAttempt(false);
-      setInputValue('');
+      if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
       setTimeLeft(config.timerDuration);
       return;
     }
@@ -119,7 +149,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       return p;
     });
     setParticipants(updatedParticipants);
-    setInputValue('');
+    if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
 
     const newAttempted = new Set(attemptedParticipants);
     newAttempted.add(currentParticipantIndex);
@@ -187,7 +217,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     if (!currentWord) return;
     clearInterval(timerRef.current as NodeJS.Timeout);
 
-    const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
+    const guess = letters.join('').trim().toLowerCase();
+    const isCorrect = guess === currentWord.word.toLowerCase();
 
     setParticipants(prev =>
       prev.map((p, index) => {
@@ -213,9 +244,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
     if (isCorrect) {
       setFeedback({ message: 'Correct! 🎉', type: 'success' });
+      if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
       setTimeout(() => {
         setFeedback({ message: '', type: '' });
-        setInputValue('');
         selectNextWord();
         nextTurn();
       }, 2000);
@@ -235,7 +266,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
     setTimeout(() => {
       setFeedback({ message: '', type: '' });
-      setInputValue('');
+      if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
       selectNextWord();
       nextTurn();
     }, 1500);
@@ -335,14 +366,23 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
               <strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"
             </p>
           </div>
+          <div className="flex gap-2 justify-center mb-4">
+            {letters.map((letter, idx) => (
+              <div
+                key={idx}
+                className={`w-12 h-16 text-4xl flex items-center justify-center rounded-lg border-b-2 ${
+                  letter
+                    ? letter.toLowerCase() === currentWord.word[idx].toLowerCase()
+                      ? 'bg-green-500'
+                      : 'bg-red-500'
+                    : 'bg-white/20'
+                }`}
+              >
+                {letter.toUpperCase()}
+              </div>
+            ))}
+          </div>
           <div className="flex gap-4 justify-center">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
-              className="text-2xl p-4 rounded-lg bg-white/20 border-2 border-transparent focus:border-yellow-300 focus:outline-none w-1/2"
-              placeholder="Type the word here..."
-            />
             <button
               onClick={handleSpellingSubmit}
               className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg text-2xl font-bold"
