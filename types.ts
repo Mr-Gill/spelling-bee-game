@@ -15,6 +15,8 @@ export interface Participant {
   streak: number;
   attempted: number;
   correct: number;
+  wordsAttempted: number;
+  wordsCorrect: number;
   accuracy?: number;
 }
 

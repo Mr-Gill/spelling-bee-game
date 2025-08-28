@@ -24,7 +24,13 @@ interface WordQueues {
 
 const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [participants, setParticipants] = useState<Participant[]>(
-    config.participants.map(p => ({ ...p, attempted: 0, correct: 0 }))
+    config.participants.map(p => ({
+      ...p,
+      attempted: 0,
+      correct: 0,
+      wordsAttempted: 0,
+      wordsCorrect: 0
+    }))
   );
   const [currentParticipantIndex, setCurrentParticipantIndex] = useState(0);
   const [currentWord, setCurrentWord] = useState<Word | null>(null);
@@ -242,6 +248,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             ...p,
             attempted: p.attempted + 1,
             correct: p.correct + (isCorrect ? 1 : 0),
+            wordsAttempted: p.wordsAttempted + 1,
+            wordsCorrect: p.wordsCorrect + (isCorrect ? 1 : 0),
             lives: isCorrect ? p.lives : p.lives - 1,
             points: isCorrect ? p.points + pointsEarned : p.points,
             streak: isCorrect ? p.streak + 1 : 0
@@ -294,9 +302,19 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       prev.map((p, index) => {
         if (index === currentParticipantIndex) {
           if (config.skipPenaltyType === 'lives') {
-            return { ...p, lives: p.lives - config.skipPenaltyValue, streak: 0 };
+            return {
+              ...p,
+              lives: p.lives - config.skipPenaltyValue,
+              streak: 0,
+              wordsAttempted: p.wordsAttempted + 1
+            };
           }
-          return { ...p, points: p.points - config.skipPenaltyValue, streak: 0 };
+          return {
+            ...p,
+            points: p.points - config.skipPenaltyValue,
+            streak: 0,
+            wordsAttempted: p.wordsAttempted + 1
+          };
         }
         return p;
       })
@@ -320,7 +338,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     const activeParticipants = participants.filter(p => p.lives > 0);
     const finalParticipants = participants.map(p => ({
       ...p,
-      accuracy: p.attempted > 0 ? (p.correct / p.attempted) * 100 : 0
+      accuracy:
+        p.wordsAttempted > 0 ? (p.wordsCorrect / p.wordsAttempted) * 100 : 0
     }));
     onEndGame({
       winner: activeParticipants.length === 1 ? activeParticipants[0] : null,
