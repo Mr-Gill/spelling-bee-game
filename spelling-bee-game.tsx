@@ -374,6 +374,21 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 
                 {error && <p className="text-red-300 text-center mb-4">{error}</p>}
                 
+                <div className="mb-8">
+                    <h2 className="text-3xl font-bold mb-4 text-center">Select Timer Duration</h2>
+                    <div className="flex justify-center gap-4">
+                        {[15, 30, 45, 60].map(time => (
+                            <button
+                                key={time}
+                                onClick={() => setTimerDuration(time)}
+                                className={`px-6 py-3 rounded-lg text-xl font-bold ${timerDuration === time ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}
+                            >
+                                {time}s
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 <button onClick={handleStart} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-8">
                     START GAME
                 </button>
