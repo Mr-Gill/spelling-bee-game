@@ -46,6 +46,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const [students, setStudents] = useState<Participant[]>([]);
   const [studentName, setStudentName] = useState('');
+  const [bulkStudentText, setBulkStudentText] = useState('');
+  const [bulkStudentError, setBulkStudentError] = useState('');
   const [skipPenaltyType, setSkipPenaltyType] = useState<'lives' | 'points'>('lives');
   const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -103,6 +105,36 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const updateStudentName = (index: number, name: string) => {
     const newStudents = students.map((student, i) => (i === index ? { ...student, name } : student));
     setStudents(newStudents);
+  };
+
+  const parseStudentNames = (text: string) =>
+    text
+      .split(/\r?\n/)
+      .flatMap(line => line.split(','))
+      .map(name => name.trim())
+      .filter(name => name !== '');
+
+  const addBulkStudents = () => {
+    const names = parseStudentNames(bulkStudentText);
+    const existing = new Set(students.map(s => s.name));
+    const uniqueNames = Array.from(new Set(names)).filter(name => !existing.has(name));
+    if (uniqueNames.length === 0) {
+      setBulkStudentError('No valid names detected.');
+      return;
+    }
+    const newStudents = uniqueNames.map(name => ({
+      name,
+      lives: 5,
+      points: 0,
+      streak: 0,
+      attempted: 0,
+      correct: 0,
+      wordsAttempted: 0,
+      wordsCorrect: 0
+    }));
+    setStudents([...students, ...newStudents]);
+    setBulkStudentText('');
+    setBulkStudentError('');
   };
 
   const parseWordList = (content: string) => {
@@ -293,6 +325,22 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <button onClick={addStudent} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">
                   Add
                 </button>
+              </div>
+              <div className="mb-4">
+                <textarea
+                  value={bulkStudentText}
+                  onChange={e => setBulkStudentText(e.target.value)}
+                  className="w-full p-2 rounded-md bg-white/20 text-white mb-2"
+                  placeholder="Paste names, one per line or separated by commas"
+                  rows={4}
+                ></textarea>
+                <button
+                  onClick={addBulkStudents}
+                  className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold"
+                >
+                  Add Names
+                </button>
+                {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
               </div>
               {students.map((student, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
