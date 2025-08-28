@@ -223,7 +223,7 @@ getTeamColor = ['bg-red-500', 'bg-blue-500', 'bg-green-500']
 - **Lightning Round** - 10-second timer for final challenge
 - **Bonus Rounds** - Special categories (compound words, homophones)
 - **Multiplayer Tournaments** - Bracket-style competitions across classes
-- **Daily Challenges** - New word challenges each day
+- **Session Challenges** - New word challenges each session
 - **Progressive Difficulty** - Words get harder as game continues
 - **Word Duels** - Head-to-head spelling battles
 - **Mystery Word Mode** - Clues only, no definition given initially
@@ -288,7 +288,7 @@ getTeamColor = ['bg-red-500', 'bg-blue-500', 'bg-green-500']
 - **Collectible Cards** - Unlock word cards showing etymology, usage
 - **Virtual Rewards** - Unlock themes, avatars, sound effects
 - **Guild System** - Students form spelling teams across classes
-- **Daily Login Rewards** - Bonus points for consistent participation
+- **Session Participation Rewards** - Bonus points for consistent participation across sessions
 - **Seasonal Events** - Special competitions during school events
 - **Spelling Bee Preparation Mode** - Training for real competitions
 
