@@ -461,18 +461,24 @@ const GameScreen = ({ config, onEndGame }) => {
             setTimeLeft(config.timerDuration);
             return;
         }
-        
+
         setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
         setMissedWords(prev => [...prev, currentWord]);
-        const updatedParticipants = participants.map((p, index) => {
-            if (index === currentParticipantIndex) {
-                return { ...p, lives: p.lives - 1, streak: 0 };
-            }
-            return p;
-        });
-        setParticipants(updatedParticipants);
+        setParticipants(prev =>
+            prev.map((p, index) => {
+                if (index === currentParticipantIndex) {
+                    return {
+                        ...p,
+                        attempted: p.attempted + 1,
+                        lives: p.lives - 1,
+                        streak: 0,
+                    };
+                }
+                return p;
+            })
+        );
         setInputValue("");
-        
+
         const newAttempted = new Set(attemptedParticipants);
         newAttempted.add(currentParticipantIndex);
 
@@ -539,29 +545,27 @@ const GameScreen = ({ config, onEndGame }) => {
 
         const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
 
-        setParticipants(prev =>
-            prev.map((p, index) => {
-                if (index === currentParticipantIndex) {
-                    const multipliers = { easy: 1, medium: 2, tricky: 3 };
-                    const basePoints = 10;
-                    const multiplier = multipliers[currentDifficulty] || 1;
-                    const bonus = p.streak * 5;
-                    const pointsEarned = basePoints * multiplier + bonus;
-                    
-                    return {
-                        ...p,
-                        attempted: p.attempted + 1,
-                        correct: p.correct + (isCorrect ? 1 : 0),
-                        lives: isCorrect ? p.lives : p.lives - 1,
-                        points: isCorrect ? p.points + pointsEarned : p.points,
-                        streak: isCorrect ? p.streak + 1 : 0,
-                    };
-                }
-                return p;
-            })
-        );
-
         if (isCorrect) {
+            setParticipants(prev =>
+                prev.map((p, index) => {
+                    if (index === currentParticipantIndex) {
+                        const multipliers = { easy: 1, medium: 2, tricky: 3 };
+                        const basePoints = 10;
+                        const multiplier = multipliers[currentDifficulty] || 1;
+                        const bonus = p.streak * 5;
+                        const pointsEarned = basePoints * multiplier + bonus;
+
+                        return {
+                            ...p,
+                            attempted: p.attempted + 1,
+                            correct: p.correct + 1,
+                            points: p.points + pointsEarned,
+                            streak: p.streak + 1,
+                        };
+                    }
+                    return p;
+                })
+            );
             setFeedback({ message: "Correct! 🎉", type: "success" });
             setTimeout(() => {
                 setFeedback({ message: "", type: "" });
@@ -595,11 +599,11 @@ const GameScreen = ({ config, onEndGame }) => {
         const existing = stored[lessonKey] || [];
         stored[lessonKey] = [...existing, ...missedWords];
         localStorage.setItem('missedWordsCollection', JSON.stringify(stored));
-        const activeParticipants = participants.filter(p => p.lives > 0);
         const finalParticipants = participants.map(p => ({
             ...p,
             accuracy: p.attempted > 0 ? (p.correct / p.attempted) * 100 : 0,
         }));
+        const activeParticipants = finalParticipants.filter(p => p.lives > 0);
         onEndGame({ winner: activeParticipants.length === 1 ? activeParticipants[0] : null, participants: finalParticipants, gameMode: config.gameMode, duration: Math.round((Date.now() - startTime) / 1000) });
     };
 
@@ -756,8 +760,7 @@ const ResultsScreen = ({ results, onRestart }) => {
                     <div key={index} className="text-left text-xl mb-3">
                         <div className="font-bold">{p.name}</div>
                         <div className="text-yellow-300">
-                            {p.correct}/{p.attempted} correct (
-                            {(p.correct / p.attempted * 100).toFixed(0)}%) - {p.lives} lives
+                            {p.correct}/{p.attempted} correct ({p.accuracy.toFixed(0)}%) - {p.lives} lives
                             remaining - {p.points} points
                         </div>
                     </div>
