@@ -20,6 +20,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
       name: p.name,
       score: p.points,
       date: new Date().toISOString(),
+      avatar: p.avatar,
     }));
     
     const updated = [...stored, ...newEntries]
@@ -79,7 +80,12 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
         <h3 className="text-3xl font-bold mb-4">📊 Final Scores</h3>
         {results && results.participants.map((p, index) => (
           <div key={index} className="text-left text-xl mb-3">
-            <div className="font-bold">{p.name}</div>
+            <div className="flex items-center gap-2">
+              {p.avatar && (
+                <img src={p.avatar} alt={`${p.name} avatar`} className="w-6 h-6 rounded-full" />
+              )}
+              <div className="font-bold">{p.name}</div>
+            </div>
             <div className="text-yellow-300">
               {p.wordsCorrect}/{p.wordsAttempted} correct (
               {p.wordsAttempted > 0

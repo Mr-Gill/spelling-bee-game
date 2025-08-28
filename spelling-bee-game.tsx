@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import { Users, BookOpen, Play, Volume2, Globe, RotateCcw, SkipForward } from 'lucide-react';
 import LeaderboardScreen from './LeaderboardScreen';
 import AchievementsScreen from './AchievementsScreen';
 
@@ -58,6 +57,14 @@ const SpellingBeeGame = () => {
     const handleBackToSetup = () => {
         setGameState("setup");
     };
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
+            document.body.classList.add(`theme-${savedTheme}`);
+        }
+    }, []);
 
     if (gameState === "setup") {
         return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;

@@ -16,6 +16,23 @@ body {
     background-repeat: repeat;
 }
 
+body.theme-light {
+    background: #f9fafb;
+    color: #1f2937;
+}
+
+body.theme-dark {
+    background: #1f2937;
+    color: #f9fafb;
+}
+
+body.theme-honeycomb {
+    background-color: #fff8dc;
+    background-image: radial-gradient(#facc15 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: #3a2b0a;
+}
+
 img,
 video {
     max-width: 100%;

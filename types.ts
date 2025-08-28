@@ -20,6 +20,7 @@ export interface Participant {
   wordsAttempted: number;
   wordsCorrect: number;
   accuracy?: number;
+  avatar?: string;
 }
 
 export interface WordDatabase {
