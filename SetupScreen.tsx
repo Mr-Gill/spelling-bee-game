@@ -129,7 +129,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     const newStudents = uniqueNames.map(name => ({
       name,
       lives: 5,
-      points: 0,
+      points: 1,
       streak: 0,
       attempted: 0,
       correct: 0,
