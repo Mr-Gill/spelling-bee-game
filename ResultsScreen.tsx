@@ -1,12 +1,23 @@
-import React from 'react';
-import { GameResults } from './types';
+import React, { useEffect } from 'react';
+import { GameResults, LeaderboardEntry } from './types';
 
 interface ResultsScreenProps {
   results: GameResults;
   onRestart: () => void;
+  onViewLeaderboard: () => void;
 }
 
-const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart }) => {
+const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onViewLeaderboard }) => {
+  useEffect(() => {
+    const existing: LeaderboardEntry[] = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+    const newEntries: LeaderboardEntry[] = results.participants.map(p => ({
+      name: p.name,
+      score: p.points,
+      date: new Date().toISOString(),
+    }));
+    const updated = [...existing, ...newEntries].sort((a, b) => b.score - a.score);
+    localStorage.setItem('leaderboard', JSON.stringify(updated));
+  }, [results]);
   const handleExport = () => {
     const dataStr =
       'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(results, null, 2));
@@ -65,12 +76,18 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart }) => 
         </div>
       )}
 
-      <div className="flex gap-6 mt-12">
+      <div className="flex gap-6 mt-12 flex-wrap justify-center">
         <button
           onClick={handleExport}
           className="bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold"
         >
           Export Results
+        </button>
+        <button
+          onClick={onViewLeaderboard}
+          className="bg-purple-500 hover:bg-purple-600 px-8 py-5 rounded-xl text-2xl font-bold"
+        >
+          View Leaderboard
         </button>
         <button
           onClick={onRestart}

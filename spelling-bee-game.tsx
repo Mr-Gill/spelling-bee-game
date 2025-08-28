@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Users, BookOpen, Play, Volume2, Globe, RotateCcw, SkipForward } from 'lucide-react';
+import LeaderboardScreen from './LeaderboardScreen';
 
 const SpellingBeeGame = () => {
     const [gameState, setGameState] = useState("setup");
@@ -44,6 +45,14 @@ const SpellingBeeGame = () => {
         setGameResults(null);
     };
 
+    const handleViewLeaderboard = () => {
+        setGameState("leaderboard");
+    };
+
+    const handleBackToSetup = () => {
+        setGameState("setup");
+    };
+
     if (gameState === "setup") {
         return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} />;
     }
@@ -51,7 +60,10 @@ const SpellingBeeGame = () => {
         return <GameScreen config={gameConfig} onEndGame={handleEndGame} />;
     }
     if (gameState === "results") {
-        return <ResultsScreen results={gameResults} onRestart={handleRestart} />;
+        return <ResultsScreen results={gameResults} onRestart={handleRestart} onViewLeaderboard={handleViewLeaderboard} />;
+    }
+    if (gameState === "leaderboard") {
+        return <LeaderboardScreen onBack={handleBackToSetup} />;
     }
     return null;
 };
@@ -879,7 +891,18 @@ const GameScreen = ({ config, onEndGame }) => {
     );
 };
 
-const ResultsScreen = ({ results, onRestart }) => {
+const ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
+    useEffect(() => {
+        const existing = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+        const newEntries = results.participants.map(p => ({
+            name: p.name,
+            score: p.points,
+            date: new Date().toISOString(),
+        }));
+        const updated = [...existing, ...newEntries].sort((a, b) => b.score - a.score);
+        localStorage.setItem('leaderboard', JSON.stringify(updated));
+    }, [results]);
+
     const handleExport = () => {
         const dataStr =
             "data:text/json;charset=utf-8," +
@@ -927,12 +950,18 @@ const ResultsScreen = ({ results, onRestart }) => {
                 ))}
             </div>
 
-            <div className="flex gap-6 mt-12">
+            <div className="flex gap-6 mt-12 flex-wrap justify-center">
                 <button
                     onClick={handleExport}
                     className="bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold"
                 >
                     Export Results
+                </button>
+                <button
+                    onClick={onViewLeaderboard}
+                    className="bg-purple-500 hover:bg-purple-600 px-8 py-5 rounded-xl text-2xl font-bold"
+                >
+                    View Leaderboard
                 </button>
                 <button
                     onClick={onRestart}
