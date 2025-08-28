@@ -1,10 +1,10 @@
 const CACHE_NAME = 'spelling-bee-cache-v1';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/app.js',
-  '/words.json',
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './words.json',
   'https://cdn.tailwindcss.com'
 ];
 
