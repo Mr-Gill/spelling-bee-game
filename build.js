@@ -55,25 +55,23 @@ async function main() {
   const esbuild = require('esbuild');
 
   await esbuild.build({
-    entryPoints: [path.join(root, 'spelling-bee-game.tsx')],
-    outfile: path.join(dist, 'app.js'),
-    bundle: true,
-    minify: true,
-    sourcemap: false,
-    // 'import.meta' warning goes away on a modern target:
-    target: ['esnext'],
-    // Make esbuild emit referenced assets and rewrite imports:
-    loader: {
-      '.ts': 'ts',
-      '.tsx': 'tsx',
-      '.json': 'json',
-      '.mp3': 'file',
-      '.svg': 'file'
-    },
-    // Assets emitted under dist/assets/<name>-<hash>.<ext>
-    assetNames: 'assets/[name]-[hash]',
-    define: { 'process.env.NODE_ENV': '"production"' },
-    logLevel: 'info'
+  entryPoints: ['spelling-bee-game.tsx'],
+  outfile: path.join(dist, 'app.js'),
+  bundle: true,
+  minify: true,
+  target: ['esnext'],
+  jsx: 'automatic',                // so you don’t need `import React ...`
+  loader: {
+    '.ts': 'ts',
+    '.tsx': 'tsx',
+    '.json': 'json',
+    '.svg': 'file',                // <— NEW
+    '.mp3': 'file'                 // <— NEW
+  },
+  assetNames: 'assets/[name]-[hash]',
+  define: { 'process.env.NODE_ENV': '"production"' },
+  platform: 'browser',
+  format: 'esm'
   });
 
   // ---- Copy static files if they exist ----
