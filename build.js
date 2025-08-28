@@ -26,7 +26,7 @@ fs.cpSync('icons', path.join(distDir, 'icons'), { recursive: true });
 
 if (fs.existsSync('avatars')) {
     fs.cpSync('avatars', path.join(distDir, 'avatars'), { recursive: true });
-} // <-- The missing brace was added here
+}
 
 if (fs.existsSync('img')) {
   fs.cpSync('img', path.join(distDir, 'img'), { recursive: true });
