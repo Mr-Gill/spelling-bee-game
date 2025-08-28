@@ -256,7 +256,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       winner: activeParticipants.length === 1 ? activeParticipants[0] : null,
       participants: finalParticipants,
       gameMode: config.gameMode,
-      duration: Math.round((Date.now() - startTime) / 1000)
+      duration: Math.round((Date.now() - startTime) / 1000),
+      missedWords
     });
   };
 
