@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Users, BookOpen, Play, Volume2, Globe, RotateCcw, SkipForward } from 'lucide-react';
 import LeaderboardScreen from './LeaderboardScreen';
+import AchievementsScreen from './AchievementsScreen';
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
@@ -50,12 +51,16 @@ const SpellingBeeGame = () => {
         setGameState("leaderboard");
     };
 
+    const handleViewAchievements = () => {
+        setGameState("achievements");
+    };
+
     const handleBackToSetup = () => {
         setGameState("setup");
     };
 
     if (gameState === "setup") {
-        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} />;
+        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
     }
     if (gameState === "playing") {
         return <GameScreen config={gameConfig} onEndGame={handleEndGame} />;
@@ -66,11 +71,14 @@ const SpellingBeeGame = () => {
     if (gameState === "leaderboard") {
         return <LeaderboardScreen onBack={handleBackToSetup} />;
     }
+    if (gameState === "achievements") {
+        return <AchievementsScreen onBack={handleBackToSetup} />;
+    }
     return null;
 };
 
 // --- Setup Screen Component ---
-const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
+const SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
     // This component's logic is kept as is.
     // A simplified version is shown here for brevity.
     const [gameMode, setGameMode] = useState("team");
@@ -94,6 +102,9 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
             <h1 className="text-4xl text-center">Game Setup</h1>
             <button onClick={handleStart} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-8">
                 START GAME
+            </button>
+            <button onClick={onViewAchievements} className="w-full bg-purple-500 hover:bg-purple-600 text-white px-6 py-4 rounded-xl text-2xl font-bold mt-4">
+                Achievements
             </button>
         </div>
     );

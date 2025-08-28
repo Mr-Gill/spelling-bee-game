@@ -1,6 +1,6 @@
 import React from 'react';
 import { SkipForward } from 'lucide-react';
-import { GameConfig, Word, Participant, GameResults } from './types';
+import { GameConfig, Word, Participant, GameResults, defaultAchievements } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
 import timeoutSoundFile from './audio/timeout.mp3';
@@ -76,6 +76,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   );
   const [attemptedParticipants, setAttemptedParticipants] = React.useState<Set<number>>(new Set());
   const [missedWords, setMissedWords] = React.useState<Word[]>([]);
+  const [unlockedAchievements, setUnlockedAchievements] = React.useState<string[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      return JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
+    } catch {
+      return [];
+    }
+  });
+  const [toast, setToast] = React.useState('');
 
   const startTimer = () => {
     timerRef.current = setInterval(() => {
@@ -372,6 +381,18 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     setParticipants(updatedParticipants);
 
     if (isCorrect) {
+      const participant = updatedParticipants[currentParticipantIndex];
+      const newlyUnlocked = defaultAchievements.filter(
+        ach => participant.wordsCorrect >= ach.threshold && !unlockedAchievements.includes(ach.id)
+      );
+      if (newlyUnlocked.length > 0) {
+        const updatedUnlocked = [...unlockedAchievements, ...newlyUnlocked.map(a => a.id)];
+        setUnlockedAchievements(updatedUnlocked);
+        localStorage.setItem('unlockedAchievements', JSON.stringify(updatedUnlocked));
+        const first = newlyUnlocked[0];
+        setToast(`Achievement unlocked: ${first.icon} ${first.name}!`);
+        setTimeout(() => setToast(''), 3000);
+      }
       if (config.soundEnabled) {
         correctAudio.current.currentTime = 0;
         correctAudio.current.play();
@@ -476,6 +497,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         className="absolute opacity-0 pointer-events-none"
         aria-hidden="true"
       />
+      {toast && (
+        <div className="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50">
+          {toast}
+        </div>
+      )}
       <div className="absolute top-8 left-8 flex gap-8">
         {participants.map((p, index) => (
           <div key={index} className="text-center">
