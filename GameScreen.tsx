@@ -38,6 +38,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [revealedLetters, setRevealedLetters] = useState<boolean[]>([]);
   const [extraAttempt, setExtraAttempt] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [difficultyLevel, setDifficultyLevel] = useState<number>(config.difficultyLevel);
+  const progressionSpeed = config.progressionSpeed;
+
+  const getDifficultyFromLevel = (level: number): 'easy' | 'medium' | 'tricky' => {
+    if (level < 3) return 'easy';
+    if (level < 6) return 'medium';
+    return 'tricky';
+  };
 
   const correctAudio = useRef<HTMLAudioElement>(new Audio(correctSoundFile));
   const wrongAudio = useRef<HTMLAudioElement>(new Audio(wrongSoundFile));
@@ -50,7 +58,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     tricky: shuffleArray(config.wordDatabase.tricky),
     review: []
   });
-  const [currentDifficulty, setCurrentDifficulty] = useState<'easy' | 'medium' | 'tricky' | 'review'>('easy');
+  const [currentDifficulty, setCurrentDifficulty] = useState<'easy' | 'medium' | 'tricky' | 'review'>(
+    getDifficultyFromLevel(config.difficultyLevel)
+  );
   const [attemptedParticipants, setAttemptedParticipants] = useState<Set<number>>(new Set());
   const [missedWords, setMissedWords] = useState<Word[]>([]);
 
@@ -102,10 +112,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
   const difficultyOrder: Array<'easy' | 'medium' | 'tricky' | 'review'> = ['easy', 'medium', 'tricky', 'review'];
 
-  const selectNextWord = () => {
-    let index = difficultyOrder.indexOf(currentDifficulty);
+  const selectNextWord = (level: number = difficultyLevel) => {
+    const desired = getDifficultyFromLevel(level);
+    let index = difficultyOrder.indexOf(desired);
     let nextWord: Word | null = null;
-    let nextDifficulty = currentDifficulty;
+    let nextDifficulty = desired;
 
     while (index < difficultyOrder.length) {
       const diff = difficultyOrder[index];
@@ -256,9 +267,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       correctAudio.current.play();
       setFeedback({ message: 'Correct! 🎉', type: 'success' });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
+      const nextLevel = difficultyLevel + progressionSpeed;
+      setDifficultyLevel(nextLevel);
       setTimeout(() => {
         setFeedback({ message: '', type: '' });
-        selectNextWord();
+        selectNextWord(nextLevel);
         nextTurn();
       }, 2000);
       return;
@@ -332,7 +345,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   };
 
   useEffect(() => {
-    selectNextWord();
+    selectNextWord(difficultyLevel);
   }, []);
 
   useEffect(() => {

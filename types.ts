@@ -31,6 +31,12 @@ export interface GameConfig {
   wordDatabase: WordDatabase;
   skipPenaltyType: 'lives' | 'points';
   skipPenaltyValue: number;
+  difficultyLevel: number;
+  progressionSpeed: number;
+}
+
+export interface GameState {
+  difficultyLevel: number;
 }
 
 export interface GameResults {
