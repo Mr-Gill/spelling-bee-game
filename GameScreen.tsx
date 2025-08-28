@@ -53,6 +53,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [revealedLetters, setRevealedLetters] = React.useState<boolean[]>([]);
   const [extraAttempt, setExtraAttempt] = React.useState(false);
   const [isHelpOpen, setIsHelpOpen] = React.useState(false);
+  const [isPaused, setIsPaused] = React.useState(false);
 
   const correctAudio = React.useRef<HTMLAudioElement>(new Audio(correctSoundFile));
   const wrongAudio = React.useRef<HTMLAudioElement>(new Audio(wrongSoundFile));
@@ -71,8 +72,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [attemptedParticipants, setAttemptedParticipants] = React.useState<Set<number>>(new Set());
   const [missedWords, setMissedWords] = React.useState<Word[]>([]);
 
-  React.useEffect(() => {
-    if (!currentWord) return;
+  const startTimer = () => {
     timerRef.current = setInterval(() => {
       setTimeLeft(prevTime => {
         if (prevTime <= 1) {
@@ -87,8 +87,22 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         return prevTime - 1;
       });
     }, 1000);
+  };
+
+  const pauseTimer = () => {
+    clearInterval(timerRef.current as NodeJS.Timeout);
+    setIsPaused(true);
+  };
+
+  const resumeTimer = () => {
+    setIsPaused(false);
+  };
+
+  React.useEffect(() => {
+    if (!currentWord || isPaused) return;
+    startTimer();
     return () => clearInterval(timerRef.current as NodeJS.Timeout);
-  }, [currentWord, config.soundEnabled]);
+  }, [currentWord, config.soundEnabled, isPaused]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -400,7 +414,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   }, [participants]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
+    <div className="relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
       <div className="absolute top-8 left-8 flex gap-8">
         {participants.map((p, index) => (
           <div key={index} className="text-center">
@@ -420,9 +434,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         </div>
       )}
 
-      <div className="absolute top-8 right-8 text-center">
+      <div className="absolute top-8 right-8 text-center z-50">
         <div className={`text-6xl font-bold ${timeLeft <= 10 ? 'text-red-500' : 'text-yellow-300'}`}>{timeLeft}</div>
         <div className="text-lg">seconds left</div>
+        <button
+          onClick={isPaused ? resumeTimer : pauseTimer}
+          className="mt-2 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+        >
+          {isPaused ? 'Resume' : 'Pause'}
+        </button>
       </div>
 
       {currentWord && (
@@ -581,6 +601,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       >
         <SkipForward size={24} />
       </button>
+
+      {isPaused && (
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40">
+          Paused
+        </div>
+      )}
     </div>
   );
 };
