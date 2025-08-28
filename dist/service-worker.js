@@ -1,16 +1,16 @@
 const CACHE_NAME = 'spelling-bee-cache-v2';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/manifest.webmanifest',
-  '/icons/icon.svg',
-  '/dist/app.js',
-  '/app.js',
-  '/words.json',
-  '/wordlists/example.json',
-  '/wordlists/example.csv',
-  '/wordlists/example.tsv',
+  './',
+  './index.html',
+  './style.css',
+  './dist/app.js',
+  './app.js',
+  './words.json',
+  './wordlists/example.json',
+  './wordlists/example.csv',
+  './wordlists/example.tsv',
+  './manifest.webmanifest',
+  './icons/icon.svg',
   'https://cdn.tailwindcss.com'
 ];
 
@@ -42,7 +42,7 @@ self.addEventListener('fetch', event => {
         });
       }).catch(() => {
         if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
+          return caches.match('./index.html');
         }
       });
     })
