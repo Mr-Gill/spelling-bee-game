@@ -8,8 +8,26 @@ interface SetupScreenProps {
 
 const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords }) => {
   const [teams, setTeams] = useState<Participant[]>([
-    { name: 'Team Alpha', lives: 5, points: 0, streak: 0, attempted: 0, correct: 0 },
-    { name: 'Team Beta', lives: 5, points: 0, streak: 0, attempted: 0, correct: 0 }
+    {
+      name: 'Team Alpha',
+      lives: 5,
+      points: 0,
+      streak: 0,
+      attempted: 0,
+      correct: 0,
+      wordsAttempted: 0,
+      wordsCorrect: 0
+    },
+    {
+      name: 'Team Beta',
+      lives: 5,
+      points: 0,
+      streak: 0,
+      attempted: 0,
+      correct: 0,
+      wordsAttempted: 0,
+      wordsCorrect: 0
+    }
   ]);
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [timerDuration] = useState(30);
@@ -34,7 +52,19 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [progressionSpeed, setProgressionSpeed] = useState(1);
 
   const addTeam = () => {
-    setTeams([...teams, { name: '', lives: 5, points: 0, streak: 0, attempted: 0, correct: 0 }]);
+    setTeams([
+      ...teams,
+      {
+        name: '',
+        lives: 5,
+        points: 0,
+        streak: 0,
+        attempted: 0,
+        correct: 0,
+        wordsAttempted: 0,
+        wordsCorrect: 0
+      }
+    ]);
   };
 
   const removeTeam = (index: number) => {
@@ -50,7 +80,16 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     if (studentName.trim()) {
       setStudents([
         ...students,
-        { name: studentName.trim(), lives: 5, points: 0, streak: 0, attempted: 0, correct: 0 }
+        {
+          name: studentName.trim(),
+          lives: 5,
+          points: 0,
+          streak: 0,
+          attempted: 0,
+          correct: 0,
+          wordsAttempted: 0,
+          wordsCorrect: 0
+        }
       ]);
       setStudentName('');
     }
@@ -140,7 +179,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         setError('Please enter names for at least two teams.');
         return;
       }
-      finalParticipants = trimmedTeams.map(t => ({ ...t, attempted: 0, correct: 0 }));
+      finalParticipants = trimmedTeams.map(t => ({
+        ...t,
+        attempted: 0,
+        correct: 0,
+        wordsAttempted: 0,
+        wordsCorrect: 0
+      }));
     } else {
       const trimmedStudents = students
         .map(student => ({ ...student, name: student.name.trim() }))
@@ -149,7 +194,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         setError('Please enter names for at least two students.');
         return;
       }
-      finalParticipants = trimmedStudents.map(s => ({ ...s, attempted: 0, correct: 0 }));
+      finalParticipants = trimmedStudents.map(s => ({
+        ...s,
+        attempted: 0,
+        correct: 0,
+        wordsAttempted: 0,
+        wordsCorrect: 0
+      }));
     }
 
     setError('');
@@ -363,7 +414,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           </div>
           <div className="mt-4 text-sm text-gray-300">
             <p>
-              <strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `sentence`,
+              <strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`,
               `prefixSuffix`, `pronunciation`. The difficulty will be determined by word length.
             </p>
           </div>
