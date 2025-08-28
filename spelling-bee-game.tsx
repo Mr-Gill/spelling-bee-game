@@ -62,6 +62,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
         { name: "Team Beta", lives: 5, points: 0, streak: 0 }
     ]);
     const [gameMode, setGameMode] = useState("team");
+    const isTeamMode = gameMode === "team";
     const [timerDuration, setTimerDuration] = useState(30);
     const [customWordListText, setCustomWordListText] = useState("");
     const [parsedCustomWords, setParsedCustomWords] = useState([]);
@@ -175,21 +176,32 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
 
     const handleStart = () => {
         let finalParticipants;
-        if (gameMode === 'team') {
+        if (isTeamMode) {
             const trimmedTeams = teams.map(team => ({ ...team, name: team.name.trim() })).filter(team => team.name !== "");
             if (trimmedTeams.length < 2) {
                 setError("Please enter names for at least two teams.");
                 return;
             }
-            // Combine point and streak fields with new stat-tracking fields
-            finalParticipants = trimmedTeams.map(t => ({ ...t, attempted: 0, correct: 0 }));
+            const startingPoints = 1;
+            finalParticipants = trimmedTeams.map(t => ({
+                ...t,
+                points: startingPoints,
+                attempted: 0,
+                correct: 0,
+            }));
         } else {
             const trimmedStudents = students.map(student => ({ ...student, name: student.name.trim() })).filter(student => student.name !== "");
             if (trimmedStudents.length < 2) {
                 setError("Please enter names for at least two students.");
                 return;
             }
-            finalParticipants = trimmedStudents.map(s => ({ ...s, attempted: 0, correct: 0 }));
+            const startingPoints = 1;
+            finalParticipants = trimmedStudents.map(s => ({
+                ...s,
+                points: startingPoints,
+                attempted: 0,
+                correct: 0,
+            }));
         }
         
         setError("");
@@ -232,8 +244,8 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 </div>
 
                 <div className="bg-white/10 p-6 rounded-lg mb-8">
-                    <h2 className="text-2xl font-bold mb-4">{gameMode === 'team' ? 'Teams' : 'Students'}</h2>
-                    {gameMode === 'team' ? (
+                    <h2 className="text-2xl font-bold mb-4">{isTeamMode ? 'Teams' : 'Students'}</h2>
+                    {isTeamMode ? (
                         <>
                             {teams.map((team, index) => (
                                 <div key={index} className="flex items-center gap-2 mb-2">
@@ -378,6 +390,7 @@ const GameScreen = ({ config, onEndGame }) => {
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
     const isTeamMode = config.gameMode === 'team';
+    const currentParticipant = participants[currentParticipantIndex];
     const [showWord, setShowWord] = useState(true);
     const [inputValue, setInputValue] = useState("");
     const [feedback, setFeedback] = useState({ message: "", type: "" });
@@ -442,7 +455,6 @@ const GameScreen = ({ config, onEndGame }) => {
             setAttemptedParticipants(new Set());
             setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
             setExtraAttempt(false);
-            // From the other branch, this logic belongs here
             setIsHelpOpen(false);
         } else {
             onEndGameWithMissedWords();
@@ -461,18 +473,24 @@ const GameScreen = ({ config, onEndGame }) => {
             setTimeLeft(config.timerDuration);
             return;
         }
-        
+
         setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
         setMissedWords(prev => [...prev, currentWord]);
-        const updatedParticipants = participants.map((p, index) => {
-            if (index === currentParticipantIndex) {
-                return { ...p, lives: p.lives - 1, streak: 0 };
-            }
-            return p;
-        });
-        setParticipants(updatedParticipants);
+        setParticipants(prev =>
+            prev.map((p, index) => {
+                if (index === currentParticipantIndex) {
+                    return {
+                        ...p,
+                        attempted: p.attempted + 1,
+                        lives: p.lives - 1,
+                        streak: 0,
+                    };
+                }
+                return p;
+            })
+        );
         setInputValue("");
-        
+
         const newAttempted = new Set(attemptedParticipants);
         newAttempted.add(currentParticipantIndex);
 
@@ -504,9 +522,8 @@ const GameScreen = ({ config, onEndGame }) => {
 
     const handleHangmanReveal = () => {
         const cost = 5;
-        if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+        if (currentParticipant.points < cost || !currentWord) return;
         spendPoints(currentParticipantIndex, cost);
-        // Ensure the word is hidden so the reveal has meaning
         setShowWord(false);
         const unrevealed = revealedLetters
             .map((rev, idx) => (!rev ? idx : null))
@@ -520,9 +537,8 @@ const GameScreen = ({ config, onEndGame }) => {
 
     const handleVowelReveal = () => {
         const cost = 3;
-        if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+        if (currentParticipant.points < cost || !currentWord) return;
         spendPoints(currentParticipantIndex, cost);
-        // Hide the word and reveal all vowels
         setShowWord(false);
         const newRevealed = currentWord.word.split('').map((letter, idx) => {
             return revealedLetters[idx] || 'aeiou'.includes(letter.toLowerCase());
@@ -532,9 +548,8 @@ const GameScreen = ({ config, onEndGame }) => {
 
     const handleFriendSubstitution = () => {
         const cost = 4;
-        if (extraAttempt || participants[currentParticipantIndex].points < cost) return;
+        if (extraAttempt || currentParticipant.points < cost) return;
         spendPoints(currentParticipantIndex, cost);
-        // Grant the team a fresh attempt and timer
         setExtraAttempt(true);
         setTimeLeft(config.timerDuration);
         setFeedback({ message: "Teammate substitution activated!", type: "info" });
@@ -546,29 +561,27 @@ const GameScreen = ({ config, onEndGame }) => {
 
         const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
 
-        setParticipants(prev =>
-            prev.map((p, index) => {
-                if (index === currentParticipantIndex) {
-                    const multipliers = { easy: 1, medium: 2, tricky: 3 };
-                    const basePoints = 10;
-                    const multiplier = multipliers[currentDifficulty] || 1;
-                    const bonus = p.streak * 5;
-                    const pointsEarned = basePoints * multiplier + bonus;
-                    
-                    return {
-                        ...p,
-                        attempted: p.attempted + 1,
-                        correct: p.correct + (isCorrect ? 1 : 0),
-                        lives: isCorrect ? p.lives : p.lives - 1,
-                        points: isCorrect ? p.points + pointsEarned : p.points,
-                        streak: isCorrect ? p.streak + 1 : 0,
-                    };
-                }
-                return p;
-            })
-        );
-
         if (isCorrect) {
+            setParticipants(prev =>
+                prev.map((p, index) => {
+                    if (index === currentParticipantIndex) {
+                        const multipliers = { easy: 1, medium: 2, tricky: 3 };
+                        const basePoints = 10;
+                        const multiplier = multipliers[currentDifficulty] || 1;
+                        const bonus = p.streak * 5;
+                        const pointsEarned = basePoints * multiplier + bonus;
+
+                        return {
+                            ...p,
+                            attempted: p.attempted + 1,
+                            correct: p.correct + 1,
+                            points: p.points + pointsEarned,
+                            streak: p.streak + 1,
+                        };
+                    }
+                    return p;
+                })
+            );
             setFeedback({ message: "Correct! 🎉", type: "success" });
             setTimeout(() => {
                 setFeedback({ message: "", type: "" });
@@ -602,11 +615,11 @@ const GameScreen = ({ config, onEndGame }) => {
         const existing = stored[lessonKey] || [];
         stored[lessonKey] = [...existing, ...missedWords];
         localStorage.setItem('missedWordsCollection', JSON.stringify(stored));
-        const activeParticipants = participants.filter(p => p.lives > 0);
         const finalParticipants = participants.map(p => ({
             ...p,
             accuracy: p.attempted > 0 ? (p.correct / p.attempted) * 100 : 0,
         }));
+        const activeParticipants = finalParticipants.filter(p => p.lives > 0);
         onEndGame({ winner: activeParticipants.length === 1 ? activeParticipants[0] : null, participants: finalParticipants, gameMode: config.gameMode, duration: Math.round((Date.now() - startTime) / 1000) });
     };
 
@@ -652,7 +665,7 @@ const GameScreen = ({ config, onEndGame }) => {
 
             {currentWord && (
                 <div className="w-full max-w-4xl text-center">
-                    <h2 className="text-4xl font-bold mb-4">Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}</h2>
+                    <h2 className="text-4xl font-bold mb-4">Word for {isTeamMode ? 'Team' : 'Student'}: {currentParticipant?.name || (isTeamMode ? 'Team' : 'Student')}</h2>
                     <div className="relative mb-8 pt-10">
                         {showWord && (
                             <div className="inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg">
@@ -694,21 +707,21 @@ const GameScreen = ({ config, onEndGame }) => {
                     <div className="mt-6 flex justify-center gap-4">
                         <button
                             onClick={handleHangmanReveal}
-                            disabled={participants[currentParticipantIndex].points < 5 || isTeamMode === false}
+                            disabled={currentParticipant.points < 5 || isTeamMode === false}
                             className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
                         >
                             Hangman Reveal (-5)
                         </button>
                         <button
                             onClick={handleVowelReveal}
-                            disabled={participants[currentParticipantIndex].points < 3 || isTeamMode === false}
+                            disabled={currentParticipant.points < 3 || isTeamMode === false}
                             className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
                         >
                             Vowel Reveal (-3)
                         </button>
                         <button
                             onClick={handleFriendSubstitution}
-                            disabled={participants[currentParticipantIndex].points < 4 || isTeamMode === false || extraAttempt}
+                            disabled={currentParticipant.points < 4 || isTeamMode === false || extraAttempt}
                             className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
                         >
                             Friend Sub (-4)
@@ -736,9 +749,10 @@ const ResultsScreen = ({ results, onRestart }) => {
     };
 
     const getWinnerMessage = () => {
-        const { winner, participants } = results;
+        const { winner, participants, gameMode } = results;
         if (winner) {
-            return `Winner: ${winner.name}`;
+            const label = gameMode === "team" ? "Team" : "Student";
+            return `Winner: ${label} ${winner.name}`;
         }
         const activeParticipants = participants.filter(p => p.lives > 0);
         if (activeParticipants.length > 1) {
@@ -747,6 +761,7 @@ const ResultsScreen = ({ results, onRestart }) => {
         }
         return "No one wins this round!";
     };
+    const standingsTitle = results.gameMode === 'team' ? 'Team Standings' : 'Individual Standings';
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center">
@@ -758,13 +773,12 @@ const ResultsScreen = ({ results, onRestart }) => {
             )}
 
             <div className="bg-white/10 p-8 rounded-lg w-full max-w-md">
-                <h3 className="text-3xl font-bold mb-4">Final Scores</h3>
+                <h3 className="text-3xl font-bold mb-4">{standingsTitle}</h3>
                 {results && results.participants.map((p, index) => (
                     <div key={index} className="text-left text-xl mb-3">
                         <div className="font-bold">{p.name}</div>
                         <div className="text-yellow-300">
-                            {p.correct}/{p.attempted} correct (
-                            {(p.correct / p.attempted * 100).toFixed(0)}%) - {p.lives} lives
+                            {p.correct}/{p.attempted} correct ({p.accuracy.toFixed(0)}%) - {p.lives} lives
                             remaining - {p.points} points
                         </div>
                     </div>
