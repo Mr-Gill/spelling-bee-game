@@ -62,6 +62,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
         { name: "Team Beta", lives: 5, points: 0, streak: 0 }
     ]);
     const [gameMode, setGameMode] = useState("team");
+    const isTeamMode = gameMode === "team";
     const [timerDuration, setTimerDuration] = useState(30);
     const [customWordListText, setCustomWordListText] = useState("");
     const [parsedCustomWords, setParsedCustomWords] = useState([]);
@@ -175,16 +176,13 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
 
     const handleStart = () => {
         let finalParticipants;
-        if (gameMode === 'team') {
-            const trimmedTeams = teams
-                .map(team => ({ ...team, name: team.name.trim() }))
-                .filter(team => team.name !== "");
+        if (isTeamMode) {
+            const trimmedTeams = teams.map(team => ({ ...team, name: team.name.trim() })).filter(team => team.name !== "");
             if (trimmedTeams.length < 2) {
                 setError("Please enter names for at least two teams.");
                 return;
             }
-            const startingPoints = trimmedTeams.length;
-            // Combine point and streak fields with new stat-tracking fields
+            const startingPoints = 1; // Starting points for each team
             finalParticipants = trimmedTeams.map(t => ({
                 ...t,
                 points: startingPoints,
@@ -192,14 +190,12 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 correct: 0,
             }));
         } else {
-            const trimmedStudents = students
-                .map(student => ({ ...student, name: student.name.trim() }))
-                .filter(student => student.name !== "");
+            const trimmedStudents = students.map(student => ({ ...student, name: student.name.trim() })).filter(student => student.name !== "");
             if (trimmedStudents.length < 2) {
                 setError("Please enter names for at least two students.");
                 return;
             }
-            const startingPoints = trimmedStudents.length;
+            const startingPoints = 1; // Starting points for each student
             finalParticipants = trimmedStudents.map(s => ({
                 ...s,
                 points: startingPoints,
@@ -248,8 +244,8 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 </div>
 
                 <div className="bg-white/10 p-6 rounded-lg mb-8">
-                    <h2 className="text-2xl font-bold mb-4">{gameMode === 'team' ? 'Teams' : 'Students'}</h2>
-                    {gameMode === 'team' ? (
+                    <h2 className="text-2xl font-bold mb-4">{isTeamMode ? 'Teams' : 'Students'}</h2>
+                    {isTeamMode ? (
                         <>
                             {teams.map((team, index) => (
                                 <div key={index} className="flex items-center gap-2 mb-2">
@@ -394,6 +390,7 @@ const GameScreen = ({ config, onEndGame }) => {
     const [currentWord, setCurrentWord] = useState(null);
     const [timeLeft, setTimeLeft] = useState(config.timerDuration);
     const isTeamMode = config.gameMode === 'team';
+    const currentParticipant = participants[currentParticipantIndex];
     const [showWord, setShowWord] = useState(true);
     const [inputValue, setInputValue] = useState("");
     const [feedback, setFeedback] = useState({ message: "", type: "" });
@@ -458,7 +455,6 @@ const GameScreen = ({ config, onEndGame }) => {
             setAttemptedParticipants(new Set());
             setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
             setExtraAttempt(false);
-            // From the other branch, this logic belongs here
             setIsHelpOpen(false);
         } else {
             onEndGameWithMissedWords();
@@ -520,7 +516,7 @@ const GameScreen = ({ config, onEndGame }) => {
 
     const handleHangmanReveal = () => {
         const cost = 5;
-        if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+        if (currentParticipant.points < cost || !currentWord) return;
         spendPoints(currentParticipantIndex, cost);
         const unrevealed = revealedLetters
             .map((rev, idx) => (!rev ? idx : null))
@@ -534,7 +530,7 @@ const GameScreen = ({ config, onEndGame }) => {
 
     const handleVowelReveal = () => {
         const cost = 3;
-        if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+        if (currentParticipant.points < cost || !currentWord) return;
         spendPoints(currentParticipantIndex, cost);
         const newRevealed = currentWord.word.split('').map((letter, idx) => {
             return revealedLetters[idx] || 'aeiou'.includes(letter.toLowerCase());
@@ -544,7 +540,7 @@ const GameScreen = ({ config, onEndGame }) => {
 
     const handleFriendSubstitution = () => {
         const cost = 4;
-        if (participants[currentParticipantIndex].points < cost) return;
+        if (currentParticipant.points < cost) return;
         spendPoints(currentParticipantIndex, cost);
         setExtraAttempt(true);
     };
@@ -661,7 +657,7 @@ const GameScreen = ({ config, onEndGame }) => {
 
             {currentWord && (
                 <div className="w-full max-w-4xl text-center">
-                    <h2 className="text-4xl font-bold mb-4">Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}</h2>
+                    <h2 className="text-4xl font-bold mb-4">Word for {isTeamMode ? 'Team' : 'Student'}: {currentParticipant?.name || (isTeamMode ? 'Team' : 'Student')}</h2>
                     <div className="relative mb-8 pt-10">
                         {showWord && (
                             <div className="inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg">
@@ -703,21 +699,21 @@ const GameScreen = ({ config, onEndGame }) => {
                     <div className="mt-6 flex justify-center gap-4">
                         <button
                             onClick={handleHangmanReveal}
-                            disabled={participants[currentParticipantIndex].points < 5 || isTeamMode === false}
+                            disabled={currentParticipant.points < 5 || isTeamMode === false}
                             className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
                         >
                             Hangman Reveal (-5)
                         </button>
                         <button
                             onClick={handleVowelReveal}
-                            disabled={participants[currentParticipantIndex].points < 3 || isTeamMode === false}
+                            disabled={currentParticipant.points < 3 || isTeamMode === false}
                             className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
                         >
                             Vowel Reveal (-3)
                         </button>
                         <button
                             onClick={handleFriendSubstitution}
-                            disabled={participants[currentParticipantIndex].points < 4 || isTeamMode === false}
+                            disabled={currentParticipant.points < 4 || isTeamMode === false}
                             className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
                         >
                             Friend Sub (-4)
@@ -745,9 +741,10 @@ const ResultsScreen = ({ results, onRestart }) => {
     };
 
     const getWinnerMessage = () => {
-        const { winner, participants } = results;
+        const { winner, participants, gameMode } = results;
         if (winner) {
-            return `Winner: ${winner.name}`;
+            const label = gameMode === "team" ? "Team" : "Student";
+            return `Winner: ${label} ${winner.name}`;
         }
         const activeParticipants = participants.filter(p => p.lives > 0);
         if (activeParticipants.length > 1) {
@@ -756,6 +753,7 @@ const ResultsScreen = ({ results, onRestart }) => {
         }
         return "No one wins this round!";
     };
+    const standingsTitle = results.gameMode === 'team' ? 'Team Standings' : 'Individual Standings';
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center">
@@ -767,7 +765,7 @@ const ResultsScreen = ({ results, onRestart }) => {
             )}
 
             <div className="bg-white/10 p-8 rounded-lg w-full max-w-md">
-                <h3 className="text-3xl font-bold mb-4">Final Scores</h3>
+                <h3 className="text-3xl font-bold mb-4">{standingsTitle}</h3>
                 {results && results.participants.map((p, index) => (
                     <div key={index} className="text-left text-xl mb-3">
                         <div className="font-bold">{p.name}</div>
