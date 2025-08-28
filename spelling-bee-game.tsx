@@ -176,20 +176,36 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
     const handleStart = () => {
         let finalParticipants;
         if (gameMode === 'team') {
-            const trimmedTeams = teams.map(team => ({ ...team, name: team.name.trim() })).filter(team => team.name !== "");
+            const trimmedTeams = teams
+                .map(team => ({ ...team, name: team.name.trim() }))
+                .filter(team => team.name !== "");
             if (trimmedTeams.length < 2) {
                 setError("Please enter names for at least two teams.");
                 return;
             }
+            const startingPoints = trimmedTeams.length;
             // Combine point and streak fields with new stat-tracking fields
-            finalParticipants = trimmedTeams.map(t => ({ ...t, attempted: 0, correct: 0 }));
+            finalParticipants = trimmedTeams.map(t => ({
+                ...t,
+                points: startingPoints,
+                attempted: 0,
+                correct: 0,
+            }));
         } else {
-            const trimmedStudents = students.map(student => ({ ...student, name: student.name.trim() })).filter(student => student.name !== "");
+            const trimmedStudents = students
+                .map(student => ({ ...student, name: student.name.trim() }))
+                .filter(student => student.name !== "");
             if (trimmedStudents.length < 2) {
                 setError("Please enter names for at least two students.");
                 return;
             }
-            finalParticipants = trimmedStudents.map(s => ({ ...s, attempted: 0, correct: 0 }));
+            const startingPoints = trimmedStudents.length;
+            finalParticipants = trimmedStudents.map(s => ({
+                ...s,
+                points: startingPoints,
+                attempted: 0,
+                correct: 0,
+            }));
         }
         
         setError("");
