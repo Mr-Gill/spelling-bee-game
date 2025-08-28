@@ -441,7 +441,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         className="absolute opacity-0 pointer-events-none"
         aria-hidden="true"
       />
-      <div className="absolute top-8 left-8 flex gap-8">
+      <div className="absolute top-8 left-8 flex gap-8 items-center">
+        <img src="img/bee.svg" alt="Bee icon" className="w-12 h-12" />
         {participants.map((p, index) => (
           <div key={index} className="text-center">
             <div className="text-2xl font-bold">{p.name}</div>
@@ -473,6 +474,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
       {currentWord && (
         <div className="w-full max-w-4xl text-center">
+          <img src="img/books.svg" alt="Book icon" className="w-10 h-10 mx-auto mb-4" />
           <h2 className="text-4xl font-bold mb-4">
             Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
           </h2>

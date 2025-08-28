@@ -305,6 +305,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-8 text-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
+          <img src="img/bee.svg" alt="Bee mascot" className="w-16 h-16 mx-auto mb-4" />
           <h1 className="text-6xl font-bold mb-4 text-yellow-300">🏆 SPELLING BEE CHAMPIONSHIP</h1>
           <p className="text-2xl">Get ready to spell your way to victory!</p>
         </div>
@@ -483,7 +484,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4">Add Custom Word List</h2>
+          <h2 className="text-2xl font-bold mb-4 flex items-center">
+            <img src="img/books.svg" alt="Books" className="w-6 h-6 mr-2" />
+            Add Custom Word List
+          </h2>
           <div className="mb-6">
             <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">
               Choose Bundled Word List
