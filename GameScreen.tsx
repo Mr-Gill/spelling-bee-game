@@ -106,6 +106,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   }, [currentWord, config.soundEnabled, isPaused]);
 
   React.useEffect(() => {
+    if (currentWord) {
+      setLetters(Array.from({ length: currentWord.word.length }, () => ''));
+    }
+  }, [currentWord]);
+
+  React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!currentWord) return;
       if (/^[a-zA-Z]$/.test(e.key)) {
@@ -132,7 +138,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentWord, letters]);
+  }, [currentWord]);
 
   const selectNextWord = (level: number) => {
     let index = Math.min(level, difficultyOrder.length - 1);
@@ -167,7 +173,6 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setShowDefinition(false);
       setShowOrigin(false);
       setShowSentence(false);
-      setLetters(Array.from({ length: nextWord.word.length }, () => ''));
       speak(nextWord.word);
     } else {
       onEndGameWithMissedWords();
