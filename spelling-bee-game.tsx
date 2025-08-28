@@ -181,6 +181,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 setError("Please enter names for at least two teams.");
                 return;
             }
+            // Combine point and streak fields with new stat-tracking fields
             finalParticipants = trimmedTeams.map(t => ({ ...t, attempted: 0, correct: 0 }));
         } else {
             const trimmedStudents = students.map(student => ({ ...student, name: student.name.trim() })).filter(student => student.name !== "");
@@ -384,6 +385,7 @@ const GameScreen = ({ config, onEndGame }) => {
     const [startTime] = useState(Date.now());
     const [revealedLetters, setRevealedLetters] = useState([]);
     const [extraAttempt, setExtraAttempt] = useState(false);
+    const [isHelpOpen, setIsHelpOpen] = useState(false);
 
     const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
     const [wordQueues, setWordQueues] = useState({
@@ -440,6 +442,8 @@ const GameScreen = ({ config, onEndGame }) => {
             setAttemptedParticipants(new Set());
             setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
             setExtraAttempt(false);
+            // From the other branch, this logic belongs here
+            setIsHelpOpen(false);
         } else {
             onEndGameWithMissedWords();
         }
@@ -611,6 +615,11 @@ const GameScreen = ({ config, onEndGame }) => {
         }
     }, [participants, onEndGame]);
 
+    const buyHint = (hintKey, cost) => {
+        // The hints logic from the other branch is for the old UI, which is being replaced.
+        // The point-spending logic has been integrated into the new 'help shop' functions.
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
             <div className="absolute top-8 left-8 flex gap-8">
@@ -720,7 +729,7 @@ const ResultsScreen = ({ results, onRestart }) => {
     };
 
     const getWinnerMessage = () => {
-        const { winner, participants, gameMode } = results;
+        const { winner, participants } = results;
         if (winner) {
             return `Winner: ${winner.name}`;
         }
