@@ -49,6 +49,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [revealedLetters, setRevealedLetters] = useState<boolean[]>([]);
   const [extraAttempt, setExtraAttempt] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   const correctAudio = useRef<HTMLAudioElement>(new Audio(correctSoundFile));
   const wrongAudio = useRef<HTMLAudioElement>(new Audio(wrongSoundFile));
@@ -141,6 +142,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
       setExtraAttempt(false);
       setIsHelpOpen(false);
+      setShowHint(false);
       setLetters(Array.from({ length: nextWord.word.length }, () => ''));
       speak(nextWord.word);
     } else {
@@ -433,6 +435,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
               <>
                 <p className="text-2xl mb-2">
                   <strong className="text-yellow-300">Definition:</strong> {currentWord.definition}
+                </p>
+                <p className="text-xl mb-2">
+                  <strong className="text-yellow-300">Origin:</strong> {currentWord.origin}
                 </p>
                 <p className="text-xl">
                   <strong className="text-yellow-300">Example:</strong> "{currentWord.example}"

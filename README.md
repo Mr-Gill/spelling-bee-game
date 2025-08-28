@@ -117,7 +117,7 @@ open index.html
      "syllables": "ex-am-ple (3 syllables)",
      "definition": "A thing characteristic of its kind",
      "origin": "Latin 'exemplum' meaning sample",
-    "example": "This is a good example of the format.",
+     "example": "This is a good example of the format.",
      "prefixSuffix": "Base word with no prefix or suffix",
      "pronunciation": "ig-ZAM-pul"
    }

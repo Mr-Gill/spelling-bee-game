@@ -4,6 +4,7 @@ export interface Word {
   definition: string;
   example: string;
   origin: string;
+  example: string;
   prefixSuffix?: string;
   pronunciation?: string;
 }
