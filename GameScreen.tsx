@@ -93,7 +93,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   
   // All other hooks and functions are assumed to be here, corrected and in order...
 
-  const handleSpellingSubmit = () => {
+const handleSpellingSubmit = () => {
     if (!currentWord) return;
     clearInterval(timerRef.current as NodeJS.Timeout);
 
@@ -101,6 +101,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     const isCorrect = guess === currentWord.word.toLowerCase();
     const shouldCountWord = isCorrect || !extraAttempt;
 
+    // 1. Update participant stats first
     const updatedParticipants = participants.map((p, index) => {
       if (index === currentParticipantIndex) {
         const multipliers: Record<string, number> = { easy: 1, medium: 2, tricky: 3 };
@@ -123,6 +124,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     });
     setParticipants(updatedParticipants);
 
+    // 2. Handle the "Correct" case
     if (isCorrect) {
       const participant = updatedParticipants[currentParticipantIndex];
       const newlyUnlocked = defaultAchievements.filter(
@@ -155,10 +157,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         nextTurn();
       }, 2000);
       
-      return; // Stop execution for the correct case
+      return; // This is the crucial missing piece
     }
     
-    // This part only runs if the answer was incorrect
+    // 3. Handle the "Incorrect" case (this part only runs if isCorrect was false)
     playWrong();
     handleIncorrectAttempt();
   };
