@@ -120,9 +120,10 @@ open index.html
      "syllables": ["ex", "am", "ple"],
      "definition": "A thing characteristic of its kind",
      "origin": "Latin 'exemplum' meaning sample",
-     "example": "This is a good example of the format.",
-     "prefixSuffix": "Base word with no prefix or suffix",
-     "pronunciation": "ig-ZAM-pul"
+      "example": "This is a good example of the format.",
+      "prefix": "",
+      "suffix": "",
+      "pronunciation": "ig-ZAM-pul"
    }
    ```
 

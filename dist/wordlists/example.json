@@ -5,7 +5,8 @@
     "definition": "a fruit",
     "origin": "Old English",
     "example": "She ate an apple.",
-    "prefixSuffix": "",
+    "prefix": "",
+    "suffix": "",
     "pronunciation": "AP-uhl"
   },
   {
@@ -14,7 +15,8 @@
     "definition": "another fruit",
     "origin": "Wolof",
     "example": "Bananas are yellow.",
-    "prefixSuffix": "",
+    "prefix": "",
+    "suffix": "",
     "pronunciation": "buh-NA-nuh"
   }
 ]
