@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SkipForward } from 'lucide-react';
-import { GameConfig, Word, Participant, GameResults } from './types';
+import { GameConfig, Word, Participant, GameResults, GameState } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
 import timeoutSoundFile from './audio/timeout.mp3';
+import { launchConfetti } from './utils/confetti';
+import { speak } from './utils/tts';
 
 interface GameScreenProps {
   config: GameConfig;
@@ -22,6 +24,8 @@ interface WordQueues {
   review: Word[];
 }
 
+const difficultyOrder: Array<'easy' | 'medium' | 'tricky' | 'review'> = ['easy', 'medium', 'tricky', 'review'];
+
 const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [participants, setParticipants] = useState<Participant[]>(
     config.participants.map(p => ({
@@ -32,11 +36,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       wordsCorrect: 0
     }))
   );
+  const [gameState, setGameState] = useState<GameState>({ difficultyLevel: config.difficultyLevel });
   const [currentParticipantIndex, setCurrentParticipantIndex] = useState(0);
   const [currentWord, setCurrentWord] = useState<Word | null>(null);
   const [timeLeft, setTimeLeft] = useState(config.timerDuration);
   const isTeamMode = config.gameMode === 'team';
   const [showWord, setShowWord] = useState(true);
+  const [showHint, setShowHint] = useState(false);
   const [letters, setLetters] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<Feedback>({ message: '', type: '' });
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -56,7 +62,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     tricky: shuffleArray(config.wordDatabase.tricky),
     review: []
   });
-  const [currentDifficulty, setCurrentDifficulty] = useState<'easy' | 'medium' | 'tricky' | 'review'>('easy');
+  const [currentDifficulty, setCurrentDifficulty] = useState<'easy' | 'medium' | 'tricky' | 'review'>(
+    difficultyOrder[Math.min(config.difficultyLevel, difficultyOrder.length - 1)]
+  );
   const [attemptedParticipants, setAttemptedParticipants] = useState<Set<number>>(new Set());
   const [missedWords, setMissedWords] = useState<Word[]>([]);
 
@@ -106,12 +114,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentWord, letters]);
 
-  const difficultyOrder: Array<'easy' | 'medium' | 'tricky' | 'review'> = ['easy', 'medium', 'tricky', 'review'];
-
-  const selectNextWord = () => {
-    let index = difficultyOrder.indexOf(currentDifficulty);
+  const selectNextWord = (level: number = gameState.difficultyLevel) => {
+    let index = Math.min(level, difficultyOrder.length - 1);
     let nextWord: Word | null = null;
-    let nextDifficulty = currentDifficulty;
+    let nextDifficulty = difficultyOrder[index];
 
     while (index < difficultyOrder.length) {
       const diff = difficultyOrder[index];
@@ -136,7 +142,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
       setExtraAttempt(false);
       setIsHelpOpen(false);
+      setShowHint(false);
       setLetters(Array.from({ length: nextWord.word.length }, () => ''));
+      speak(nextWord.word);
     } else {
       onEndGameWithMissedWords();
     }
@@ -234,6 +242,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
     const guess = letters.join('').trim().toLowerCase();
     const isCorrect = guess === currentWord.word.toLowerCase();
+    const shouldCountWord = isCorrect || !extraAttempt;
 
     setParticipants(prev =>
       prev.map((p, index) => {
@@ -248,8 +257,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             ...p,
             attempted: p.attempted + 1,
             correct: p.correct + (isCorrect ? 1 : 0),
-            wordsAttempted: p.wordsAttempted + 1,
-            wordsCorrect: p.wordsCorrect + (isCorrect ? 1 : 0),
+            wordsAttempted: p.wordsAttempted + (shouldCountWord ? 1 : 0),
+            wordsCorrect: p.wordsCorrect + (shouldCountWord && isCorrect ? 1 : 0),
             lives: isCorrect ? p.lives : p.lives - 1,
             points: isCorrect ? p.points + pointsEarned : p.points,
             streak: isCorrect ? p.streak + 1 : 0
@@ -260,13 +269,16 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     );
 
     if (isCorrect) {
+      launchConfetti();
       correctAudio.current.currentTime = 0;
       correctAudio.current.play();
       setFeedback({ message: 'Correct! 🎉', type: 'success' });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
+      const newLevel = gameState.difficultyLevel + config.progressionSpeed;
+      setGameState(prev => ({ ...prev, difficultyLevel: newLevel }));
       setTimeout(() => {
         setFeedback({ message: '', type: '' });
-        selectNextWord();
+        selectNextWord(newLevel);
         nextTurn();
       }, 2000);
       return;
@@ -301,20 +313,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     setParticipants(prev =>
       prev.map((p, index) => {
         if (index === currentParticipantIndex) {
-          if (config.skipPenaltyType === 'lives') {
-            return {
-              ...p,
-              lives: p.lives - config.skipPenaltyValue,
-              streak: 0,
-              wordsAttempted: p.wordsAttempted + 1
-            };
-          }
-          return {
+          const updated = {
             ...p,
-            points: p.points - config.skipPenaltyValue,
             streak: 0,
             wordsAttempted: p.wordsAttempted + 1
           };
+          if (config.skipPenaltyType === 'lives') {
+            return { ...updated, lives: p.lives - config.skipPenaltyValue };
+          }
+          return { ...updated, points: p.points - config.skipPenaltyValue };
         }
         return p;
       })
@@ -338,8 +345,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     const activeParticipants = participants.filter(p => p.lives > 0);
     const finalParticipants = participants.map(p => ({
       ...p,
-      accuracy:
-        p.wordsAttempted > 0 ? (p.wordsCorrect / p.wordsAttempted) * 100 : 0
+      accuracy: p.wordsAttempted > 0 ? (p.wordsCorrect / p.wordsAttempted) * 100 : 0
     }));
     onEndGame({
       winner: activeParticipants.length === 1 ? activeParticipants[0] : null,
@@ -400,6 +406,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
               </div>
             )}
             <button
+              onClick={() => speak(currentWord.word)}
+              className="absolute top-0 left-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+            >
+              Replay Word
+            </button>
+            <button
               onClick={() => setShowWord(!showWord)}
               className="absolute top-0 right-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
             >
@@ -415,15 +427,25 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
                   .join(' ')}
               </p>
             )}
-            <p className="text-2xl mb-2">
-              <strong className="text-yellow-300">Definition:</strong> {currentWord.definition}
-            </p>
-            <p className="text-xl mb-2">
-              <strong className="text-yellow-300">Origin:</strong> {currentWord.origin}
-            </p>
-            <p className="text-xl">
-              <strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"
-            </p>
+            {showHint && (
+              <>
+                <p className="text-2xl mb-2">
+                  <strong className="text-yellow-300">Definition:</strong> {currentWord.definition}
+                </p>
+                <p className="text-xl mb-2">
+                  <strong className="text-yellow-300">Origin:</strong> {currentWord.origin}
+                </p>
+                <p className="text-xl">
+                  <strong className="text-yellow-300">Example:</strong> "{currentWord.example}"
+                </p>
+              </>
+            )}
+            <button
+              onClick={() => setShowHint(!showHint)}
+              className="mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+            >
+              {showHint ? 'Hide Hint' : 'Show Hint'}
+            </button>
           </div>
           <div className="flex gap-2 justify-center mb-4">
             {letters.map((letter, idx) => (

@@ -34,6 +34,9 @@
     "url": "https://github.com/squidgyg/interactive-spelling-bee/issues"
   },
   "homepage": "https://squidgyg.github.io/interactive-spelling-bee/",
+  "dependencies": {
+    "canvas-confetti": "^1.9.3"
+  },
   "devDependencies": {
     "esbuild": "^0.25.9",
     "gh-pages": "^6.0.0",
