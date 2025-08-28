@@ -40,6 +40,8 @@ export interface GameConfig {
   effectsEnabled: boolean;
   difficultyLevel: number;
   progressionSpeed: number;
+  /** When true, the game uses the daily challenge word list */
+  dailyChallenge?: boolean;
 }
 
 export interface GameResults {
