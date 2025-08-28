@@ -8,13 +8,11 @@
     "start": "npx serve dist",
     "serve": "npx serve dist",
     "build": "npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=esnext --loader:.mp3=file --loader:.svg=file --asset-names=assets/[name]-[hash]",
-    "postbuild": "node -e \"const fs=require('fs'),cp=(s,d)=>{try{fs.cpSync(s,d,{recursive:true})}catch{}};fs.mkdirSync('dist',{recursive:true});['index.html','style.css','manifest.webmanifest','service-worker.js','leaderboard.json','words.json'].forEach(f=>{try{fs.copyFileSync(f,'dist/'+f)}catch{}});['audio','icons','img','avatars'].forEach(d=>cp(d,'dist/'+d));\"",
+    "postbuild": "node -e \"const fs=require('fs'),cp=(s,d)=>{try{fs.cpSync(s,d,{recursive:true})}catch{};['index.html','style.css','manifest.webmanifest','service-worker.js','leaderboard.json','words.json'].forEach(f=>{try{fs.mkdirSync('dist',{recursive:true});fs.copyFileSync(f,'dist/'+f)}catch{}});['audio','icons','img','avatars'].forEach(d=>cp(d,'dist/'+d));\"",
     "watch": "npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --watch",
     "test": "echo 'No tests configured yet'",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
-}
-
   },
   "repository": {
     "type": "git",
