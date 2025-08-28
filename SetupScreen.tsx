@@ -48,6 +48,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [studentName, setStudentName] = useState('');
   const [skipPenaltyType, setSkipPenaltyType] = useState<'lives' | 'points'>('lives');
   const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
+  const [initialDifficulty, setInitialDifficulty] = useState(0);
+  const [progressionSpeed, setProgressionSpeed] = useState(1);
 
   const addTeam = () => {
     setTeams([
@@ -215,7 +217,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       gameMode,
       timerDuration,
       skipPenaltyType,
-      skipPenaltyValue
+      skipPenaltyValue,
+      difficultyLevel: initialDifficulty,
+      progressionSpeed
     } as GameConfig;
     onStartGame(config);
   };
@@ -328,6 +332,34 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               onChange={e => setSkipPenaltyValue(Number(e.target.value))}
               className="p-2 rounded-md bg-white/20 text-white w-24"
             />
+          </div>
+        </div>
+
+        <div className="bg-white/10 p-6 rounded-lg mb-8">
+          <h2 className="text-2xl font-bold mb-4">Difficulty Settings</h2>
+          <div className="flex gap-4">
+            <div>
+              <label className="block mb-2">Initial Difficulty</label>
+              <select
+                value={initialDifficulty}
+                onChange={e => setInitialDifficulty(Number(e.target.value))}
+                className="p-2 rounded-md bg-white/20 text-white"
+              >
+                <option value={0}>Easy</option>
+                <option value={1}>Medium</option>
+                <option value={2}>Tricky</option>
+              </select>
+            </div>
+            <div>
+              <label className="block mb-2">Progression Speed</label>
+              <input
+                type="number"
+                min={1}
+                value={progressionSpeed}
+                onChange={e => setProgressionSpeed(Number(e.target.value))}
+                className="p-2 rounded-md bg-white/20 text-white w-24"
+              />
+            </div>
           </div>
         </div>
 
