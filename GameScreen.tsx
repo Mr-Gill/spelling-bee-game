@@ -43,6 +43,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [showWord, setShowWord] = React.useState(true);
   const [showHint, setShowHint] = React.useState(false);
   const [usedHint, setUsedHint] = React.useState(false);
+  const [showDefinition, setShowDefinition] = React.useState(false);
+  const [showOrigin, setShowOrigin] = React.useState(false);
+  const [showSentence, setShowSentence] = React.useState(false);
   const [letters, setLetters] = React.useState<string[]>([]);
   const [feedback, setFeedback] = React.useState<Feedback>({ message: '', type: '' });
   const timerRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -146,6 +149,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setIsHelpOpen(false);
       setShowHint(false);
       setUsedHint(false);
+      setShowDefinition(false);
+      setShowOrigin(false);
+      setShowSentence(false);
       setLetters(Array.from({ length: nextWord.word.length }, () => ''));
       speak(nextWord.word);
     } else {
@@ -452,18 +458,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
                   .join(' ')}
               </p>
             )}
-            {showHint && (
-              <>
-                <p className="text-2xl mb-2">
-                  <strong className="text-yellow-300">Definition:</strong> {currentWord.definition}
-                </p>
-                <p className="text-xl mb-2">
-                  <strong className="text-yellow-300">Origin:</strong> {currentWord.origin}
-                </p>
-                <p className="text-xl">
-                  <strong className="text-yellow-300">Example:</strong> "{currentWord.example}"
-                </p>
-              </>
+            {showDefinition && (
+              <p className="text-2xl mb-2">
+                <strong className="text-yellow-300">Definition:</strong> {currentWord.definition}
+              </p>
             )}
             <button
               onClick={() => {
@@ -474,6 +472,57 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             >
               {showHint ? 'Hide Hint' : 'Show Hint'}
             </button>
+            {showOrigin && (
+              <p className="text-xl mb-2">
+                <strong className="text-yellow-300">Origin:</strong> {currentWord.origin}
+              </p>
+            )}
+            {showSentence && (
+              <p className="text-xl">
+                <strong className="text-yellow-300">Example:</strong> "{currentWord.example}"
+              </p>
+            )}
+            <div className="mt-4 flex gap-4 justify-center">
+              {!showDefinition && (
+                <button
+                  onClick={() => {
+                    if (participants[currentParticipantIndex].points < 1) return;
+                    spendPoints(currentParticipantIndex, 1);
+                    setShowDefinition(true);
+                  }}
+                  disabled={participants[currentParticipantIndex].points < 1}
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                >
+                  Buy Definition (-1)
+                </button>
+              )}
+              {!showOrigin && (
+                <button
+                  onClick={() => {
+                    if (participants[currentParticipantIndex].points < 1) return;
+                    spendPoints(currentParticipantIndex, 1);
+                    setShowOrigin(true);
+                  }}
+                  disabled={participants[currentParticipantIndex].points < 1}
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                >
+                  Buy Origin (-1)
+                </button>
+              )}
+              {!showSentence && (
+                <button
+                  onClick={() => {
+                    if (participants[currentParticipantIndex].points < 1) return;
+                    spendPoints(currentParticipantIndex, 1);
+                    setShowSentence(true);
+                  }}
+                  disabled={participants[currentParticipantIndex].points < 1}
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                >
+                  Buy Sentence (-1)
+                </button>
+              )}
+            </div>
           </div>
           <div className="flex gap-2 justify-center mb-4">
             {letters.map((letter, idx) => (

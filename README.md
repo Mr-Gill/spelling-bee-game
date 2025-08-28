@@ -42,7 +42,7 @@ Transform your spelling lessons into engaging, interactive competitions that stu
 - **Help Shop System** - Strategic point-based assistance options
 - **Incorrect Word Tracking** - Identify challenging words for future lessons
 - **Sound Effects** - Audio feedback for correct/incorrect answers
-- **Dynamic Scoring** - Starting points scale with player count with difficulty multipliers and streak bonuses
+- **Dynamic Scoring** - Players start with 1 point and earn more with difficulty multipliers and streak bonuses
 
 ---
 
@@ -67,13 +67,15 @@ Transform your spelling lessons into engaging, interactive competitions that stu
 
 ## 🛍️ **Strategic Help Shop System**
 
-Students earn points for correct answers and can strategically spend them on assistance:
+Students earn points for correct answers and can strategically spend them on assistance. Players start with 1 point each, allowing immediate use of the shop:
 
 | Help Item | Cost | Description |
 |-----------|------|-------------|
 | 🔍 **Reveal Word** | 3 points | Show the word in large text |
 | ⏱️ **Extra Time** | 2 points | Add 15 seconds to the timer |
-| 📊 **Syllable Count** | 1 point | Audio hint about syllable structure |
+| 📖 **Definition Hint** | 1 point | Provide the word's definition |
+| 🌍 **Origin Hint** | 1 point | Share the word's origin |
+| 📝 **Sentence Hint** | 1 point | Use the word in a sentence |
 
 *This system encourages strategic thinking and resource management while providing scaffolded support.*
 
