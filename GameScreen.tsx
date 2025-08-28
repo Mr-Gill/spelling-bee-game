@@ -20,6 +20,7 @@ interface GameScreenProps {
 interface Feedback { message: string; type: string; }
 interface WordQueues { easy: Word[]; medium: Word[]; tricky: Word[]; review: Word[]; }
 
+
 const difficultyOrder: Array<'easy' | 'medium' | 'tricky' | 'review'> = ['easy', 'medium', 'tricky', 'review'];
 
 const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
@@ -127,7 +128,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentWord, isPaused, letters]); // Added letters to dependency array
+  }, [currentWord, isPaused, letters]);
 
   React.useEffect(() => {
     if (!showWord && currentWord) {
@@ -193,7 +194,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
     setFeedback({ message: 'Incorrect. Try again next time!', type: 'error' });
     if (currentWord) setMissedWords(prev => [...prev, currentWord]);
-    
+
     const updatedParticipants = participants.map((p, index) => {
       if (index === currentParticipantIndex) {
         return {
@@ -273,13 +274,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   };
 
   const handleFriendSubstitution = () => {
-    const cost = 4; // Corrected cost to match UI
+    const cost = 4;
     if (participants[currentParticipantIndex].points < cost) return;
     spendPoints(currentParticipantIndex, cost);
     setExtraAttempt(true);
     setUsedHint(true);
   };
-  
+
   const handlePrefixReveal = () => {
     const cost = 3;
     if (participants[currentParticipantIndex].points < cost || !currentWord) return;
@@ -328,7 +329,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const handleVirtualLetter = (letter: string) => {
     typeLetter(letter);
   };
-  
+
   const handleVirtualBackspace = () => {
     setLetters(prev => {
       const reverseIndex = [...prev].reverse().findIndex(l => l !== '');
@@ -432,7 +433,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       nextTurn();
     }, 1500);
   };
-  
+
   const onEndGameWithMissedWords = () => {
     const lessonKey = new Date().toISOString().split('T')[0];
     const stored = JSON.parse(localStorage.getItem('missedWordsCollection') || '{}');
@@ -455,7 +456,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
   React.useEffect(() => {
     if (config.participants.length > 0) {
-        selectNextWord(config.participants[0].difficultyLevel);
+      selectNextWord(config.participants[0].difficultyLevel);
     }
   }, []);
 
@@ -468,10 +469,265 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   }, [participants]);
 
   return (
-    // JSX remains the same
     <div className="relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
-        {/* Full UI is assumed here */}
-        <h1>Game On</h1>
+      <input
+        ref={hiddenInputRef}
+        type="text"
+        className="absolute opacity-0 pointer-events-none"
+        aria-hidden="true"
+      />
+      <div className="absolute top-8 left-8 flex gap-8">
+        {participants.map((p, index) => (
+          <div key={index} className="text-center">
+            <div className="text-2xl font-bold">{p.name}</div>
+            <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(p.lives)}</div>
+            <div className="text-xl font-bold text-green-400">{p.points} pts</div>
+          </div>
+        ))}
+      </div>
+
+      {feedback.message && (
+        <div className={`absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${
+          feedback.type === 'success' ? 'bg-green-500' : feedback.type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+        }`}
+        >
+          {feedback.message}
+        </div>
+      )}
+
+      <div className="absolute top-8 right-8 text-center z-50">
+        <div className={`text-6xl font-bold ${timeLeft <= 10 ? 'text-red-500' : 'text-yellow-300'}`}>{timeLeft}</div>
+        <div className="text-lg">seconds left</div>
+        <button
+          onClick={isPaused ? resumeTimer : pauseTimer}
+          className="mt-2 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+        >
+          {isPaused ? 'Resume' : 'Pause'}
+        </button>
+      </div>
+
+      {currentWord && (
+        <div className="w-full max-w-4xl text-center">
+          <h2 className="text-4xl font-bold mb-4">
+            Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
+          </h2>
+          <div className="relative mb-8 pt-10">
+            {showWord && (
+              <div className="inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg">
+                {currentWord.word}
+                {currentWord.pronunciation && (
+                  <span className="ml-4 text-5xl text-yellow-300">{currentWord.pronunciation}</span>
+                )}
+              </div>
+            )}
+            <button
+              onClick={() => speak(currentWord.word)}
+              className="absolute top-0 left-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+            >
+              Replay Word
+            </button>
+            <button
+              onClick={() => setShowWord(!showWord)}
+              className="absolute top-0 right-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+            >
+              {showWord ? 'Hide Word' : 'Show Word'}
+            </button>
+          </div>
+          <div className="bg-white/10 p-6 rounded-lg mb-8">
+            {revealedLetters.some(r => r) && (
+              <p className="text-3xl font-mono mb-4">
+                {currentWord.word
+                  .split('')
+                  .map((letter, idx) => (revealedLetters[idx] ? letter : '_'))
+                  .join(' ')}
+              </p>
+            )}
+            {showDefinition && (
+              <p className="text-2xl mb-2">
+                <strong className="text-yellow-300">Definition:</strong> {currentWord.definition}
+              </p>
+            )}
+            <button
+              onClick={() => {
+                setShowHint(!showHint);
+                if (!showHint) setUsedHint(true);
+              }}
+              className="mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+            >
+              {showHint ? 'Hide Hint' : 'Show Hint'}
+            </button>
+            {showHint && currentWord && (
+              <div className="mt-4 flex flex-col items-center gap-4">
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {currentWord.syllables.map((syllable, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => speak(syllable)}
+                      disabled={!revealedSyllables[idx] || !showWord}
+                      className="bg-yellow-100 text-black px-2 py-1 rounded disabled:opacity-50"
+                    >
+                      {showWord && revealedSyllables[idx] ? syllable : '???'}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {currentWord.syllables.map((_, idx) =>
+                    !revealedSyllables[idx] && (
+                      <button
+                        key={`reveal-${idx}`}
+                        onClick={() => handleRevealSyllable(idx)}
+                        disabled={participants[currentParticipantIndex].points < 3}
+                        className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                      >
+                        {`Reveal syllable ${idx + 1} (-3)`}
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
+            {showOrigin && (
+              <p className="text-xl mb-2">
+                <strong className="text-yellow-300">Origin:</strong> {currentWord.origin}
+              </p>
+            )}
+            {showSentence && (
+              <p className="text-xl">
+                <strong className="text-yellow-300">Example:</strong> "{currentWord.example}"
+              </p>
+            )}
+            {showPrefix && showWord && currentWord.prefix && (
+              <p className="text-xl mb-2">
+                <strong className="text-yellow-300">Prefix:</strong> {currentWord.prefix}
+              </p>
+            )}
+            {showSuffix && showWord && currentWord.suffix && (
+              <p className="text-xl mb-2">
+                <strong className="text-yellow-300">Suffix:</strong> {currentWord.suffix}
+              </p>
+            )}
+            <div className="mt-4 flex gap-4 justify-center">
+              {!showDefinition && (
+                <button
+                  onClick={() => {
+                    if (participants[currentParticipantIndex].points < 1) return;
+                    spendPoints(currentParticipantIndex, 1);
+                    setShowDefinition(true);
+                  }}
+                  disabled={participants[currentParticipantIndex].points < 1}
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                >
+                  Buy Definition (-1)
+                </button>
+              )}
+              {!showOrigin && (
+                <button
+                  onClick={() => {
+                    if (participants[currentParticipantIndex].points < 1) return;
+                    spendPoints(currentParticipantIndex, 1);
+                    setShowOrigin(true);
+                  }}
+                  disabled={participants[currentParticipantIndex].points < 1}
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                >
+                  Buy Origin (-1)
+                </button>
+              )}
+              {!showSentence && (
+                <button
+                  onClick={() => {
+                    if (participants[currentParticipantIndex].points < 1) return;
+                    spendPoints(currentParticipantIndex, 1);
+                    setShowSentence(true);
+                  }}
+                  disabled={participants[currentParticipantIndex].points < 1}
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                >
+                  Buy Sentence (-1)
+                </button>
+              )}
+            </div>
+            <div className="mt-4 flex gap-4 justify-center">
+              {!showPrefix && currentWord.prefix && (
+                <button
+                  onClick={handlePrefixReveal}
+                  disabled={participants[currentParticipantIndex].points < 3}
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                >
+                  Reveal Prefix (-3)
+                </button>
+              )}
+              {!showSuffix && currentWord.suffix && (
+                <button
+                  onClick={handleSuffixReveal}
+                  disabled={participants[currentParticipantIndex].points < 3}
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                >
+                  Reveal Suffix (-3)
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="flex gap-2 justify-center mb-4">
+            {letters.map((letter, idx) => (
+              <div
+                key={idx}
+                className={`w-12 h-16 text-4xl flex items-center justify-center rounded-lg border-b-2 ${
+                  letter
+                    ? letter.toLowerCase() === currentWord.word[idx].toLowerCase()
+                      ? 'bg-green-500'
+                      : 'bg-red-500'
+                    : 'bg-white/20'
+                }`}
+              >
+                {letter.toUpperCase()}
+              </div>
+            ))}
+          </div>
+          <OnScreenKeyboard
+            onLetter={handleVirtualLetter}
+            onBackspace={handleVirtualBackspace}
+            onSubmit={handleSpellingSubmit}
+          />
+
+          <div className="mt-6 flex justify-center gap-4">
+            <button
+              onClick={handleHangmanReveal}
+              disabled={participants[currentParticipantIndex].points < 5 || isTeamMode === false}
+              className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+            >
+              Hangman Reveal (-5)
+            </button>
+            <button
+              onClick={handleVowelReveal}
+              disabled={participants[currentParticipantIndex].points < 3 || isTeamMode === false}
+              className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+            >
+              Vowel Reveal (-3)
+            </button>
+            <button
+              onClick={handleFriendSubstitution}
+              disabled={participants[currentParticipantIndex].points < 4 || isTeamMode === false}
+              className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+            >
+              Friend Sub (-4)
+            </button>
+          </div>
+        </div>
+      )}
+
+      <button
+        onClick={skipWord}
+        className="absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl"
+      >
+        <SkipForward size={24} />
+      </button>
+
+      {isPaused && (
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40">
+          Paused
+        </div>
+      )}
     </div>
   );
 };
