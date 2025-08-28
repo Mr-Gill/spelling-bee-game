@@ -1,10 +1,9 @@
-const CACHE_NAME = 'spelling-bee-cache-v2';
+const CACHE_NAME = 'spelling-bee-cache-v3';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
-  './dist/app.js',
-  './app.js',
+  './app.js', // Cache bundled application script
   './words.json',
   './wordlists/example.json',
   './wordlists/example.csv',
