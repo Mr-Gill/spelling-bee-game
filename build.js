@@ -1,69 +1,82 @@
-const esbuild = require('esbuild');
+// build.js - bundles TS/TSX and copies static assets for GitHub Pages
+// Run by CI: `npm run build`
+
 const fs = require('fs');
+const fsp = require('fs').promises;
 const path = require('path');
 
-// Define the destination directory
-const distDir = 'dist';
-
-// 1. Clear the dist directory if it exists, then create it.
-if (fs.existsSync(distDir)) {
-    fs.rmSync(distDir, { recursive: true, force: true });
-}
-fs.mkdirSync(distDir, { recursive: true });
-
-// 2. Copy static files (HTML, styles, PWA assets) to dist
-const indexHtmlPath = path.join(distDir, 'index.html');
-let indexHtml = fs.readFileSync('index.html', 'utf8');
-indexHtml = indexHtml.replace('dist/app.js', 'app.js');
-fs.writeFileSync(indexHtmlPath, indexHtml);
-
-fs.copyFileSync('style.css', path.join(distDir, 'style.css'));
-fs.copyFileSync('manifest.webmanifest', path.join(distDir, 'manifest.webmanifest'));
-fs.copyFileSync('service-worker.js', path.join(distDir, 'service-worker.js'));
-fs.copyFileSync('words.json', path.join(distDir, 'words.json'));
-fs.copyFileSync('leaderboard.json', path.join(distDir, 'leaderboard.json'));
-fs.cpSync('icons', path.join(distDir, 'icons'), { recursive: true });
-
-if (fs.existsSync('avatars')) {
-    fs.cpSync('avatars', path.join(distDir, 'avatars'), { recursive: true });
+async function copyFileIfExists(src, dest) {
+  try {
+    await fsp.copyFile(src, dest);
+  } catch (e) {
+    if (e.code !== 'ENOENT') throw e;
+  }
 }
 
-if (fs.existsSync('img')) {
-  fs.cpSync('img', path.join(distDir, 'img'), { recursive: true });
-}
-
-fs.cpSync('audio', path.join(distDir, 'audio'), { recursive: true });
-
-// Copy wordlists directory
-const copyDir = (src, dest) => {
-    fs.mkdirSync(dest, { recursive: true });
-    for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
-        const srcPath = path.join(src, entry.name);
-        const destPath = path.join(dest, entry.name);
-        if (entry.isDirectory()) {
-            copyDir(srcPath, destPath);
-        } else {
-            fs.copyFileSync(srcPath, destPath);
-        }
+async function copyDirIfExists(srcDir, destDir) {
+  try {
+    const st = await fsp.stat(srcDir);
+    if (!st.isDirectory()) return;
+  } catch (e) {
+    if (e.code === 'ENOENT') return;
+    throw e;
+  }
+  await fsp.mkdir(destDir, { recursive: true });
+  const entries = await fsp.readdir(srcDir, { withFileTypes: true });
+  await Promise.all(entries.map(async (ent) => {
+    const s = path.join(srcDir, ent.name);
+    const d = path.join(destDir, ent.name);
+    if (ent.isDirectory()) {
+      await copyDirIfExists(s, d);
+    } else {
+      await fsp.copyFile(s, d);
     }
-};
-
-if (fs.existsSync('wordlists')) {
-    copyDir('wordlists', path.join(distDir, 'wordlists'));
+  }));
 }
 
-// 3. Run esbuild to bundle the application
-esbuild.build({
-  entryPoints: ['spelling-bee-game.tsx'],
-  bundle: true,
-  outfile: 'dist/app.js',
-  format: 'esm',
-  jsx: 'automatic',
-  loader: {
-    '.svg': 'file',
-    '.mp3': 'file',
-  },
-}).catch((e) => {
-  console.error(e);
+async function main() {
+  const dist = path.join(__dirname, 'dist');
+
+  // Clean & recreate dist
+  await fsp.rm(dist, { recursive: true, force: true });
+  await fsp.mkdir(dist, { recursive: true });
+
+  // Bundle app (TypeScript/TSX -> dist/app.js)
+  const esbuild = require('esbuild');
+  await esbuild.build({
+    entryPoints: ['spelling-bee-game.tsx'], // main TSX entry
+    outfile: path.join(dist, 'app.js'),
+    bundle: true,
+    minify: true,
+    sourcemap: false,
+    target: ['es2019'],
+    loader: { '.ts': 'ts', '.tsx': 'tsx', '.json': 'json' },
+    define: { 'process.env.NODE_ENV': '"production"' }
+  });
+
+  // Copy top-level static files (only if present)
+  const staticFiles = [
+    'index.html',
+    'style.css',
+    'manifest.webmanifest',
+    'service-worker.js',
+    'leaderboard.json',
+    'words.json'
+  ];
+  await Promise.all(staticFiles.map(async (f) => {
+    await copyFileIfExists(path.join(__dirname, f), path.join(dist, f));
+  }));
+
+  // Copy asset folders if present
+  const folders = ['audio', 'icons', 'img', 'avatars'];
+  for (const folder of folders) {
+    await copyDirIfExists(path.join(__dirname, folder), path.join(dist, folder));
+  }
+
+  console.log('Build complete → dist/');
+}
+
+main().catch((err) => {
+  console.error(err);
   process.exit(1);
 });
