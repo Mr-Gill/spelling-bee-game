@@ -434,6 +434,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             {showWord && (
               <div className="inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg">
                 {currentWord.word}
+                {currentWord.pronunciation && (
+                  <span className="ml-4 text-5xl text-yellow-300">{currentWord.pronunciation}</span>
+                )}
               </div>
             )}
             <button
