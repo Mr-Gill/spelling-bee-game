@@ -13,6 +13,12 @@ body {
     overflow-x: hidden;
 }
 
+img,
+video {
+    max-width: 100%;
+    height: auto;
+}
+
 /* Custom animations */
 @keyframes pulse {
     0%, 100% {
@@ -155,6 +161,9 @@ body {
 @media (max-width: 640px) {
     .w-1\/2 {
         width: 100%;
+    }
+    #root {
+        padding: 0.5rem;
     }
 }
 

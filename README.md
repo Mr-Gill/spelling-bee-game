@@ -42,6 +42,7 @@ Transform your spelling lessons into engaging, interactive competitions that stu
 - **Help Shop System** - Strategic point-based assistance options
 - **Incorrect Word Tracking** - Identify challenging words for future lessons
 - **Sound Effects** - Audio feedback for correct/incorrect answers
+- **Dynamic Scoring** - Starting points scale with player count with difficulty multipliers and streak bonuses
 
 ---
 
