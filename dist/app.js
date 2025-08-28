@@ -351,7 +351,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                         </div>
                     </div>
                     <div className="mt-4 text-sm text-gray-300">
-                        <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `sentence`, `prefixSuffix`, `pronunciation`. The difficulty will be determined by word length.</p>
+                        <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `sentence`, `prefix`, `suffix`, `pronunciation`. The difficulty will be determined by word length.</p>
                     </div>
                 </div>
 
@@ -412,7 +412,8 @@ const GameScreen = ({ config, onEndGame }) => {
     const [isHelpOpen, setIsHelpOpen] = useState(false);
     const [revealedHints, setRevealedHints] = useState({
         syllables: false,
-        prefixSuffix: false,
+        prefix: false,
+        suffix: false,
         pronunciation: false
     });
 
@@ -472,7 +473,7 @@ const GameScreen = ({ config, onEndGame }) => {
             setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
             setExtraAttempt(false);
             setIsHelpOpen(false);
-            setRevealedHints({ syllables: false, prefixSuffix: false, pronunciation: false });
+            setRevealedHints({ syllables: false, prefix: false, suffix: false, pronunciation: false });
         } else {
             onEndGameWithMissedWords();
         }
@@ -579,11 +580,18 @@ const GameScreen = ({ config, onEndGame }) => {
         setRevealedHints((prev) => ({ ...prev, syllables: true }));
     };
 
-    const handleRevealPrefixSuffix = () => {
-        const cost = 2;
+    const handleRevealPrefix = () => {
+        const cost = 3;
         if (currentParticipant.points < cost || !currentWord) return;
         spendPoints(currentParticipantIndex, cost);
-        setRevealedHints((prev) => ({ ...prev, prefixSuffix: true }));
+        setRevealedHints((prev) => ({ ...prev, prefix: true }));
+    };
+
+    const handleRevealSuffix = () => {
+        const cost = 3;
+        if (currentParticipant.points < cost || !currentWord) return;
+        spendPoints(currentParticipantIndex, cost);
+        setRevealedHints((prev) => ({ ...prev, suffix: true }));
     };
 
     const handleRevealPronunciation = () => {
@@ -726,8 +734,11 @@ const GameScreen = ({ config, onEndGame }) => {
                         {revealedHints.syllables && (
                             <p className="text-xl mb-2"><strong className="text-yellow-300">Syllables:</strong> {currentWord.syllables}</p>
                         )}
-                        {revealedHints.prefixSuffix && (
-                            <p className="text-xl mb-2"><strong className="text-yellow-300">Prefix/Suffix:</strong> {currentWord.prefixSuffix}</p>
+                        {showWord && revealedHints.prefix && (
+                            <p className="text-xl mb-2"><strong className="text-yellow-300">Prefix:</strong> {currentWord.prefix}</p>
+                        )}
+                        {showWord && revealedHints.suffix && (
+                            <p className="text-xl mb-2"><strong className="text-yellow-300">Suffix:</strong> {currentWord.suffix}</p>
                         )}
                         {revealedHints.pronunciation && (
                             <p className="text-xl"><strong className="text-yellow-300">Pronunciation:</strong> {currentWord.pronunciation}</p>
@@ -792,11 +803,18 @@ const GameScreen = ({ config, onEndGame }) => {
                             Reveal Syllables (-2)
                         </button>
                         <button
-                            onClick={handleRevealPrefixSuffix}
-                            disabled={revealedHints.prefixSuffix || currentParticipant.points < 2}
+                            onClick={handleRevealPrefix}
+                            disabled={revealedHints.prefix || currentParticipant.points < 3}
                             className="w-full bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded disabled:opacity-50"
                         >
-                            Reveal Prefix/Suffix (-2)
+                            Reveal Prefix (-3)
+                        </button>
+                        <button
+                            onClick={handleRevealSuffix}
+                            disabled={revealedHints.suffix || currentParticipant.points < 3}
+                            className="w-full bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded disabled:opacity-50"
+                        >
+                            Reveal Suffix (-3)
                         </button>
                         <button
                             onClick={handleRevealPronunciation}

@@ -43,9 +43,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [showWord, setShowWord] = React.useState(true);
   const [showHint, setShowHint] = React.useState(false);
   const [usedHint, setUsedHint] = React.useState(false);
-  const [showDefinition, setShowDefinition] = React.useState(false);
-  const [showOrigin, setShowOrigin] = React.useState(false);
-  const [showSentence, setShowSentence] = React.useState(false);
+    const [showDefinition, setShowDefinition] = React.useState(false);
+    const [showOrigin, setShowOrigin] = React.useState(false);
+    const [showSentence, setShowSentence] = React.useState(false);
+    const [showPrefix, setShowPrefix] = React.useState(false);
+    const [showSuffix, setShowSuffix] = React.useState(false);
   const [letters, setLetters] = React.useState<string[]>([]);
   const [feedback, setFeedback] = React.useState<Feedback>({ message: '', type: '' });
   const timerRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -149,9 +151,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setIsHelpOpen(false);
       setShowHint(false);
       setUsedHint(false);
-      setShowDefinition(false);
-      setShowOrigin(false);
-      setShowSentence(false);
+        setShowDefinition(false);
+        setShowOrigin(false);
+        setShowSentence(false);
+        setShowPrefix(false);
+        setShowSuffix(false);
       setLetters(Array.from({ length: nextWord.word.length }, () => ''));
       speak(nextWord.word);
     } else {
@@ -247,13 +251,29 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     setRevealedLetters(newRevealed);
   };
 
-  const handleFriendSubstitution = () => {
-    const cost = 4;
-    if (participants[currentParticipantIndex].points < cost) return;
-    spendPoints(currentParticipantIndex, cost);
-    setExtraAttempt(true);
-    setUsedHint(true);
-  };
+    const handleFriendSubstitution = () => {
+      const cost = 4;
+      if (participants[currentParticipantIndex].points < cost) return;
+      spendPoints(currentParticipantIndex, cost);
+      setExtraAttempt(true);
+      setUsedHint(true);
+    };
+
+    const handlePrefixReveal = () => {
+      const cost = 3;
+      if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+      spendPoints(currentParticipantIndex, cost);
+      setUsedHint(true);
+      setShowPrefix(true);
+    };
+
+    const handleSuffixReveal = () => {
+      const cost = 3;
+      if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+      spendPoints(currentParticipantIndex, cost);
+      setUsedHint(true);
+      setShowSuffix(true);
+    };
 
   const handleSpellingSubmit = () => {
     if (!currentWord) return;
@@ -477,15 +497,25 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
                 <strong className="text-yellow-300">Origin:</strong> {currentWord.origin}
               </p>
             )}
-            {showSentence && (
-              <p className="text-xl">
-                <strong className="text-yellow-300">Example:</strong> "{currentWord.example}"
-              </p>
-            )}
-            <div className="mt-4 flex gap-4 justify-center">
-              {!showDefinition && (
-                <button
-                  onClick={() => {
+              {showSentence && (
+                <p className="text-xl">
+                  <strong className="text-yellow-300">Example:</strong> "{currentWord.example}"
+                </p>
+              )}
+              {showPrefix && showWord && currentWord.prefix && (
+                <p className="text-xl mb-2">
+                  <strong className="text-yellow-300">Prefix:</strong> {currentWord.prefix}
+                </p>
+              )}
+              {showSuffix && showWord && currentWord.suffix && (
+                <p className="text-xl mb-2">
+                  <strong className="text-yellow-300">Suffix:</strong> {currentWord.suffix}
+                </p>
+              )}
+              <div className="mt-4 flex gap-4 justify-center">
+                {!showDefinition && (
+                  <button
+                    onClick={() => {
                     if (participants[currentParticipantIndex].points < 1) return;
                     spendPoints(currentParticipantIndex, 1);
                     setShowDefinition(true);
@@ -520,6 +550,26 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
                   className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
                 >
                   Buy Sentence (-1)
+                </button>
+              )}
+            </div>
+            <div className="mt-4 flex gap-4 justify-center">
+              {!showPrefix && currentWord.prefix && (
+                <button
+                  onClick={handlePrefixReveal}
+                  disabled={participants[currentParticipantIndex].points < 3}
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                >
+                  Reveal Prefix (-3)
+                </button>
+              )}
+              {!showSuffix && currentWord.suffix && (
+                <button
+                  onClick={handleSuffixReveal}
+                  disabled={participants[currentParticipantIndex].points < 3}
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                >
+                  Reveal Suffix (-3)
                 </button>
               )}
             </div>

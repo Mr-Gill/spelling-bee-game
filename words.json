@@ -6,7 +6,8 @@
       "definition": "A person you like and know well",
       "origin": "Old English 'freond', from Germanic root meaning 'to love'",
       "example": "My best friend and I love to play together.",
-      "prefixSuffix": "Base word with no prefix or suffix",
+      "prefix": "",
+      "suffix": "",
       "pronunciation": "FREND"
     },
     {
@@ -15,7 +16,8 @@
       "definition": "Feeling or showing pleasure and contentment",
       "origin": "Middle English 'happy', from 'hap' meaning luck or fortune",
       "example": "The children were happy to see the circus.",
-      "prefixSuffix": "Base word 'hap' + suffix '-py'",
+      "prefix": "hap",
+      "suffix": "py",
       "pronunciation": "HAP-ee"
     }
   ],
@@ -26,7 +28,8 @@
       "definition": "Required to be done or achieved; essential",
       "origin": "Latin 'necessarius', from 'necesse' meaning unavoidable",
       "example": "It is necessary to study hard for the test.",
-      "prefixSuffix": "Base 'necess' + suffix '-ary'",
+      "prefix": "necess",
+      "suffix": "ary",
       "pronunciation": "NES-uh-ser-ee"
     }
   ],
@@ -37,7 +40,8 @@
       "definition": "A type of flower with many thin petals",
       "origin": "Greek 'chrysos' (gold) + 'anthemon' (flower)",
       "example": "The chrysanthemum bloomed beautifully in autumn.",
-      "prefixSuffix": "Greek compound: chryso- (gold) + -anthemum (flower)",
+      "prefix": "chryso",
+      "suffix": "anthemum",
       "pronunciation": "kri-SAN-thuh-mum"
     }
   ]

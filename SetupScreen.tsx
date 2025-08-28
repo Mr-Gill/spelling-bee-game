@@ -494,7 +494,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           <div className="mt-4 text-sm text-gray-300">
             <p>
               <strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`,
-              `prefixSuffix`, `pronunciation`. The difficulty will be determined by word length.
+              `prefix`, `suffix`, `pronunciation`. The difficulty will be determined by word length.
             </p>
           </div>
         </div>
