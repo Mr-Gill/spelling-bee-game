@@ -393,7 +393,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                         </div>
                     </div>
                     <div className="mt-4 text-sm text-gray-300">
-                        <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `sentence`, `prefixSuffix`, `pronunciation`. The difficulty will be determined by word length.</p>
+                        <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefixSuffix`, `pronunciation`. The difficulty will be determined by word length.</p>
                     </div>
                     {wordListError && (
                         <p className="text-red-300 mt-4">{wordListError}</p>
@@ -471,6 +471,7 @@ const GameScreen = ({ config, onEndGame }) => {
     const isTeamMode = config.gameMode === 'team';
     const currentParticipant = participants[currentParticipantIndex];
     const [showWord, setShowWord] = useState(true);
+    const [showHint, setShowHint] = useState(false);
     const [inputValue, setInputValue] = useState("");
     const [feedback, setFeedback] = useState({ message: "", type: "" });
     const timerRef = useRef(null);
@@ -793,9 +794,18 @@ const GameScreen = ({ config, onEndGame }) => {
                                 )).join(' ')}
                             </p>
                         )}
-                        <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
-                        <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
-                        <p className="text-xl mb-2"><strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"</p>
+                        {showHint && (
+                            <>
+                                <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
+                                <p className="text-xl mb-2"><strong className="text-yellow-300">Example:</strong> "{currentWord.example}"</p>
+                            </>
+                        )}
+                        <button
+                            onClick={() => setShowHint(!showHint)}
+                            className="mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+                        >
+                            {showHint ? 'Hide Hint' : 'Show Hint'}
+                        </button>
                         {revealedHints.syllables && (
                             <p className="text-xl mb-2"><strong className="text-yellow-300">Syllables:</strong> {currentWord.syllables}</p>
                         )}
