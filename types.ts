@@ -20,6 +20,7 @@ export interface Participant {
   wordsAttempted: number;
   wordsCorrect: number;
   accuracy?: number;
+  avatar?: string;
 }
 
 export interface WordDatabase {
@@ -57,3 +58,35 @@ export interface LeaderboardEntry {
   date: string;
   avatar?: string;
 }
+
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  threshold: number;
+}
+
+export const defaultAchievements: Achievement[] = [
+  {
+    id: 'ten-words',
+    name: 'Novice Speller',
+    description: 'Get 10 words correct',
+    icon: '🐣',
+    threshold: 10,
+  },
+  {
+    id: 'fifty-words',
+    name: 'Word Wizard',
+    description: 'Get 50 words correct',
+    icon: '🧙',
+    threshold: 50,
+  },
+  {
+    id: 'hundred-words',
+    name: 'Master Speller',
+    description: 'Get 100 words correct',
+    icon: '🏆',
+    threshold: 100,
+  },
+];

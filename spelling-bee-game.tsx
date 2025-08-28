@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import { Users, BookOpen, Play, Volume2, Globe, RotateCcw, SkipForward } from 'lucide-react';
 import LeaderboardScreen from './LeaderboardScreen';
 import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
+import AchievementsScreen from './AchievementsScreen';
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
@@ -58,12 +58,24 @@ const SpellingBeeGame = () => {
         setGameState("leaderboard");
     };
 
+    const handleViewAchievements = () => {
+        setGameState("achievements");
+    };
+
     const handleBackToSetup = () => {
         setGameState("setup");
     };
 
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
+            document.body.classList.add(`theme-${savedTheme}`);
+        }
+    }, []);
+
     if (gameState === "setup") {
-        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} />;
+        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
     }
     if (gameState === "playing") {
         return <GameScreen config={gameConfig} onEndGame={handleEndGame} />;
@@ -74,9 +86,11 @@ const SpellingBeeGame = () => {
     if (gameState === "leaderboard") {
         return <LeaderboardScreen onBack={handleBackToSetup} />;
     }
+    if (gameState === "achievements") {
+        return <AchievementsScreen onBack={handleBackToSetup} />;
+    }
     return null;
 };
-
 
 // --- App Rendering ---
 const container = document.getElementById('root');
