@@ -1,7 +1,8 @@
 {
-  "name": "interactive-spelling-bee",
+  "name": "spelling-bee-game",
   "version": "1.0.0",
   "description": "A comprehensive, classroom-ready spelling bee game with rich educational content and advanced features",
+  "private": true,
   "main": "index.html",
   "scripts": {
     "start": "npx serve dist",
@@ -14,28 +15,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/squidgyg/interactive-spelling-bee.git"
+    "url": "git+https://github.com/SquidgyG/spelling-bee-game.git"
   },
   "keywords": [
-    "education",
-    "spelling",
-    "classroom",
-    "phonics",
-    "game",
-    "interactive",
-    "teaching",
-    "learning",
-    "vocabulary",
-    "spelling-bee"
+    "education", "spelling", "classroom", "phonics", "game",
+    "interactive", "teaching", "learning", "vocabulary", "spelling-bee"
   ],
   "author": "Your Name <your.email@example.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/squidgyg/interactive-spelling-bee/issues"
+    "url": "https://github.com/SquidgyG/spelling-bee-game/issues"
   },
-  "homepage": "https://squidgyg.github.io/interactive-spelling-bee/",
+  "homepage": "https://squidgyg.github.io/spelling-bee-game/",
   "dependencies": {
-    "canvas-confetti": "^1.9.3"
+    "canvas-confetti": "1.9.3"
   },
   "devDependencies": {
     "esbuild": "^0.25.9",
@@ -45,12 +38,6 @@
     "react-dom": "^19.1.1",
     "serve": "^14.2.1"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ],
-  "engines": {
-    "node": ">=14.0.0"
-  }
+  "browserslist": ["> 1%", "last 2 versions", "not dead"],
+  "engines": { "node": ">=18" }
 }
