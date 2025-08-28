@@ -4,6 +4,7 @@ import { GameConfig, Word, Participant, GameResults } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
 import timeoutSoundFile from './audio/timeout.mp3';
+import { speak } from './utils/tts';
 
 interface GameScreenProps {
   config: GameConfig;
@@ -137,6 +138,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setExtraAttempt(false);
       setIsHelpOpen(false);
       setLetters(Array.from({ length: nextWord.word.length }, () => ''));
+      speak(nextWord.word);
     } else {
       onEndGameWithMissedWords();
     }
@@ -399,6 +401,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
                 {currentWord.word}
               </div>
             )}
+            <button
+              onClick={() => speak(currentWord.word)}
+              className="absolute top-0 left-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+            >
+              Replay Word
+            </button>
             <button
               onClick={() => setShowWord(!showWord)}
               className="absolute top-0 right-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
