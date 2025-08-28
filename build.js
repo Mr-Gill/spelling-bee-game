@@ -44,15 +44,22 @@ async function main() {
   // Bundle app (TypeScript/TSX -> dist/app.js)
   const esbuild = require('esbuild');
   await esbuild.build({
-    entryPoints: ['spelling-bee-game.tsx'], // main TSX entry
-    outfile: path.join(dist, 'app.js'),
-    bundle: true,
-    minify: true,
-    sourcemap: false,
-    target: ['es2019'],
-    loader: { '.ts': 'ts', '.tsx': 'tsx', '.json': 'json' },
-    define: { 'process.env.NODE_ENV': '"production"' }
-  });
+  entryPoints: ['spelling-bee-game.tsx'],
+  outfile: path.join(dist, 'app.js'),
+  bundle: true,
+  minify: true,
+  sourcemap: false,
+  target: ['esnext'],
+  assetNames: 'assets/[name]-[hash]',
+  loader: {
+    '.ts': 'ts',
+    '.tsx': 'tsx',
+    '.json': 'json',
+    '.mp3': 'file',
+    '.svg': 'file'
+  },
+  define: { 'process.env.NODE_ENV': '"production"' }
+});
 
   // Copy top-level static files (only if present)
   const staticFiles = [
