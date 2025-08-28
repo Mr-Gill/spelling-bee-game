@@ -48,12 +48,17 @@ if (fs.existsSync('wordlists')) {
 
 // 3. Run esbuild to bundle the application
 esbuild.build({
-    entryPoints: ['spelling-bee-game.tsx'],
-    bundle: true,
-    outfile: 'dist/app.js', // Output to dist/app.js
-    format: 'esm',        // Output as an ES Module
-    jsx: 'automatic',     // Use automatic JSX runtime
+  entryPoints: ['spelling-bee-game.tsx'],
+  bundle: true,
+  outfile: 'dist/app.js',
+  format: 'esm',
+  jsx: 'automatic',
+  // Add these lines to handle different file types
+  loader: {
+    '.svg': 'file',
+    '.mp3': 'file',
+  },
 }).catch((e) => {
-    console.error(e);
-    process.exit(1);
+  console.error(e);
+  process.exit(1);
 });
