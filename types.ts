@@ -29,6 +29,8 @@ export interface GameConfig {
   gameMode: 'team' | 'individual';
   timerDuration: number;
   wordDatabase: WordDatabase;
+  skipPenaltyType: 'lives' | 'points';
+  skipPenaltyValue: number;
 }
 
 export interface GameResults {

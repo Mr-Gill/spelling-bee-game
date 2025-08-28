@@ -231,6 +231,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     if (currentWord) {
       setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
     }
+    setParticipants(prev =>
+      prev.map((p, index) => {
+        if (index === currentParticipantIndex) {
+          if (config.skipPenaltyType === 'lives') {
+            return { ...p, lives: p.lives - config.skipPenaltyValue, streak: 0 };
+          }
+          return { ...p, points: p.points - config.skipPenaltyValue, streak: 0 };
+        }
+        return p;
+      })
+    );
     setAttemptedParticipants(new Set());
 
     setTimeout(() => {
