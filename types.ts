@@ -38,6 +38,10 @@ export interface GameConfig {
   skipPenaltyValue: number;
   soundEnabled: boolean;
   effectsEnabled: boolean;
+  /** Background music style identifier */
+  musicStyle: string;
+  /** Volume for background music between 0 and 1 */
+  musicVolume: number;
   difficultyLevel: number;
   progressionSpeed: number;
   /** When true, the game uses the daily challenge word list */

@@ -48,6 +48,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState('light');
   const [dailyStreak, setDailyStreak] = useState(0);
+  const [musicStyle] = useState('Funk');
+  const [musicVolume] = useState(0.5);
   
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
@@ -120,6 +122,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         skipPenaltyValue,
         soundEnabled,
         effectsEnabled,
+        musicStyle,
+        musicVolume,
         difficultyLevel: initialDifficulty,
         progressionSpeed,
         dailyChallenge: true,

@@ -5,6 +5,7 @@ import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
+import useMusic from './utils/useMusic';
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
@@ -73,6 +74,12 @@ const SpellingBeeGame = () => {
             document.body.classList.add(`theme-${savedTheme}`);
         }
     }, []);
+
+    // Handle background music on different screens
+    const musicStyle = gameConfig?.musicStyle || 'Funk';
+    const musicVolume = gameConfig?.musicVolume ?? 0.5;
+    const trackVariant = gameState === 'playing' ? 'instrumental' : 'vocal';
+    useMusic(musicStyle, trackVariant, musicVolume, gameConfig?.soundEnabled ?? true);
 
     if (gameState === "setup") {
         return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
