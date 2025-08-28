@@ -26,5 +26,17 @@
             });
         }
     </script>
+    <script>
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            if (target instanceof HTMLButtonElement) {
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                target.classList.add('btn-bounce');
+                target.addEventListener('animationend', () => {
+                    target.classList.remove('btn-bounce');
+                }, { once: true });
+            }
+        });
+    </script>
 </body>
 </html>
