@@ -72,8 +72,10 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
         <div className="text-2xl mb-6">Game Duration: {results.duration} seconds</div>
       )}
 
+      <div className="text-5xl mb-4">🏆</div>
+
       <div className="bg-white/10 p-8 rounded-lg w-full max-w-md">
-        <h3 className="text-3xl font-bold mb-4">Final Scores</h3>
+        <h3 className="text-3xl font-bold mb-4">📊 Final Scores</h3>
         {results && results.participants.map((p, index) => (
           <div key={index} className="text-left text-xl mb-3">
             <div className="font-bold">{p.name}</div>
@@ -90,7 +92,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
 
       {results.missedWords && results.missedWords.length > 0 && (
         <div className="bg-white/10 p-8 rounded-lg w-full max-w-md mt-8">
-          <h3 className="text-3xl font-bold mb-4">Missed Words</h3>
+          <h3 className="text-3xl font-bold mb-4">❌ Missed Words</h3>
           {results.missedWords.map((w, index) => (
             <div key={index} className="text-left text-xl mb-2">
               <span className="font-bold">{w.word}</span> - {w.definition}
@@ -104,19 +106,19 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
           onClick={handleExport}
           className="bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold"
         >
-          Export Results
+          📤 Export Results
         </button>
         <button
           onClick={onViewLeaderboard}
           className="bg-purple-500 hover:bg-purple-600 px-8 py-5 rounded-xl text-2xl font-bold"
         >
-          View Leaderboard
+          📈 View Leaderboard
         </button>
         <button
           onClick={onRestart}
           className="bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold"
         >
-          Play Again
+          🔄 Play Again
         </button>
       </div>
     </div>
