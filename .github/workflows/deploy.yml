@@ -31,9 +31,13 @@ jobs:
 
       - name: Adjust paths for GitHub Pages
         run: |
+          set -euxo pipefail
           REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
+          # Adjust index.html
           sed -i "s,href=\"style.css\",href=\"/$REPO_NAME/style.css\",g" dist/index.html
           sed -i "s,src=\"app.js\",src=\"/$REPO_NAME/app.js\",g" dist/index.html
+          # Add this line to adjust the service worker
+          sed -i "s,{{REPO_NAME}},$REPO_NAME,g" dist/service-worker.js
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
