@@ -18,8 +18,16 @@
     "url": "git+https://github.com/SquidgyG/spelling-bee-game.git"
   },
   "keywords": [
-    "education", "spelling", "classroom", "phonics", "game",
-    "interactive", "teaching", "learning", "vocabulary", "spelling-bee"
+    "education",
+    "spelling",
+    "classroom",
+    "phonics",
+    "game",
+    "interactive",
+    "teaching",
+    "learning",
+    "vocabulary",
+    "spelling-bee"
   ],
   "author": "Your Name <your.email@example.com>",
   "license": "MIT",
@@ -38,6 +46,12 @@
     "react-dom": "^19.1.1",
     "serve": "^14.2.1"
   },
-  "browserslist": ["> 1%", "last 2 versions", "not dead"],
-  "engines": { "node": ">=18" }
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
 }
