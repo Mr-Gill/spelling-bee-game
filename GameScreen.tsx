@@ -6,26 +6,20 @@ import wrongSoundFile from './audio/wrong.mp3';
 import timeoutSoundFile from './audio/timeout.mp3';
 import letterCorrectSoundFile from './audio/letter-correct.mp3';
 import letterWrongSoundFile from './audio/letter-wrong.mp3';
+import shopSoundFile from './audio/shop.mp3';
+import loseLifeSoundFile from './audio/lose-life.mp3';
 import { launchConfetti } from './utils/confetti';
 import { speak } from './utils/tts';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 
+// Interface definitions remain the same...
 interface GameScreenProps {
   config: GameConfig;
   onEndGame: (results: GameResults) => void;
 }
+interface Feedback { message: string; type: string; }
+interface WordQueues { easy: Word[]; medium: Word[]; tricky: Word[]; review: Word[]; }
 
-interface Feedback {
-  message: string;
-  type: string;
-}
-
-interface WordQueues {
-  easy: Word[];
-  medium: Word[];
-  tricky: Word[];
-  review: Word[];
-}
 
 const difficultyOrder: Array<'easy' | 'medium' | 'tricky' | 'review'> = ['easy', 'medium', 'tricky', 'review'];
 
@@ -49,11 +43,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [showDefinition, setShowDefinition] = React.useState(false);
   const [showOrigin, setShowOrigin] = React.useState(false);
   const [showSentence, setShowSentence] = React.useState(false);
+  const [showPrefix, setShowPrefix] = React.useState(false);
+  const [showSuffix, setShowSuffix] = React.useState(false);
   const [letters, setLetters] = React.useState<string[]>([]);
   const [feedback, setFeedback] = React.useState<Feedback>({ message: '', type: '' });
   const timerRef = React.useRef<NodeJS.Timeout | null>(null);
   const [startTime] = React.useState(Date.now());
   const [revealedLetters, setRevealedLetters] = React.useState<boolean[]>([]);
+  const [revealedSyllables, setRevealedSyllables] = React.useState<boolean[]>([]);
   const [extraAttempt, setExtraAttempt] = React.useState(false);
   const [isHelpOpen, setIsHelpOpen] = React.useState(false);
   const [isPaused, setIsPaused] = React.useState(false);
@@ -63,6 +60,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const timeoutAudio = React.useRef<HTMLAudioElement>(new Audio(timeoutSoundFile));
   const letterCorrectAudio = React.useRef<HTMLAudioElement>(new Audio(letterCorrectSoundFile));
   const letterWrongAudio = React.useRef<HTMLAudioElement>(new Audio(letterWrongSoundFile));
+  const shopAudio = React.useRef<HTMLAudioElement>(new Audio(shopSoundFile));
+  const loseLifeAudio = React.useRef<HTMLAudioElement>(new Audio(loseLifeSoundFile));
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
 
   const shuffleArray = (arr: Word[]) => [...arr].sort(() => Math.random() - 0.5);
@@ -118,7 +117,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!currentWord) return;
+      if (!currentWord || isPaused) return;
       if (/^[a-zA-Z]$/.test(e.key)) {
         typeLetter(e.key);
       } else if (e.key === 'Backspace') {
@@ -127,10 +126,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         handleSpellingSubmit();
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentWord]);
+  }, [currentWord, isPaused, letters]);
+
+  React.useEffect(() => {
+    if (!showWord && currentWord) {
+      setRevealedSyllables(Array(currentWord.syllables.length).fill(false));
+    }
+  }, [showWord, currentWord]);
 
   const selectNextWord = (level: number) => {
     let index = Math.min(level, difficultyOrder.length - 1);
@@ -142,10 +146,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       const queue = wordQueues[diff];
       if (queue.length > 0) {
         nextWord = queue[0];
-        setWordQueues(prev => ({
-          ...prev,
-          [diff]: prev[diff].slice(1)
-        }));
+        setWordQueues(prev => ({ ...prev, [diff]: prev[diff].slice(1) }));
         nextDifficulty = diff;
         break;
       }
@@ -157,7 +158,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setCurrentWord(nextWord);
       setTimeLeft(config.timerDuration);
       setAttemptedParticipants(new Set());
-      setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
+      setRevealedLetters(Array(nextWord.word.length).fill(false));
+      setRevealedSyllables(Array(nextWord.syllables.length).fill(false));
       setExtraAttempt(false);
       setIsHelpOpen(false);
       setShowHint(false);
@@ -165,10 +167,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setShowDefinition(false);
       setShowOrigin(false);
       setShowSentence(false);
-      setLetters(Array.from({ length: nextWord.word.length }, () => ''));
+      setShowPrefix(false);
+      setShowSuffix(false);
+      setLetters(Array(nextWord.word.length).fill(''));
       if (hiddenInputRef.current) {
-        hiddenInputRef.current.value = '';
         hiddenInputRef.current.focus();
+      }
       speak(nextWord.word);
     } else {
       onEndGameWithMissedWords();
@@ -190,6 +194,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
     setFeedback({ message: 'Incorrect. Try again next time!', type: 'error' });
     if (currentWord) setMissedWords(prev => [...prev, currentWord]);
+
     const updatedParticipants = participants.map((p, index) => {
       if (index === currentParticipantIndex) {
         return {
@@ -202,6 +207,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       return p;
     });
     setParticipants(updatedParticipants);
+
+    if (config.soundEnabled) {
+      loseLifeAudio.current.currentTime = 0;
+      loseLifeAudio.current.play();
+    }
     if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
 
     const newAttempted = new Set(attemptedParticipants);
@@ -235,6 +245,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         return p;
       })
     );
+    if (config.soundEnabled) {
+      shopAudio.current.currentTime = 0;
+      shopAudio.current.play();
+    }
   };
 
   const handleHangmanReveal = () => {
@@ -242,9 +256,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     if (participants[currentParticipantIndex].points < cost || !currentWord) return;
     spendPoints(currentParticipantIndex, cost);
     setUsedHint(true);
-    const unrevealed = revealedLetters
-      .map((rev, idx) => (!rev ? idx : null))
-      .filter(idx => idx !== null) as number[];
+    const unrevealed = revealedLetters.map((rev, idx) => (!rev ? idx : null)).filter(idx => idx !== null) as number[];
     if (unrevealed.length === 0) return;
     const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
     const newRevealed = [...revealedLetters];
@@ -257,18 +269,44 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     if (participants[currentParticipantIndex].points < cost || !currentWord) return;
     spendPoints(currentParticipantIndex, cost);
     setUsedHint(true);
-    const newRevealed = currentWord.word.split('').map((letter, idx) => {
-      return revealedLetters[idx] || 'aeiou'.includes(letter.toLowerCase());
-    });
+    const newRevealed = currentWord.word.split('').map((letter, idx) => revealedLetters[idx] || 'aeiou'.includes(letter.toLowerCase()));
     setRevealedLetters(newRevealed);
   };
 
   const handleFriendSubstitution = () => {
-    const cost = 5;
+    const cost = 4;
     if (participants[currentParticipantIndex].points < cost) return;
     spendPoints(currentParticipantIndex, cost);
     setExtraAttempt(true);
     setUsedHint(true);
+  };
+
+  const handlePrefixReveal = () => {
+    const cost = 3;
+    if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+    spendPoints(currentParticipantIndex, cost);
+    setUsedHint(true);
+    setShowPrefix(true);
+  };
+
+  const handleSuffixReveal = () => {
+    const cost = 3;
+    if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+    spendPoints(currentParticipantIndex, cost);
+    setUsedHint(true);
+    setShowSuffix(true);
+  };
+
+  const handleRevealSyllable = (index: number) => {
+    const cost = 3;
+    if (!currentWord || participants[currentParticipantIndex].points < cost) return;
+    spendPoints(currentParticipantIndex, cost);
+    setUsedHint(true);
+    setRevealedSyllables(prev => {
+      const updated = [...prev];
+      updated[index] = true;
+      return updated;
+    });
   };
 
   const typeLetter = (letter: string) => {
@@ -279,11 +317,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       const newLetters = [...prev];
       newLetters[index] = letter;
       if (config.soundEnabled) {
-        const isCorrectLetter =
-          currentWord.word[index].toLowerCase() === letter.toLowerCase();
-        const audio = isCorrectLetter
-          ? letterCorrectAudio.current
-          : letterWrongAudio.current;
+        const isCorrectLetter = currentWord.word[index].toLowerCase() === letter.toLowerCase();
+        const audio = isCorrectLetter ? letterCorrectAudio.current : letterWrongAudio.current;
         audio.currentTime = 0;
         audio.play();
       }
@@ -313,36 +348,28 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     const guess = letters.join('').trim().toLowerCase();
     const isCorrect = guess === currentWord.word.toLowerCase();
     const shouldCountWord = isCorrect || !extraAttempt;
-    const nextIndex = (currentParticipantIndex + 1) % participants.length;
-    const nextDifficulty = participants[nextIndex].difficultyLevel;
 
-    setParticipants(prev =>
-      prev.map((p, index) => {
-        if (index === currentParticipantIndex) {
-          const multipliers: Record<string, number> = { easy: 1, medium: 2, tricky: 3 };
-          const basePoints = 5;
-          const multiplier = multipliers[currentDifficulty] || 1;
-          const bonus = p.streak * 2;
-          const pointsEarned = basePoints * multiplier + bonus;
-
-          return {
-            ...p,
-            attempted: p.attempted + 1,
-            correct: p.correct + (isCorrect ? 1 : 0),
-            wordsAttempted: p.wordsAttempted + (shouldCountWord ? 1 : 0),
-            wordsCorrect: p.wordsCorrect + (shouldCountWord && isCorrect ? 1 : 0),
-            points: isCorrect ? p.points + pointsEarned : p.points,
-            streak: isCorrect ? p.streak + 1 : 0,
-            difficultyLevel: isCorrect
-              ? usedHint
-                ? p.difficultyLevel
-                : p.difficultyLevel + config.progressionSpeed
-              : p.difficultyLevel
-          };
-        }
-        return p;
-      })
-    );
+    const updatedParticipants = participants.map((p, index) => {
+      if (index === currentParticipantIndex) {
+        const multipliers: Record<string, number> = { easy: 1, medium: 2, tricky: 3 };
+        const basePoints = 5;
+        const multiplier = multipliers[currentDifficulty] || 1;
+        const bonus = p.streak * 2;
+        const pointsEarned = basePoints * multiplier + bonus;
+        return {
+          ...p,
+          attempted: p.attempted + 1,
+          correct: p.correct + (isCorrect ? 1 : 0),
+          wordsAttempted: p.wordsAttempted + (shouldCountWord ? 1 : 0),
+          wordsCorrect: p.wordsCorrect + (shouldCountWord && isCorrect ? 1 : 0),
+          points: isCorrect ? p.points + pointsEarned : p.points,
+          streak: isCorrect ? p.streak + 1 : 0,
+          difficultyLevel: isCorrect ? (usedHint ? p.difficultyLevel : p.difficultyLevel + config.progressionSpeed) : p.difficultyLevel
+        };
+      }
+      return p;
+    });
+    setParticipants(updatedParticipants);
 
     if (isCorrect) {
       if (config.soundEnabled) {
@@ -353,20 +380,20 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         launchConfetti();
       }
       setFeedback({ message: 'Correct! 🎉', type: 'success' });
-      if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
       setTimeout(() => {
+        const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
+        const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
         setFeedback({ message: '', type: '' });
         selectNextWord(nextDifficulty);
         nextTurn();
       }, 2000);
-      return;
+    } else {
+      if (config.soundEnabled) {
+        wrongAudio.current.currentTime = 0;
+        wrongAudio.current.play();
+      }
+      handleIncorrectAttempt();
     }
-
-    if (config.soundEnabled) {
-      wrongAudio.current.currentTime = 0;
-      wrongAudio.current.play();
-    }
-    handleIncorrectAttempt();
   };
 
   const skipWord = () => {
@@ -375,30 +402,31 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     const deduction = isLivesPenalty
       ? `-${config.skipPenaltyValue} life${config.skipPenaltyValue > 1 ? 's' : ''}`
       : `-${config.skipPenaltyValue} pts`;
-    setParticipants(prev =>
-      prev.map((p, index) => {
-        if (index === currentParticipantIndex) {
-          const updated = {
-            ...p,
-            streak: 0,
-            wordsAttempted: p.wordsAttempted + 1
-          };
-          return isLivesPenalty
-            ? { ...updated, lives: p.lives - config.skipPenaltyValue }
-            : { ...updated, points: p.points - config.skipPenaltyValue };
-        }
-        return p;
-      })
-    );
+
+    const updatedParticipants = participants.map((p, index) => {
+      if (index === currentParticipantIndex) {
+        const updated = { ...p, streak: 0, wordsAttempted: p.wordsAttempted + 1 };
+        return isLivesPenalty
+          ? { ...updated, lives: p.lives - config.skipPenaltyValue }
+          : { ...updated, points: p.points - config.skipPenaltyValue };
+      }
+      return p;
+    });
+    setParticipants(updatedParticipants);
+
+    if (isLivesPenalty && config.soundEnabled) {
+      loseLifeAudio.current.currentTime = 0;
+      loseLifeAudio.current.play();
+    }
     setFeedback({ message: `Word Skipped (${deduction})`, type: 'info' });
     if (currentWord) {
       setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
     }
     setAttemptedParticipants(new Set());
-    const nextIndex = (currentParticipantIndex + 1) % participants.length;
-    const nextDifficulty = participants[nextIndex].difficultyLevel;
 
     setTimeout(() => {
+      const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
+      const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
       setFeedback({ message: '', type: '' });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
       selectNextWord(nextDifficulty);
@@ -427,7 +455,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   };
 
   React.useEffect(() => {
-    selectNextWord(participants[0].difficultyLevel);
+    if (config.participants.length > 0) {
+      selectNextWord(config.participants[0].difficultyLevel);
+    }
   }, []);
 
   React.useEffect(() => {
@@ -526,6 +556,36 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             >
               {showHint ? 'Hide Hint' : 'Show Hint'}
             </button>
+            {showHint && currentWord && (
+              <div className="mt-4 flex flex-col items-center gap-4">
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {currentWord.syllables.map((syllable, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => speak(syllable)}
+                      disabled={!revealedSyllables[idx] || !showWord}
+                      className="bg-yellow-100 text-black px-2 py-1 rounded disabled:opacity-50"
+                    >
+                      {showWord && revealedSyllables[idx] ? syllable : '???'}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {currentWord.syllables.map((_, idx) =>
+                    !revealedSyllables[idx] && (
+                      <button
+                        key={`reveal-${idx}`}
+                        onClick={() => handleRevealSyllable(idx)}
+                        disabled={participants[currentParticipantIndex].points < 3}
+                        className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                      >
+                        {`Reveal syllable ${idx + 1} (-3)`}
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
             {showOrigin && (
               <p className="text-xl mb-2">
                 <strong className="text-yellow-300">Origin:</strong> {currentWord.origin}
@@ -534,6 +594,16 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             {showSentence && (
               <p className="text-xl">
                 <strong className="text-yellow-300">Example:</strong> "{currentWord.example}"
+              </p>
+            )}
+            {showPrefix && showWord && currentWord.prefix && (
+              <p className="text-xl mb-2">
+                <strong className="text-yellow-300">Prefix:</strong> {currentWord.prefix}
+              </p>
+            )}
+            {showSuffix && showWord && currentWord.suffix && (
+              <p className="text-xl mb-2">
+                <strong className="text-yellow-300">Suffix:</strong> {currentWord.suffix}
               </p>
             )}
             <div className="mt-4 flex gap-4 justify-center">
@@ -574,6 +644,26 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
                   className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
                 >
                   Buy Sentence (-1)
+                </button>
+              )}
+            </div>
+            <div className="mt-4 flex gap-4 justify-center">
+              {!showPrefix && currentWord.prefix && (
+                <button
+                  onClick={handlePrefixReveal}
+                  disabled={participants[currentParticipantIndex].points < 3}
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                >
+                  Reveal Prefix (-3)
+                </button>
+              )}
+              {!showSuffix && currentWord.suffix && (
+                <button
+                  onClick={handleSuffixReveal}
+                  disabled={participants[currentParticipantIndex].points < 3}
+                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                >
+                  Reveal Suffix (-3)
                 </button>
               )}
             </div>

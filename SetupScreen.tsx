@@ -305,12 +305,19 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-8 text-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold mb-4 text-yellow-300">🏆 SPELLING BEE CHAMPIONSHIP</h1>
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <img
+              src="icons/icon.svg"
+              alt="Bee mascot"
+              className="w-12 h-12 md:w-16 md:h-16"
+            />
+            <h1 className="text-6xl font-bold text-yellow-300">🏆 SPELLING BEE CHAMPIONSHIP</h1>
+          </div>
           <p className="text-2xl">Get ready to spell your way to victory!</p>
         </div>
 
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-4 text-center">Select Game Mode</h2>
+          <h2 className="text-3xl font-bold mb-4 text-center">Select Game Mode 🎮</h2>
           <div className="flex justify-center gap-4">
             <button
               onClick={() => setGameMode('team')}
@@ -328,7 +335,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4">{gameMode === 'team' ? 'Teams' : 'Students'}</h2>
+          <h2 className="text-2xl font-bold mb-4">
+            {gameMode === 'team' ? 'Teams 👥' : 'Students 🧑‍🎓'}
+          </h2>
           {gameMode === 'team' ? (
             <>
               {teams.map((team, index) => (
@@ -414,7 +423,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4">Skip Penalty</h2>
+          <h2 className="text-2xl font-bold mb-4">Skip Penalty ⏭️</h2>
           <div className="flex gap-4">
             <select
               value={skipPenaltyType}
@@ -435,7 +444,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4">Difficulty Settings</h2>
+          <h2 className="text-2xl font-bold mb-4">Difficulty Settings 🎚️</h2>
           <div className="flex gap-4">
             <div>
               <label className="block mb-2">Initial Difficulty</label>
@@ -463,7 +472,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
-            <h2 className="text-2xl font-bold mb-4">Audio & Effects</h2>
+            <h2 className="text-2xl font-bold mb-4">Audio & Effects 🔊✨</h2>
             <label className="flex items-center space-x-3 mb-2">
                 <input
                 type="checkbox"
@@ -483,7 +492,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4">Add Custom Word List</h2>
+          <h2 className="text-2xl font-bold mb-4">Add Custom Word List 📝</h2>
           <div className="mb-6">
             <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">
               Choose Bundled Word List
@@ -534,7 +543,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           <div className="mt-4 text-sm text-gray-300">
             <p>
               <strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`,
-              `prefixSuffix`, `pronunciation`. The difficulty will be determined by word length.
+              `prefix`, `suffix`, `pronunciation`. The difficulty will be determined by word length.
             </p>
           </div>
         </div>
