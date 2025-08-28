@@ -33,6 +33,21 @@ body.theme-honeycomb {
     color: #3a2b0a;
 }
 
+/* Teacher Mode increases overall scaling for easier classroom viewing */
+body.teacher-mode {
+    font-size: 1.25rem;
+}
+
+body.teacher-mode button {
+    font-size: 1.1em;
+    padding: 1em 1.25em;
+}
+
+body.teacher-mode .scorecard {
+    padding: 1.5em;
+    margin-bottom: 1.5em;
+}
+
 img,
 video {
     max-width: 100%;
