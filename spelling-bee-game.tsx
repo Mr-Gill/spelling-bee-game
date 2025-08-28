@@ -182,15 +182,26 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 setError("Please enter names for at least two teams.");
                 return;
             }
-            // Combine point and streak fields with new stat-tracking fields
-            finalParticipants = trimmedTeams.map(t => ({ ...t, attempted: 0, correct: 0 }));
+            const startingPoints = 1; // Starting points for each team
+            finalParticipants = trimmedTeams.map(t => ({
+                ...t,
+                points: startingPoints,
+                attempted: 0,
+                correct: 0,
+            }));
         } else {
             const trimmedStudents = students.map(student => ({ ...student, name: student.name.trim() })).filter(student => student.name !== "");
             if (trimmedStudents.length < 2) {
                 setError("Please enter names for at least two students.");
                 return;
             }
-            finalParticipants = trimmedStudents.map(s => ({ ...s, attempted: 0, correct: 0 }));
+            const startingPoints = 1; // Starting points for each student
+            finalParticipants = trimmedStudents.map(s => ({
+                ...s,
+                points: startingPoints,
+                attempted: 0,
+                correct: 0,
+            }));
         }
         
         setError("");
@@ -444,7 +455,6 @@ const GameScreen = ({ config, onEndGame }) => {
             setAttemptedParticipants(new Set());
             setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
             setExtraAttempt(false);
-            // From the other branch, this logic belongs here
             setIsHelpOpen(false);
         } else {
             onEndGameWithMissedWords();
