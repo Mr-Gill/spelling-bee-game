@@ -1,6 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GameResults, GameConfig, LeaderboardEntry } from './types';
 import applauseSoundFile from './audio/applause.mp3';
+import { launchConfetti } from './utils/confetti';
+import { recordDailyCompletion, StreakInfo } from './DailyChallenge';
 import { launchConfetti } from './confetti';
 import beeImg from './img/avatars/bee.svg';
 
@@ -13,23 +15,41 @@ interface ResultsScreenProps {
 
 const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestart, onViewLeaderboard }) => {
   const applauseAudio = useRef<HTMLAudioElement>(new Audio(applauseSoundFile));
+  const [streakInfo, setStreakInfo] = useState<StreakInfo | null>(null);
+  const [bonus, setBonus] = useState(0);
+
+  useEffect(() => {
+    if (config.dailyChallenge) {
+      const info = recordDailyCompletion();
+      setStreakInfo(info);
+      setBonus(info.currentStreak > 1 ? (info.currentStreak - 1) * 10 : 0);
+    }
+  }, [config.dailyChallenge]);
+
+  useEffect(() => {
+    if (localStorage.getItem('teacherMode') === 'true') {
+      document.body.classList.add('teacher-mode');
+    } else {
+      document.body.classList.remove('teacher-mode');
+    }
+  }, []);
 
   useEffect(() => {
     // Update the leaderboard with the new scores
     const stored: LeaderboardEntry[] = JSON.parse(localStorage.getItem('leaderboard') || '[]');
     const newEntries: LeaderboardEntry[] = results.participants.map(p => ({
       name: p.name,
-      score: p.points,
+      score: p.points + (config.dailyChallenge ? bonus : 0),
       date: new Date().toISOString(),
       avatar: p.avatar,
     }));
-    
+
     const updated = [...stored, ...newEntries]
       .sort((a, b) => b.score - a.score)
       .slice(0, 10); // Keep only the top 10 scores
-      
+
     localStorage.setItem('leaderboard', JSON.stringify(updated));
-  }, [results]);
+  }, [results, config.dailyChallenge, bonus]);
 
   useEffect(() => {
     // Play sound and show confetti if there's a winner and effects are enabled
@@ -77,7 +97,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
 
       <div className="text-5xl mb-4">🏆</div>
 
-      <div className="bg-white/10 p-8 rounded-lg w-full max-w-md">
+      <div className="bg-white/10 p-8 rounded-lg w-full max-w-md scorecard">
         <h3 className="text-3xl font-bold mb-4">📊 Final Scores</h3>
         {results && results.participants.map((p, index) => (
           <div key={index} className="text-left text-xl mb-3">
@@ -90,14 +110,25 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
               {p.wordsAttempted > 0
                 ? Math.round((p.wordsCorrect / p.wordsAttempted) * 100)
                 : 0}
-              %) - {p.lives} lives remaining - {p.points} points
+              %) - {p.lives} lives remaining - {p.points + (config.dailyChallenge ? bonus : 0)} points
             </div>
           </div>
         ))}
       </div>
 
+      {config.dailyChallenge && streakInfo && (
+        <div className="bg-white/10 p-4 rounded-lg w-full max-w-md mt-4">
+          <div className="text-xl">
+            🔥 Streak: {streakInfo.currentStreak} day{streakInfo.currentStreak !== 1 ? 's' : ''} (Best {streakInfo.highestStreak})
+          </div>
+          {bonus > 0 && (
+            <div className="text-yellow-300">Bonus Points: +{bonus}</div>
+          )}
+        </div>
+      )}
+
       {results.missedWords && results.missedWords.length > 0 && (
-        <div className="bg-white/10 p-8 rounded-lg w-full max-w-md mt-8">
+        <div className="bg-white/10 p-8 rounded-lg w-full max-w-md mt-8 scorecard">
           <h3 className="text-3xl font-bold mb-4">❌ Missed Words</h3>
           {results.missedWords.map((w, index) => (
             <div key={index} className="text-left text-xl mb-2">

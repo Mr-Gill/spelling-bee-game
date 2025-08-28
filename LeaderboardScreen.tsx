@@ -27,10 +27,18 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (localStorage.getItem('teacherMode') === 'true') {
+      document.body.classList.add('teacher-mode');
+    } else {
+      document.body.classList.remove('teacher-mode');
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center">
       <h1 className="text-6xl font-bold mb-8 text-yellow-300">🏅 Leaderboard</h1>
-      <div className="bg-white/10 p-8 rounded-lg w-full max-w-md">
+      <div className="bg-white/10 p-8 rounded-lg w-full max-w-md scorecard">
         {entries.length === 0 ? (
           <div className="text-xl">No scores yet.</div>
         ) : (

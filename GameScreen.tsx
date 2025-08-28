@@ -87,6 +87,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   });
   const [toast, setToast] = React.useState('');
 
+  React.useEffect(() => {
+    if (localStorage.getItem('teacherMode') === 'true') {
+      document.body.classList.add('teacher-mode');
+    } else {
+      document.body.classList.remove('teacher-mode');
+    }
+  }, []);
+
   const startTimer = () => {
     timerRef.current = setInterval(() => {
       setTimeLeft(prevTime => {
@@ -493,7 +501,7 @@ React.useEffect(() => {
       <div className="absolute top-8 left-8 flex gap-8 items-center">
         <img src="img/bee.svg" alt="Bee icon" className="w-12 h-12" />
         {participants.map((p, index) => (
-          <div key={index} className="text-center">
+          <div key={index} className="text-center scorecard">
             <div className="text-2xl font-bold">{p.name}</div>
             <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(p.lives)}</div>
             <div className="text-xl font-bold text-green-400">{p.points} pts</div>
