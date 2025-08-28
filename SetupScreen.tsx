@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Word, Participant, GameConfig } from './types';
+import { fetchDailyWordList, getStreakInfo } from './DailyChallenge';
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
@@ -57,6 +58,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [effectsEnabled, setEffectsEnabled] = useState(true);
   const [initialDifficulty, setInitialDifficulty] = useState(0);
   const [progressionSpeed, setProgressionSpeed] = useState(1);
+  const [dailyStreak, setDailyStreak] = useState(0);
 
   useEffect(() => {
     const savedTeams = localStorage.getItem('teams');
@@ -71,6 +73,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         setStudents(JSON.parse(savedStudents));
       } catch {}
     }
+    try {
+      setDailyStreak(getStreakInfo().currentStreak);
+    } catch {}
   }, []);
 
   const updateTeams = (newTeams: Participant[]) => {
@@ -299,6 +304,39 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       progressionSpeed
     } as GameConfig;
     onStartGame(config);
+  };
+
+  const handleDailyChallenge = async () => {
+    try {
+      const dailyWords = await fetchDailyWordList();
+      onAddCustomWords(dailyWords);
+      const player: Participant = {
+        name: 'Player',
+        lives: 5,
+        difficultyLevel: 0,
+        points: 0,
+        streak: 0,
+        attempted: 0,
+        correct: 0,
+        wordsAttempted: 0,
+        wordsCorrect: 0,
+      };
+      const config: GameConfig = {
+        participants: [player],
+        gameMode: 'individual',
+        timerDuration,
+        skipPenaltyType,
+        skipPenaltyValue,
+        soundEnabled,
+        effectsEnabled,
+        difficultyLevel: initialDifficulty,
+        progressionSpeed,
+        dailyChallenge: true,
+      } as GameConfig;
+      onStartGame(config);
+    } catch {
+      setError('Daily challenge not available today.');
+    }
   };
 
   return (
@@ -568,6 +606,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-8"
         >
           START GAME
+        </button>
+        <button
+          onClick={handleDailyChallenge}
+          className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-4"
+        >
+          Daily Challenge 🔥{dailyStreak > 0 ? ` (Streak ${dailyStreak})` : ''}
         </button>
       </div>
     </div>
