@@ -182,10 +182,8 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 setError("Please enter names for at least two teams.");
                 return;
             }
-            const startingPoints = 1;
             finalParticipants = trimmedTeams.map(t => ({
                 ...t,
-                points: startingPoints,
                 attempted: 0,
                 correct: 0,
             }));
@@ -195,10 +193,8 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                 setError("Please enter names for at least two students.");
                 return;
             }
-            const startingPoints = 1;
             finalParticipants = trimmedStudents.map(s => ({
                 ...s,
-                points: startingPoints,
                 attempted: 0,
                 correct: 0,
             }));
@@ -387,6 +383,17 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                             </button>
                         ))}
                     </div>
+                </div>
+
+                <div className="bg-white/10 p-6 rounded-lg mb-8">
+                    <h2 className="text-2xl font-bold mb-4">Starting Points</h2>
+                    <input
+                        type="number"
+                        min="0"
+                        value={startingPoints}
+                        onChange={(e) => setStartingPoints(parseInt(e.target.value) || 0)}
+                        className="p-2 rounded-md bg-white/20 text-white w-32"
+                    />
                 </div>
 
                 <button onClick={handleStart} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold mt-8">
