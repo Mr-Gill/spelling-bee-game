@@ -44,7 +44,11 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart }) => 
           <div key={index} className="text-left text-xl mb-3">
             <div className="font-bold">{p.name}</div>
             <div className="text-yellow-300">
-              {p.correct}/{p.attempted} correct ({(p.correct / p.attempted * 100).toFixed(0)}%) - {p.lives} lives remaining - {p.points} points
+              {p.wordsCorrect}/{p.wordsAttempted} correct (
+              {p.wordsAttempted > 0
+                ? Math.round((p.wordsCorrect / p.wordsAttempted) * 100)
+                : 0}
+              %) - {p.lives} lives remaining - {p.points} points
             </div>
           </div>
         ))}
