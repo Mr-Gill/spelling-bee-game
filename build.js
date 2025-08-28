@@ -12,7 +12,11 @@ if (fs.existsSync(distDir)) {
 fs.mkdirSync(distDir, { recursive: true });
 
 // 2. Copy static files (HTML, styles, PWA assets) to dist
-fs.copyFileSync('index.html', path.join(distDir, 'index.html'));
+const indexHtmlPath = path.join(distDir, 'index.html');
+let indexHtml = fs.readFileSync('index.html', 'utf8');
+indexHtml = indexHtml.replace('dist/app.js', 'app.js');
+fs.writeFileSync(indexHtmlPath, indexHtml);
+
 fs.copyFileSync('style.css', path.join(distDir, 'style.css'));
 fs.copyFileSync('manifest.webmanifest', path.join(distDir, 'manifest.webmanifest'));
 fs.copyFileSync('service-worker.js', path.join(distDir, 'service-worker.js'));

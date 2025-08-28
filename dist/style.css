@@ -158,6 +158,15 @@ video {
     }
 }
 
+@media (max-width: 640px) {
+    .w-1\/2 {
+        width: 100%;
+    }
+    #root {
+        padding: 0.5rem;
+    }
+}
+
 @media (max-width: 480px) {
     .text-4xl {
         font-size: 2rem;
@@ -169,15 +178,6 @@ video {
     
     .p-8 {
         padding: 1rem;
-    }
-}
-
-@media (max-width: 640px) {
-    .w-1\/2 {
-        width: 100%;
-    }
-    #root {
-        padding: 0.5rem;
     }
 }
 
