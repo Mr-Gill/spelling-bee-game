@@ -51,6 +51,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const timerRef = React.useRef<NodeJS.Timeout | null>(null);
   const [startTime] = React.useState(Date.now());
   const [revealedLetters, setRevealedLetters] = React.useState<boolean[]>([]);
+  const [revealedSyllables, setRevealedSyllables] = React.useState<boolean[]>([]);
   const [extraAttempt, setExtraAttempt] = React.useState(false);
   const [isHelpOpen, setIsHelpOpen] = React.useState(false);
 
@@ -119,6 +120,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentWord, letters]);
 
+  React.useEffect(() => {
+    if (!showWord && currentWord) {
+      setRevealedSyllables(Array(currentWord.syllables.length).fill(false));
+    }
+  }, [showWord, currentWord]);
+
   const selectNextWord = (level: number) => {
     let index = Math.min(level, difficultyOrder.length - 1);
     let nextWord: Word | null = null;
@@ -145,6 +152,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setTimeLeft(config.timerDuration);
       setAttemptedParticipants(new Set());
       setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
+      setRevealedSyllables(Array.from({ length: nextWord.syllables.length }, () => false));
       setExtraAttempt(false);
       setIsHelpOpen(false);
       setShowHint(false);
@@ -253,6 +261,18 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     spendPoints(currentParticipantIndex, cost);
     setExtraAttempt(true);
     setUsedHint(true);
+  };
+
+  const handleRevealSyllable = (index: number) => {
+    const cost = 3;
+    if (!currentWord || participants[currentParticipantIndex].points < cost) return;
+    spendPoints(currentParticipantIndex, cost);
+    setUsedHint(true);
+    setRevealedSyllables(prev => {
+      const updated = [...prev];
+      updated[index] = true;
+      return updated;
+    });
   };
 
   const handleSpellingSubmit = () => {
@@ -472,6 +492,36 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             >
               {showHint ? 'Hide Hint' : 'Show Hint'}
             </button>
+            {showHint && currentWord && (
+              <div className="mt-4 flex flex-col items-center gap-4">
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {currentWord.syllables.map((syllable, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => speak(syllable)}
+                      disabled={!revealedSyllables[idx] || !showWord}
+                      className="bg-yellow-100 text-black px-2 py-1 rounded disabled:opacity-50"
+                    >
+                      {showWord && revealedSyllables[idx] ? syllable : '???'}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {currentWord.syllables.map((_, idx) =>
+                    !revealedSyllables[idx] && (
+                      <button
+                        key={`reveal-${idx}`}
+                        onClick={() => handleRevealSyllable(idx)}
+                        disabled={participants[currentParticipantIndex].points < 3}
+                        className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+                      >
+                        {`Reveal syllable ${idx + 1} (-3)`}
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
             {showOrigin && (
               <p className="text-xl mb-2">
                 <strong className="text-yellow-300">Origin:</strong> {currentWord.origin}
