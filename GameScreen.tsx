@@ -227,7 +227,22 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
   const skipWord = () => {
     clearInterval(timerRef.current as NodeJS.Timeout);
-    setFeedback({ message: 'Word Skipped', type: 'info' });
+
+    const penalty = 2;
+    let deduction = '';
+    const updatedParticipants = participants.map((p, index) => {
+      if (index === currentParticipantIndex) {
+        if (p.points >= penalty) {
+          deduction = `-${penalty} pts`;
+          return { ...p, points: p.points - penalty };
+        }
+        deduction = '-1 life';
+        return { ...p, lives: p.lives - 1 };
+      }
+      return p;
+    });
+    setParticipants(updatedParticipants);
+    setFeedback({ message: `Word Skipped (${deduction})`, type: 'info' });
     if (currentWord) {
       setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
     }
