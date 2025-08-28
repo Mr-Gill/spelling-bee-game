@@ -6,6 +6,7 @@ import wrongSoundFile from './audio/wrong.mp3';
 import timeoutSoundFile from './audio/timeout.mp3';
 import { launchConfetti } from './utils/confetti';
 import { speak } from './utils/tts';
+import OnScreenKeyboard from './components/OnScreenKeyboard';
 
 interface GameScreenProps {
   config: GameConfig;
@@ -54,10 +55,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [revealedSyllables, setRevealedSyllables] = React.useState<boolean[]>([]);
   const [extraAttempt, setExtraAttempt] = React.useState(false);
   const [isHelpOpen, setIsHelpOpen] = React.useState(false);
+  const [isPaused, setIsPaused] = React.useState(false);
 
   const correctAudio = React.useRef<HTMLAudioElement>(new Audio(correctSoundFile));
   const wrongAudio = React.useRef<HTMLAudioElement>(new Audio(wrongSoundFile));
   const timeoutAudio = React.useRef<HTMLAudioElement>(new Audio(timeoutSoundFile));
+  const hiddenInputRef = React.useRef<HTMLInputElement>(null);
 
   const shuffleArray = (arr: Word[]) => [...arr].sort(() => Math.random() - 0.5);
   const [wordQueues, setWordQueues] = React.useState<WordQueues>({
@@ -72,8 +75,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [attemptedParticipants, setAttemptedParticipants] = React.useState<Set<number>>(new Set());
   const [missedWords, setMissedWords] = React.useState<Word[]>([]);
 
-  React.useEffect(() => {
-    if (!currentWord) return;
+  const startTimer = () => {
     timerRef.current = setInterval(() => {
       setTimeLeft(prevTime => {
         if (prevTime <= 1) {
@@ -88,12 +90,32 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         return prevTime - 1;
       });
     }, 1000);
+  };
+
+  const pauseTimer = () => {
+    clearInterval(timerRef.current as NodeJS.Timeout);
+    setIsPaused(true);
+  };
+
+  const resumeTimer = () => {
+    setIsPaused(false);
+  };
+
+  React.useEffect(() => {
+    if (!currentWord || isPaused) return;
+    startTimer();
     return () => clearInterval(timerRef.current as NodeJS.Timeout);
-  }, [currentWord, config.soundEnabled]);
+  }, [currentWord, config.soundEnabled, isPaused]);
+
+  React.useEffect(() => {
+    if (currentWord) {
+      setLetters(Array.from({ length: currentWord.word.length }, () => ''));
+    }
+  }, [currentWord]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!currentWord) return;
+      if (!currentWord || isPaused) return;
       if (/^[a-zA-Z]$/.test(e.key)) {
         setLetters(prev => {
           const index = prev.findIndex(l => l === '');
@@ -118,7 +140,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentWord, letters]);
+  }, [currentWord, isPaused]);
 
   React.useEffect(() => {
     if (!showWord && currentWord) {
@@ -161,6 +183,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setShowOrigin(false);
       setShowSentence(false);
       setLetters(Array.from({ length: nextWord.word.length }, () => ''));
+      if (hiddenInputRef.current) {
+        hiddenInputRef.current.value = '';
+        hiddenInputRef.current.focus();
+      }
       speak(nextWord.word);
     } else {
       onEndGameWithMissedWords();
@@ -230,7 +256,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   };
 
   const handleHangmanReveal = () => {
-    const cost = 5;
+    const cost = 6;
     if (participants[currentParticipantIndex].points < cost || !currentWord) return;
     spendPoints(currentParticipantIndex, cost);
     setUsedHint(true);
@@ -245,7 +271,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   };
 
   const handleVowelReveal = () => {
-    const cost = 3;
+    const cost = 4;
     if (participants[currentParticipantIndex].points < cost || !currentWord) return;
     spendPoints(currentParticipantIndex, cost);
     setUsedHint(true);
@@ -256,13 +282,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   };
 
   const handleFriendSubstitution = () => {
-    const cost = 4;
+    const cost = 5;
     if (participants[currentParticipantIndex].points < cost) return;
     spendPoints(currentParticipantIndex, cost);
     setExtraAttempt(true);
     setUsedHint(true);
   };
-
+  
   const handleRevealSyllable = (index: number) => {
     const cost = 3;
     if (!currentWord || participants[currentParticipantIndex].points < cost) return;
@@ -275,6 +301,27 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     });
   };
 
+  const handleVirtualLetter = (letter: string) => {
+    setLetters(prev => {
+      const index = prev.findIndex(l => l === '');
+      if (index === -1) return prev;
+      const newLetters = [...prev];
+      newLetters[index] = letter;
+      return newLetters;
+    });
+  };
+
+  const handleVirtualBackspace = () => {
+    setLetters(prev => {
+      const reverseIndex = [...prev].reverse().findIndex(l => l !== '');
+      if (reverseIndex === -1) return prev;
+      const index = prev.length - 1 - reverseIndex;
+      const newLetters = [...prev];
+      newLetters[index] = '';
+      return newLetters;
+    });
+  };
+
   const handleSpellingSubmit = () => {
     if (!currentWord) return;
     clearInterval(timerRef.current as NodeJS.Timeout);
@@ -283,15 +330,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     const isCorrect = guess === currentWord.word.toLowerCase();
     const shouldCountWord = isCorrect || !extraAttempt;
     const nextIndex = (currentParticipantIndex + 1) % participants.length;
-    const nextDifficulty = participants[nextIndex].difficultyLevel;
-
-    setParticipants(prev =>
-      prev.map((p, index) => {
+    
+    setParticipants(prev => {
+      const newParticipants = prev.map((p, index) => {
         if (index === currentParticipantIndex) {
           const multipliers: Record<string, number> = { easy: 1, medium: 2, tricky: 3 };
-          const basePoints = 10;
+          const basePoints = 5;
           const multiplier = multipliers[currentDifficulty] || 1;
-          const bonus = p.streak * 5;
+          const bonus = p.streak * 2;
           const pointsEarned = basePoints * multiplier + bonus;
 
           return {
@@ -303,88 +349,80 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             points: isCorrect ? p.points + pointsEarned : p.points,
             streak: isCorrect ? p.streak + 1 : 0,
             difficultyLevel: isCorrect
-              ? usedHint
-                ? p.difficultyLevel
-                : p.difficultyLevel + config.progressionSpeed
+              ? (usedHint ? p.difficultyLevel : p.difficultyLevel + config.progressionSpeed)
               : p.difficultyLevel
           };
         }
         return p;
-      })
-    );
+      });
 
-    if (isCorrect) {
-      if (config.soundEnabled) {
-        correctAudio.current.currentTime = 0;
-        correctAudio.current.play();
-      }
-      if (config.effectsEnabled) {
-        launchConfetti();
-      }
-      setFeedback({ message: 'Correct! 🎉', type: 'success' });
-      if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
-      setTimeout(() => {
-        setFeedback({ message: '', type: '' });
-        selectNextWord(nextDifficulty);
-        nextTurn();
-      }, 2000);
-      return;
-    }
+      const nextDifficulty = newParticipants[nextIndex].difficultyLevel;
 
-    if (config.soundEnabled) {
-      wrongAudio.current.currentTime = 0;
-      wrongAudio.current.play();
-    }
-    handleIncorrectAttempt();
+      if (isCorrect) {
+        if (config.soundEnabled) {
+          correctAudio.current.currentTime = 0;
+          correctAudio.current.play();
+        }
+        if (config.effectsEnabled) {
+          launchConfetti();
+        }
+        setFeedback({ message: 'Correct! 🎉', type: 'success' });
+        if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
+        setTimeout(() => {
+          setFeedback({ message: '', type: '' });
+          selectNextWord(nextDifficulty);
+          nextTurn();
+        }, 2000);
+      } else {
+        if (config.soundEnabled) {
+          wrongAudio.current.currentTime = 0;
+          wrongAudio.current.play();
+        }
+        handleIncorrectAttempt();
+      }
+      return newParticipants;
+    });
   };
 
   const skipWord = () => {
     clearInterval(timerRef.current as NodeJS.Timeout);
-
-    const penalty = 2;
-    let deduction = '';
-    const updatedParticipants = participants.map((p, index) => {
-      if (index === currentParticipantIndex) {
-        if (p.points >= penalty) {
-          deduction = `-${penalty} pts`;
-          return { ...p, points: p.points - penalty };
-        }
-        deduction = '-1 life';
-        return { ...p, lives: p.lives - 1 };
-      }
-      return p;
-    });
-    setParticipants(updatedParticipants);
-    setFeedback({ message: `Word Skipped (${deduction})`, type: 'info' });
-    if (currentWord) {
-      setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
-    }
-    setParticipants(prev =>
-      prev.map((p, index) => {
+    const isLivesPenalty = config.skipPenaltyType === 'lives';
+    const deduction = isLivesPenalty
+      ? `-${config.skipPenaltyValue} life${config.skipPenaltyValue > 1 ? 's' : ''}`
+      : `-${config.skipPenaltyValue} pts`;
+      
+    setParticipants(prev => {
+        const updatedParticipants = prev.map((p, index) => {
         if (index === currentParticipantIndex) {
           const updated = {
             ...p,
             streak: 0,
             wordsAttempted: p.wordsAttempted + 1
           };
-          if (config.skipPenaltyType === 'lives') {
-            return { ...updated, lives: p.lives - config.skipPenaltyValue };
-          }
-          return { ...updated, points: p.points - config.skipPenaltyValue };
+          return isLivesPenalty
+            ? { ...updated, lives: p.lives - config.skipPenaltyValue }
+            : { ...updated, points: p.points - config.skipPenaltyValue };
         }
         return p;
-      })
-    );
-    setAttemptedParticipants(new Set());
-    const nextIndex = (currentParticipantIndex + 1) % participants.length;
-    const nextDifficulty = participants[nextIndex].difficultyLevel;
+      });
 
-    setTimeout(() => {
-      setFeedback({ message: '', type: '' });
-      if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
-      selectNextWord(nextDifficulty);
-      nextTurn();
-    }, 1500);
+      setFeedback({ message: `Word Skipped (${deduction})`, type: 'info' });
+      if (currentWord) {
+        setWordQueues(queuePrev => ({ ...queuePrev, review: [...queuePrev.review, currentWord] }));
+      }
+      setAttemptedParticipants(new Set());
+      const nextIndex = (currentParticipantIndex + 1) % participants.length;
+      const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
+
+      setTimeout(() => {
+        setFeedback({ message: '', type: '' });
+        if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
+        selectNextWord(nextDifficulty);
+        nextTurn();
+      }, 1500);
+
+      return updatedParticipants;
+    });
   };
 
   const onEndGameWithMissedWords = () => {
@@ -420,7 +458,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   }, [participants]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
+    <div className="relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
+      <input
+        ref={hiddenInputRef}
+        type="text"
+        className="absolute opacity-0 pointer-events-none"
+        aria-hidden="true"
+      />
       <div className="absolute top-8 left-8 flex gap-8">
         {participants.map((p, index) => (
           <div key={index} className="text-center">
@@ -440,9 +484,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         </div>
       )}
 
-      <div className="absolute top-8 right-8 text-center">
+      <div className="absolute top-8 right-8 text-center z-50">
         <div className={`text-6xl font-bold ${timeLeft <= 10 ? 'text-red-500' : 'text-yellow-300'}`}>{timeLeft}</div>
         <div className="text-lg">seconds left</div>
+        <button
+          onClick={isPaused ? resumeTimer : pauseTimer}
+          className="mt-2 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+        >
+          {isPaused ? 'Resume' : 'Pause'}
+        </button>
       </div>
 
       {currentWord && (
@@ -454,6 +504,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             {showWord && (
               <div className="inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg">
                 {currentWord.word}
+                {currentWord.pronunciation && (
+                  <span className="ml-4 text-5xl text-yellow-300">{currentWord.pronunciation}</span>
+                )}
               </div>
             )}
             <button
@@ -590,14 +643,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
               </div>
             ))}
           </div>
-          <div className="flex gap-4 justify-center">
-            <button
-              onClick={handleSpellingSubmit}
-              className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg text-2xl font-bold"
-            >
-              Submit
-            </button>
-          </div>
+          <OnScreenKeyboard
+            onLetter={handleVirtualLetter}
+            onBackspace={handleVirtualBackspace}
+            onSubmit={handleSpellingSubmit}
+          />
 
           <div className="mt-6 flex justify-center gap-4">
             <button
@@ -631,6 +681,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       >
         <SkipForward size={24} />
       </button>
+
+      {isPaused && (
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40">
+          Paused
+        </div>
+      )}
     </div>
   );
 };

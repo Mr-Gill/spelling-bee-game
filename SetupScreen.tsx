@@ -7,7 +7,7 @@ interface SetupScreenProps {
 }
 
 const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords }) => {
-  const [teams, setTeams] = useState<Participant[]>([
+  const defaultTeams: Participant[] = [
     {
       name: 'Team Alpha',
       lives: 5,
@@ -23,14 +23,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       name: 'Team Beta',
       lives: 5,
       difficultyLevel: 0,
-      points:01,
+      points: 0,
       streak: 0,
       attempted: 0,
       correct: 0,
       wordsAttempted: 0,
       wordsCorrect: 0
     }
-  ]);
+  ];
+  const [teams, setTeams] = useState<Participant[]>(defaultTeams);
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
@@ -56,8 +57,41 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [effectsEnabled, setEffectsEnabled] = useState(true);
   const [initialDifficulty, setInitialDifficulty] = useState(0);
   const [progressionSpeed, setProgressionSpeed] = useState(1);
+
+  useEffect(() => {
+    const savedTeams = localStorage.getItem('teams');
+    if (savedTeams) {
+      try {
+        setTeams(JSON.parse(savedTeams));
+      } catch {}
+    }
+    const savedStudents = localStorage.getItem('students');
+    if (savedStudents) {
+      try {
+        setStudents(JSON.parse(savedStudents));
+      } catch {}
+    }
+  }, []);
+
+  const updateTeams = (newTeams: Participant[]) => {
+    setTeams(newTeams);
+    localStorage.setItem('teams', JSON.stringify(newTeams));
+  };
+
+  const updateStudents = (newStudents: Participant[]) => {
+    setStudents(newStudents);
+    localStorage.setItem('students', JSON.stringify(newStudents));
+  };
+
+  const clearRoster = () => {
+    localStorage.removeItem('teams');
+    localStorage.removeItem('students');
+    setTeams(defaultTeams);
+    setStudents([]);
+  };
+
   const addTeam = () => {
-    setTeams([
+    updateTeams([
         ...teams,
         {
           name: '',
@@ -74,17 +108,17 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
 
   const removeTeam = (index: number) => {
-    setTeams(teams.filter((_, i) => i !== index));
+    updateTeams(teams.filter((_, i) => i !== index));
   };
 
   const updateTeamName = (index: number, name: string) => {
     const newTeams = teams.map((team, i) => (i === index ? { ...team, name } : team));
-    setTeams(newTeams);
+    updateTeams(newTeams);
   };
 
   const addStudent = () => {
     if (studentName.trim()) {
-      setStudents([
+      updateStudents([
         ...students,
         {
           name: studentName.trim(),
@@ -103,12 +137,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
 
   const removeStudent = (index: number) => {
-    setStudents(students.filter((_, i) => i !== index));
+    updateStudents(students.filter((_, i) => i !== index));
   };
 
   const updateStudentName = (index: number, name: string) => {
     const newStudents = students.map((student, i) => (i === index ? { ...student, name } : student));
-    setStudents(newStudents);
+    updateStudents(newStudents);
   };
 
   const parseStudentNames = (text: string) =>
@@ -129,14 +163,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     const newStudents = uniqueNames.map(name => ({
       name,
       lives: 5,
-      points: 0,
+      points: 1,
       streak: 0,
       attempted: 0,
       correct: 0,
       wordsAttempted: 0,
       wordsCorrect: 0
     }));
-    setStudents([...students, ...newStudents]);
+    updateStudents([...students, ...newStudents]);
     setBulkStudentText('');
     setBulkStudentError('');
   };
@@ -350,28 +384,34 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </button>
                 {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
               </div>
-              {students.map((student, index) => (
-                <div key={index} className="flex items-center gap-2 mb-2">
-                  <input
-                    type="text"
-                    value={student.name}
-                    onChange={e => updateStudentName(index, e.target.value)}
-                    placeholder="Student name"
-                    className="flex-grow p-2 rounded-md bg-white/20 text-white"
-                  />
-                  {students.length > 1 && (
-                    <button
-                      onClick={() => removeStudent(index)}
-                      className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded"
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
-              ))}
-            </>
-          )}
-        </div>
+          {students.map((student, index) => (
+            <div key={index} className="flex items-center gap-2 mb-2">
+              <input
+                type="text"
+                value={student.name}
+                onChange={e => updateStudentName(index, e.target.value)}
+                placeholder="Student name"
+                className="flex-grow p-2 rounded-md bg-white/20 text-white"
+              />
+              {students.length > 1 && (
+                <button
+                  onClick={() => removeStudent(index)}
+                  className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+        </>
+      )}
+      <button
+        onClick={clearRoster}
+        className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded"
+      >
+        Clear Saved Roster
+      </button>
+    </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
           <h2 className="text-2xl font-bold mb-4">Skip Penalty</h2>
