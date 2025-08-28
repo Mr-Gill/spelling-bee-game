@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { GameResults } from './types';
+import applauseSoundFile from './audio/applause.mp3';
+import { launchConfetti } from './confetti';
 
 interface ResultsScreenProps {
   results: GameResults;
@@ -7,6 +9,7 @@ interface ResultsScreenProps {
 }
 
 const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart }) => {
+  const applauseAudio = useRef<HTMLAudioElement>(new Audio(applauseSoundFile));
   const handleExport = () => {
     const dataStr =
       'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(results, null, 2));
@@ -28,6 +31,13 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart }) => 
     }
     return 'No one wins this round!';
   };
+
+  useEffect(() => {
+    if (results.winner) {
+      applauseAudio.current.play();
+      launchConfetti();
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center">
