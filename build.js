@@ -26,6 +26,7 @@ fs.cpSync('icons', path.join(distDir, 'icons'), { recursive: true });
 if (fs.existsSync('img')) {
     fs.cpSync('img', path.join(distDir, 'img'), { recursive: true });
 }
+fs.cpSync('audio', path.join(distDir, 'audio'), { recursive: true });
 
 // Copy wordlists directory
 const copyDir = (src, dest) => {
