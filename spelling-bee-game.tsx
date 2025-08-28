@@ -381,7 +381,7 @@ const SetupScreen = ({ onStartGame, onAddCustomWords }) => {
                         </div>
                     </div>
                     <div className="mt-4 text-sm text-gray-300">
-                        <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `sentence`, `prefixSuffix`, `pronunciation`. The difficulty will be determined by word length.</p>
+                        <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefixSuffix`, `pronunciation`. The difficulty will be determined by word length.</p>
                     </div>
                     {wordListError && (
                         <p className="text-red-300 mt-4">{wordListError}</p>
@@ -466,6 +466,7 @@ const GameScreen = ({ config, onEndGame }) => {
     const [revealedLetters, setRevealedLetters] = useState([]);
     const [extraAttempt, setExtraAttempt] = useState(false);
     const [isHelpOpen, setIsHelpOpen] = useState(false);
+    const [showHint, setShowHint] = useState(false);
     const [revealedHints, setRevealedHints] = useState({
         syllables: false,
         prefixSuffix: false,
@@ -528,6 +529,7 @@ const GameScreen = ({ config, onEndGame }) => {
             setRevealedLetters(Array.from({ length: nextWord.word.length }, () => false));
             setExtraAttempt(false);
             setIsHelpOpen(false);
+            setShowHint(false);
             setRevealedHints({ syllables: false, prefixSuffix: false, pronunciation: false });
         } else {
             onEndGameWithMissedWords();
@@ -781,9 +783,13 @@ const GameScreen = ({ config, onEndGame }) => {
                                 )).join(' ')}
                             </p>
                         )}
-                        <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
-                        <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
-                        <p className="text-xl mb-2"><strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"</p>
+                        {showHint && (
+                            <>
+                                <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
+                                <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
+                                <p className="text-xl mb-2"><strong className="text-yellow-300">Example:</strong> "{currentWord.example}"</p>
+                            </>
+                        )}
                         {revealedHints.syllables && (
                             <p className="text-xl mb-2"><strong className="text-yellow-300">Syllables:</strong> {currentWord.syllables}</p>
                         )}
@@ -793,6 +799,12 @@ const GameScreen = ({ config, onEndGame }) => {
                         {revealedHints.pronunciation && (
                             <p className="text-xl"><strong className="text-yellow-300">Pronunciation:</strong> {currentWord.pronunciation}</p>
                         )}
+                        <button
+                            onClick={() => setShowHint(!showHint)}
+                            className="mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+                        >
+                            {showHint ? 'Hide Hint' : 'Show Hint'}
+                        </button>
                     </div>
                     <div className="flex gap-4 justify-center">
                         <input

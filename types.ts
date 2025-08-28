@@ -3,7 +3,7 @@ export interface Word {
   syllables: string;
   definition: string;
   origin: string;
-  sentence: string;
+  example: string;
   prefixSuffix?: string;
   pronunciation?: string;
 }
