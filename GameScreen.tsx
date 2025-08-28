@@ -59,6 +59,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const correctAudio = React.useRef<HTMLAudioElement>(new Audio(correctSoundFile));
   const wrongAudio = React.useRef<HTMLAudioElement>(new Audio(wrongSoundFile));
   const timeoutAudio = React.useRef<HTMLAudioElement>(new Audio(timeoutSoundFile));
+  const hiddenInputRef = React.useRef<HTMLInputElement>(null);
 
   const shuffleArray = (arr: Word[]) => [...arr].sort(() => Math.random() - 0.5);
   const [wordQueues, setWordQueues] = React.useState<WordQueues>({
@@ -132,7 +133,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentWord, letters]);
+  }, [currentWord]);
 
   const selectNextWord = (level: number) => {
     let index = Math.min(level, difficultyOrder.length - 1);
@@ -168,6 +169,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setShowOrigin(false);
       setShowSentence(false);
       setLetters(Array.from({ length: nextWord.word.length }, () => ''));
+      if (hiddenInputRef.current) {
+        hiddenInputRef.current.value = '';
+        hiddenInputRef.current.focus();
+      }
       speak(nextWord.word);
     } else {
       onEndGameWithMissedWords();
@@ -425,6 +430,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
+      <input
+        ref={hiddenInputRef}
+        type="text"
+        className="absolute opacity-0 pointer-events-none"
+        aria-hidden="true"
+      />
       <div className="absolute top-8 left-8 flex gap-8">
         {participants.map((p, index) => (
           <div key={index} className="text-center">
