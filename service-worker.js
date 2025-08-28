@@ -1,16 +1,16 @@
+const REPO_NAME = '{{REPO_NAME}}'; // This is our placeholder
 const CACHE_NAME = 'spelling-bee-cache-v2';
 const ASSETS = [
-  './',
-  './index.html',
-  './style.css',
-  './manifest.webmanifest',
-  './icons/icon.svg',
-  './dist/app.js',
-  './app.js',
-  './words.json',
-  './wordlists/example.json',
-  './wordlists/example.csv',
-  './wordlists/example.tsv',
+  `/${REPO_NAME}/`,
+  `/${REPO_NAME}/index.html`,
+  `/${REPO_NAME}/style.css`,
+  `/${REPO_NAME}/manifest.webmanifest`,
+  `/${REPO_NAME}/icons/icon.svg`,
+  `/${REPO_NAME}/app.js`,
+  `/${REPO_NAME}/words.json`,
+  `/${REPO_NAME}/wordlists/example.json`,
+  `/${REPO_NAME}/wordlists/example.csv`,
+  `/${REPO_NAME}/wordlists/example.tsv`,
   'https://cdn.tailwindcss.com'
 ];
 
