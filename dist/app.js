@@ -19692,6 +19692,7 @@ var SkipForward = createLucideIcon("skip-forward", __iconNode);
 
 // spelling-bee-game.tsx
 var import_jsx_runtime = __toESM(require_jsx_runtime());
+var import_react3 = __toESM(require_react());
 var SpellingBeeGame = () => {
   const [gameState, setGameState] = (0, import_react3.useState)("setup");
   const [gameConfig, setGameConfig] = (0, import_react3.useState)(null);
@@ -19726,7 +19727,7 @@ var SpellingBeeGame = () => {
     setGameResults(null);
   };
   if (gameState === "setup") {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SetupScreen, { onStartGame: handleStartGame, onAddCustomWords: handleAddCustomWords });
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SetupScreen, { onStartGame: handleStartGame, onAddCustomWords: handleAddCustomWords, wordDatabase });
   }
   if (gameState === "playing") {
     return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(GameScreen, { config: gameConfig, onEndGame: handleEndGame });
@@ -19736,7 +19737,7 @@ var SpellingBeeGame = () => {
   }
   return null;
 };
-var SetupScreen = ({ onStartGame, onAddCustomWords }) => {
+var SetupScreen = ({ onStartGame, onAddCustomWords, wordDatabase }) => {
   const [teams, setTeams] = (0, import_react3.useState)([
     { name: "Team Alpha", lives: 5 },
     { name: "Team Beta", lives: 5 }
@@ -19744,17 +19745,57 @@ var SetupScreen = ({ onStartGame, onAddCustomWords }) => {
   const [gameMode, setGameMode] = (0, import_react3.useState)("team");
   const [timerDuration, setTimerDuration] = (0, import_react3.useState)(30);
   const [customWordListText, setCustomWordListText] = (0, import_react3.useState)("");
+  const [parsedCustomWords, setParsedCustomWords] = (0, import_react3.useState)([]);
+  const [missedWordsCollection, setMissedWordsCollection] = (0, import_react3.useState)({});
+  const [includeMissedWords, setIncludeMissedWords] = (0, import_react3.useState)(false);
+  const [error, setError] = (0, import_react3.useState)("");
+  const bundledWordLists = [
+    { label: "Example JSON", file: "example.json" },
+    { label: "Example CSV", file: "example.csv" },
+    { label: "Example TSV", file: "example.tsv" }
+  ];
+  const [selectedBundledList, setSelectedBundledList] = (0, import_react3.useState)("");
+  const [students, setStudents] = (0, import_react3.useState)([]);
+  const [studentName, setStudentName] = (0, import_react3.useState)("");
+  const addTeam = () => {
+    setTeams([...teams, { name: "", lives: 5 }]);
+  };
+  const removeTeam = (index) => {
+    setTeams(teams.filter((_, i) => i !== index));
+  };
+  const updateTeamName = (index, name) => {
+    const newTeams = teams.map(
+      (team, i) => i === index ? { ...team, name } : team
+    );
+    setTeams(newTeams);
+  };
+  const addStudent = () => {
+    if (studentName.trim()) {
+      setStudents([...students, { name: studentName.trim(), lives: 5 }]);
+      setStudentName("");
+    }
+  };
+  const removeStudent = (index) => {
+    setStudents(students.filter((_, i) => i !== index));
+  };
+  const updateStudentName = (index, name) => {
+    const newStudents = students.map(
+      (student, i) => i === index ? { ...student, name } : student
+    );
+    setStudents(newStudents);
+  };
   const parseWordList = (content) => {
     try {
       const parsed = JSON.parse(content);
       if (Array.isArray(parsed)) {
-        onAddCustomWords(parsed);
+        setParsedCustomWords(parsed);
         return;
       }
     } catch (e) {
     }
     const lines = content.trim().split("\n");
-    if (lines.length < 2) return;
+    if (lines.length < 2)
+      return;
     const headerLine = lines[0];
     const delimiter = headerLine.includes(",") ? "," : "	";
     const headers = headerLine.split(delimiter).map((h) => h.trim());
@@ -19766,7 +19807,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords }) => {
       });
       return wordObj;
     });
-    onAddCustomWords(words);
+    setParsedCustomWords(words);
   };
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -19775,27 +19816,170 @@ var SetupScreen = ({ onStartGame, onAddCustomWords }) => {
       reader.onload = (e) => {
         const content = e.target.result;
         setCustomWordListText(content);
-        parseWordList(content);
       };
       reader.readAsText(file);
     }
   };
   (0, import_react3.useEffect)(() => {
+    if (selectedBundledList) {
+      fetch(`wordlists/${selectedBundledList}`).then((res) => res.text()).then((text) => setCustomWordListText(text));
+    }
+  }, [selectedBundledList]);
+  (0, import_react3.useEffect)(() => {
     if (customWordListText) {
       parseWordList(customWordListText);
     }
   }, [customWordListText]);
+  (0, import_react3.useEffect)(() => {
+    const stored = JSON.parse(localStorage.getItem("missedWordsCollection") || "{}");
+    setMissedWordsCollection(stored);
+  }, []);
+  const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
   const handleStart = () => {
-    const config = { teams, gameMode, timerDuration };
+    let participantsArray = [];
+    if (gameMode === "team") {
+      const trimmedTeams = teams.map((team) => ({ ...team, name: team.name.trim() })).filter((team) => team.name !== "");
+      if (trimmedTeams.length < 2) {
+        setError("Please enter names for at least two teams.");
+        return;
+      }
+      participantsArray = trimmedTeams;
+    } else {
+      const trimmedStudents = students.map((student) => ({ ...student, name: student.name.trim() })).filter((student) => student.name !== "");
+      if (trimmedStudents.length < 2) {
+        setError("Please enter names for at least two students.");
+        return;
+      }
+      participantsArray = trimmedStudents;
+    }
+    setError("");
+    let finalWords = [...parsedCustomWords];
+    if (includeMissedWords) {
+      const extraWords = Object.values(missedWordsCollection).flat();
+      finalWords = [...finalWords, ...extraWords];
+    }
+    onAddCustomWords(finalWords);
+    const config = { participants: participantsArray, gameMode, timerDuration };
     onStartGame(config);
   };
   return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-8 text-white", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "max-w-7xl mx-auto", children: [
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-center mb-12", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300", children: "\u{1F3C6} SPELLING BEE CHAMPIONSHIP" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300", children: "🏆 SPELLING BEE CHAMPIONSHIP" }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-2xl", children: "Get ready to spell your way to victory!" })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mb-8", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-3xl font-bold mb-4 text-center", children: "Select Game Mode" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex justify-center gap-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          "button",
+          {
+            onClick: () => setGameMode("team"),
+            className: `px-6 py-3 rounded-lg text-xl font-bold ${gameMode === "team" ? "bg-yellow-300 text-black" : "bg-blue-500 hover:bg-blue-400"}`,
+            children: "Team"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          "button",
+          {
+            onClick: () => setGameMode("individual"),
+            className: `px-6 py-3 rounded-lg text-xl font-bold ${gameMode === "individual" ? "bg-yellow-300 text-black" : "bg-blue-500 hover:bg-blue-400"}`,
+            children: "Individual"
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold mb-4", children: gameMode === "team" ? "Teams" : "Students" }),
+      gameMode === "team" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+        teams.map((team, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "input",
+            {
+              type: "text",
+              value: team.name,
+              onChange: (e) => updateTeamName(index, e.target.value),
+              placeholder: `Team ${index + 1} Name`,
+              className: "flex-grow p-2 rounded-md bg-white/20 text-white"
+            }
+          ),
+          teams.length > 1 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "button",
+            {
+              onClick: () => removeTeam(index),
+              className: "px-2 py-1 bg-red-500 hover:bg-red-600 rounded",
+              children: "Remove"
+            }
+          )
+        ] }, index)),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          "button",
+          {
+            onClick: addTeam,
+            className: "mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded",
+            children: "Add Team"
+          }
+        )
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex gap-4 mb-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "input",
+            {
+              type: "text",
+              value: studentName,
+              onChange: (e) => setStudentName(e.target.value),
+              className: "flex-grow p-2 rounded-md bg-white/20 text-white",
+              placeholder: "Student name"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "button",
+            {
+              onClick: addStudent,
+              className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold",
+              children: "Add"
+            }
+          )
+        ] }),
+        students.map((student, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "input",
+            {
+              type: "text",
+              value: student.name,
+              onChange: (e) => updateStudentName(index, e.target.value),
+              placeholder: "Student name",
+              className: "flex-grow p-2 rounded-md bg-white/20 text-white"
+            }
+          ),
+          students.length > 1 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "button",
+            {
+              onClick: () => removeStudent(index),
+              className: "px-2 py-1 bg-red-500 hover:bg-red-600 rounded",
+              children: "Remove"
+            }
+          )
+        ] }, index))
+      ] })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold mb-4", children: "Add Custom Word List" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mb-6", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { htmlFor: "bundled-list", className: "block text-lg font-medium mb-2", children: "Choose Bundled Word List" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+          "select",
+          {
+            id: "bundled-list",
+            value: selectedBundledList,
+            onChange: (e) => setSelectedBundledList(e.target.value),
+            className: "w-full p-2 rounded-md bg-white/20 text-white",
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "", children: "-- Select a list --" }),
+              bundledWordLists.map((list) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: list.file, children: list.label }, list.file))
+            ]
+          }
+        )
+      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { htmlFor: "file-upload", className: "block text-lg font-medium mb-2", children: "Upload File" }),
@@ -19832,7 +20016,23 @@ var SetupScreen = ({ onStartGame, onAddCustomWords }) => {
         " The first row should be headers: `word`, `syllables`, `definition`, `origin`, `sentence`, `prefixSuffix`, `pronunciation`. The difficulty will be determined by word length."
       ] }) })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mb-8", children: [
+    missedWordCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "bg-white/10 p-4 rounded-lg mb-8", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "flex items-center space-x-3", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+        "input",
+        {
+          type: "checkbox",
+          checked: includeMissedWords,
+          onChange: (e) => setIncludeMissedWords(e.target.checked)
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
+        "Include ",
+        missedWordCount,
+        " missed words from previous sessions"
+      ] })
+    ] }) }),
+    error && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-red-300 text-center mb-4", children: error }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "mb-8", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-3xl font-bold mb-4 text-center", children: "Select Timer Duration" }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "flex justify-center gap-4", children: [15, 30, 45, 60].map((time) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
         "button",
@@ -19851,80 +20051,175 @@ var SetupScreen = ({ onStartGame, onAddCustomWords }) => {
   ] }) });
 };
 var GameScreen = ({ config, onEndGame }) => {
-  const [teams, setTeams] = (0, import_react3.useState)(config.teams);
-  const [currentTeamIndex, setCurrentTeamIndex] = (0, import_react3.useState)(0);
+  const [participants, setParticipants] = (0, import_react3.useState)(config.participants);
+  const [currentParticipantIndex, setCurrentParticipantIndex] = (0, import_react3.useState)(0);
   const [currentWord, setCurrentWord] = (0, import_react3.useState)(null);
   const [timeLeft, setTimeLeft] = (0, import_react3.useState)(config.timerDuration);
-  (0, import_react3.useEffect)(() => {
-    if (!currentWord || timeLeft <= 0) return;
-    const timer = setInterval(() => {
-      setTimeLeft((prevTime) => prevTime - 1);
-    }, 1e3);
-    return () => clearInterval(timer);
-  }, [currentWord, timeLeft]);
-  const selectRandomWord = (difficulty) => {
-    const words = config.wordDatabase[difficulty] || config.wordDatabase.easy;
-    const word = words[Math.floor(Math.random() * words.length)];
-    setTimeLeft(config.timerDuration);
-    return word;
-  };
-  const skipWord = () => {
-    const newWord = selectRandomWord("easy");
-    setCurrentWord(newWord);
-    nextTurn();
-  };
-  const nextTurn = () => {
-    setCurrentTeamIndex((currentTeamIndex + 1) % teams.length);
-  };
-  (0, import_react3.useEffect)(() => {
-    setCurrentWord(selectRandomWord("easy"));
-  }, []);
-  (0, import_react3.useEffect)(() => {
-    if (!teams || teams.length === 0) return;
-    const activeTeams = teams.filter((t) => t.lives > 0);
-    if (activeTeams.length <= 1) {
-      onEndGame({ winner: activeTeams[0], teams });
-    }
-  }, [teams, onEndGame]);
+  const isTeamMode = config.gameMode === "team";
+  const [showWord, setShowWord] = (0, import_react3.useState)(true);
   const [inputValue, setInputValue] = (0, import_react3.useState)("");
   const [feedback, setFeedback] = (0, import_react3.useState)({ message: "", type: "" });
+  const timerRef = (0, import_react3.useRef)(null);
+  const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
+  const [wordQueues, setWordQueues] = (0, import_react3.useState)({
+    easy: shuffleArray(config.wordDatabase.easy),
+    medium: shuffleArray(config.wordDatabase.medium),
+    tricky: shuffleArray(config.wordDatabase.tricky),
+    review: []
+  });
+  const [currentDifficulty, setCurrentDifficulty] = (0, import_react3.useState)("easy");
+  const [attemptedParticipants, setAttemptedParticipants] = (0, import_react3.useState)(/* @__PURE__ */ new Set());
+  const [missedWords, setMissedWords] = (0, import_react3.useState)([]);
+  (0, import_react3.useEffect)(() => {
+    if (!currentWord)
+      return;
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(timerRef.current);
+          handleIncorrectAttempt();
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1e3);
+    return () => clearInterval(timerRef.current);
+  }, [currentWord]);
+  const difficultyOrder = ["easy", "medium", "tricky", "review"];
+  const selectNextWord = () => {
+    let index = difficultyOrder.indexOf(currentDifficulty);
+    let nextWord = null;
+    let nextDifficulty = currentDifficulty;
+    while (index < difficultyOrder.length) {
+      const diff = difficultyOrder[index];
+      const queue = wordQueues[diff];
+      if (queue.length > 0) {
+        nextWord = queue[0];
+        setWordQueues((prev) => ({
+          ...prev,
+          [diff]: prev[diff].slice(1)
+        }));
+        nextDifficulty = diff;
+        break;
+      }
+      index++;
+    }
+    if (nextWord) {
+      setCurrentDifficulty(nextDifficulty);
+      setCurrentWord(nextWord);
+      setTimeLeft(config.timerDuration);
+      setAttemptedParticipants(/* @__PURE__ */ new Set());
+    } else {
+      const activeParticipants = participants.filter((p) => p.lives > 0);
+      onEndGameWithMissedWords();
+    }
+  };
+  const nextTurn = () => {
+    setCurrentParticipantIndex((prevIndex) => (prevIndex + 1) % participants.length);
+  };
+  const handleIncorrectAttempt = () => {
+    setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
+    setMissedWords((prev) => [...prev, currentWord]);
+    const updatedParticipants = participants.map((p, index) => {
+      if (index === currentParticipantIndex) {
+        return { ...p, lives: p.lives - 1 };
+      }
+      return p;
+    });
+    setParticipants(updatedParticipants);
+    setInputValue("");
+    const newAttempted = new Set(attemptedParticipants);
+    newAttempted.add(currentParticipantIndex);
+    setTimeout(() => {
+      setFeedback({ message: "", type: "" });
+      if (newAttempted.size >= participants.length) {
+        setWordQueues((prev) => ({ ...prev, review: [...prev.review, currentWord] }));
+        setAttemptedParticipants(/* @__PURE__ */ new Set());
+        selectNextWord();
+        nextTurn();
+      } else {
+        setAttemptedParticipants(newAttempted);
+        nextTurn();
+        setTimeLeft(config.timerDuration);
+      }
+    }, 2e3);
+  };
   const handleSpellingSubmit = () => {
-    if (!currentWord) return;
+    if (!currentWord)
+      return;
+    clearInterval(timerRef.current);
     const isCorrect = inputValue.trim().toLowerCase() === currentWord.word.toLowerCase();
     if (isCorrect) {
-      setFeedback({ message: "Correct!", type: "success" });
-    } else {
-      setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
-      const updatedTeams = teams.map((team, index) => {
-        if (index === currentTeamIndex) {
-          return { ...team, lives: team.lives - 1 };
-        }
-        return team;
-      });
-      setTeams(updatedTeams);
+      setFeedback({ message: "Correct! 🎉", type: "success" });
+      setTimeout(() => {
+        setFeedback({ message: "", type: "" });
+        setInputValue("");
+        selectNextWord();
+        nextTurn();
+      }, 2e3);
+      return;
     }
+    handleIncorrectAttempt();
+  };
+  const skipWord = () => {
+    clearInterval(timerRef.current);
+    setFeedback({ message: "Word Skipped", type: "info" });
+    setWordQueues((prev) => ({ ...prev, review: [...prev.review, currentWord] }));
+    setAttemptedParticipants(/* @__PURE__ */ new Set());
     setTimeout(() => {
       setFeedback({ message: "", type: "" });
       setInputValue("");
-      const newWord = selectRandomWord("easy");
-      setCurrentWord(newWord);
+      selectNextWord();
       nextTurn();
-    }, 2e3);
+    }, 1500);
   };
+  const onEndGameWithMissedWords = () => {
+    const lessonKey = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+    const stored = JSON.parse(localStorage.getItem("missedWordsCollection") || "{}");
+    const existing = stored[lessonKey] || [];
+    stored[lessonKey] = [...existing, ...missedWords];
+    localStorage.setItem("missedWordsCollection", JSON.stringify(stored));
+    const activeParticipants = participants.filter((p) => p.lives > 0);
+    onEndGame({ winner: activeParticipants.length === 1 ? activeParticipants[0] : null, participants, gameMode: config.gameMode });
+  };
+  (0, import_react3.useEffect)(() => {
+    selectNextWord();
+  }, []);
+  (0, import_react3.useEffect)(() => {
+    if (!participants || participants.length === 0)
+      return;
+    const activeParticipants = participants.filter((p) => p.lives > 0);
+    if (activeParticipants.length <= 1) {
+      onEndGameWithMissedWords();
+    }
+  }, [participants, onEndGame]);
   return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute top-8 left-8 flex gap-8", children: teams.map((team, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-2xl font-bold", children: team.name }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-4xl font-bold text-yellow-300", children: "\u2764\uFE0F".repeat(team.lives) })
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute top-8 left-8 flex gap-8", children: participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-2xl font-bold", children: p.name }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-4xl font-bold text-yellow-300", children: "❤️".repeat(p.lives) })
     ] }, index)) }),
-    feedback.message && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${feedback.type === "success" ? "bg-green-500" : "bg-red-500"}`, children: feedback.message }),
+    feedback.message && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${feedback.type === "success" ? "bg-green-500" : feedback.type === "error" ? "bg-red-500" : "bg-blue-500"}`, children: feedback.message }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "absolute top-8 right-8 text-center", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `text-6xl font-bold ${timeLeft <= 10 ? "text-red-500" : "text-yellow-300"}`, children: timeLeft }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-lg", children: "seconds left" })
     ] }),
     currentWord && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "w-full max-w-4xl text-center", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", { className: "text-4xl font-bold mb-4", children: [
-        "Word for Team: ",
-        teams[currentTeamIndex]?.name || "Team"
+        "Word for ",
+        isTeamMode ? "Team" : "Student",
+        ": ",
+        participants[currentParticipantIndex]?.name || (isTeamMode ? "Team" : "Student")
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "relative mb-8 pt-10", children: [
+        showWord && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg", children: currentWord.word }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          "button",
+          {
+            onClick: () => setShowWord(!showWord),
+            className: "absolute top-0 right-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold",
+            children: showWord ? "Hide Word" : "Show Word"
+          }
+        )
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { className: "text-2xl mb-2", children: [
@@ -19958,22 +20253,32 @@ var GameScreen = ({ config, onEndGame }) => {
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: handleSpellingSubmit, className: "bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg text-2xl font-bold", children: "Submit" })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: skipWord, className: "absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SkipForward, { size: 24 }) })
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: skipWord, className: "absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl", children: "Skip" })
   ] });
 };
 var ResultsScreen = ({ results, onRestart }) => {
+  const { participants, winner, gameMode } = results;
+  const isTeamMode = gameMode === "team";
+  const getWinnerMessage = () => {
+    if (winner) {
+      return `Winner: ${winner.name}`;
+    }
+    const activeParticipants = participants.filter(p => p.lives > 0);
+    if (activeParticipants.length > 1) {
+      const names = activeParticipants.map(p => p.name).join(' and ');
+      return `It's a draw between ${names}!`;
+    }
+    return "No one wins this round!";
+  };
   return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300", children: "\u{1F3C6} Game Over! \u{1F3C6}" }),
-    results && results.winner ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", { className: "text-4xl mb-8", children: [
-      "Winner: ",
-      results.winner.name
-    ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-4xl mb-8", children: "It's a draw!" }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300", children: "🏆 Game Over! 🏆" }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-4xl mb-8", children: getWinnerMessage() }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-3xl font-bold mb-4", children: "Final Scores" }),
-      results && results.teams.map((team, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex justify-between items-center text-2xl mb-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: team.name }),
+      participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex justify-between items-center text-2xl mb-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: p.name }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "font-bold text-yellow-300", children: [
-          team.lives,
+          p.lives,
           " lives remaining"
         ] })
       ] }, index))
@@ -19988,6 +20293,7 @@ if (container) {
     /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react3.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SpellingBeeGame, {}) })
   );
 }
+
 /*! Bundled license information:
 
 react/cjs/react.development.js:
