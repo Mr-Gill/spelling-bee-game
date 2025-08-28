@@ -386,6 +386,11 @@ const GameScreen = ({ config, onEndGame }) => {
     const [revealedLetters, setRevealedLetters] = useState([]);
     const [extraAttempt, setExtraAttempt] = useState(false);
     const [isHelpOpen, setIsHelpOpen] = useState(false);
+    const [revealedHints, setRevealedHints] = useState({
+        syllables: false,
+        prefixSuffix: false,
+        pronunciation: false,
+    });
 
     const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
     const [wordQueues, setWordQueues] = useState({
@@ -444,6 +449,7 @@ const GameScreen = ({ config, onEndGame }) => {
             setExtraAttempt(false);
             // From the other branch, this logic belongs here
             setIsHelpOpen(false);
+            setRevealedHints({ syllables: false, prefixSuffix: false, pronunciation: false });
         } else {
             onEndGameWithMissedWords();
         }
@@ -531,6 +537,27 @@ const GameScreen = ({ config, onEndGame }) => {
         if (participants[currentParticipantIndex].points < cost) return;
         spendPoints(currentParticipantIndex, cost);
         setExtraAttempt(true);
+    };
+
+    const handleRevealSyllables = () => {
+        const cost = 2;
+        if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+        spendPoints(currentParticipantIndex, cost);
+        setRevealedHints(prev => ({ ...prev, syllables: true }));
+    };
+
+    const handleRevealPrefixSuffix = () => {
+        const cost = 2;
+        if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+        spendPoints(currentParticipantIndex, cost);
+        setRevealedHints(prev => ({ ...prev, prefixSuffix: true }));
+    };
+
+    const handleRevealPronunciation = () => {
+        const cost = 2;
+        if (participants[currentParticipantIndex].points < cost || !currentWord) return;
+        spendPoints(currentParticipantIndex, cost);
+        setRevealedHints(prev => ({ ...prev, pronunciation: true }));
     };
 
     const handleSpellingSubmit = () => {
@@ -669,7 +696,16 @@ const GameScreen = ({ config, onEndGame }) => {
                         )}
                         <p className="text-2xl mb-2"><strong className="text-yellow-300">Definition:</strong> {currentWord.definition}</p>
                         <p className="text-xl mb-2"><strong className="text-yellow-300">Origin:</strong> {currentWord.origin}</p>
-                        <p className="text-xl"><strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"</p>
+                        <p className="text-xl mb-2"><strong className="text-yellow-300">In a sentence:</strong> "{currentWord.sentence}"</p>
+                        {revealedHints.syllables && (
+                            <p className="text-xl mb-2"><strong className="text-yellow-300">Syllables:</strong> {currentWord.syllables}</p>
+                        )}
+                        {revealedHints.prefixSuffix && (
+                            <p className="text-xl mb-2"><strong className="text-yellow-300">Prefix/Suffix:</strong> {currentWord.prefixSuffix}</p>
+                        )}
+                        {revealedHints.pronunciation && (
+                            <p className="text-xl"><strong className="text-yellow-300">Pronunciation:</strong> {currentWord.pronunciation}</p>
+                        )}
                     </div>
                     <div className="flex gap-4 justify-center">
                         <input
@@ -683,36 +719,75 @@ const GameScreen = ({ config, onEndGame }) => {
                             Submit
                         </button>
                     </div>
+                </div>
+            )}
 
-                    <div className="mt-6 flex justify-center gap-4">
+            <button
+                onClick={() => setIsHelpOpen(true)}
+                className="absolute bottom-8 left-8 bg-yellow-500 hover:bg-yellow-600 p-4 rounded-lg text-black"
+            >
+                <BookOpen size={24} />
+            </button>
+
+            <button onClick={skipWord} className="absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl">
+                <SkipForward size={24} />
+            </button>
+
+            {isHelpOpen && (
+                <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-10">
+                    <div className="bg-white text-black p-6 rounded-lg w-full max-w-sm text-center space-y-2">
+                        <h3 className="text-2xl font-bold mb-2">Help Shop</h3>
                         <button
                             onClick={handleHangmanReveal}
-                            disabled={participants[currentParticipantIndex].points < 5 || isTeamMode === false}
-                            className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+                            disabled={participants[currentParticipantIndex].points < 5}
+                            className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
                         >
                             Hangman Reveal (-5)
                         </button>
                         <button
                             onClick={handleVowelReveal}
-                            disabled={participants[currentParticipantIndex].points < 3 || isTeamMode === false}
-                            className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+                            disabled={participants[currentParticipantIndex].points < 3}
+                            className="w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded disabled:opacity-50"
                         >
                             Vowel Reveal (-3)
                         </button>
                         <button
                             onClick={handleFriendSubstitution}
-                            disabled={participants[currentParticipantIndex].points < 4 || isTeamMode === false}
-                            className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+                            disabled={participants[currentParticipantIndex].points < 4}
+                            className="w-full bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded disabled:opacity-50"
                         >
                             Friend Sub (-4)
+                        </button>
+                        <button
+                            onClick={handleRevealSyllables}
+                            disabled={revealedHints.syllables || participants[currentParticipantIndex].points < 2}
+                            className="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded disabled:opacity-50"
+                        >
+                            Reveal Syllables (-2)
+                        </button>
+                        <button
+                            onClick={handleRevealPrefixSuffix}
+                            disabled={revealedHints.prefixSuffix || participants[currentParticipantIndex].points < 2}
+                            className="w-full bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded disabled:opacity-50"
+                        >
+                            Reveal Prefix/Suffix (-2)
+                        </button>
+                        <button
+                            onClick={handleRevealPronunciation}
+                            disabled={revealedHints.pronunciation || participants[currentParticipantIndex].points < 2}
+                            className="w-full bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded disabled:opacity-50"
+                        >
+                            Reveal Pronunciation (-2)
+                        </button>
+                        <button
+                            onClick={() => setIsHelpOpen(false)}
+                            className="w-full mt-2 bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded"
+                        >
+                            Close
                         </button>
                     </div>
                 </div>
             )}
-
-            <button onClick={skipWord} className="absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl">
-                <SkipForward size={24} />
-            </button>
         </div>
     );
 };
