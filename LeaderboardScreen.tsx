@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LeaderboardEntry } from './types';
+import beeImg from './img/avatars/bee.svg';
 
 interface LeaderboardScreenProps {
   onBack: () => void;
@@ -46,15 +47,11 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
               <li key={index} className="flex justify-between items-center py-1">
                 <span className="flex items-center font-bold">
                   {index < 3 && <span className="mr-2">{['🥇', '🥈', '🥉'][index]}</span>}
-                  {entry.avatar ? (
-                    <img
-                      src={entry.avatar}
-                      alt={`${entry.name}'s avatar`}
-                      className="w-6 h-6 rounded-full mr-2"
-                    />
-                  ) : (
-                    <div className="w-6 h-6 rounded-full bg-gray-500 mr-2" />
-                  )}
+                  <img
+                    src={entry.avatar || beeImg}
+                    alt={`${entry.name}'s avatar`}
+                    className="w-6 h-6 rounded-full mr-2"
+                  />
                   {index + 1}. {entry.name}
                 </span>
                 <span className="text-yellow-300">{entry.score}</span>
