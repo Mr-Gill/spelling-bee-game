@@ -222,7 +222,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   };
 
   const handleHangmanReveal = () => {
-    const cost = 5;
+    const cost = 6;
     if (participants[currentParticipantIndex].points < cost || !currentWord) return;
     spendPoints(currentParticipantIndex, cost);
     setUsedHint(true);
@@ -237,7 +237,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   };
 
   const handleVowelReveal = () => {
-    const cost = 3;
+    const cost = 4;
     if (participants[currentParticipantIndex].points < cost || !currentWord) return;
     spendPoints(currentParticipantIndex, cost);
     setUsedHint(true);
@@ -248,7 +248,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   };
 
   const handleFriendSubstitution = () => {
-    const cost = 4;
+    const cost = 5;
     if (participants[currentParticipantIndex].points < cost) return;
     spendPoints(currentParticipantIndex, cost);
     setExtraAttempt(true);
@@ -269,9 +269,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       prev.map((p, index) => {
         if (index === currentParticipantIndex) {
           const multipliers: Record<string, number> = { easy: 1, medium: 2, tricky: 3 };
-          const basePoints = 10;
+          const basePoints = 5;
           const multiplier = multipliers[currentDifficulty] || 1;
-          const bonus = p.streak * 5;
+          const bonus = p.streak * 2;
           const pointsEarned = basePoints * multiplier + bonus;
 
           return {
