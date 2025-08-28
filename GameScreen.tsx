@@ -4,6 +4,7 @@ import { GameConfig, Word, Participant, GameResults } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
 import timeoutSoundFile from './audio/timeout.mp3';
+import loseLifeSoundFile from './audio/lose-life.mp3';
 import { launchConfetti } from './utils/confetti';
 import { speak } from './utils/tts';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
@@ -59,6 +60,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const correctAudio = React.useRef<HTMLAudioElement>(new Audio(correctSoundFile));
   const wrongAudio = React.useRef<HTMLAudioElement>(new Audio(wrongSoundFile));
   const timeoutAudio = React.useRef<HTMLAudioElement>(new Audio(timeoutSoundFile));
+  const loseLifeAudio = React.useRef<HTMLAudioElement>(new Audio(loseLifeSoundFile));
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
 
   const shuffleArray = (arr: Word[]) => [...arr].sort(() => Math.random() - 0.5);
@@ -211,6 +213,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       return p;
     });
     setParticipants(updatedParticipants);
+    if (config.soundEnabled) {
+      loseLifeAudio.current.currentTime = 0;
+      loseLifeAudio.current.play();
+    }
     if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
 
     const newAttempted = new Set(attemptedParticipants);
@@ -385,6 +391,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         return p;
       })
     );
+    if (isLivesPenalty && config.soundEnabled) {
+      loseLifeAudio.current.currentTime = 0;
+      loseLifeAudio.current.play();
+    }
     setFeedback({ message: `Word Skipped (${deduction})`, type: 'info' });
     if (currentWord) {
       setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
