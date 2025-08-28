@@ -1,12 +1,17 @@
-import React from 'react';
-import { GameResults } from './types';
+import React, { useEffect } from 'react';
+import { GameResults, GameConfig } from './types';
 
 interface ResultsScreenProps {
   results: GameResults;
+  config: GameConfig;
   onRestart: () => void;
 }
-
-const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart }) => {
+const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestart }) => {
+  useEffect(() => {
+    if (config.effectsEnabled && typeof (window as any).confetti === 'function') {
+      (window as any).confetti();
+    }
+  }, [config.effectsEnabled]);
   const handleExport = () => {
     const dataStr =
       'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(results, null, 2));

@@ -33,6 +33,8 @@ export interface GameConfig {
   wordDatabase: WordDatabase;
   skipPenaltyType: 'lives' | 'points';
   skipPenaltyValue: number;
+  soundEnabled: boolean;
+  effectsEnabled: boolean;
 }
 
 export interface GameResults {

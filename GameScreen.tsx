@@ -65,8 +65,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     timerRef.current = setInterval(() => {
       setTimeLeft(prevTime => {
         if (prevTime <= 1) {
-          timeoutAudio.current.currentTime = 0;
-          timeoutAudio.current.play();
+          if (config.soundEnabled) {
+            timeoutAudio.current.currentTime = 0;
+            timeoutAudio.current.play();
+          }
           clearInterval(timerRef.current as NodeJS.Timeout);
           handleIncorrectAttempt();
           return 0;
@@ -260,8 +262,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     );
 
     if (isCorrect) {
-      correctAudio.current.currentTime = 0;
-      correctAudio.current.play();
+      if (config.soundEnabled) {
+        correctAudio.current.currentTime = 0;
+        correctAudio.current.play();
+      }
+      if (config.effectsEnabled && typeof (window as any).confetti === 'function') {
+        (window as any).confetti();
+      }
       setFeedback({ message: 'Correct! 🎉', type: 'success' });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
       setTimeout(() => {
@@ -272,8 +279,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       return;
     }
 
-    wrongAudio.current.currentTime = 0;
-    wrongAudio.current.play();
+    if (config.soundEnabled) {
+      wrongAudio.current.currentTime = 0;
+      wrongAudio.current.play();
+    }
     handleIncorrectAttempt();
   };
 

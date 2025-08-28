@@ -51,7 +51,7 @@ const SpellingBeeGame = () => {
         return <GameScreen config={gameConfig} onEndGame={handleEndGame} />;
     }
     if (gameState === "results") {
-        return <ResultsScreen results={gameResults} onRestart={handleRestart} />;
+        return <ResultsScreen results={gameResults} config={gameConfig} onRestart={handleRestart} />;
     }
     return null;
 };
