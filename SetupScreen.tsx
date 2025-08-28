@@ -30,7 +30,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
   ]);
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
-  const [timerDuration] = useState(30);
+  const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
   const [parsedCustomWords, setParsedCustomWords] = useState<Word[]>([]);
   const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, Word[]>>({});
@@ -50,7 +50,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [effectsEnabled, setEffectsEnabled] = useState(true);
-
+  const [initialDifficulty, setInitialDifficulty] = useState(0);
+  const [progressionSpeed, setProgressionSpeed] = useState(1);
   const addTeam = () => {
     setTeams([
       ...teams,
@@ -219,7 +220,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       skipPenaltyType,
       skipPenaltyValue,
       soundEnabled,
-      effectsEnabled
+      effectsEnabled,
+      difficultyLevel: initialDifficulty,
+      progressionSpeed
     } as GameConfig;
     onStartGame(config);
   };
@@ -336,23 +339,51 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4">Audio & Effects</h2>
-          <label className="flex items-center space-x-3 mb-2">
-            <input
-              type="checkbox"
-              checked={soundEnabled}
-              onChange={e => setSoundEnabled(e.target.checked)}
-            />
-            <span>Enable Sound</span>
-          </label>
-          <label className="flex items-center space-x-3">
-            <input
-              type="checkbox"
-              checked={effectsEnabled}
-              onChange={e => setEffectsEnabled(e.target.checked)}
-            />
-            <span>Enable Visual Effects</span>
-          </label>
+          <h2 className="text-2xl font-bold mb-4">Difficulty Settings</h2>
+          <div className="flex gap-4">
+            <div>
+              <label className="block mb-2">Initial Difficulty</label>
+              <select
+                value={initialDifficulty}
+                onChange={e => setInitialDifficulty(Number(e.target.value))}
+                className="p-2 rounded-md bg-white/20 text-white"
+              >
+                <option value={0}>Easy</option>
+                <option value={1}>Medium</option>
+                <option value={2}>Tricky</option>
+              </select>
+            </div>
+            <div>
+              <label className="block mb-2">Progression Speed</label>
+              <input
+                type="number"
+                min={1}
+                value={progressionSpeed}
+                onChange={e => setProgressionSpeed(Number(e.target.value))}
+                className="p-2 rounded-md bg-white/20 text-white w-24"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white/10 p-6 rounded-lg mb-8">
+            <h2 className="text-2xl font-bold mb-4">Audio & Effects</h2>
+            <label className="flex items-center space-x-3 mb-2">
+                <input
+                type="checkbox"
+                checked={soundEnabled}
+                onChange={e => setSoundEnabled(e.target.checked)}
+                />
+                <span>Enable Sound</span>
+            </label>
+            <label className="flex items-center space-x-3">
+                <input
+                type="checkbox"
+                checked={effectsEnabled}
+                onChange={e => setEffectsEnabled(e.target.checked)}
+                />
+                <span>Enable Visual Effects</span>
+            </label>
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
@@ -406,7 +437,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           </div>
           <div className="mt-4 text-sm text-gray-300">
             <p>
-              <strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `sentence`,
+              <strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`,
               `prefixSuffix`, `pronunciation`. The difficulty will be determined by word length.
             </p>
           </div>

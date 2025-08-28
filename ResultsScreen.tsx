@@ -1,17 +1,46 @@
-import React, { useEffect } from 'react';
-import { GameResults, GameConfig } from './types';
+import React, { useEffect, useRef } from 'react';
+import { GameResults, GameConfig, LeaderboardEntry } from './types';
+import applauseSoundFile from './audio/applause.mp3';
+import { launchConfetti } from './utils/confetti';
 
 interface ResultsScreenProps {
   results: GameResults;
   config: GameConfig;
   onRestart: () => void;
+  onViewLeaderboard: () => void;
 }
-const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestart }) => {
+
+const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestart, onViewLeaderboard }) => {
+  const applauseAudio = useRef<HTMLAudioElement>(new Audio(applauseSoundFile));
+
   useEffect(() => {
-    if (config.effectsEnabled && typeof (window as any).confetti === 'function') {
-      (window as any).confetti();
+    // Update the leaderboard with the new scores
+    const stored: LeaderboardEntry[] = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+    const newEntries: LeaderboardEntry[] = results.participants.map(p => ({
+      name: p.name,
+      score: p.points,
+      date: new Date().toISOString(),
+    }));
+    
+    const updated = [...stored, ...newEntries]
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10); // Keep only the top 10 scores
+      
+    localStorage.setItem('leaderboard', JSON.stringify(updated));
+  }, [results]);
+
+  useEffect(() => {
+    // Play sound and show confetti if there's a winner and effects are enabled
+    if (results.winner) {
+      if (config.soundEnabled) {
+        applauseAudio.current.play();
+      }
+      if (config.effectsEnabled) {
+        launchConfetti();
+      }
     }
-  }, [config.effectsEnabled]);
+  }, [results.winner, config.soundEnabled, config.effectsEnabled]);
+
   const handleExport = () => {
     const dataStr =
       'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(results, null, 2));
@@ -70,12 +99,18 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
         </div>
       )}
 
-      <div className="flex gap-6 mt-12">
+      <div className="flex gap-6 mt-12 flex-wrap justify-center">
         <button
           onClick={handleExport}
           className="bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold"
         >
           Export Results
+        </button>
+        <button
+          onClick={onViewLeaderboard}
+          className="bg-purple-500 hover:bg-purple-600 px-8 py-5 rounded-xl text-2xl font-bold"
+        >
+          View Leaderboard
         </button>
         <button
           onClick={onRestart}

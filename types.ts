@@ -3,7 +3,7 @@ export interface Word {
   syllables: string;
   definition: string;
   origin: string;
-  sentence: string;
+  example: string;
   prefixSuffix?: string;
   pronunciation?: string;
 }
@@ -35,6 +35,8 @@ export interface GameConfig {
   skipPenaltyValue: number;
   soundEnabled: boolean;
   effectsEnabled: boolean;
+  difficultyLevel: number;
+  progressionSpeed: number;
 }
 
 export interface GameResults {
@@ -43,4 +45,14 @@ export interface GameResults {
   gameMode: 'team' | 'individual';
   duration: number;
   missedWords: Word[];
+}
+
+export interface GameState {
+  difficultyLevel: number;
+}
+
+export interface LeaderboardEntry {
+  name: string;
+  score: number;
+  date: string;
 }
