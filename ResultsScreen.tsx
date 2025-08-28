@@ -14,6 +14,14 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
   const applauseAudio = useRef<HTMLAudioElement>(new Audio(applauseSoundFile));
 
   useEffect(() => {
+    if (localStorage.getItem('teacherMode') === 'true') {
+      document.body.classList.add('teacher-mode');
+    } else {
+      document.body.classList.remove('teacher-mode');
+    }
+  }, []);
+
+  useEffect(() => {
     // Update the leaderboard with the new scores
     const stored: LeaderboardEntry[] = JSON.parse(localStorage.getItem('leaderboard') || '[]');
     const newEntries: LeaderboardEntry[] = results.participants.map(p => ({
@@ -76,7 +84,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
 
       <div className="text-5xl mb-4">🏆</div>
 
-      <div className="bg-white/10 p-8 rounded-lg w-full max-w-md">
+      <div className="bg-white/10 p-8 rounded-lg w-full max-w-md scorecard">
         <h3 className="text-3xl font-bold mb-4">📊 Final Scores</h3>
         {results && results.participants.map((p, index) => (
           <div key={index} className="text-left text-xl mb-3">
@@ -98,7 +106,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
       </div>
 
       {results.missedWords && results.missedWords.length > 0 && (
-        <div className="bg-white/10 p-8 rounded-lg w-full max-w-md mt-8">
+        <div className="bg-white/10 p-8 rounded-lg w-full max-w-md mt-8 scorecard">
           <h3 className="text-3xl font-bold mb-4">❌ Missed Words</h3>
           {results.missedWords.map((w, index) => (
             <div key={index} className="text-left text-xl mb-2">

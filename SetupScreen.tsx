@@ -46,11 +46,24 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [initialDifficulty, setInitialDifficulty] = useState(0);
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState('light');
+  const [teacherMode, setTeacherMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('teacherMode');
+    return saved === 'true';
+  });
 
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
     document.body.classList.add(`theme-${t}`);
   };
+
+  useEffect(() => {
+    if (teacherMode) {
+      document.body.classList.add('teacher-mode');
+    } else {
+      document.body.classList.remove('teacher-mode');
+    }
+    localStorage.setItem('teacherMode', String(teacherMode));
+  }, [teacherMode]);
 
   useEffect(() => {
     const savedTeams = localStorage.getItem('teams');
@@ -222,6 +235,18 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             <option value="dark">Dark</option>
             <option value="honeycomb">Honeycomb</option>
           </select>
+        </div>
+
+        <div className="bg-white/10 p-6 rounded-lg mb-8">
+          <h2 className="text-2xl font-bold mb-4">Teacher Mode 👩‍🏫</h2>
+          <label className="flex items-center gap-2 text-white">
+            <input
+              type="checkbox"
+              checked={teacherMode}
+              onChange={e => setTeacherMode(e.target.checked)}
+            />
+            <span>Enable larger fonts and spacing</span>
+          </label>
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
