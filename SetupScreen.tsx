@@ -4,16 +4,17 @@ import beeImg from './img/avatars/bee.svg';
 import bookImg from './img/avatars/book.svg';
 import trophyImg from './img/avatars/trophy.svg';
 
-// Gather available music styles from the audio directory
-// Temporarily hardcoded until import.meta.glob is properly supported
+// Gather available music styles.
+// This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
   onAddCustomWords: (words: Word[]) => void;
+  onViewAchievements: () => void;
 }
 
-const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords }) => {
+const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
   const avatars = [beeImg, bookImg, trophyImg];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
@@ -42,10 +43,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [bulkStudentError, setBulkStudentError] = useState('');
   const [skipPenaltyType, setSkipPenaltyType] = useState<'lives' | 'points'>('lives');
   const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
-  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
-    const saved = localStorage.getItem('soundEnabled');
-    return saved !== null ? saved === 'true' : true;
-  });
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => localStorage.getItem('soundEnabled') !== 'false');
   const [effectsEnabled, setEffectsEnabled] = useState(true);
   const [musicStyle, setMusicStyle] = useState<string>(() => localStorage.getItem('musicStyle') ?? 'Funk');
   const [musicVolume, setMusicVolume] = useState<number>(() => parseFloat(localStorage.getItem('musicVolume') ?? '1'));
@@ -86,59 +84,331 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   useEffect(() => localStorage.setItem('musicStyle', musicStyle), [musicStyle]);
   useEffect(() => localStorage.setItem('musicVolume', String(musicVolume)), [musicVolume]);
 
+  const updateTeams = (newTeams: Participant[]) => {
+    setTeams(newTeams);
+    localStorage.setItem('teams', JSON.stringify(newTeams));
+  };
+
+  const updateStudents = (newStudents: Participant[]) => {
+    setStudents(newStudents);
+    localStorage.setItem('students', JSON.stringify(newStudents));
+  };
+
+  const clearRoster = () => {
+    localStorage.removeItem('teams');
+    localStorage.removeItem('students');
+    setTeams(getDefaultTeams());
+    setStudents([]);
+  };
+
   const createParticipant = (name: string, difficulty: number): Participant => ({
     name: name.trim(), lives: 5, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
   });
 
-  // All other participant and word list handling functions are assumed to be here...
-  const handleStart = () => { /* Logic for custom game */ };
+  const addTeam = () => updateTeams([...teams, createParticipant('', 0)]);
+  const removeTeam = (index: number) => updateTeams(teams.filter((_, i) => i !== index));
+  const updateTeamName = (index: number, name: string) => {
+    const newTeams = teams.map((team, i) => (i === index ? { ...team, name } : team));
+    updateTeams(newTeams);
+  };
 
-  const startSessionChallenge = async () => {
-    try {
-      const randomList = bundledWordLists[Math.floor(Math.random() * bundledWordLists.length)];
-      const response = await fetch(`wordlists/${randomList.file}`);
-      const words: Word[] = await response.json();
-      onAddCustomWords(words);
-      const config: GameConfig = {
-        participants: gameMode === 'team' ? teams : students,
-        gameMode, timerDuration, skipPenaltyType, skipPenaltyValue, soundEnabled, effectsEnabled, difficultyLevel: initialDifficulty, progressionSpeed, musicStyle, musicVolume,
-      };
-      onStartGame(config);
-    } catch {
-      setError('Failed to load session challenge.');
+  const addStudent = () => {
+    if (studentName.trim()) {
+      updateStudents([...students, createParticipant(studentName, initialDifficulty)]);
+      setStudentName('');
     }
   };
 
+  const removeStudent = (index: number) => updateStudents(students.filter((_, i) => i !== index));
+  const updateStudentName = (index: number, name: string) => {
+    const newStudents = students.map((student, i) => (i === index ? { ...student, name } : student));
+    updateStudents(newStudents);
+  };
+
+  const parseStudentNames = (text: string) =>
+    text.split(/\r?\n/).flatMap(line => line.split(',')).map(name => name.trim()).filter(name => name !== '');
+
+  const addBulkStudents = () => {
+    const names = parseStudentNames(bulkStudentText);
+    const existing = new Set(students.map(s => s.name));
+    const uniqueNames = Array.from(new Set(names)).filter(name => !existing.has(name));
+    if (uniqueNames.length === 0) {
+      setBulkStudentError('No new unique names detected.');
+      return;
+    }
+    const newStudents = uniqueNames.map(name => createParticipant(name, initialDifficulty));
+    updateStudents([...students, ...newStudents]);
+    setBulkStudentText('');
+    setBulkStudentError('');
+  };
+  
+  const parseWordList = (content: string) => {
+    try {
+      const parsed = JSON.parse(content) as Word[];
+      if (Array.isArray(parsed)) {
+        setParsedCustomWords(parsed);
+        return;
+      }
+    } catch (e) {}
+
+    const lines = content.trim().split('\n');
+    if (lines.length < 2) return;
+    const delimiter = lines[0].includes(',') ? ',' : '\t';
+    const headers = lines[0].split(delimiter).map(h => h.trim());
+    const words = lines.slice(1).map(line => {
+      const values = line.split(delimiter);
+      const wordObj: any = {};
+      headers.forEach((header, index) => {
+        wordObj[header] = values[index] ? values[index].trim() : '';
+      });
+      return wordObj as Word;
+    });
+    setParsedCustomWords(words);
+  };
+  
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const content = e.target?.result as string;
+        setCustomWordListText(content);
+      };
+      reader.readAsText(file);
+    }
+  };
+  
+  useEffect(() => {
+    if (selectedBundledList) {
+      fetch(`wordlists/${selectedBundledList}`)
+        .then(res => res.text())
+        .then(text => setCustomWordListText(text));
+    }
+  }, [selectedBundledList]);
+
+  useEffect(() => {
+    if (customWordListText) {
+      parseWordList(customWordListText);
+    }
+  }, [customWordListText]);
+
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem('missedWordsCollection') || '{}');
+    setMissedWordsCollection(stored);
+  }, []);
+
+  const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
+
+  const handleStart = async (isSessionChallenge = false) => {
+    let challengeWords: Word[] = [];
+    if (isSessionChallenge) {
+      try {
+        const randomList = bundledWordLists[Math.floor(Math.random() * bundledWordLists.length)];
+        const response = await fetch(`wordlists/${randomList.file}`);
+        const text = await response.text();
+        challengeWords = JSON.parse(text);
+      } catch {
+        setError('Failed to load session challenge words.');
+        return;
+      }
+    }
+
+    let finalParticipants: Participant[];
+    if (gameMode === 'team') {
+        const trimmedTeams = teams.filter(team => team.name.trim() !== "");
+        if (trimmedTeams.length < 2) {
+            setError('Please add at least two teams with names.');
+            return;
+        }
+        finalParticipants = trimmedTeams.map(t => ({...t, difficultyLevel: initialDifficulty}));
+    } else {
+        const trimmedStudents = students.filter(student => student.name.trim() !== "");
+        if (trimmedStudents.length < 1 && isSessionChallenge) {
+             finalParticipants = [createParticipant('Player 1', initialDifficulty)];
+        } else if (trimmedStudents.length < 2 && !isSessionChallenge) {
+            setError('Please add at least two students for a custom game.');
+            return;
+        } else {
+             finalParticipants = trimmedStudents.map(s => ({...s, difficultyLevel: initialDifficulty}));
+        }
+    }
+
+    setError('');
+    
+    let finalWords: Word[] = isSessionChallenge ? challengeWords : parsedCustomWords;
+    if (includeMissedWords && !isSessionChallenge) {
+      const extraWords = Object.values(missedWordsCollection).flat();
+      finalWords = [...finalWords, ...extraWords];
+    }
+    
+    onAddCustomWords(finalWords);
+    
+    const config: GameConfig = {
+      participants: finalParticipants,
+      gameMode, timerDuration, skipPenaltyType, skipPenaltyValue, soundEnabled, effectsEnabled, difficultyLevel: initialDifficulty, progressionSpeed, musicStyle, musicVolume,
+    };
+    onStartGame(config);
+  };
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-8 text-white">
+    <div className="min-h-screen p-8 text-white">
       <div className="max-w-7xl mx-auto">
-        {/* All UI sections for game setup are assumed to be here... */}
+        <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-3 mb-4">
+                <img src="icons/icon.svg" alt="Bee mascot" className="w-12 h-12 md:w-16 md:h-16" />
+                <h1 className="text-4xl md:text-6xl font-bold text-yellow-300">🏆 SPELLING BEE CHAMPIONSHIP</h1>
+            </div>
+            <p className="text-xl md:text-2xl">Get ready to spell your way to victory!</p>
+        </div>
+
+        <div className="bg-white/10 p-6 rounded-lg mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-center">Select Game Mode 🎮</h2>
+          <div className="flex justify-center gap-4">
+            <button onClick={() => setGameMode('team')} className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'team' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}>Team</button>
+            <button onClick={() => setGameMode('individual')} className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'individual' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}>Individual</button>
+          </div>
+        </div>
         
         <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4">Music 🎵</h2>
-          <div className="mb-4">
-            <label className="block mb-2">Style</label>
-            <select value={musicStyle} onChange={e => setMusicStyle(e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
-              {musicStyles.map(style => (<option key={style} value={style}>{style}</option>))}
-            </select>
-          </div>
-          <div>
-            <label className="block mb-2">Volume: {Math.round(musicVolume * 100)}%</label>
-            <input type="range" min={0} max={1} step={0.01} value={musicVolume} onChange={e => setMusicVolume(parseFloat(e.target.value))} className="w-full" />
-          </div>
+          <h2 className="text-2xl font-bold mb-4">{gameMode === 'team' ? 'Teams 👥' : 'Students 🧑‍🎓'}</h2>
+          {gameMode === 'team' ? (
+            <>
+              {teams.map((team, index) => (
+                <div key={index} className="flex items-center gap-2 mb-2">
+                  <img src={team.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                  <input type="text" value={team.name} onChange={e => updateTeamName(index, e.target.value)} placeholder={`Team ${index + 1} Name`} className="flex-grow p-2 rounded-md bg-white/20 text-white" />
+                  {teams.length > 1 && (<button onClick={() => removeTeam(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
+                </div>
+              ))}
+              <button onClick={addTeam} className="mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded">Add Team</button>
+            </>
+          ) : (
+            <>
+              <div className="flex gap-4 mb-4">
+                <input type="text" value={studentName} onChange={e => setStudentName(e.target.value)} className="flex-grow p-2 rounded-md bg-white/20 text-white" placeholder="Student name" />
+                <button onClick={addStudent} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add</button>
+              </div>
+              <div className="mb-4">
+                <textarea value={bulkStudentText} onChange={e => setBulkStudentText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white mb-2" placeholder="Paste names, one per line or separated by commas" rows={4}></textarea>
+                <button onClick={addBulkStudents} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add Names</button>
+                {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
+              </div>
+              {students.map((student, index) => (
+                <div key={index} className="flex items-center gap-2 mb-2">
+                  <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                  <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
+                  {students.length > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
+                </div>
+              ))}
+            </>
+          )}
+          <button onClick={clearRoster} className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Clear Saved Roster</button>
         </div>
 
-        {/* Other settings panels... */}
-
-        <div className="flex gap-4 mt-8">
-            <button onClick={handleStart} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">
-                Start Custom Game
-            </button>
-            <button onClick={startSessionChallenge} className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">
-                Start Session Challenge
-            </button>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4">Skip Penalty ⏭️</h2>
+                <div className="flex gap-4">
+                    <select value={skipPenaltyType} onChange={e => setSkipPenaltyType(e.target.value as 'lives' | 'points')} className="p-2 rounded-md bg-white/20 text-white">
+                        <option value="lives">Lives</option>
+                        <option value="points">Points</option>
+                    </select>
+                    <input type="number" min={0} value={skipPenaltyValue} onChange={e => setSkipPenaltyValue(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
+                </div>
+            </div>
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4">Difficulty Settings 🎚️</h2>
+                <div className="flex gap-4">
+                    <div>
+                        <label className="block mb-2">Initial Difficulty</label>
+                        <select value={initialDifficulty} onChange={e => setInitialDifficulty(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white">
+                            <option value={0}>Easy</option>
+                            <option value={1}>Medium</option>
+                            <option value={2}>Tricky</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block mb-2">Progression Speed</label>
+                        <input type="number" min={1} value={progressionSpeed} onChange={e => setProgressionSpeed(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
+                    </div>
+                </div>
+            </div>
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4">Audio & Effects 🔊✨</h2>
+                <label className="flex items-center space-x-3 mb-2"><input type="checkbox" checked={soundEnabled} onChange={e => setSoundEnabled(e.target.checked)} /><span>Enable Sound</span></label>
+                <label className="flex items-center space-x-3"><input type="checkbox" checked={effectsEnabled} onChange={e => setEffectsEnabled(e.target.checked)} /><span>Enable Visual Effects</span></label>
+            </div>
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4">Theme 🎨</h2>
+                <select value={theme} onChange={e => { const t = e.target.value; setTheme(t); localStorage.setItem('theme', t); applyTheme(t); }} className="p-2 rounded-md bg-white/20 text-white">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="honeycomb">Honeycomb</option>
+                </select>
+            </div>
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4">Teacher Mode 👩‍🏫</h2>
+                <label className="flex items-center gap-2 text-white"><input type="checkbox" checked={teacherMode} onChange={e => setTeacherMode(e.target.checked)} /><span>Enable larger fonts and spacing</span></label>
+            </div>
+             <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4">Music 🎵</h2>
+                <div className="mb-4">
+                    <label className="block mb-2">Style</label>
+                    <select value={musicStyle} onChange={e => setMusicStyle(e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
+                        {musicStyles.map(style => (<option key={style} value={style}>{style}</option>))}
+                    </select>
+                </div>
+                <div>
+                    <label className="block mb-2">Volume: {Math.round(musicVolume * 100)}%</label>
+                    <input type="range" min={0} max={1} step={0.01} value={musicVolume} onChange={e => setMusicVolume(parseFloat(e.target.value))} className="w-full" />
+                </div>
+            </div>
         </div>
-        {error && <div className="mt-4 text-red-300 text-center">{error}</div>}
+        
+        <div className="bg-white/10 p-6 rounded-lg mb-8 mt-8">
+            <h2 className="text-2xl font-bold mb-4">Add Custom Word List 📝</h2>
+            <div className="mb-6">
+                <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">Choose Bundled Word List</label>
+                <select id="bundled-list" value={selectedBundledList} onChange={e => setSelectedBundledList(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white">
+                    <option value="">-- Select a list --</option>
+                    {bundledWordLists.map(list => (<option key={list.file} value={list.file}>{list.label}</option>))}
+                </select>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label htmlFor="file-upload" className="block text-lg font-medium mb-2">Upload File</label>
+                    <p className="text-sm text-gray-300 mb-2">Upload a JSON or TSV file.</p>
+                    <input id="file-upload" type="file" accept=".json,.tsv,.txt,.csv" onChange={handleFileChange} className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-300 file:text-black hover:file:bg-yellow-400" />
+                </div>
+                <div>
+                    <label htmlFor="paste-area" className="block text-lg font-medium mb-2">Or Paste Spreadsheet Data</label>
+                    <p className="text-sm text-gray-300 mb-2">Paste data from Excel or Google Sheets (tab-separated).</p>
+                    <textarea id="paste-area" rows={4} value={customWordListText} onChange={e => setCustomWordListText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white" placeholder="Paste your tab-separated values here..."></textarea>
+                </div>
+            </div>
+            <div className="mt-4 text-sm text-gray-300">
+                <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`.</p>
+            </div>
+        </div>
+        
+        {missedWordCount > 0 && (
+            <div className="bg-white/10 p-4 rounded-lg mb-8">
+                <label className="flex items-center space-x-3">
+                    <input type="checkbox" checked={includeMissedWords} onChange={e => setIncludeMissedWords(e.target.checked)} />
+                    <span>Include {missedWordCount} missed words from previous sessions</span>
+                </label>
+            </div>
+        )}
+
+        {error && <p className="text-red-300 text-center mb-4">{error}</p>}
+        
+        <div className="flex flex-col md:flex-row gap-4 mt-8">
+            <button onClick={() => handleStart(false)} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Custom Game</button>
+            <button onClick={() => handleStart(true)} className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Session Challenge</button>
+        </div>
+        <div className="mt-4 text-center">
+            <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold">View Achievements</button>
+        </div>
       </div>
     </div>
   );
