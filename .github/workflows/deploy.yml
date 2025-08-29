@@ -26,26 +26,16 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      # Use npm install (NOT npm ci) so Actions can resolve a stale lockfile
+      # Use npm ci for reliable installs (if lockfile is up-to-date)
       - name: Install deps
         run: |
           set -euxo pipefail
-          npm install
+          npm ci
 
       - name: Build
         run: npm run build
 
-      - name: Install deps (prefer ci; fallback to install)
-        run: |
-          set -euxo pipefail
-          npm ci || npm install
-
-      # Optional: catch broken package.json early
-      - name: Validate package.json
-        run: node -e "JSON.parse(require('fs').readFileSync('package.json','utf8'))"
-
-      # Fix asset paths for GitHub Pages; guard service-worker.js in case it's absent
-        # (sed returns nonzero if file missing, so wrap with checks)
+      # Fix asset paths for GitHub Pages; skip if files are missing
       - name: Rewrite paths for Pages
         run: |
           set -euxo pipefail
@@ -53,6 +43,8 @@ jobs:
           if [ -f dist/index.html ]; then
             sed -i "s,href=\"style.css\",href=\"/$REPO_NAME/style.css\",g" dist/index.html
             sed -i "s,src=\"app.js\",src=\"/$REPO_NAME/app.js\",g" dist/index.html
+          else
+            echo "dist/index.html not found; skipping"
           fi
           if [ -f dist/service-worker.js ]; then
             sed -i "s,{{REPO_NAME}},$REPO_NAME,g" dist/service-worker.js
