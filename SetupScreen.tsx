@@ -5,13 +5,8 @@ import bookImg from './img/avatars/book.svg';
 import trophyImg from './img/avatars/trophy.svg';
 
 // Gather available music styles from the audio directory
-const musicFileImports = import.meta.glob('./audio/*.mp3', { eager: true, as: 'url' });
-const musicStyles = Object.keys(musicFileImports)
-  .filter(path => path.includes("It's a Spelling Bee!"))
-  .map(path => {
-    const match = path.match(/It's a Spelling Bee! \((.+)\)\.mp3$/);
-    return match ? match[1] : path;
-  });
+// Temporarily hardcoded until import.meta.glob is properly supported
+const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;

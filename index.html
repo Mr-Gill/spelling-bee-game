@@ -18,7 +18,8 @@
 <body>
     <div id="root"></div>
     
-    <script type="module" src="dist/app.js"></script>
+    <script type="module" src="./app.js"></script>
+    <!--
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -26,6 +27,8 @@
             });
         }
     </script>
+    -->
+    <!-- Service worker temporarily disabled for debugging -->
     <script>
         document.addEventListener('click', (e) => {
             const target = e.target;
