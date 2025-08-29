@@ -32,12 +32,12 @@ jobs:
           set -euxo pipefail
           npm install
 
+      - name: Build
+        run: npm run build
+
       # Fail early if build.js has any unmatched braces/backticks/etc.
       - name: Parse-check build.js
         run: node --check build.js
-
-      - name: Build
-        run: npm run build
 
       - name: Install deps (prefer ci; fallback to install)
         run: |
@@ -53,9 +53,6 @@ jobs:
         run: |
           set -euxo pipefail
           if [ -f build.js ]; then node --check build.js; else echo "No build.js; skipping"; fi
-
-      - name: Build
-        run: npm run build
 
       # Fix asset paths for GitHub Pages; guard service-worker.js in case it's absent
         # (sed returns nonzero if file missing, so wrap with checks)
