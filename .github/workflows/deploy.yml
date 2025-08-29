@@ -20,6 +20,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Enable step debugging
+      - name: Setup debug environment
+        run: |
+          echo "ACTIONS_STEP_DEBUG=${{ secrets.ACTIONS_STEP_DEBUG }}" >> $GITHUB_ENV
+          echo "ACTIONS_RUNNER_DEBUG=${{ secrets.ACTIONS_RUNNER_DEBUG }}" >> $GITHUB_ENV
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -34,6 +40,10 @@ jobs:
 
       - name: Build
         run: npm run build
+        # Capture build output on failure
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
+        timeout-minutes: 10
 
       # Fix asset paths for GitHub Pages; skip if files are missing
       - name: Rewrite paths for Pages
@@ -67,3 +77,24 @@ jobs:
       - name: Deploy to Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # Add post-failure diagnostics
+  diagnostics:
+    if: ${{ failure() }}
+    needs: [build, deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        if: ${{ failure() && needs.build.result == 'failure' }}
+        uses: actions/download-artifact@v3
+        with:
+          name: pages-artifact
+          path: artifacts
+
+      - name: Show directory structure
+        run: ls -R artifacts
+
+      - name: Capture error logs
+        run: |
+          echo "BUILD FAILURE LOGS:"
+          find artifacts -type f -exec echo '{}' \; -exec cat '{}' \;
