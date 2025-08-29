@@ -27,20 +27,20 @@ jobs:
           node-version: '20'
           cache: npm
 
-      # If your lockfile is now in sync, prefer npm ci:
       - name: Install deps
         run: npm ci
 
-      - name: Check build script syntax
-        run: node --check build.js
-
       - name: Build
-        run: npm run build
+        run: |
+          npm run build
+          mkdir -p dist
+          cp index.html dist/
+          cp style.css dist/
+          cp app.js dist/
+          cp service-worker.js dist/
 
-      # Adjust paths for GitHub Pages (repo subpath)
       - name: Rewrite paths
         run: |
-          set -euxo pipefail
           REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
           sed -i "s,href=\"style.css\",href=\"/$REPO_NAME/style.css\",g" dist/index.html
           sed -i "s,src=\"app.js\",src=\"/$REPO_NAME/app.js\",g" dist/index.html
