@@ -8,7 +8,7 @@ if (!fs.existsSync('dist')) {
 
 // Run esbuild
 console.log('Building application...');
-execSync('npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --define:import.meta.url="\'.\'" --loader:.mp3=file --loader:.svg=file --asset-names=assets/[name]-[hash]', { stdio: 'inherit' });
+execSync(`npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file`, { stdio: 'inherit' });
 
 // Function to copy files/directories
 const copyAssets = (src, dest) => {
