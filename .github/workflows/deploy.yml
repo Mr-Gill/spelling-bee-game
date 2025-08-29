@@ -50,12 +50,17 @@ jobs:
         run: |
           set -euxo pipefail
           REPO_NAME=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f2)
+          echo "Repository name: $REPO_NAME"
+          echo "Contents of dist/index.html before rewrite:"
+          cat dist/index.html
           if [ -f dist/index.html ]; then
             sed -i "s,href=\"./tailwind.css\",href=\"/$REPO_NAME/tailwind.css\",g" dist/index.html
             sed -i "s,src=\"./app.js\",src=\"/$REPO_NAME/app.js\",g" dist/index.html
             sed -i "s,href=\"style.css\",href=\"/$REPO_NAME/style.css\",g" dist/index.html
             sed -i "s,href=\"manifest.webmanifest\",href=\"/$REPO_NAME/manifest.webmanifest\",g" dist/index.html
             sed -i "s,href=\"icons/,href=\"/$REPO_NAME/icons/,g" dist/index.html
+            echo "Contents of dist/index.html after rewrite:"
+            cat dist/index.html
           else
             echo "dist/index.html not found; skipping"
           fi
