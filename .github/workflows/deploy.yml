@@ -52,7 +52,9 @@ jobs:
           REPO_NAME=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f2)
           if [ -f dist/index.html ]; then
             sed -i "s,href=\"style.css\",href=\"/$REPO_NAME/style.css\",g" dist/index.html
-            sed -i "s,src=\"app.js\",src=\"/$REPO_NAME/app.js\",g" dist/index.html
+            sed -i "s,src=\"./app.js\",src=\"/$REPO_NAME/app.js\",g" dist/index.html
+            sed -i "s,href=\"manifest.webmanifest\",href=\"/$REPO_NAME/manifest.webmanifest\",g" dist/index.html
+            sed -i "s,href=\"icons/,href=\"/$REPO_NAME/icons/,g" dist/index.html
           else
             echo "dist/index.html not found; skipping"
           fi
