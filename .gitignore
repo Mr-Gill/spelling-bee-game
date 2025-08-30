@@ -4,3 +4,6 @@ dist/
 .DS_Store
 
 app.js
+app.js.map
+tailwind.css
+tailwind.css.map

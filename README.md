@@ -159,9 +159,24 @@ open index.html
 
 ---
 
+## 🚀 **Build & Deployment**
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Build the project (outputs files to `dist/`):
+   ```bash
+   npm run build
+   ```
+   This generates `dist/app.js`, `dist/tailwind.css`, and copies required assets.
+3. Deploy or serve the contents of the `dist/` directory.
+
+> Built files are no longer committed to the repository and are produced during the build step.
+
 ## 🔧 **Customization Options**
 
-### ⚙️ **Easy Modifications** (Edit `app.js`)
+### ⚙️ **Easy Modifications** (Edit `spelling-bee-game.tsx` and rebuild)
 ```javascript
 // Change timer duration
 setTimeLeft(30) // 30 seconds (default)
