@@ -53,6 +53,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [musicVolume, setMusicVolume] = useState<number>(() => parseFloat(localStorage.getItem('musicVolume') ?? '1'));
   const [initialDifficulty, setInitialDifficulty] = useState(0);
   const [progressionSpeed, setProgressionSpeed] = useState(1);
+  const [adaptiveDifficulty, setAdaptiveDifficulty] = useState(true);
   const [theme, setTheme] = useState('light');
   const [teacherMode, setTeacherMode] = useState<boolean>(() => localStorage.getItem('teacherMode') === 'true');
   const [aiGrade, setAiGrade] = useState(5);
@@ -308,7 +309,17 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     
     const config: GameConfig = {
       participants: finalParticipants,
-      gameMode, timerDuration, skipPenaltyType, skipPenaltyValue, soundEnabled, effectsEnabled, difficultyLevel: initialDifficulty, progressionSpeed, musicStyle, musicVolume,
+      gameMode,
+      timerDuration,
+      skipPenaltyType,
+      skipPenaltyValue,
+      soundEnabled,
+      effectsEnabled,
+      difficultyLevel: initialDifficulty,
+      progressionSpeed,
+      adaptiveDifficulty,
+      musicStyle,
+      musicVolume,
     };
     onStartGame(config);
   };
@@ -405,6 +416,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                         <input type="number" min={1} value={progressionSpeed} onChange={e => setProgressionSpeed(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
                     </div>
                 </div>
+                <label className="flex items-center space-x-3 mt-4"><input type="checkbox" checked={adaptiveDifficulty} onChange={e => setAdaptiveDifficulty(e.target.checked)} /><span>Enable Adaptive Difficulty</span></label>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Audio & Effects 🔊✨</h2>

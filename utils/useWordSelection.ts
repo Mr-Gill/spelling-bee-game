@@ -19,7 +19,10 @@ interface WordQueues {
 
 const shuffleArray = (arr: Word[]) => [...arr].sort(() => Math.random() - 0.5);
 
-const useWordSelection = (db: WordDatabase) => {
+const useWordSelection = (
+  db: WordDatabase,
+  onRecommendDifficulty?: (difficulty: Difficulty) => void
+) => {
   const [wordQueues, setWordQueues] = useState<WordQueues>({
     easy: shuffleArray(db.easy),
     medium: shuffleArray(db.medium),
@@ -28,6 +31,28 @@ const useWordSelection = (db: WordDatabase) => {
   });
   const [currentWord, setCurrentWord] = useState<Word | null>(null);
   const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>('easy');
+  const [recentResults, setRecentResults] = useState<boolean[]>([]);
+  const [accuracy, setAccuracy] = useState(0);
+
+  const recordResult = useCallback(
+    (isCorrect: boolean) => {
+      setRecentResults(prev => {
+        const updated = [...prev, isCorrect].slice(-5);
+        const acc = updated.filter(Boolean).length / updated.length;
+        setAccuracy(acc);
+        if (acc > 0.8 && onRecommendDifficulty) {
+          const currentIndex = difficultyOrder.indexOf(currentDifficulty);
+          const nextIndex = Math.min(currentIndex + 1, difficultyOrder.length - 2);
+          const recommended = difficultyOrder[nextIndex];
+          if (recommended !== currentDifficulty) {
+            onRecommendDifficulty(recommended);
+          }
+        }
+        return updated;
+      });
+    },
+    [currentDifficulty, onRecommendDifficulty]
+  );
 
   const selectNextWord = useCallback(
     (level: number) => {
@@ -54,7 +79,17 @@ const useWordSelection = (db: WordDatabase) => {
     [wordQueues]
   );
 
-  return { wordQueues, setWordQueues, currentWord, currentDifficulty, selectNextWord, setCurrentWord };
+  return {
+    wordQueues,
+    setWordQueues,
+    currentWord,
+    currentDifficulty,
+    selectNextWord,
+    setCurrentWord,
+    setCurrentDifficulty,
+    recordResult,
+    accuracy,
+  };
 };
 
 export default useWordSelection;

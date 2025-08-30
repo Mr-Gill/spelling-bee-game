@@ -43,6 +43,7 @@ export interface GameConfig {
   musicVolume: number;
   difficultyLevel: number;
   progressionSpeed: number;
+  adaptiveDifficulty: boolean;
   /** When true, the game uses the daily challenge word list */
   dailyChallenge?: boolean;
 }

@@ -12,7 +12,7 @@ import { launchConfetti } from './utils/confetti';
 import { speak } from './utils/tts';
 import useSound from './utils/useSound';
 import useTimer from './utils/useTimer';
-import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
+import useWordSelection, { difficultyOrder, Difficulty } from './utils/useWordSelection';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
 import AvatarSelector from './components/AvatarSelector';
@@ -68,8 +68,27 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [feedback, setFeedback] = React.useState<Feedback>({ message: '', type: '' });
   const [extraAttempt, setExtraAttempt] = React.useState(false);
   const [isHelpOpen, setIsHelpOpen] = React.useState(false);
-  const { wordQueues, setWordQueues, currentWord, currentDifficulty, selectNextWord } =
-    useWordSelection(config.wordDatabase);
+  const handleDifficultyRecommendation = React.useCallback(
+    (difficulty: Difficulty) => {
+      if (!config.adaptiveDifficulty) return;
+      setParticipants(prev =>
+        prev.map((p, index) =>
+          index === currentParticipantIndex
+            ? { ...p, difficultyLevel: difficultyOrder.indexOf(difficulty) }
+            : p
+        )
+      );
+    },
+    [config.adaptiveDifficulty, currentParticipantIndex]
+  );
+  const {
+    wordQueues,
+    setWordQueues,
+    currentWord,
+    currentDifficulty,
+    selectNextWord,
+    recordResult,
+  } = useWordSelection(config.wordDatabase, handleDifficultyRecommendation);
   const [attemptedParticipants, setAttemptedParticipants] = React.useState<Set<number>>(new Set());
   const [missedWords, setMissedWords] = React.useState<Word[]>([]);
   const [unlockedAchievements, setUnlockedAchievements] = React.useState<string[]>(() => {
@@ -104,6 +123,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
     isPaused,
   } = useTimer(config.timerDuration, () => {
     playTimeout();
+    recordResult(false);
     handleIncorrectAttempt();
   });
   React.useEffect(() => {
@@ -260,6 +280,10 @@ const GameScreen: React.FC<GameScreenProps> = ({
     const isCorrect = guess === currentWord.word.toLowerCase();
     const shouldCountWord = isCorrect || !extraAttempt;
 
+    if (shouldCountWord) {
+      recordResult(isCorrect);
+    }
+
     const updatedParticipants = participants.map((p, index) => {
       if (index === currentParticipantIndex) {
         const multipliers: Record<string, number> = { easy: 1, medium: 2, tricky: 3 };
@@ -339,6 +363,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       return p;
     });
     setParticipants(updatedParticipants);
+    recordResult(false);
 
     if (isLivesPenalty) {
       playLoseLife();
