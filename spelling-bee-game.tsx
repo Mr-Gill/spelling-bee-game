@@ -6,6 +6,8 @@ import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
 import useMusic from './utils/useMusic';
+import PracticeScreen from './PracticeScreen';
+import { getDueReviewWords } from './utils/reviewQueue';
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
@@ -18,6 +20,11 @@ const SpellingBeeGame = () => {
     const [musicVolume, setMusicVolume] = useState(0.5);
     const [soundEnabled, setSoundEnabled] = useState(true);
     const [isMusicPlaying, setIsMusicPlaying] = useState(true);
+    const [hasReviewWords, setHasReviewWords] = useState(false);
+
+    const checkReviewQueue = () => {
+        setHasReviewWords(getDueReviewWords().length > 0);
+    };
 
     useEffect(() => {
         fetch('words.json')
@@ -25,6 +32,16 @@ const SpellingBeeGame = () => {
             .then(data => setWordDatabase(data))
             .catch(err => console.error('Failed to load word list', err));
     }, []);
+
+    useEffect(() => {
+        checkReviewQueue();
+    }, []);
+
+    useEffect(() => {
+        if (gameState === 'setup') {
+            checkReviewQueue();
+        }
+    }, [gameState]);
 
     const handleAddCustomWords = (newWords) => {
         const easy = newWords.filter(w => w.word.length <= 5);
@@ -49,6 +66,10 @@ const SpellingBeeGame = () => {
         setMusicVolume(config.musicVolume);
         setIsMusicPlaying(true);
         setGameState("playing");
+    };
+
+    const handleStartReview = () => {
+        setGameState('practice');
     };
 
     const handleEndGame = (results) => {
@@ -92,7 +113,16 @@ const SpellingBeeGame = () => {
     useMusic(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
 
     if (gameState === "setup") {
-        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
+        return (
+            <>
+                <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />
+                {hasReviewWords && (
+                    <button className="fixed bottom-4 right-4 bg-yellow-500 text-black px-4 py-2 rounded" onClick={handleStartReview}>
+                        Review
+                    </button>
+                )}
+            </>
+        );
     }
     if (gameState === "playing") {
         return (
@@ -110,6 +140,9 @@ const SpellingBeeGame = () => {
                 onQuit={handleQuitToSetup}
             />
         );
+    }
+    if (gameState === "practice") {
+        return <PracticeScreen onBack={handleBackToSetup} />;
     }
     if (gameState === "results") {
         return <ResultsScreen results={gameResults} config={gameConfig} onRestart={handleRestart} onViewLeaderboard={handleViewLeaderboard} />;
