@@ -75,7 +75,10 @@ const SpellingBeeGame = () => {
     };
 
     const handleQuitToSetup = () => {
+        // Return to setup and clear any gameplay state
         setGameState("setup");
+        setGameConfig(null);
+        setGameResults(null);
     };
 
     useEffect(() => {
