@@ -16,6 +16,7 @@ import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
 import AvatarSelector from './components/AvatarSelector';
+import ScoreCard from './components/ScoreCard';
 import { audioManager } from './utils/audio';
 
 interface GameScreenProps {
@@ -385,11 +386,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       <div className="absolute top-8 left-8 flex gap-8 items-center">
         <img src="img/bee.svg" alt="Bee icon" className="w-12 h-12" />
         {participants.map((p, index) => (
-          <div key={index} className="text-center scorecard">
-            <div className="text-2xl font-bold">{p.name}</div>
-            <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(p.lives)}</div>
-            <div className="text-xl font-bold text-green-400">{p.points} pts</div>
-          </div>
+          <ScoreCard key={index} participant={p} isActive={index === currentParticipantIndex} />
         ))}
       </div>
       
