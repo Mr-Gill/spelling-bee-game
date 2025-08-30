@@ -3,11 +3,8 @@ node_modules
 build
 dist
 app.js
-<<<<<<< HEAD
 .DS_Store
-=======
 
 # Tailwind build artifacts
 /tailwind.css
 /dist/tailwind.css
->>>>>>> origin/codex/remove-tailwind.css-from-version-control
