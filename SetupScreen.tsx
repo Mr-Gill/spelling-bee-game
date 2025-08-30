@@ -1,23 +1,11 @@
 import React, { useState } from 'react';
 import { GameConfig, Word } from './types';
 import { parseWordList } from './utils/parseWordList';
-import { achievements } from './constants/achievements';
-import GameOptions from './components/GameOptions';
-import StudentRoster from './components/StudentRoster';
-import TeamForm from './components/TeamForm';
-import beeImg from './img/avatars/bee.svg';
 import bookImg from './img/avatars/book.svg';
-import trophyImg from './img/avatars/trophy.svg';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
-=======
-import TeamForm from './components/TeamForm';
-import StudentRoster from './components/StudentRoster';
-import GameOptions, { OptionsState } from './components/GameOptions';
-import useRoster from './hooks/useRoster';
->>>>>>> origin/codex/create-and-organize-setup-ui-subcomponents
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
@@ -37,9 +25,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     { name: 'Team Beta', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
   ];
 
-<<<<<<< HEAD
   const [teams, setTeams] = useState<Participant[]>(getDefaultTeams());
-=======
   const {
     participants: teams,
     addParticipant: addTeamParticipant,
@@ -57,7 +43,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   } = useRoster('students', []);
 
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
->>>>>>> origin/codex/create-and-organize-setup-ui-subcomponents
   const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
   const [parsedCustomWords, setParsedCustomWords] = useState<Word[]>([]);
@@ -70,7 +55,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     { label: 'Example TSV', file: 'example.tsv' }
   ];
   const [selectedBundledList, setSelectedBundledList] = useState('');
-<<<<<<< HEAD
   const [students, setStudents] = useState<Participant[]>([]);
   const [studentName, setStudentName] = useState('');
   const [bulkStudentText, setBulkStudentText] = useState('');
@@ -88,16 +72,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState('light');
   const [teacherMode, setTeacherMode] = useState<boolean>(() => localStorage.getItem('teacherMode') === 'true');
-<<<<<<< HEAD
   const [aiGrade, setAiGrade] = useState(5);
   const [aiTopic, setAiTopic] = useState('');
   const [aiCount, setAiCount] = useState(10);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
-=======
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<string>(() => localStorage.getItem('selectedVoice') ?? '');
->>>>>>> origin/codex/extend-speak-to-accept-voice-options
 
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
@@ -178,7 +159,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const createParticipant = (name: string, difficulty: number): Participant => ({
     name: name.trim(), lives: startingLives, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
-=======
 
   const [options, setOptions] = useState<OptionsState>({
     skipPenaltyType: 'lives',
@@ -191,7 +171,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     teacherMode: localStorage.getItem('teacherMode') === 'true',
     musicStyle: localStorage.getItem('musicStyle') ?? 'Funk',
     musicVolume: parseFloat(localStorage.getItem('musicVolume') ?? '1'),
->>>>>>> origin/codex/create-and-organize-setup-ui-subcomponents
   });
 
   const createParticipant = (name: string, difficulty: number): Participant => ({
@@ -415,7 +394,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               updateTeamName={updateTeamName}
             />
           ) : (
-<<<<<<< HEAD
             <>
               <div className="flex gap-4 mb-4">
                 <input type="text" value={studentName} onChange={e => setStudentName(e.target.value)} className="flex-grow p-2 rounded-md bg-white/20 text-white" placeholder="Student name" />
@@ -444,7 +422,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
               ))}
             </>
-=======
             <StudentRoster
               students={students}
               avatars={avatars}
@@ -454,12 +431,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               createParticipant={createParticipant}
               initialDifficulty={options.initialDifficulty}
             />
->>>>>>> origin/codex/create-and-organize-setup-ui-subcomponents
           )}
           <button onClick={clearRoster} className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Clear Saved Roster</button>
         </div>
 
-<<<<<<< HEAD
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Starting Lives ❤️</h2>
@@ -534,9 +509,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
             </div>
         </div>
-=======
         <GameOptions options={options} setOptions={setOptions} />
->>>>>>> origin/codex/create-and-organize-setup-ui-subcomponents
         
         <div className="bg-white/10 p-6 rounded-lg mb-8 mt-8">
             <h2 className="text-2xl font-bold mb-4">Add Custom Word List 📝</h2>
