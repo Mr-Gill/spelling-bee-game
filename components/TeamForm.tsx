@@ -1,8 +1,8 @@
 import React from 'react';
-import { Participant } from '../types';
+import { Team } from '../types';
 
 interface TeamFormProps {
-  teams: Participant[];
+  teams: Team[];
   avatars: string[];
   addTeam: () => void;
   removeTeam: (index: number) => void;

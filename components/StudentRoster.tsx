@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Participant } from '../types';
+import { Participant, Team } from '../types';
 
 interface StudentRosterProps {
   students: Participant[];
@@ -9,6 +9,10 @@ interface StudentRosterProps {
   updateStudentName: (index: number, name: string) => void;
   createParticipant: (name: string, difficulty: number) => Participant;
   initialDifficulty: number;
+  /** Optional list of teams for assigning students */
+  teams?: Team[];
+  /** Called when a student's team assignment changes */
+  onAssignTeam?: (index: number, teamName: string) => void;
 }
 
 const StudentRoster: React.FC<StudentRosterProps> = ({
@@ -19,6 +23,8 @@ const StudentRoster: React.FC<StudentRosterProps> = ({
   updateStudentName,
   createParticipant,
   initialDifficulty,
+  teams = [],
+  onAssignTeam,
 }) => {
   const [studentName, setStudentName] = useState('');
   const [bulkStudentText, setBulkStudentText] = useState('');
@@ -86,14 +92,32 @@ const StudentRoster: React.FC<StudentRosterProps> = ({
       </div>
       {students.map((student, index) => (
         <div key={index} className="flex items-center gap-2 mb-2">
-          <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+          <img
+            src={student.avatar || avatars[0]}
+            alt="avatar"
+            className="w-8 h-8 rounded-full"
+          />
           <input
             type="text"
             value={student.name}
-            onChange={e => updateStudentName(index, e.target.value)}
+            onChange={(e) => updateStudentName(index, e.target.value)}
             placeholder="Student name"
             className="flex-grow p-2 rounded-md bg-white/20 text-white"
           />
+          {teams.length > 0 && (
+            <select
+              value={student.team || ''}
+              onChange={(e) => onAssignTeam && onAssignTeam(index, e.target.value)}
+              className="p-2 rounded-md bg-white/20 text-white"
+            >
+              <option value="">No Team</option>
+              {teams.map((t, i) => (
+                <option key={i} value={t.name}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+          )}
           {students.length > 0 && (
             <button
               onClick={() => removeStudent(index)}
