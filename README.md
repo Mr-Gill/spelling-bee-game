@@ -112,7 +112,7 @@ open index.html
 
 ### ➕ **Easy Custom Word Lists**
 1. Click **"+ Add Word List"** during setup
-2. Use the provided JSON template
+2. Use the provided JSON template or the in-app **Download Template** button ([direct link](wordlists/example.csv))
 3. Each word requires:
    ```json
    {
