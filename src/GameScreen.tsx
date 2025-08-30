@@ -367,7 +367,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
             />
           </div>
           <div className="coins-display">
-            <img src="img/bee.svg" alt="Bee" />
+            <img src="../img/bee.svg" alt="Bee" />
             {state.coins}
           </div>
         </header>

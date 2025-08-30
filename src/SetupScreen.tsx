@@ -29,7 +29,7 @@ interface SetupScreenProps {
 // Using direct paths to assets in the public directory
 const beeImg = '/img/bee.svg';
 const bookImg = '/img/book.svg';
-const trophyImg = '/img/trophy.svg';
+const trophyImg = '../img/trophy.svg';
 
 // Available avatars for participants
 const availableAvatars = [beeImg, bookImg, trophyImg];
