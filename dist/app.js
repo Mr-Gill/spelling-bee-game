@@ -24485,6 +24485,55 @@ var require_jsx_runtime = __commonJS({
   }
 });
 
+// utils/parseWordList.js
+var require_parseWordList = __commonJS({
+  "utils/parseWordList.js"(exports, module2) {
+    "use strict";
+    var requiredFields = ["word", "definition"];
+    function validateWords(words) {
+      for (let i = 0; i < words.length; i++) {
+        const w = words[i];
+        for (const field of requiredFields) {
+          if (!w[field]) {
+            throw new Error(`Word at index ${i} is missing required field '${field}'`);
+          }
+        }
+      }
+    }
+    function parseWordList(content) {
+      try {
+        const parsed = JSON.parse(content);
+        if (Array.isArray(parsed)) {
+          validateWords(parsed);
+          return parsed;
+        }
+      } catch (e) {
+        if (e instanceof SyntaxError) {
+        } else {
+          throw e;
+        }
+      }
+      const lines = content.trim().split("\n");
+      if (lines.length < 2) {
+        throw new Error("Invalid word list format.");
+      }
+      const delimiter = lines[0].includes(",") ? "," : "	";
+      const headers = lines[0].split(delimiter).map((h) => h.trim());
+      const words = lines.slice(1).filter((line) => line.trim()).map((line) => {
+        const values = line.split(delimiter);
+        const wordObj = {};
+        headers.forEach((header, idx) => {
+          wordObj[header] = values[idx] ? values[idx].trim() : "";
+        });
+        return wordObj;
+      });
+      validateWords(words);
+      return words;
+    }
+    module2.exports = { parseWordList };
+  }
+});
+
 // spelling-bee-game.tsx
 var import_react14 = __toESM(require_react());
 var import_client = __toESM(require_client());
@@ -24568,6 +24617,7 @@ var book_default = "./book-6U2LI7OV.svg";
 var trophy_default = "./trophy-3YRZKM4U.svg";
 
 // SetupScreen.tsx
+var import_parseWordList = __toESM(require_parseWordList());
 var import_jsx_runtime2 = __toESM(require_jsx_runtime());
 var musicStyles = ["Funk", "Country", "Deep Bass", "Rock", "Jazz", "Classical"];
 var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
@@ -24739,26 +24789,12 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
   };
   const parseWordList = (content) => {
     try {
-      const parsed = JSON.parse(content);
-      if (Array.isArray(parsed)) {
-        setParsedCustomWords(parsed);
-        return;
-      }
+      const words = (0, import_parseWordList.parseWordList)(content);
+      setParsedCustomWords(words);
+      setError("");
     } catch (e) {
+      setError(e.message || "Invalid word list format.");
     }
-    const lines = content.trim().split("\n");
-    if (lines.length < 2) return;
-    const delimiter = lines[0].includes(",") ? "," : "	";
-    const headers = lines[0].split(delimiter).map((h) => h.trim());
-    const words = lines.slice(1).map((line) => {
-      const values = line.split(delimiter);
-      const wordObj = {};
-      headers.forEach((header, index) => {
-        wordObj[header] = values[index] ? values[index].trim() : "";
-      });
-      return wordObj;
-    });
-    setParsedCustomWords(words);
   };
   const handleFileChange = (event) => {
     const file = event.target.files?.[0];
@@ -27257,7 +27293,6 @@ var SpellingBeeGame = () => {
     setSoundEnabled(gameConfig.soundEnabled);
     setMusicStyle(config.musicStyle);
     setMusicVolume(config.musicVolume);
-    setSoundEnabled(config.soundEnabled);
     setIsMusicPlaying(true);
     setGameState("playing");
   };

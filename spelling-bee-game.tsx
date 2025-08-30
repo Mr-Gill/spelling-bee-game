@@ -47,7 +47,6 @@ const SpellingBeeGame = () => {
         setSoundEnabled(gameConfig.soundEnabled);
         setMusicStyle(config.musicStyle);
         setMusicVolume(config.musicVolume);
-        setSoundEnabled(config.soundEnabled);
         setIsMusicPlaying(true);
         setGameState("playing");
     };
