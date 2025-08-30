@@ -87,6 +87,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState("");
+  const scoreboardChannelRef = React.useRef<BroadcastChannel | null>(null);
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);
@@ -98,6 +99,20 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const playLetterWrong = useSound(letterWrongSoundFile, config.soundEnabled);
   const playShop = useSound(shopSoundFile, config.soundEnabled);
   const playLoseLife = useSound(loseLifeSoundFile, config.soundEnabled);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      scoreboardChannelRef.current = new BroadcastChannel('scoreboard');
+      scoreboardChannelRef.current.postMessage({ participants });
+    }
+    return () => {
+      scoreboardChannelRef.current?.close();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    scoreboardChannelRef.current?.postMessage({ participants });
+  }, [participants]);
 
   const {
     timeLeft,
