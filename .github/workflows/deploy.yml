@@ -39,7 +39,12 @@ jobs:
         env:
           GITHUB_MODELS_TOKEN: ${{ secrets.GITHUB_MODELS_TOKEN }}
           NODE_OPTIONS: --max_old_space_size=4096
-        run: npm run build
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > .npmrc
+          echo "@squidgyg:registry=https://npm.pkg.github.com" >> .npmrc
+          npm run build
+          # Clean up .npmrc after build
+          rm -f .npmrc
         timeout-minutes: 10
 
       # Fix asset paths for GitHub Pages; skip if files are missing
