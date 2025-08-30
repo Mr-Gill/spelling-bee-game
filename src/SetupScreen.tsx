@@ -486,7 +486,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
 
   const handleTeamSelect = (team: Team) => {
-    // Add implementation here
+    setAllParticipants(prev => [...prev, team]);
   };
 
   const handleTeamRemove = (id: string) => {
@@ -498,11 +498,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
 
   const handleParticipantRemove = (index: number) => {
-    // Add implementation here
+    setParticipants(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleParticipantEdit = (index: number, name: string) => {
-    // Add implementation here
+    setParticipants(prev => prev.map((p, i) => i === index ? {...p, name} : p));
   };
 
   type ParticipantOrTeam = Participant | Team;
