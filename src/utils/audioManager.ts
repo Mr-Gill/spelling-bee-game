@@ -195,11 +195,8 @@ class AudioManager {
       // We'll need to find the sound instance that contains this ID
       // and stop it directly
       for (const sound of this.sounds.values()) {
-        const soundIds = sound.sound.ids();
-        if (soundIds.includes(keyOrId)) {
-          sound.sound.stop(keyOrId);
-          break;
-        }
+        // Try to stop the sound by ID
+        sound.sound.stop(keyOrId);
       }
     } else {
       // Stop all sounds with this key
