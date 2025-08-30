@@ -9,7 +9,7 @@
     "start": "npx serve dist",
     "serve": "npx serve dist",
     "build:css": "npx tailwindcss -i ./src/tailwind.css -o ./tailwind.css --minify",
-    "build": "npm run build:css && npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --external:lucide-react --external:uuid --external:canvas-confetti --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file && node scripts/copy-assets.js && node scripts/copy-wordlist.js",
+    "build": "npm run build:css && npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --external:uuid --external:canvas-confetti --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file && node scripts/copy-assets.js && node scripts/copy-wordlist.js",
     "watch": "npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --watch",
     "test": "node --test",
     "predeploy": "npm run build",
@@ -19,7 +19,8 @@
     "dev:curriculum": "tsc api/curriculumWordService.ts --outDir api && node api/curriculumWordService.js",
     "generate:audio": "ts-node scripts/generate-audio.ts",
     "generate:sfx": "ts-node scripts/generate-sfx.ts",
-    "generate:all-audio": "npm run generate:sfx && npm run generate:audio"
+    "generate:all-audio": "npm run generate:sfx && npm run generate:audio",
+    "generate:wordlist": "ts-node scripts/generate-ai-wordlist.ts"
   },
   "repository": {
     "type": "git",
@@ -43,6 +44,7 @@
   },
   "dependencies": {
     "@types/howler": "^2.2.12",
+    "@types/js-yaml": "^4.0.5",
     "canvas-confetti": "^1.9.3",
     "fs-extra": "^11.3.1",
     "howler": "^2.2.4",
@@ -53,7 +55,6 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.0",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
     "@types/canvas-confetti": "^1.9.0",
@@ -63,12 +64,16 @@
     "@types/react-dom": "^19.1.9",
     "autoprefixer": "^10.4.21",
     "axios": "^1.11.0",
-    "dotenv": "^17.2.1",
+    "dotenv": "^16.0.0",
     "elevenlabs": "^1.59.0",
     "esbuild": "^0.25.9",
+    "gh-pages": "^6.3.0",
+    "js-yaml": "^4.1.0",
+    "openai": "^4.0.0",
     "postcss": "^8.5.6",
     "prettier": "^3.0.3",
     "serve": "^14.2.1",
+    "tailwindcss": "^3.4.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },
