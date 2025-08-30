@@ -4,6 +4,7 @@ import {
   GameConfig,
   Word,
   Participant,
+  Team,
   GameResults,
   defaultAchievements,
 } from "./types";
@@ -40,8 +41,11 @@ interface Feedback {
 // difficultyOrder is imported from useWordSelection
 
 const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
-  const [participants, setParticipants] = React.useState<Participant[]>(
-    config.participants.map((p) => ({
+  const isTeamMode = config.gameMode === "team";
+  const [participants, setParticipants] = React.useState<
+    (Participant | Team)[]
+  >(
+    (config.participants as (Participant | Team)[]).map((p) => ({
       ...p,
       attempted: 0,
       correct: 0,
@@ -49,9 +53,29 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       wordsCorrect: 0,
     })),
   );
+
+  const shuffle = <T,>(arr: T[]): T[] => {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  };
+
+  const [teamQueues, setTeamQueues] = React.useState<Participant[][]>(() => {
+    if (!isTeamMode) return [];
+    return (config.participants as Team[]).map((t) => shuffle([...t.students]));
+  });
+
   const [currentParticipantIndex, setCurrentParticipantIndex] =
     React.useState(0);
-  const isTeamMode = config.gameMode === "team";
+
+  const currentStudent = React.useMemo(() => {
+    if (!isTeamMode) return null;
+    const queue = teamQueues[currentParticipantIndex] || [];
+    return queue[0] || null;
+  }, [teamQueues, currentParticipantIndex, isTeamMode]);
   const [showWord, setShowWord] = React.useState(true);
   const [usedHint, setUsedHint] = React.useState(false);
   const [letters, setLetters] = React.useState<string[]>([]);
@@ -190,6 +214,20 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   };
 
   const nextTurn = () => {
+    if (isTeamMode) {
+      setTeamQueues((prev) => {
+        const newQueues = [...prev];
+        const queue = [...newQueues[currentParticipantIndex]];
+        queue.shift();
+        if (queue.length === 0) {
+          const team = participants[currentParticipantIndex] as Team;
+          newQueues[currentParticipantIndex] = shuffle([...team.students]);
+        } else {
+          newQueues[currentParticipantIndex] = queue;
+        }
+        return newQueues;
+      });
+    }
     setCurrentParticipantIndex(
       (prevIndex) => (prevIndex + 1) % participants.length,
     );
@@ -552,10 +590,25 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
       {currentWord && (
         <div className="w-full max-w-4xl text-center">
+<<<<<<< HEAD:src/GameScreen.tsx
           <img src="img/books.svg" alt="Book icon" className="w-10 h-10 mx-auto mb-4" />
           <h2 className="text-4xl font-bold mb-4 uppercase font-heading">
             Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
+=======
+          <img
+            src="img/books.svg"
+            alt="Book icon"
+            className="w-10 h-10 mx-auto mb-4"
+          />
+          <h2 className="text-4xl font-bold mb-2 uppercase font-heading">
+            Word for {isTeamMode ? 'Team' : 'Student'}:{' '}
+            {participants[currentParticipantIndex]?.name ||
+              (isTeamMode ? 'Team' : 'Student')}
+>>>>>>> origin/codex/extend-team-functionality-in-game-setup:GameScreen.tsx
           </h2>
+          {isTeamMode && currentStudent && (
+            <div className="text-xl mb-4">Hot Seat: {currentStudent.name}</div>
+          )}
           <div className="relative mb-8 pt-10">
             {showWord && (
               <div className="inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg">
