@@ -82,8 +82,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       playTimeout();
       handleIncorrectAttempt();
     });
-
-    const [attemptedParticipants, setAttemptedParticipants] = React.useState<Set<number>>(new Set());
+const [attemptedParticipants, setAttemptedParticipants] = React.useState<Set<number>>(new Set());
     const [missedWords, setMissedWords] = React.useState<Word[]>([]);
     const [unlockedAchievements, setUnlockedAchievements] = React.useState<string[]>(() => {
       if (typeof window === 'undefined') return [];
