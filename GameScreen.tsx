@@ -22,6 +22,7 @@ import useWordSelection, { difficultyOrder } from "./utils/useWordSelection";
 import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
+import CircularTimer from "./components/CircularTimer";
 import { audioManager } from "./utils/audio";
 
 interface GameScreenProps {
@@ -480,12 +481,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       )}
 
       <div className="absolute top-8 right-8 text-center z-50">
-        <div
-          className={`text-6xl font-bold ${timeLeft <= 10 ? "text-red-500" : "text-yellow-300"}`}
-        >
-          {timeLeft}
-        </div>
-        <div className="text-lg">seconds left</div>
+        <CircularTimer timeLeft={timeLeft} total={config.timerDuration} />
         <button
           onClick={isPaused ? resumeTimer : pauseTimer}
           className="mt-2 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
