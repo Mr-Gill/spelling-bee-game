@@ -6,6 +6,7 @@ import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
 import useMusic from './utils/useMusic';
+import ScoreboardScreen from './ScoreboardScreen';
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
@@ -91,11 +92,29 @@ const SpellingBeeGame = () => {
     const trackVariant = screen === 'game' ? 'instrumental' : 'vocal';
     useMusic(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
 
+    const [scoreboardWindow, setScoreboardWindow] = useState<Window | null>(null);
+
+    const openScoreboard = () => {
+        if (typeof window === 'undefined') return;
+        if (scoreboardWindow && !scoreboardWindow.closed) {
+            scoreboardWindow.focus();
+            return;
+        }
+        const win = window.open('', 'scoreboard', 'width=600,height=400');
+        if (win) {
+            win.document.title = 'Scoreboard';
+            const rootEl = win.document.createElement('div');
+            win.document.body.appendChild(rootEl);
+            ReactDOM.createRoot(rootEl).render(<ScoreboardScreen />);
+            setScoreboardWindow(win);
+        }
+    };
+
+    let content = null;
     if (gameState === "setup") {
-        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
-    }
-    if (gameState === "playing") {
-        return (
+        content = <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
+    } else if (gameState === "playing") {
+        content = (
             <GameScreen
                 config={gameConfig}
                 onEndGame={handleEndGame}
@@ -110,17 +129,22 @@ const SpellingBeeGame = () => {
                 onQuit={handleQuitToSetup}
             />
         );
+    } else if (gameState === "results") {
+        content = <ResultsScreen results={gameResults} config={gameConfig} onRestart={handleRestart} onViewLeaderboard={handleViewLeaderboard} />;
+    } else if (gameState === "leaderboard") {
+        content = <LeaderboardScreen onBack={handleBackToSetup} />;
+    } else if (gameState === "achievements") {
+        content = <AchievementsScreen onBack={handleBackToSetup} />;
     }
-    if (gameState === "results") {
-        return <ResultsScreen results={gameResults} config={gameConfig} onRestart={handleRestart} onViewLeaderboard={handleViewLeaderboard} />;
-    }
-    if (gameState === "leaderboard") {
-        return <LeaderboardScreen onBack={handleBackToSetup} />;
-    }
-    if (gameState === "achievements") {
-        return <AchievementsScreen onBack={handleBackToSetup} />;
-    }
-    return null;
+
+    return (
+        <>
+            <button className="absolute top-2 right-2 bg-yellow-300 text-black px-4 py-2 rounded" onClick={openScoreboard}>
+                Show Scoreboard
+            </button>
+            {content}
+        </>
+    );
 };
 
 // --- App Rendering ---
