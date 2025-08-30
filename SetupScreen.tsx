@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GameConfig, Word } from './types';
 import { parseWordList } from './utils/parseWordList';
+import beeImg from './img/avatars/bee.svg';
 import bookImg from './img/avatars/book.svg';
+import trophyImg from './img/avatars/trophy.svg';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -19,6 +21,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [startingLives, setStartingLives] = useState(10);
+  const [bestClassScore] = useState(() => Number(localStorage.getItem('bestClassScore') || '0'));
 
   const getDefaultTeams = (): Participant[] => [
     { name: 'Team Alpha', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
@@ -564,11 +567,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         )}
 
         {error && <p className="text-red-300 text-center mb-4">{error}</p>}
-        
+
         <div className="flex flex-col md:flex-row gap-4 mt-8">
             <button onClick={() => handleStart(false)} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Custom Game</button>
             <button onClick={() => handleStart(true)} className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Session Challenge</button>
         </div>
+        {bestClassScore > 0 && (
+          <div className="mt-4 text-center text-yellow-300 text-xl">🏅 Best Class Score: {bestClassScore}</div>
+        )}
         <div className="mt-4 text-center">
             <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold">View Achievements</button>
         </div>
