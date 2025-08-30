@@ -528,9 +528,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         </div>
       )}
       <div className="absolute top-8 left-8 flex gap-8 items-center">
-        <img src="img/bee.svg" alt="Bee icon" className="w-12 h-12" />
+        <img src={`${process.env.PUBLIC_URL || ''}/img/bee.svg`} alt="Bee icon" className="w-12 h-12" />
         {participants.map((p, index) => (
-          <div key={index} className="text-center scorecard">
+          <div key={index} className="text-center bg-white/10 p-4 rounded-lg">
             <div className="text-2xl font-bold">{p.name}</div>
             <div className="text-4xl font-bold text-yellow-300">
               {"❤️".repeat(p.lives)}
@@ -556,10 +556,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         </div>
       )}
 
-      <div className="absolute top-8 right-8 text-center z-50">
-        <div
-          className={`text-6xl font-bold ${timeLeft <= 10 ? "text-red-500" : "text-yellow-300"}`}
-        >
+      <div className="absolute top-8 right-8 text-center z-50 bg-white/10 p-4 rounded-lg">
+        <div className={`text-6xl font-bold ${timeLeft <= 10 ? "text-red-500" : "text-yellow-300"}`}>
           {timeLeft}
         </div>
         <div className="text-lg">seconds left</div>
@@ -591,14 +589,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
       {currentWord && (
         <div className="w-full max-w-4xl text-center">
-<img src="img/books.svg" alt="Book icon" className="w-10 h-10 mx-auto mb-4" />
-          <h2 className="text-4xl font-bold mb-2 uppercase font-heading">
+          <img src={`${process.env.PUBLIC_URL || ''}/img/books.svg`} alt="Book icon" className="w-10 h-10 mx-auto mb-6" />
+          <h2 className="text-4xl font-bold mb-6 uppercase font-heading">
             Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
           </h2>
           {isTeamMode && currentStudent && (
-            <div className="text-xl mb-4">Hot Seat: {currentStudent.name}</div>
+            <div className="text-xl mb-6">Hot Seat: {currentStudent.name}</div>
           )}
-          <div className="relative mb-8 pt-10">
+          <div className="relative mb-10 pt-12">
             {showWord && (
               <div className="inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg">
                 {currentWord.word}
@@ -632,7 +630,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             onHintUsed={() => setUsedHint(true)}
             onExtraAttempt={() => setExtraAttempt(true)}
           />
-          <div className="flex gap-2 justify-center mb-4">
+          <div className="flex gap-2 justify-center mb-8">
             {letters.map((letter, idx) => (
               <div
                 key={idx}
@@ -671,7 +669,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
           <div>Paused</div>
           <button
             onClick={() => setShowAudioSettings(true)}
-            className="bg-yellow-300 text-black px-6 py-2 rounded-lg text-2xl"
+            className="bg-yellow-300 text-black px-6 py-3 rounded-lg text-2xl font-bold hover:bg-yellow-400 transition-colors"
           >
             Audio Settings
           </button>
