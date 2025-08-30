@@ -41,6 +41,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [studentName, setStudentName] = useState('');
   const [bulkStudentText, setBulkStudentText] = useState('');
   const [bulkStudentError, setBulkStudentError] = useState('');
+  const [randomTeamCount, setRandomTeamCount] = useState(0);
+  const [randomTeamSize, setRandomTeamSize] = useState(0);
+  const [randomizeError, setRandomizeError] = useState('');
   const [skipPenaltyType, setSkipPenaltyType] = useState<'lives' | 'points'>('lives');
   const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => localStorage.getItem('soundEnabled') !== 'false');
@@ -145,6 +148,42 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     updateStudents([...students, ...newStudents]);
     setBulkStudentText('');
     setBulkStudentError('');
+  };
+
+  const randomizeTeams = () => {
+    if (students.length < 2) {
+      setRandomizeError('Add at least two students to create teams.');
+      return;
+    }
+    let count = 0;
+    if (randomTeamCount > 0) {
+      count = randomTeamCount;
+    } else if (randomTeamSize > 0) {
+      count = Math.ceil(students.length / randomTeamSize);
+    }
+    if (count <= 0) {
+      setRandomizeError('Specify number of teams or team size.');
+      return;
+    }
+    const shuffled = [...students];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const groups: Participant[][] = Array.from({ length: count }, () => []);
+    shuffled.forEach((student, idx) => {
+      groups[idx % count].push(student);
+    });
+    const newTeams = groups
+      .filter(group => group.length > 0)
+      .map((group, index) => {
+        const teamName = `Team ${index + 1}: ${group.map(s => s.name).join(', ')}`;
+        const participant = createParticipant(teamName, initialDifficulty);
+        participant.avatar = teams[index]?.avatar || participant.avatar;
+        return participant;
+      });
+    updateTeams(newTeams);
+    setRandomizeError('');
   };
   
   const parseWordList = (content: string) => {
@@ -329,6 +368,16 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <textarea value={bulkStudentText} onChange={e => setBulkStudentText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white mb-2" placeholder="Paste names, one per line or separated by commas" rows={4}></textarea>
                 <button onClick={addBulkStudents} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add Names</button>
                 {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
+              </div>
+              <div className="mb-4">
+                <h3 className="text-xl font-bold mb-2">Randomize Teams</h3>
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <input type="number" min={1} value={randomTeamCount || ''} onChange={e => { setRandomTeamCount(Number(e.target.value)); setRandomTeamSize(0); }} placeholder="Number of teams" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
+                  <span>or</span>
+                  <input type="number" min={1} value={randomTeamSize || ''} onChange={e => { setRandomTeamSize(Number(e.target.value)); setRandomTeamCount(0); }} placeholder="Team size" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
+                  <button onClick={randomizeTeams} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Randomize</button>
+                </div>
+                {randomizeError && <p className="text-red-300">{randomizeError}</p>}
               </div>
               {students.map((student, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
