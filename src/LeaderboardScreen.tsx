@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LeaderboardEntry } from './types';
-import beeImg from './img/avatars/bee.svg';
+import beeImg from '../img/avatars/bee.svg';
 
 interface LeaderboardScreenProps {
   onBack: () => void;

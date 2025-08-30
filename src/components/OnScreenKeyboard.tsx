@@ -1,6 +1,6 @@
 import React from 'react';
 import useSound from '../utils/useSound';
-import letterSoundFile from '../audio/letter-correct.mp3';
+import letterSoundFile from '../../audio/letter-correct.mp3';
 
 interface OnScreenKeyboardProps {
   onLetter: (letter: string) => void;

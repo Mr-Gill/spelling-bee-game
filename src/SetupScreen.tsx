@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Word, Participant, GameConfig } from './types';
-import beeImg from './img/avatars/bee.svg';
-import bookImg from './img/avatars/book.svg';
-import trophyImg from './img/avatars/trophy.svg';
+import beeImg from '../img/avatars/bee.svg';
+import bookImg from '../img/avatars/book.svg';
+import trophyImg from '../img/avatars/trophy.svg';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
