@@ -24,6 +24,7 @@ const useMusic = (
     instrumental: null,
     vocal: null,
   });
+  const promptRef = useRef(false);
 
   const stop = useCallback(() => {
     (['instrumental', 'vocal'] as const).forEach((v) => {
@@ -59,6 +60,7 @@ const useMusic = (
           console.warn(`Menu music file not found: ${menuSrc}`);
           menuRef.current[trackVariant] = null;
         };
+        menuAudio.load();
 
         const gameAudio = new Audio(gameSrc);
         gameAudio.loop = true;
@@ -67,6 +69,7 @@ const useMusic = (
           console.warn(`Gameplay music file not found: ${gameSrc}`);
           gameRef.current[trackVariant] = null;
         };
+        gameAudio.load();
 
         menuRef.current[trackVariant] = menuAudio;
         gameRef.current[trackVariant] = gameAudio;
@@ -99,7 +102,15 @@ const useMusic = (
     const refs = screen === 'menu' ? menuRef.current : gameRef.current;
     const track = refs[variant];
     stop();
-    track?.play().catch(() => {});
+    track?.play().catch(() => {
+      if (promptRef.current) return;
+      promptRef.current = true;
+      const enable = () => {
+        track.play().catch(() => {});
+      };
+      document.addEventListener('click', enable, { once: true });
+      alert('Click anywhere to enable audio');
+    });
   }, [screen, variant, enabled, stop]);
 
   // Clean up on unmount

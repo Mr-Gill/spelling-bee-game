@@ -80,7 +80,8 @@ const SpellingBeeGame = () => {
     const musicVolume = gameConfig?.musicVolume ?? 0.5;
     const screen = gameState === 'playing' ? 'game' : 'menu';
     const trackVariant = screen === 'game' ? 'instrumental' : 'vocal';
-    useMusic(musicStyle, trackVariant, musicVolume, gameConfig?.soundEnabled ?? true, screen);
+    const soundEnabled = gameConfig?.soundEnabled ?? (localStorage.getItem('soundEnabled') !== 'false');
+    useMusic(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
 
     if (gameState === "setup") {
         return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
