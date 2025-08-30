@@ -3,6 +3,7 @@ import { Word, Participant, GameConfig } from './types';
 import beeImg from './img/avatars/bee.svg';
 import bookImg from './img/avatars/book.svg';
 import trophyImg from './img/avatars/trophy.svg';
+import { parseWordList as parseWordListUtil } from './utils/parseWordList';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -144,26 +145,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   
   const parseWordList = (content: string) => {
     try {
-      const parsed = JSON.parse(content) as Word[];
-      if (Array.isArray(parsed)) {
-        setParsedCustomWords(parsed);
-        return;
-      }
-    } catch (e) {}
-
-    const lines = content.trim().split('\n');
-    if (lines.length < 2) return;
-    const delimiter = lines[0].includes(',') ? ',' : '\t';
-    const headers = lines[0].split(delimiter).map(h => h.trim());
-    const words = lines.slice(1).map(line => {
-      const values = line.split(delimiter);
-      const wordObj: any = {};
-      headers.forEach((header, index) => {
-        wordObj[header] = values[index] ? values[index].trim() : '';
-      });
-      return wordObj as Word;
-    });
-    setParsedCustomWords(words);
+      const words = parseWordListUtil(content);
+      setParsedCustomWords(words);
+      setError('');
+    } catch (e: any) {
+      setError(e.message || 'Invalid word list format.');
+    }
   };
   
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
