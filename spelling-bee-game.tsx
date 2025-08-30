@@ -7,6 +7,7 @@ import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
 import ShopScreen from './ShopScreen';
 import useMusic from './utils/useMusic';
+import { AudioProvider } from "./AudioContext";
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
@@ -137,7 +138,9 @@ if (container) {
     const root = ReactDOM.createRoot(container);
     root.render(
         <React.StrictMode>
-            <SpellingBeeGame />
+            <AudioProvider>
+                <SpellingBeeGame />
+            </AudioProvider>
         </React.StrictMode>
     );
 }

@@ -84,6 +84,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     { file: 'words.json', label: 'Standard Words' }
   ]);
 
+  const API_URL = process.env.NODE_ENV === 'production' 
+    ? 'https://your-production-api.com' 
+    : 'http://localhost:3001';
+
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
     document.body.classList.add(`theme-${t}`);
@@ -275,7 +279,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setAiLoading(true);
     setAiError('');
     try {
-      const res = await fetch('http://localhost:3001/wordlist', {
+      const res = await fetch(`${API_URL}/wordlist`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: aiCount }),

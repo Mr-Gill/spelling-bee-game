@@ -23,6 +23,7 @@ import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
 import { AudioSettings } from "./components/AudioSettings";
+import { useAudio } from "./AudioContext";
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -111,16 +112,18 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     localStorage.setItem("equippedAvatar", currentAvatar);
   }, [currentAvatar]);
 
-  const playCorrect = useSound(correctSoundFile, config.soundEnabled);
-  const playWrong = useSound(wrongSoundFile, config.soundEnabled);
-  const playTimeout = useSound(timeoutSoundFile, config.soundEnabled);
+  const { muted, toggleMute } = useAudio();
+
+  const playCorrect = useSound(correctSoundFile, !muted);
+  const playWrong = useSound(wrongSoundFile, !muted);
+  const playTimeout = useSound(timeoutSoundFile, !muted);
   const playLetterCorrect = useSound(
     letterCorrectSoundFile,
-    config.soundEnabled,
+    !muted,
   );
-  const playLetterWrong = useSound(letterWrongSoundFile, config.soundEnabled);
-  const playShop = useSound(shopSoundFile, config.soundEnabled);
-  const playLoseLife = useSound(loseLifeSoundFile, config.soundEnabled);
+  const playLetterWrong = useSound(letterWrongSoundFile, !muted);
+  const playShop = useSound(shopSoundFile, !muted);
+  const playLoseLife = useSound(loseLifeSoundFile, !muted);
 
   const {
     timeLeft,
@@ -469,6 +472,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     }
   }, [participants]);
 
+  const [showAudioSettings, setShowAudioSettings] = React.useState(false);
+
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center font-body">
       <input
@@ -527,14 +532,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         </button>
       </div>
 
-      <audio-controls className="audio-controls">
+      {/* TODO: Replace with proper audio management */}
+      {/* <audio-controls className="audio-controls">
         <button
-          className={`audio-btn ${audioManager.muted ? "muted" : ""}`}
-          onClick={() => audioManager.toggleMute()}
+          className={`audio-btn ${soundEnabled ? "" : "muted"}`}
+          onClick={() => {
+            soundEnabled ? playWrong() : playCorrect();
+          }}
         >
-          {audioManager.muted ? "🔇" : "🔊"}
+          {soundEnabled ? "🔊" : "🔇"}
         </button>
-      </audio-controls>
+      </audio-controls> */}
 
       <AvatarSelector
         currentAvatar={currentAvatar}
@@ -603,7 +611,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             onLetter={handleVirtualLetter}
             onBackspace={handleVirtualBackspace}
             onSubmit={handleSpellingSubmit}
-            soundEnabled={config.soundEnabled}
+            soundEnabled={!muted}
             usedLetters={usedLetters}
           />
         </div>
