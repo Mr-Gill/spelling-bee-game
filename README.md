@@ -120,12 +120,61 @@ open index.html
      "syllables": ["ex", "am", "ple"],
      "definition": "A thing characteristic of its kind",
      "origin": "Latin 'exemplum' meaning sample",
-      "example": "This is a good example of the format.",
-      "prefix": "",
-      "suffix": "",
-      "pronunciation": "ig-ZAM-pul"
+     "example": "This is a good example of the format.",
+     "prefix": "",
+     "suffix": "",
+     "pronunciation": "ig-ZAM-pul"
    }
    ```
+
+### 🤖 **AI‑Generated Word Lists**
+
+Teachers can automatically create new lists using GitHub-hosted models.
+
+**Prerequisite**: a GitHub account with access to [GitHub Models](https://docs.github.com/en/github-models/overview) and a personal access token.
+
+```bash
+export GITHUB_TOKEN=ghp_yourtoken
+# For OpenAI-compatible clients
+export OPENAI_API_KEY=$GITHUB_TOKEN
+export OPENAI_API_BASE=https://models.inference.ai.azure.com
+```
+
+**Example prompt**
+
+> "Create 3 easy spelling bee words for 2nd graders. Return a JSON array of objects with word, syllables, definition, origin, example, prefix, suffix, pronunciation."
+
+**Example usage**
+
+```bash
+curl -sL https://models.inference.ai.azure.com/v1/chat/completions \
+  -H "Authorization: Bearer $GITHUB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "model": "gpt-4o-mini",
+        "messages": [
+          {"role": "system", "content": "You generate spelling bee word lists in JSON."},
+          {"role": "user", "content": "Create 3 easy words for 2nd graders with definition, syllables and example."}
+        ]
+      }'
+```
+
+**Sample output**
+
+```json
+{
+  "choices": [
+    {
+      "message": {
+        "content": "[\n  {\n    \"word\": \"pencil\",\n    \"syllables\": [\"pen\", \"cil\"],\n    \"definition\": \"a tool for writing\",\n    \"origin\": \"Latin\",\n    \"example\": \"I sharpened my pencil.\",\n    \"prefix\": \"\",\n    \"suffix\": \"\",\n    \"pronunciation\": \"PEN-sil\"\n  },\n  {\n    \"word\": \"music\",\n    \"syllables\": [\"mu\", \"sic\"],\n    \"definition\": \"sounds that are sung or played\",\n    \"origin\": \"Greek\",\n    \"example\": \"She loves music.\",\n    \"prefix\": \"\",\n    \"suffix\": \"\",\n    \"pronunciation\": \"MYOO-zik\"\n  },\n  {\n    \"word\": \"garden\",\n    \"syllables\": [\"gar\", \"den\"],\n    \"definition\": \"a place to grow plants\",\n    \"origin\": \"Old English\",\n    \"example\": \"The garden has roses.\",\n    \"prefix\": \"\",\n    \"suffix\": \"\",\n    \"pronunciation\": \"GAR-den\"\n  }\n]"
+      }
+    }
+  ],
+  "usage": { "prompt_tokens": 63, "completion_tokens": 122, "total_tokens": 185 }
+}
+```
+
+Copy the array from `choices[0].message.content` into a file in `wordlists/`. The `usage` block shows token counts to help estimate costs.
 
 ### 📊 **Word List Features**
 - **Multiple Difficulties** - Easy, Medium, Hard auto-progression
@@ -418,6 +467,20 @@ This project is **open source** and available under the [MIT License](LICENSE).
 Whether you're teaching phonics to elementary students, vocabulary to middle schoolers, or preparing high schoolers for competitions, this spelling bee game adapts to your needs while maintaining the rich educational content that makes learning meaningful.
 
 **🎯 Ready to transform your spelling lessons? [Start playing now!](https://squidgyg.github.io/spelling-bee-game/)**
+
+---
+
+## Development
+
+### AI Word List Endpoint
+
+Run a local server that uses GitHub Models to generate word lists:
+
+```
+npm run dev:wordlist
+```
+
+The server expects a `GITHUB_TOKEN` with the `models:read` scope.
 
 ---
 

@@ -41,6 +41,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [studentName, setStudentName] = useState('');
   const [bulkStudentText, setBulkStudentText] = useState('');
   const [bulkStudentError, setBulkStudentError] = useState('');
+  const [randomTeamCount, setRandomTeamCount] = useState(0);
+  const [randomTeamSize, setRandomTeamSize] = useState(0);
+  const [randomizeError, setRandomizeError] = useState('');
   const [skipPenaltyType, setSkipPenaltyType] = useState<'lives' | 'points'>('lives');
   const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => localStorage.getItem('soundEnabled') !== 'false');
@@ -51,6 +54,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState('light');
   const [teacherMode, setTeacherMode] = useState<boolean>(() => localStorage.getItem('teacherMode') === 'true');
+  const [aiGrade, setAiGrade] = useState(5);
+  const [aiTopic, setAiTopic] = useState('');
+  const [aiCount, setAiCount] = useState(10);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
 
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
@@ -141,6 +149,42 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setBulkStudentText('');
     setBulkStudentError('');
   };
+
+  const randomizeTeams = () => {
+    if (students.length < 2) {
+      setRandomizeError('Add at least two students to create teams.');
+      return;
+    }
+    let count = 0;
+    if (randomTeamCount > 0) {
+      count = randomTeamCount;
+    } else if (randomTeamSize > 0) {
+      count = Math.ceil(students.length / randomTeamSize);
+    }
+    if (count <= 0) {
+      setRandomizeError('Specify number of teams or team size.');
+      return;
+    }
+    const shuffled = [...students];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const groups: Participant[][] = Array.from({ length: count }, () => []);
+    shuffled.forEach((student, idx) => {
+      groups[idx % count].push(student);
+    });
+    const newTeams = groups
+      .filter(group => group.length > 0)
+      .map((group, index) => {
+        const teamName = `Team ${index + 1}: ${group.map(s => s.name).join(', ')}`;
+        const participant = createParticipant(teamName, initialDifficulty);
+        participant.avatar = teams[index]?.avatar || participant.avatar;
+        return participant;
+      });
+    updateTeams(newTeams);
+    setRandomizeError('');
+  };
   
   const parseWordList = (content: string) => {
     try {
@@ -175,6 +219,27 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         setCustomWordListText(content);
       };
       reader.readAsText(file);
+    }
+  };
+
+  const generateAIWords = async () => {
+    setAiLoading(true);
+    setAiError('');
+    try {
+      const res = await fetch('http://localhost:3001/wordlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: aiCount }),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error('Invalid response');
+      setParsedCustomWords(prev => [...prev, ...data]);
+    } catch (err) {
+      console.error('Failed to generate AI word list', err);
+      setAiError('Failed to generate words.');
+    } finally {
+      setAiLoading(false);
     }
   };
   
@@ -304,6 +369,16 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <button onClick={addBulkStudents} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add Names</button>
                 {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
               </div>
+              <div className="mb-4">
+                <h3 className="text-xl font-bold mb-2">Randomize Teams</h3>
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <input type="number" min={1} value={randomTeamCount || ''} onChange={e => { setRandomTeamCount(Number(e.target.value)); setRandomTeamSize(0); }} placeholder="Number of teams" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
+                  <span>or</span>
+                  <input type="number" min={1} value={randomTeamSize || ''} onChange={e => { setRandomTeamSize(Number(e.target.value)); setRandomTeamCount(0); }} placeholder="Team size" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
+                  <button onClick={randomizeTeams} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Randomize</button>
+                </div>
+                {randomizeError && <p className="text-red-300">{randomizeError}</p>}
+              </div>
               {students.map((student, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
                   <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
@@ -396,6 +471,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     <p className="text-sm text-gray-300 mb-2">Paste data from Excel or Google Sheets (tab-separated).</p>
                     <textarea id="paste-area" rows={4} value={customWordListText} onChange={e => setCustomWordListText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white" placeholder="Paste your tab-separated values here..."></textarea>
                 </div>
+            </div>
+            <div className="mt-6">
+                <div className="flex flex-col md:flex-row gap-2">
+                    <input type="number" min={1} value={aiGrade} onChange={e => setAiGrade(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="Grade" />
+                    <input type="text" value={aiTopic} onChange={e => setAiTopic(e.target.value)} className="p-2 rounded-md bg-white/20 text-white flex-1" placeholder="Topic (optional)" />
+                    <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="# Words" />
+                    <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
+                </div>
+                {aiError && <p className="text-red-300 mt-2">{aiError}</p>}
             </div>
             <div className="mt-4 text-sm text-gray-300">
                 <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`.</p>
