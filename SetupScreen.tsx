@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { GameConfig, Word } from './types';
-import { parseWordList } from './utils/parseWordList';
+import { Word, Participant, GameConfig } from './types';
+import beeImg from './img/avatars/bee.svg';
 import bookImg from './img/avatars/book.svg';
+import trophyImg from './img/avatars/trophy.svg';
 import AccessibilitySettings from './components/AccessibilitySettings';
 
 // Gather available music styles.
@@ -18,32 +19,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const avatars = [beeImg, bookImg, trophyImg];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
-  const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
-  const [startingLives, setStartingLives] = useState(10);
-  const [showAccessibility, setShowAccessibility] = useState(false);
-
   const getDefaultTeams = (): Participant[] => [
-    { name: 'Team Alpha', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
-    { name: 'Team Beta', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
+    { name: 'Team Alpha', lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
+    { name: 'Team Beta', lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
   ];
 
   const [teams, setTeams] = useState<Participant[]>(getDefaultTeams());
-  const {
-    participants: teams,
-    addParticipant: addTeamParticipant,
-    removeParticipant: removeTeam,
-    updateName: updateTeamName,
-    clear: clearTeams,
-  } = useRoster('teams', getDefaultTeams());
-
-  const {
-    participants: students,
-    addParticipant: addStudentParticipant,
-    removeParticipant: removeStudent,
-    updateName: updateStudentName,
-    clear: clearStudents,
-  } = useRoster('students', []);
-
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
@@ -61,9 +42,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [studentName, setStudentName] = useState('');
   const [bulkStudentText, setBulkStudentText] = useState('');
   const [bulkStudentError, setBulkStudentError] = useState('');
-  const [randomTeamCount, setRandomTeamCount] = useState(0);
-  const [randomTeamSize, setRandomTeamSize] = useState(0);
-  const [randomizeError, setRandomizeError] = useState('');
   const [skipPenaltyType, setSkipPenaltyType] = useState<'lives' | 'points'>('lives');
   const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => localStorage.getItem('soundEnabled') !== 'false');
@@ -74,13 +52,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState('light');
   const [teacherMode, setTeacherMode] = useState<boolean>(() => localStorage.getItem('teacherMode') === 'true');
+  const [showAccessibility, setShowAccessibility] = useState(false);
   const [aiGrade, setAiGrade] = useState(5);
   const [aiTopic, setAiTopic] = useState('');
   const [aiCount, setAiCount] = useState(10);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const [selectedVoice, setSelectedVoice] = useState<string>(() => localStorage.getItem('selectedVoice') ?? '');
 
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
@@ -95,10 +72,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
     localStorage.setItem('teacherMode', String(teacherMode));
   }, [teacherMode]);
-
-  useEffect(() => {
-    setStartingLives(gameMode === 'team' ? 10 : 5);
-  }, [gameMode]);
   
   useEffect(() => {
     const savedTeams = localStorage.getItem('teams');
@@ -117,21 +90,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   useEffect(() => localStorage.setItem('soundEnabled', String(soundEnabled)), [soundEnabled]);
   useEffect(() => localStorage.setItem('musicStyle', musicStyle), [musicStyle]);
   useEffect(() => localStorage.setItem('musicVolume', String(musicVolume)), [musicVolume]);
-  useEffect(() => {
-    if (selectedVoice) {
-      localStorage.setItem('selectedVoice', selectedVoice);
-    } else {
-      localStorage.removeItem('selectedVoice');
-    }
-  }, [selectedVoice]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    const loadVoices = () => setVoices(window.speechSynthesis.getVoices());
-    loadVoices();
-    window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
-    return () => window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
-  }, []);
 
   const updateTeams = (newTeams: Participant[]) => {
     setTeams(newTeams);
@@ -143,15 +101,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     localStorage.setItem('students', JSON.stringify(newStudents));
   };
 
-  useEffect(() => {
-    if (gameMode === 'team') {
-      updateTeams(teams.map(t => ({ ...t, lives: startingLives })));
-    } else {
-      updateStudents(students.map(s => ({ ...s, lives: startingLives })));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startingLives, gameMode]);
-
   const clearRoster = () => {
     localStorage.removeItem('teams');
     localStorage.removeItem('students');
@@ -160,85 +109,68 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
 
   const createParticipant = (name: string, difficulty: number): Participant => ({
-    name: name.trim(), lives: startingLives, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
-
-  const [options, setOptions] = useState<OptionsState>({
-    skipPenaltyType: 'lives',
-    skipPenaltyValue: 1,
-    initialDifficulty: 0,
-    progressionSpeed: 1,
-    soundEnabled: localStorage.getItem('soundEnabled') !== 'false',
-    effectsEnabled: true,
-    theme: localStorage.getItem('theme') ?? 'light',
-    teacherMode: localStorage.getItem('teacherMode') === 'true',
-    musicStyle: localStorage.getItem('musicStyle') ?? 'Funk',
-    musicVolume: parseFloat(localStorage.getItem('musicVolume') ?? '1'),
+    name: name.trim(), lives: 5, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
   });
 
-  const createParticipant = (name: string, difficulty: number): Participant => ({
-    name: name.trim(),
-    lives: 5,
-    points: 0,
-    difficultyLevel: difficulty,
-    streak: 0,
-    attempted: 0,
-    correct: 0,
-    wordsAttempted: 0,
-    wordsCorrect: 0,
-    avatar: getRandomAvatar(),
-  });
-
-  const addTeam = () => addTeamParticipant(createParticipant('', 0));
-
-  const clearRoster = () => {
-    clearTeams();
-    clearStudents();
+  const addTeam = () => updateTeams([...teams, createParticipant('', 0)]);
+  const removeTeam = (index: number) => updateTeams(teams.filter((_, i) => i !== index));
+  const updateTeamName = (index: number, name: string) => {
+    const newTeams = teams.map((team, i) => (i === index ? { ...team, name } : team));
+    updateTeams(newTeams);
   };
 
-  const randomizeTeams = () => {
-    if (students.length < 2) {
-      setRandomizeError('Add at least two students to create teams.');
+  const addStudent = () => {
+    if (studentName.trim()) {
+      updateStudents([...students, createParticipant(studentName, initialDifficulty)]);
+      setStudentName('');
+    }
+  };
+
+  const removeStudent = (index: number) => updateStudents(students.filter((_, i) => i !== index));
+  const updateStudentName = (index: number, name: string) => {
+    const newStudents = students.map((student, i) => (i === index ? { ...student, name } : student));
+    updateStudents(newStudents);
+  };
+
+  const parseStudentNames = (text: string) =>
+    text.split(/\r?\n/).flatMap(line => line.split(',')).map(name => name.trim()).filter(name => name !== '');
+
+  const addBulkStudents = () => {
+    const names = parseStudentNames(bulkStudentText);
+    const existing = new Set(students.map(s => s.name));
+    const uniqueNames = Array.from(new Set(names)).filter(name => !existing.has(name));
+    if (uniqueNames.length === 0) {
+      setBulkStudentError('No new unique names detected.');
       return;
     }
-    let count = 0;
-    if (randomTeamCount > 0) {
-      count = randomTeamCount;
-    } else if (randomTeamSize > 0) {
-      count = Math.ceil(students.length / randomTeamSize);
-    }
-    if (count <= 0) {
-      setRandomizeError('Specify number of teams or team size.');
-      return;
-    }
-    const shuffled = [...students];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    const groups: Participant[][] = Array.from({ length: count }, () => []);
-    shuffled.forEach((student, idx) => {
-      groups[idx % count].push(student);
-    });
-    const newTeams = groups
-      .filter(group => group.length > 0)
-      .map((group, index) => {
-        const teamName = `Team ${index + 1}: ${group.map(s => s.name).join(', ')}`;
-        const participant = createParticipant(teamName, initialDifficulty);
-        participant.avatar = teams[index]?.avatar || participant.avatar;
-        return participant;
-      });
-    updateTeams(newTeams);
-    setRandomizeError('');
+    const newStudents = uniqueNames.map(name => createParticipant(name, initialDifficulty));
+    updateStudents([...students, ...newStudents]);
+    setBulkStudentText('');
+    setBulkStudentError('');
   };
   
   const parseWordList = (content: string) => {
     try {
-      const words = parseWordListUtil(content);
-      setParsedCustomWords(words);
-      setError('');
-    } catch (e: any) {
-      setError(e.message || 'Invalid word list format.');
-    }
+      const parsed = JSON.parse(content) as Word[];
+      if (Array.isArray(parsed)) {
+        setParsedCustomWords(parsed);
+        return;
+      }
+    } catch (e) {}
+
+    const lines = content.trim().split('\n');
+    if (lines.length < 2) return;
+    const delimiter = lines[0].includes(',') ? ',' : '\t';
+    const headers = lines[0].split(delimiter).map(h => h.trim());
+    const words = lines.slice(1).map(line => {
+      const values = line.split(delimiter);
+      const wordObj: any = {};
+      headers.forEach((header, index) => {
+        wordObj[header] = values[index] ? values[index].trim() : '';
+      });
+      return wordObj as Word;
+    });
+    setParsedCustomWords(words);
   };
   
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -327,16 +259,16 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             setError('Please add at least two teams with names.');
             return;
         }
-        finalParticipants = trimmedTeams.map(t => ({...t, difficultyLevel: options.initialDifficulty}));
+        finalParticipants = trimmedTeams.map(t => ({...t, difficultyLevel: initialDifficulty}));
     } else {
         const trimmedStudents = students.filter(student => student.name.trim() !== "");
         if (trimmedStudents.length < 1 && isSessionChallenge) {
-             finalParticipants = [createParticipant('Player 1', options.initialDifficulty)];
+             finalParticipants = [createParticipant('Player 1', initialDifficulty)];
         } else if (trimmedStudents.length < 2 && !isSessionChallenge) {
             setError('Please add at least two students for a custom game.');
             return;
         } else {
-             finalParticipants = trimmedStudents.map(s => ({...s, difficultyLevel: options.initialDifficulty}));
+             finalParticipants = trimmedStudents.map(s => ({...s, difficultyLevel: initialDifficulty}));
         }
     }
 
@@ -352,44 +284,24 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     
     const config: GameConfig = {
       participants: finalParticipants,
-      gameMode,
-      timerDuration,
-      skipPenaltyType: options.skipPenaltyType,
-      skipPenaltyValue: options.skipPenaltyValue,
-      soundEnabled: options.soundEnabled,
-      effectsEnabled: options.effectsEnabled,
-      difficultyLevel: options.initialDifficulty,
-      progressionSpeed: options.progressionSpeed,
-      musicStyle: options.musicStyle,
-      musicVolume: options.musicVolume,
+      gameMode, timerDuration, skipPenaltyType, skipPenaltyValue, soundEnabled, effectsEnabled, difficultyLevel: initialDifficulty, progressionSpeed, musicStyle, musicVolume,
     };
     onStartGame(config);
   };
   
   return (
-    <div className="min-h-screen p-8 text-white font-body relative">
-      <button
-        onClick={() => setShowAccessibility(true)}
-        className="absolute top-4 right-4 bg-yellow-300 text-black px-4 py-2 rounded font-bold"
-      >
-        Accessibility
-      </button>
-      {showAccessibility && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <AccessibilitySettings onClose={() => setShowAccessibility(false)} />
-        </div>
-      )}
+    <div className="min-h-screen p-8 text-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
                 <img src="icons/icon.svg" alt="Bee mascot" className="w-12 h-12 md:w-16 md:h-16" />
-                <h1 className="text-4xl md:text-6xl font-bold text-yellow-300 uppercase font-heading">🏆 SPELLING BEE CHAMPIONSHIP</h1>
+                <h1 className="text-4xl md:text-6xl font-bold text-yellow-300">🏆 SPELLING BEE CHAMPIONSHIP</h1>
             </div>
             <p className="text-xl md:text-2xl">Get ready to spell your way to victory!</p>
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4 text-center uppercase font-heading">Select Game Mode 🎮</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center">Select Game Mode 🎮</h2>
           <div className="flex justify-center gap-4">
             <button onClick={() => setGameMode('team')} className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'team' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}>Team</button>
             <button onClick={() => setGameMode('individual')} className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'individual' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}>Individual</button>
@@ -397,15 +309,18 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         </div>
         
         <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4 uppercase font-heading">{gameMode === 'team' ? 'Teams 👥' : 'Students 🧑‍🎓'}</h2>
+          <h2 className="text-2xl font-bold mb-4">{gameMode === 'team' ? 'Teams 👥' : 'Students 🧑‍🎓'}</h2>
           {gameMode === 'team' ? (
-            <TeamForm
-              teams={teams}
-              avatars={avatars}
-              addTeam={addTeam}
-              removeTeam={removeTeam}
-              updateTeamName={updateTeamName}
-            />
+            <>
+              {teams.map((team, index) => (
+                <div key={index} className="flex items-center gap-2 mb-2">
+                  <img src={team.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                  <input type="text" value={team.name} onChange={e => updateTeamName(index, e.target.value)} placeholder={`Team ${index + 1} Name`} className="flex-grow p-2 rounded-md bg-white/20 text-white" />
+                  {teams.length > 1 && (<button onClick={() => removeTeam(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
+                </div>
+              ))}
+              <button onClick={addTeam} className="mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded">Add Team</button>
+            </>
           ) : (
             <>
               <div className="flex gap-4 mb-4">
@@ -417,16 +332,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <button onClick={addBulkStudents} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add Names</button>
                 {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
               </div>
-              <div className="mb-4">
-                <h3 className="text-xl font-bold mb-2">Randomize Teams</h3>
-                <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <input type="number" min={1} value={randomTeamCount || ''} onChange={e => { setRandomTeamCount(Number(e.target.value)); setRandomTeamSize(0); }} placeholder="Number of teams" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
-                  <span>or</span>
-                  <input type="number" min={1} value={randomTeamSize || ''} onChange={e => { setRandomTeamSize(Number(e.target.value)); setRandomTeamCount(0); }} placeholder="Team size" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
-                  <button onClick={randomizeTeams} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Randomize</button>
-                </div>
-                {randomizeError && <p className="text-red-300">{randomizeError}</p>}
-              </div>
               {students.map((student, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
                   <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
@@ -435,30 +340,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
               ))}
             </>
-            <StudentRoster
-              students={students}
-              avatars={avatars}
-              addParticipant={addStudentParticipant}
-              removeStudent={removeStudent}
-              updateStudentName={updateStudentName}
-              createParticipant={createParticipant}
-              initialDifficulty={options.initialDifficulty}
-            />
           )}
           <button onClick={clearRoster} className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Clear Saved Roster</button>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white/10 p-6 rounded-lg">
-<<<<<<< HEAD
-                <h2 className="text-2xl font-bold mb-4">Starting Lives ❤️</h2>
-                <input type="number" min={1} value={startingLives} onChange={e => setStartingLives(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full" />
-            </div>
-            <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Skip Penalty ⏭️</h2>
-=======
-                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Skip Penalty ⏭️</h2>
->>>>>>> origin/codex/import-google-fonts-and-configure-tailwind
                 <div className="flex gap-4">
                     <select value={skipPenaltyType} onChange={e => setSkipPenaltyType(e.target.value as 'lives' | 'points')} className="p-2 rounded-md bg-white/20 text-white">
                         <option value="lives">Lives</option>
@@ -468,7 +356,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Difficulty Settings 🎚️</h2>
+                <h2 className="text-2xl font-bold mb-4">Difficulty Settings 🎚️</h2>
                 <div className="flex gap-4">
                     <div>
                         <label className="block mb-2">Initial Difficulty</label>
@@ -485,23 +373,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Audio & Effects 🔊✨</h2>
+                <h2 className="text-2xl font-bold mb-4">Audio & Effects 🔊✨</h2>
                 <label className="flex items-center space-x-3 mb-2"><input type="checkbox" checked={soundEnabled} onChange={e => setSoundEnabled(e.target.checked)} /><span>Enable Sound</span></label>
                 <label className="flex items-center space-x-3"><input type="checkbox" checked={effectsEnabled} onChange={e => setEffectsEnabled(e.target.checked)} /><span>Enable Visual Effects</span></label>
-                {voices.length > 0 && (
-                    <div className="mt-4">
-                        <label className="block mb-2">Voice</label>
-                        <select value={selectedVoice} onChange={e => setSelectedVoice(e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
-                            <option value="">Default</option>
-                            {voices.map(v => (
-                                <option key={v.voiceURI} value={v.voiceURI}>{`${v.name} (${v.lang})`}</option>
-                            ))}
-                        </select>
-                    </div>
-                )}
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Theme 🎨</h2>
+                <h2 className="text-2xl font-bold mb-4">Theme 🎨</h2>
                 <select value={theme} onChange={e => { const t = e.target.value; setTheme(t); localStorage.setItem('theme', t); applyTheme(t); }} className="p-2 rounded-md bg-white/20 text-white">
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
@@ -509,11 +386,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </select>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Teacher Mode 👩‍🏫</h2>
+                <h2 className="text-2xl font-bold mb-4">Teacher Mode 👩‍🏫</h2>
                 <label className="flex items-center gap-2 text-white"><input type="checkbox" checked={teacherMode} onChange={e => setTeacherMode(e.target.checked)} /><span>Enable larger fonts and spacing</span></label>
             </div>
              <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Music 🎵</h2>
+                <h2 className="text-2xl font-bold mb-4">Music 🎵</h2>
                 <div className="mb-4">
                     <label className="block mb-2">Style</label>
                     <select value={musicStyle} onChange={e => setMusicStyle(e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
@@ -526,10 +403,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
             </div>
         </div>
-        <GameOptions options={options} setOptions={setOptions} />
         
         <div className="bg-white/10 p-6 rounded-lg mb-8 mt-8">
-            <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Add Custom Word List 📝</h2>
+            <h2 className="text-2xl font-bold mb-4">Add Custom Word List 📝</h2>
             <div className="mb-6">
                 <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">Choose Bundled Word List</label>
                 <select id="bundled-list" value={selectedBundledList} onChange={e => setSelectedBundledList(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white">
@@ -560,9 +436,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             </div>
             <div className="mt-4 text-sm text-gray-300">
                 <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`.</p>
-                <div className="mt-2">
-                    <a href="wordlists/example.csv" download className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Download Template</a>
-                </div>
             </div>
             <div className="mt-2">
               <a href="wordlists/example.csv" download className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
@@ -589,6 +462,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         <div className="mt-4 text-center">
             <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold">View Achievements</button>
         </div>
+        <div className="mt-4 text-center">
+            <button onClick={() => setShowAccessibility(true)} className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl text-xl font-bold">Accessibility</button>
+        </div>
+        {showAccessibility && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <AccessibilitySettings onClose={() => setShowAccessibility(false)} />
+          </div>
+        )}
       </div>
     </div>
   );
