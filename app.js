@@ -26277,7 +26277,8 @@ var GameScreen = ({ config, onEndGame }) => {
         ref: hiddenInputRef,
         type: "text",
         className: "absolute opacity-0 pointer-events-none",
-        "aria-hidden": "true"
+        "aria-hidden": "true",
+        tabIndex: -1
       }
     ),
     toast && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50", children: toast }),
