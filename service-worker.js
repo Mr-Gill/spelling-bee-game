@@ -5,7 +5,7 @@ const ASSETS = [
   './style.css',
   './manifest.webmanifest',
   './icons/icon.svg',
-  './app.js',
+  './app.js', // Cache bundled application script
   './words.json',
   './wordlists/example.json',
   './wordlists/example.csv',
