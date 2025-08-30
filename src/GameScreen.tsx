@@ -1,13 +1,13 @@
 import React from 'react';
 import { SkipForward } from 'lucide-react';
 import { GameConfig, Word, Participant, GameResults, defaultAchievements } from './types';
-import correctSoundFile from './audio/correct.mp3';
-import wrongSoundFile from './audio/wrong.mp3';
-import timeoutSoundFile from './audio/timeout.mp3';
-import letterCorrectSoundFile from './audio/letter-correct.mp3';
-import letterWrongSoundFile from './audio/letter-wrong.mp3';
-import shopSoundFile from './audio/shop.mp3';
-import loseLifeSoundFile from './audio/lose-life.mp3';
+import correctSoundFile from '../audio/correct.mp3';
+import wrongSoundFile from '../audio/wrong.mp3';
+import timeoutSoundFile from '../audio/timeout.mp3';
+import letterCorrectSoundFile from '../audio/letter-correct.mp3';
+import letterWrongSoundFile from '../audio/letter-wrong.mp3';
+import shopSoundFile from '../audio/shop.mp3';
+import loseLifeSoundFile from '../audio/lose-life.mp3';
 import { launchConfetti } from './utils/confetti';
 import { speak } from './utils/tts';
 import useSound from './utils/useSound';
@@ -503,6 +503,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         type="text"
         className="absolute opacity-0 pointer-events-none"
         aria-hidden="true"
+        tabIndex={-1}
       />
       {toast && (
         <div className="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50">
