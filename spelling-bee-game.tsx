@@ -5,6 +5,7 @@ import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
+import HistoryScreen from './HistoryScreen';
 import useMusic from './utils/useMusic';
 
 // --- Main App Component ---
@@ -70,6 +71,10 @@ const SpellingBeeGame = () => {
         setGameState("achievements");
     };
 
+    const handleViewHistory = () => {
+        setGameState("history");
+    };
+
     const handleBackToSetup = () => {
         setGameState("setup");
     };
@@ -92,7 +97,7 @@ const SpellingBeeGame = () => {
     useMusic(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
 
     if (gameState === "setup") {
-        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
+        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} onViewHistory={handleViewHistory} />;
     }
     if (gameState === "playing") {
         return (
@@ -116,6 +121,9 @@ const SpellingBeeGame = () => {
     }
     if (gameState === "leaderboard") {
         return <LeaderboardScreen onBack={handleBackToSetup} />;
+    }
+    if (gameState === "history") {
+        return <HistoryScreen onBack={handleBackToSetup} />;
     }
     if (gameState === "achievements") {
         return <AchievementsScreen onBack={handleBackToSetup} />;
