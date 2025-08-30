@@ -5,7 +5,7 @@ export type Word = {
   definition?: string;
   origin?: string;
   example?: string;
-  phonemes?: string[];
+  phonemes: string[];
   phonics?: string;
 };
 
