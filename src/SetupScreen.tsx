@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { GameConfig, Word, Participant } from './types';
+import React, { useState, useEffect } from 'react';
+import { GameConfig, Word, Participant, OptionsState } from './types';
 import { parseWordList } from './utils/parseWordList';
-import useRoster from './hooks/useRoster';
-import beeImg from './img/avatars/bee.svg';
-import bookImg from './img/avatars/book.svg';
-import trophyImg from './img/avatars/trophy.svg';
+import useRoster from '../hooks/useRoster';
+import beeImg from '../img/avatars/bee.svg';
+import bookImg from '../img/avatars/book.svg';
+import trophyImg from '../img/avatars/trophy.svg';
 import WordListPrompt from './components/WordListPrompt';
+import StudentRoster from './components/StudentRoster';
+import TeamForm from './components/TeamForm';
+import GameOptions from './components/GameOptions';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -29,7 +32,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     { name: 'Team Beta', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
   ];
 
-  const [teams, setTeams] = useState<Participant[]>(getDefaultTeams());
   const {
     participants: teams,
     addParticipant: addTeamParticipant,
@@ -46,7 +48,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     clear: clearStudents,
   } = useRoster('students', []);
 
-  const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
   const [parsedCustomWords, setParsedCustomWords] = useState<Word[]>([]);
@@ -59,7 +60,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     { label: 'Example TSV', file: 'example.tsv' }
   ];
   const [selectedBundledList, setSelectedBundledList] = useState('');
-  const [students, setStudents] = useState<Participant[]>([]);
   const [studentName, setStudentName] = useState('');
   const [bulkStudentText, setBulkStudentText] = useState('');
   const [bulkStudentError, setBulkStudentError] = useState('');
@@ -163,6 +163,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const createParticipant = (name: string, difficulty: number): Participant => ({
     name: name.trim(), lives: startingLives, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
+  });
 
   const [options, setOptions] = useState<OptionsState>({
     skipPenaltyType: 'lives',
@@ -173,29 +174,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     effectsEnabled: true,
     theme: localStorage.getItem('theme') ?? 'light',
     teacherMode: localStorage.getItem('teacherMode') === 'true',
+    musicEnabled: true,
     musicStyle: localStorage.getItem('musicStyle') ?? 'Funk',
     musicVolume: parseFloat(localStorage.getItem('musicVolume') ?? '1'),
   });
 
-  const createParticipant = (name: string, difficulty: number): Participant => ({
-    name: name.trim(),
-    lives: 5,
-    points: 0,
-    difficultyLevel: difficulty,
-    streak: 0,
-    attempted: 0,
-    correct: 0,
-    wordsAttempted: 0,
-    wordsCorrect: 0,
-    avatar: getRandomAvatar(),
-  });
 
   const addTeam = () => addTeamParticipant(createParticipant('', 0));
 
-  const clearRoster = () => {
-    clearTeams();
-    clearStudents();
-  };
 
   const randomizeTeams = () => {
     if (students.length < 2) {
@@ -390,15 +376,17 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         <div className="bg-white/10 p-6 rounded-lg mb-8">
           <h2 className="text-2xl font-bold mb-4 uppercase font-heading">{gameMode === 'team' ? 'Teams 👥' : 'Students 🧑‍🎓'}</h2>
           {gameMode === 'team' ? (
-            <TeamForm
-              teams={teams}
-              avatars={avatars}
-              addTeam={addTeam}
-              removeTeam={removeTeam}
-              updateTeamName={updateTeamName}
-            />
-          ) : (
-            <>
+    <>
+      <TeamForm
+        teams={teams}
+        avatars={avatars}
+        addTeam={addTeam}
+        removeTeam={removeTeam}
+        updateTeamName={updateTeamName}
+      />
+    </>
+  ) : (
+    <>
               <div className="flex gap-4 mb-4">
                 <input type="text" value={studentName} onChange={e => setStudentName(e.target.value)} className="flex-grow p-2 rounded-md bg-white/20 text-white" placeholder="Student name" />
                 <button onClick={addStudent} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add</button>
@@ -425,31 +413,23 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                   {students.length > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
                 </div>
               ))}
+              <StudentRoster
+                students={students}
+                avatars={avatars}
+                addParticipant={addStudentParticipant}
+                removeStudent={removeStudent}
+                updateStudentName={updateStudentName}
+                createParticipant={createParticipant}
+                initialDifficulty={options.initialDifficulty}
+              />
             </>
-            <StudentRoster
-              students={students}
-              avatars={avatars}
-              addParticipant={addStudentParticipant}
-              removeStudent={removeStudent}
-              updateStudentName={updateStudentName}
-              createParticipant={createParticipant}
-              initialDifficulty={options.initialDifficulty}
-            />
           )}
           <button onClick={clearRoster} className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Clear Saved Roster</button>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white/10 p-6 rounded-lg">
-<<<<<<< HEAD
-                <h2 className="text-2xl font-bold mb-4">Starting Lives ❤️</h2>
-                <input type="number" min={1} value={startingLives} onChange={e => setStartingLives(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full" />
-            </div>
-            <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Skip Penalty ⏭️</h2>
-=======
                 <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Skip Penalty ⏭️</h2>
->>>>>>> origin/codex/import-google-fonts-and-configure-tailwind
                 <div className="flex gap-4">
                     <select value={skipPenaltyType} onChange={e => setSkipPenaltyType(e.target.value as 'lives' | 'points')} className="p-2 rounded-md bg-white/20 text-white">
                         <option value="lives">Lives</option>

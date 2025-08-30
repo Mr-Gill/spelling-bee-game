@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { promptPresets, PromptCategory } from '../constants/promptPresets';
+import { promptPresets, PromptCategory } from '../../constants/promptPresets';
 
 interface WordListPromptProps {
   value: string;

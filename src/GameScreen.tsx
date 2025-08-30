@@ -15,6 +15,7 @@ import letterCorrectSoundFile from "../audio/letter-correct.mp3";
 import letterWrongSoundFile from "../audio/letter-wrong.mp3";
 import shopSoundFile from "../audio/shop.mp3";
 import loseLifeSoundFile from "../audio/lose-life.mp3";
+import beeImg from '../img/avatars/bee.svg';
 import { launchConfetti } from "./utils/confetti";
 import { speak } from "./utils/tts";
 import useSound from "./utils/useSound";
@@ -23,7 +24,7 @@ import useWordSelection, { difficultyOrder } from "./utils/useWordSelection";
 import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
-import AudioSettings from "./components/AudioSettings";
+import { AudioSettings } from "./components/AudioSettings";
 import { useAudio } from "./AudioContext";
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
@@ -590,21 +591,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
       {currentWord && (
         <div className="w-full max-w-4xl text-center">
-<<<<<<< HEAD:src/GameScreen.tsx
-          <img src="img/books.svg" alt="Book icon" className="w-10 h-10 mx-auto mb-4" />
-          <h2 className="text-4xl font-bold mb-4 uppercase font-heading">
-            Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
-=======
-          <img
-            src="img/books.svg"
-            alt="Book icon"
-            className="w-10 h-10 mx-auto mb-4"
-          />
+<img src="img/books.svg" alt="Book icon" className="w-10 h-10 mx-auto mb-4" />
           <h2 className="text-4xl font-bold mb-2 uppercase font-heading">
-            Word for {isTeamMode ? 'Team' : 'Student'}:{' '}
-            {participants[currentParticipantIndex]?.name ||
-              (isTeamMode ? 'Team' : 'Student')}
->>>>>>> origin/codex/extend-team-functionality-in-game-setup:GameScreen.tsx
+            Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
           </h2>
           {isTeamMode && currentStudent && (
             <div className="text-xl mb-4">Hot Seat: {currentStudent.name}</div>

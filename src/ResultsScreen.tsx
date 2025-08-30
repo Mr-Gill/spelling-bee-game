@@ -3,7 +3,7 @@ import { GameResults, GameConfig, LeaderboardEntry } from './types';
 import applauseSoundFile from '../audio/applause.mp3';
 import { launchConfetti } from './utils/confetti';
 import { recordDailyCompletion, StreakInfo } from './DailyChallenge';
-import beeImg from './img/avatars/bee.svg';
+import beeImg from '../img/avatars/bee.svg';
 import MorphologyCard from './components/MorphologyCard';
 
 interface ResultsScreenProps {
