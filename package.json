@@ -9,7 +9,7 @@
     "start": "npx serve dist",
     "serve": "npx serve dist",
     "build:css": "npx tailwindcss -i ./src/tailwind.css -o ./tailwind.css --minify",
-    "build": "npm run build:css && npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --external:react --external:react-dom --external:canvas-confetti --external:classnames --external:framer-motion --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file && node scripts/copy-assets.js && node scripts/copy-wordlist.js",
+    "build": "npm run build:css && npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --inject:./src/react-shim.js --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file && node scripts/copy-assets.js && node scripts/copy-wordlist.js",
     "watch": "npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --watch",
     "test": "node --test",
     "predeploy": "npm run build",
