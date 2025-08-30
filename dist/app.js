@@ -24623,12 +24623,13 @@ var musicStyles = ["Funk", "Country", "Deep Bass", "Rock", "Jazz", "Classical"];
 var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
   const avatars2 = [bee_default, book_default, trophy_default];
   const getRandomAvatar = () => avatars2[Math.floor(Math.random() * avatars2.length)];
+  const [gameMode, setGameMode] = (0, import_react2.useState)("team");
+  const [startingLives, setStartingLives] = (0, import_react2.useState)(10);
   const getDefaultTeams = () => [
-    { name: "Team Alpha", lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
-    { name: "Team Beta", lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
+    { name: "Team Alpha", lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
+    { name: "Team Beta", lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
   ];
   const [teams, setTeams] = (0, import_react2.useState)(getDefaultTeams());
-  const [gameMode, setGameMode] = (0, import_react2.useState)("team");
   const [timerDuration, setTimerDuration] = (0, import_react2.useState)(30);
   const [customWordListText, setCustomWordListText] = (0, import_react2.useState)("");
   const [parsedCustomWords, setParsedCustomWords] = (0, import_react2.useState)([]);
@@ -24676,6 +24677,9 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
     localStorage.setItem("teacherMode", String(teacherMode));
   }, [teacherMode]);
   (0, import_react2.useEffect)(() => {
+    setStartingLives(gameMode === "team" ? 10 : 5);
+  }, [gameMode]);
+  (0, import_react2.useEffect)(() => {
     const savedTeams = localStorage.getItem("teams");
     if (savedTeams) try {
       setTeams(JSON.parse(savedTeams).map((t) => ({ ...t, avatar: t.avatar || getRandomAvatar() })));
@@ -24705,6 +24709,13 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
     setStudents(newStudents);
     localStorage.setItem("students", JSON.stringify(newStudents));
   };
+  (0, import_react2.useEffect)(() => {
+    if (gameMode === "team") {
+      updateTeams(teams.map((t) => ({ ...t, lives: startingLives })));
+    } else {
+      updateStudents(students.map((s) => ({ ...s, lives: startingLives })));
+    }
+  }, [startingLives, gameMode]);
   const clearRoster = () => {
     localStorage.removeItem("teams");
     localStorage.removeItem("students");
@@ -24713,7 +24724,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
   };
   const createParticipant = (name, difficulty) => ({
     name: name.trim(),
-    lives: 5,
+    lives: startingLives,
     points: 0,
     difficultyLevel: difficulty,
     streak: 0,
@@ -24965,6 +24976,10 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
       /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { onClick: clearRoster, className: "mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded", children: "Clear Saved Roster" })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "grid md:grid-cols-2 lg:grid-cols-3 gap-8", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h2", { className: "text-2xl font-bold mb-4", children: "Starting Lives \u2764\uFE0F" }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("input", { type: "number", min: 1, value: startingLives, onChange: (e) => setStartingLives(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-full" })
+      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h2", { className: "text-2xl font-bold mb-4", children: "Skip Penalty \u23ED\uFE0F" }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex gap-4", children: [
