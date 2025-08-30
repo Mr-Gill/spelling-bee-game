@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GameConfig, Word } from './types';
 import { parseWordList } from './utils/parseWordList';
 import bookImg from './img/avatars/book.svg';
@@ -49,11 +49,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, Word[]>>({});
   const [includeMissedWords, setIncludeMissedWords] = useState(false);
   const [error, setError] = useState('');
-  const bundledWordLists = [
+  const [bundledWordLists, setBundledWordLists] = useState([
     { label: 'Example JSON', file: 'example.json' },
     { label: 'Example CSV', file: 'example.csv' },
-    { label: 'Example TSV', file: 'example.tsv' }
-  ];
+    { label: 'Example TSV', file: 'example.tsv' },
+  ]);
   const [selectedBundledList, setSelectedBundledList] = useState('');
   const [students, setStudents] = useState<Participant[]>([]);
   const [studentName, setStudentName] = useState('');
@@ -77,6 +77,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [aiCount, setAiCount] = useState(10);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
+  const [showCurriculumDialog, setShowCurriculumDialog] = useState(false);
+  const [curriculumSubject, setCurriculumSubject] = useState('');
+  const [curriculumGrade, setCurriculumGrade] = useState(1);
+  const [curriculumWords, setCurriculumWords] = useState<Word[]>([]);
+  const [curriculumLoading, setCurriculumLoading] = useState(false);
+  const [curriculumError, setCurriculumError] = useState('');
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<string>(() => localStorage.getItem('selectedVoice') ?? '');
 
@@ -271,6 +277,30 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       setAiLoading(false);
     }
   };
+
+  const fetchCurriculumWords = async () => {
+    setCurriculumLoading(true);
+    setCurriculumError('');
+    try {
+      const res = await fetch('http://localhost:3002/curriculumWords', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject: curriculumSubject, gradeLevel: curriculumGrade }),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      const data = await res.json();
+      if (!Array.isArray(data.words)) throw new Error('Invalid response');
+      setCurriculumWords(data.words);
+      if (data.file) {
+        setBundledWordLists(prev => [...prev, { label: `Subject: ${curriculumSubject}`, file: data.file }]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch curriculum words', err);
+      setCurriculumError('Failed to fetch curriculum words.');
+    } finally {
+      setCurriculumLoading(false);
+    }
+  };
   
   useEffect(() => {
     if (selectedBundledList) {
@@ -299,6 +329,19 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('missedWordsCollection') || '{}');
     setMissedWordsCollection(stored);
+  }, []);
+
+  useEffect(() => {
+    fetch('http://localhost:3002/curriculumWords')
+      .then(res => res.json())
+      .then((files: string[]) => {
+        const lists = files.map(f => ({
+          label: `Subject: ${f.replace(/^subject-/, '').replace('.json', '')}`,
+          file: f,
+        }));
+        setBundledWordLists(prev => [...prev, ...lists]);
+      })
+      .catch(() => {});
   }, []);
 
   const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
@@ -542,6 +585,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     <input type="text" value={aiTopic} onChange={e => setAiTopic(e.target.value)} className="p-2 rounded-md bg-white/20 text-white flex-1" placeholder="Topic (optional)" />
                     <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="# Words" />
                     <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
+                    <button onClick={() => setShowCurriculumDialog(true)} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded w-full md:w-auto">Curriculum Words</button>
                 </div>
                 {aiError && <p className="text-red-300 mt-2">{aiError}</p>}
             </div>
@@ -577,6 +621,34 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold">View Achievements</button>
         </div>
       </div>
+      {showCurriculumDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg w-96 text-black">
+            <h3 className="text-xl font-bold mb-4">Curriculum Words</h3>
+            <div className="mb-2">
+              <label className="block mb-1">Subject</label>
+              <input type="text" value={curriculumSubject} onChange={e => setCurriculumSubject(e.target.value)} className="w-full p-2 border rounded" />
+            </div>
+            <div className="mb-2">
+              <label className="block mb-1">Grade</label>
+              <input type="number" min={1} value={curriculumGrade} onChange={e => setCurriculumGrade(Number(e.target.value))} className="w-full p-2 border rounded" />
+            </div>
+            <button onClick={fetchCurriculumWords} disabled={curriculumLoading} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded w-full">{curriculumLoading ? 'Loading...' : 'Fetch'}</button>
+            {curriculumError && <p className="text-red-500 mt-2">{curriculumError}</p>}
+            {curriculumWords.length > 0 && (
+              <ul className="mt-4 max-h-40 overflow-y-auto list-disc list-inside text-left">
+                {curriculumWords.map((w, i) => (
+                  <li key={i}>{w.word}</li>
+                ))}
+              </ul>
+            )}
+            <div className="flex gap-2 mt-4">
+              <button onClick={() => { setParsedCustomWords(prev => [...prev, ...curriculumWords]); setShowCurriculumDialog(false); }} className="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Use Words</button>
+              <button onClick={() => setShowCurriculumDialog(false)} className="flex-1 bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
