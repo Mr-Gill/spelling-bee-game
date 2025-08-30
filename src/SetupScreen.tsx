@@ -38,6 +38,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     removeParticipant: removeTeam,
     updateName: updateTeamName,
     clear: clearTeams,
+    setParticipants: setTeamsParticipants,
   } = useRoster('teams', getDefaultTeams());
 
   const {
@@ -46,6 +47,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     removeParticipant: removeStudent,
     updateName: updateStudentName,
     clear: clearStudents,
+    setParticipants: setStudentsParticipants,
   } = useRoster('students', []);
 
   const [timerDuration, setTimerDuration] = useState(30);
@@ -104,9 +106,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   
   useEffect(() => {
     const savedTeams = localStorage.getItem('teams');
-    if (savedTeams) try { setTeams(JSON.parse(savedTeams).map((t: Participant) => ({ ...t, avatar: t.avatar || getRandomAvatar() }))); } catch {}
+    if (savedTeams) try { setTeamsParticipants(JSON.parse(savedTeams).map((t: Participant) => ({ ...t, avatar: t.avatar || getRandomAvatar() }))); } catch {}
     const savedStudents = localStorage.getItem('students');
-    if (savedStudents) try { setStudents(JSON.parse(savedStudents).map((s: Participant) => ({ ...s, avatar: s.avatar || getRandomAvatar() }))); } catch {}
+    if (savedStudents) try { setStudentsParticipants(JSON.parse(savedStudents).map((s: Participant) => ({ ...s, avatar: s.avatar || getRandomAvatar() }))); } catch {}
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       setTheme(savedTheme);
@@ -136,12 +138,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   }, []);
 
   const updateTeams = (newTeams: Participant[]) => {
-    setTeams(newTeams);
+    setTeamsParticipants(newTeams);
     localStorage.setItem('teams', JSON.stringify(newTeams));
   };
 
   const updateStudents = (newStudents: Participant[]) => {
-    setStudents(newStudents);
+    setStudentsParticipants(newStudents);
     localStorage.setItem('students', JSON.stringify(newStudents));
   };
 
@@ -157,8 +159,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const clearRoster = () => {
     localStorage.removeItem('teams');
     localStorage.removeItem('students');
-    setTeams(getDefaultTeams());
-    setStudents([]);
+    setTeamsParticipants(getDefaultTeams());
+    setStudentsParticipants([]);
   };
 
   const createParticipant = (name: string, difficulty: number): Participant => ({
