@@ -1,5 +1,5 @@
 import React from 'react';
-import { SkipForward } from 'lucide-react';
+import { SkipForward, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { GameConfig, Word, Participant, GameResults, defaultAchievements } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
@@ -16,11 +16,20 @@ import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
 import AvatarSelector from './components/AvatarSelector';
-import { audioManager } from './utils/audio';
+
+const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
 interface GameScreenProps {
   config: GameConfig;
   onEndGame: (results: GameResults) => void;
+  musicStyle: string;
+  musicVolume: number;
+  onMusicStyleChange: (style: string) => void;
+  onMusicVolumeChange: (volume: number) => void;
+  soundEnabled: boolean;
+  onSoundEnabledChange: (enabled: boolean) => void;
+  isMusicPlaying: boolean;
+  onToggleMusicPlaying: () => void;
 }
 
 interface Feedback {
@@ -30,7 +39,18 @@ interface Feedback {
 
 // difficultyOrder is imported from useWordSelection
 
-const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
+const GameScreen: React.FC<GameScreenProps> = ({
+  config,
+  onEndGame,
+  musicStyle,
+  musicVolume,
+  onMusicStyleChange,
+  onMusicVolumeChange,
+  soundEnabled,
+  onSoundEnabledChange,
+  isMusicPlaying,
+  onToggleMusicPlaying,
+}) => {
   const [participants, setParticipants] = React.useState<Participant[]>(
     config.participants.map(p => ({
       ...p,
@@ -65,13 +85,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState('');
 
-  const playCorrect = useSound(correctSoundFile, config.soundEnabled);
-  const playWrong = useSound(wrongSoundFile, config.soundEnabled);
-  const playTimeout = useSound(timeoutSoundFile, config.soundEnabled);
-  const playLetterCorrect = useSound(letterCorrectSoundFile, config.soundEnabled);
-  const playLetterWrong = useSound(letterWrongSoundFile, config.soundEnabled);
-  const playShop = useSound(shopSoundFile, config.soundEnabled);
-  const playLoseLife = useSound(loseLifeSoundFile, config.soundEnabled);
+  const playCorrect = useSound(correctSoundFile, soundEnabled);
+  const playWrong = useSound(wrongSoundFile, soundEnabled);
+  const playTimeout = useSound(timeoutSoundFile, soundEnabled);
+  const playLetterCorrect = useSound(letterCorrectSoundFile, soundEnabled);
+  const playLetterWrong = useSound(letterWrongSoundFile, soundEnabled);
+  const playShop = useSound(shopSoundFile, soundEnabled);
+  const playLoseLife = useSound(loseLifeSoundFile, soundEnabled);
 
   const {
     timeLeft,
@@ -412,17 +432,44 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
           {isPaused ? 'Resume' : 'Pause'}
         </button>
       </div>
-
-      <audio-controls className="audio-controls">
-        <button 
-          className={`audio-btn ${audioManager.muted ? 'muted' : ''}`}
-          onClick={() => audioManager.toggleMute()}
+      <div className="absolute bottom-8 left-8 bg-black/50 p-4 rounded-lg z-50 flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onToggleMusicPlaying}
+            className="bg-yellow-300 text-black p-2 rounded"
+            aria-label={isMusicPlaying ? 'Pause music' : 'Play music'}
+          >
+            {isMusicPlaying ? <Pause size={16} /> : <Play size={16} />}
+          </button>
+          <button
+            onClick={() => onSoundEnabledChange(!soundEnabled)}
+            className="bg-yellow-300 text-black p-2 rounded"
+            aria-label={soundEnabled ? 'Mute audio' : 'Unmute audio'}
+          >
+            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+          </button>
+        </div>
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.01}
+          value={musicVolume}
+          onChange={e => onMusicVolumeChange(parseFloat(e.target.value))}
+          className="w-32"
+        />
+        <select
+          value={musicStyle}
+          onChange={e => onMusicStyleChange(e.target.value)}
+          className="text-black rounded p-1"
         >
-          {audioManager.muted ? '🔇' : '🔊'}
-        </button>
-      </audio-controls>
+          {musicStyles.map(style => (
+            <option key={style} value={style}>{style}</option>
+          ))}
+        </select>
+      </div>
 
-      <AvatarSelector 
+      <AvatarSelector
         currentAvatar={currentAvatar}
         onSelect={(avatar) => setCurrentAvatar(avatar)}
       />
@@ -485,7 +532,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             onLetter={handleVirtualLetter}
             onBackspace={handleVirtualBackspace}
             onSubmit={handleSpellingSubmit}
-            soundEnabled={config.soundEnabled}
+            soundEnabled={soundEnabled}
           />
         </div>
       )}
