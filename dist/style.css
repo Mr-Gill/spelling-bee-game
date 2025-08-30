@@ -1,21 +1,5 @@
 /* Custom styles for Spelling Bee Championship */
 
-<<<<<<< HEAD
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-:root {
-  --primary-color: #2563eb; /* Improved contrast blue */
-  --text-color: #1e293b; /* Darker text for better readability */
-  --bg-color: #f8fafc; /* Light background */
-  
-  /* Dark mode variables */
-  --dark-primary: #3b82f6;
-  --dark-text: #f1f5f9;
-  --dark-bg: #0f172a;
-}
-
-=======
->>>>>>> origin/codex/import-google-fonts-and-configure-tailwind
 * {
     box-sizing: border-box;
 }
@@ -101,31 +85,6 @@ video {
 
 @media (prefers-reduced-motion: reduce) {
     .btn-bounce {
-        animation: none;
-    }
-}
-
-@keyframes bee-fly {
-    0% {
-        transform: translateX(-10vw);
-    }
-    100% {
-        transform: translateX(110vw);
-    }
-}
-
-.flying-bee {
-    position: fixed;
-    top: 50vh;
-    left: -10vw;
-    width: 80px;
-    z-index: 1000;
-    pointer-events: none;
-    animation: bee-fly 8s linear forwards;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .flying-bee {
         animation: none;
     }
 }
@@ -258,28 +217,6 @@ video {
 
 .audio-btn.muted {
     opacity: 0.5;
-}
-
-/* Theme toggle styles */
-.theme-toggle {
-  position: fixed;
-  bottom: 70px;
-  right: 20px;
-  z-index: 100;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.dark-mode {
-  --primary-color: var(--dark-primary);
-  --text-color: var(--dark-text);
-  --bg-color: var(--dark-bg);
 }
 
 /* Responsive design */

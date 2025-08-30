@@ -12,8 +12,6 @@ import wrongSoundFile from "./audio/wrong.mp3";
 import timeoutSoundFile from "./audio/timeout.mp3";
 import letterCorrectSoundFile from "./audio/letter-correct.mp3";
 import letterWrongSoundFile from "./audio/letter-wrong.mp3";
-import shopSoundFile from "./audio/shop.mp3";
-import loseLifeSoundFile from "./audio/lose-life.mp3";
 import { launchConfetti } from "./utils/confetti";
 import { speak } from "./utils/tts";
 import useSound from "./utils/useSound";
@@ -437,7 +435,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   }, [participants]);
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
+    <div className="relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center font-body">
       <input
         ref={hiddenInputRef}
         type="text"
@@ -510,6 +508,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
       {currentWord && (
         <div className="w-full max-w-4xl text-center">
+<<<<<<< HEAD
           <img
             src="img/books.svg"
             alt="Book icon"
@@ -519,6 +518,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             Word for {isTeamMode ? "Team" : "Student"}:{" "}
             {participants[currentParticipantIndex]?.name ||
               (isTeamMode ? "Team" : "Student")}
+=======
+          <img src="img/books.svg" alt="Book icon" className="w-10 h-10 mx-auto mb-4" />
+          <h2 className="text-4xl font-bold mb-4 uppercase font-heading">
+            Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
+>>>>>>> origin/codex/import-google-fonts-and-configure-tailwind
           </h2>
           <div className="relative mb-8 pt-10">
             {showWord && (
