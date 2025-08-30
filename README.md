@@ -421,6 +421,20 @@ Whether you're teaching phonics to elementary students, vocabulary to middle sch
 
 ---
 
+## Development
+
+### AI Word List Endpoint
+
+Run a local server that uses GitHub Models to generate word lists:
+
+```
+npm run dev:wordlist
+```
+
+The server expects a `GITHUB_TOKEN` with the `models:read` scope.
+
+---
+
 ## New Features
 
 ### Audio System

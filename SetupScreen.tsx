@@ -51,6 +51,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState('light');
   const [teacherMode, setTeacherMode] = useState<boolean>(() => localStorage.getItem('teacherMode') === 'true');
+  const [aiGrade, setAiGrade] = useState(5);
+  const [aiTopic, setAiTopic] = useState('');
+  const [aiCount, setAiCount] = useState(10);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
 
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
@@ -175,6 +180,27 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         setCustomWordListText(content);
       };
       reader.readAsText(file);
+    }
+  };
+
+  const generateAIWords = async () => {
+    setAiLoading(true);
+    setAiError('');
+    try {
+      const res = await fetch('http://localhost:3001/wordlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: aiCount }),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error('Invalid response');
+      setParsedCustomWords(prev => [...prev, ...data]);
+    } catch (err) {
+      console.error('Failed to generate AI word list', err);
+      setAiError('Failed to generate words.');
+    } finally {
+      setAiLoading(false);
     }
   };
   
@@ -396,6 +422,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     <p className="text-sm text-gray-300 mb-2">Paste data from Excel or Google Sheets (tab-separated).</p>
                     <textarea id="paste-area" rows={4} value={customWordListText} onChange={e => setCustomWordListText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white" placeholder="Paste your tab-separated values here..."></textarea>
                 </div>
+            </div>
+            <div className="mt-6">
+                <div className="flex flex-col md:flex-row gap-2">
+                    <input type="number" min={1} value={aiGrade} onChange={e => setAiGrade(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="Grade" />
+                    <input type="text" value={aiTopic} onChange={e => setAiTopic(e.target.value)} className="p-2 rounded-md bg-white/20 text-white flex-1" placeholder="Topic (optional)" />
+                    <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="# Words" />
+                    <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
+                </div>
+                {aiError && <p className="text-red-300 mt-2">{aiError}</p>}
             </div>
             <div className="mt-4 text-sm text-gray-300">
                 <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`.</p>
