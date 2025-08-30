@@ -16,6 +16,7 @@ import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
 import AvatarSelector from './components/AvatarSelector';
+import { useNotifications, NotificationContainer } from './components/Notification.jsx';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -82,11 +83,12 @@ const GameScreen: React.FC<GameScreenProps> = ({
       return [];
     }
   });
-  const [toast, setToast] = React.useState('');
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState('');
   const [darkMode, setDarkMode] = React.useState(false);
+
+  const { notifications, addNotification, removeNotification } = useNotifications();
 
   const playCorrect = useSound(correctSoundFile, soundEnabled);
   const playWrong = useSound(wrongSoundFile, soundEnabled);
@@ -294,9 +296,9 @@ const GameScreen: React.FC<GameScreenProps> = ({
         const updatedUnlocked = [...unlockedAchievements, ...newlyUnlocked.map(a => a.id)];
         setUnlockedAchievements(updatedUnlocked);
         localStorage.setItem('unlockedAchievements', JSON.stringify(updatedUnlocked));
-        const first = newlyUnlocked[0];
-        setToast(`Achievement unlocked: ${first.icon} ${first.name}!`);
-        setTimeout(() => setToast(''), 3000);
+        newlyUnlocked.forEach(ach => {
+          addNotification(`Achievement unlocked: ${ach.icon} ${ach.name}!`);
+        });
       }
       
       playCorrect();
@@ -416,11 +418,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         aria-hidden="true"
         tabIndex={-1}
       />
-      {toast && (
-        <div className="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50">
-          {toast}
-        </div>
-      )}
+      <NotificationContainer notifications={notifications} onRemove={removeNotification} />
       <div className="absolute top-8 left-8 flex gap-8 items-center">
         <button
           onClick={handleQuit}
