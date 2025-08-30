@@ -1,16 +1,10 @@
-export const launchConfetti = () => {
+import confetti from 'canvas-confetti';
+
+export const launchConfetti = (): void => {
   if (typeof window === 'undefined') return;
-  const scriptId = 'confetti-script';
-  const existing = document.getElementById(scriptId) as HTMLScriptElement | null;
-  if (!existing) {
-    const script = document.createElement('script');
-    script.id = scriptId;
-    script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
-    script.onload = () => {
-      (window as any).confetti?.();
-    };
-    document.body.appendChild(script);
-  } else {
-    (window as any).confetti?.();
-  }
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 },
+  });
 };
