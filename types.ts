@@ -6,6 +6,8 @@ export interface Word {
   example: string;
   prefix?: string;
   suffix?: string;
+  prefixMeaning?: string;
+  suffixMeaning?: string;
   pronunciation?: string;
   /** Optional source the word list was generated from */
   source?: string;
