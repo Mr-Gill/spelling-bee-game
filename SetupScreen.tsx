@@ -16,6 +16,9 @@ interface SetupScreenProps {
 const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
   const avatars = [beeImg, bookImg, trophyImg];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
+  const teamViewUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}${window.location.pathname}?team=1`
+    : '';
 
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [startingLives, setStartingLives] = useState(10);
@@ -373,6 +376,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <h1 className="text-4xl md:text-6xl font-bold text-yellow-300 uppercase font-heading">🏆 SPELLING BEE CHAMPIONSHIP</h1>
             </div>
             <p className="text-xl md:text-2xl">Get ready to spell your way to victory!</p>
+            <a
+              href={teamViewUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block mt-4 text-blue-300 underline"
+            >
+              Team View
+            </a>
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">

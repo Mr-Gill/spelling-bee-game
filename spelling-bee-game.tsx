@@ -5,10 +5,18 @@ import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
+import TeamDisplay from './TeamDisplay';
 import useMusic from './utils/useMusic';
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
+    if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('team') === '1') {
+            return <TeamDisplay />;
+        }
+    }
+
     const [gameState, setGameState] = useState("setup");
     const [gameConfig, setGameConfig] = useState(null);
     const [gameResults, setGameResults] = useState(null);

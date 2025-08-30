@@ -85,6 +85,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState("");
+  const wordChannelRef = React.useRef<BroadcastChannel | null>(null);
+  const teamViewUrl = React.useMemo(() => {
+    if (typeof window === "undefined") return "";
+    return `${window.location.origin}${window.location.pathname}?team=1`;
+  }, []);
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);
@@ -110,6 +115,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     handleIncorrectAttempt();
   });
   React.useEffect(() => {
+    wordChannelRef.current = new BroadcastChannel("word");
+    return () => wordChannelRef.current?.close();
+  }, []);
+  React.useEffect(() => {
     if (localStorage.getItem("teacherMode") === "true") {
       document.body.classList.add("teacher-mode");
     } else {
@@ -120,6 +129,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   React.useEffect(() => {
     if (currentWord) {
       setLetters(Array.from({ length: currentWord.word.length }, () => ""));
+      wordChannelRef.current?.postMessage(currentWord.word);
     }
   }, [currentWord]);
 
@@ -584,6 +594,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
           />
         </div>
       )}
+
+      <button
+        onClick={() => window.open(teamViewUrl, "_blank")}
+        className="absolute bottom-8 left-8 bg-blue-500 hover:bg-blue-600 p-4 rounded-lg text-xl"
+      >
+        Team View
+      </button>
 
       <button
         onClick={skipWord}
