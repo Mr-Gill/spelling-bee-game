@@ -8,6 +8,20 @@
 
 ---
 
+## 🤖 **AI-Powered Word Lists**
+
+Generate custom spelling word lists tailored to your classroom needs using GitHub's AI models. The system can create word lists on any topic with rich educational content including definitions, origins, and pronunciation guides.
+
+### Key Features:
+- **Custom Topics** - Generate words on any subject or theme
+- **Curriculum-Aligned** - Words are selected based on grade-level appropriateness
+- **Rich Content** - Each word includes definition, origin, example, and pronunciation
+- **Automatic Updates** - Word lists are generated and deployed automatically
+
+[Learn more about word list generation](WORDLIST.md)
+
+---
+
 ## 🎯 **Perfect for Educators**
 
 Transform your spelling lessons into engaging, interactive competitions that students love! This isn't just a game—it's a comprehensive educational tool designed by teachers, for teachers.

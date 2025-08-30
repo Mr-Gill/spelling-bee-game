@@ -5,6 +5,11 @@ dist
 app.js
 .DS_Store
 
+# Environment
+.env
+.env.local
+.env.*.local
+
 # Tailwind build artifacts
 /tailwind.css
 /dist/tailwind.css

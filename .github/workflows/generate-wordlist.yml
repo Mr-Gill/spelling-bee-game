@@ -1,0 +1,68 @@
+name: Generate and Deploy Word List
+
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: 'Topic for word list'
+        required: true
+        default: 'education'
+      count:
+        description: 'Number of words to generate'
+        required: true
+        default: '50'
+  push:
+    branches: [ main ]
+    paths:
+      - 'scripts/generate-wordlist.js'
+      - '.github/workflows/generate-wordlist.yml'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Generate word list
+        id: generate
+        run: |
+          # Use input parameters if provided, otherwise use defaults
+          TOPIC="${{ github.event.inputs.topic || 'education' }}"
+          COUNT="${{ github.event.inputs.count || 50 }}"
+          echo "Generating $COUNT words about $TOPIC"
+          node scripts/generate-wordlist.js "$TOPIC" "$COUNT"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Build project
+        run: |
+          npm run build
+          
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
+          clean: true
+          
+      - name: Commit word list
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add wordlist.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update word list" && git push)
