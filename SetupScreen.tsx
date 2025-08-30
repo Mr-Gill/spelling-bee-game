@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GameConfig, Word } from './types';
 import { parseWordList } from './utils/parseWordList';
 import bookImg from './img/avatars/book.svg';
@@ -77,6 +77,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [aiCount, setAiCount] = useState(10);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
+  const [headlineWords, setHeadlineWords] = useState<Word[]>([]);
+  const [headlinesLoading, setHeadlinesLoading] = useState(false);
+  const [headlinesError, setHeadlinesError] = useState('');
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<string>(() => localStorage.getItem('selectedVoice') ?? '');
 
@@ -269,6 +272,35 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       setAiError('Failed to generate words.');
     } finally {
       setAiLoading(false);
+    }
+  };
+
+  const fetchHeadlines = async () => {
+    setHeadlinesLoading(true);
+    setHeadlinesError('');
+    try {
+      const today = new Date().toDateString();
+      const cached = localStorage.getItem('headlineWords');
+      const cachedDate = localStorage.getItem('headlineWordsDate');
+      if (cached && cachedDate === today) {
+        const parsed = JSON.parse(cached);
+        setHeadlineWords(parsed);
+        setParsedCustomWords(prev => [...prev, ...parsed]);
+        return;
+      }
+      const res = await fetch('http://localhost:3002/headlines');
+      if (!res.ok) throw new Error('Request failed');
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error('Invalid response');
+      setHeadlineWords(data);
+      setParsedCustomWords(prev => [...prev, ...data]);
+      localStorage.setItem('headlineWords', JSON.stringify(data));
+      localStorage.setItem('headlineWordsDate', today);
+    } catch (err) {
+      console.error('Failed to load headlines', err);
+      setHeadlinesError('Failed to load headlines.');
+    } finally {
+      setHeadlinesLoading(false);
     }
   };
   
@@ -543,7 +575,26 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="# Words" />
                     <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
                 </div>
-                {aiError && <p className="text-red-300 mt-2">{aiError}</p>}
+            {aiError && <p className="text-red-300 mt-2">{aiError}</p>}
+            </div>
+            <div className="mt-4">
+              <button
+                onClick={fetchHeadlines}
+                disabled={headlinesLoading}
+                className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded w-full md:w-auto"
+              >
+                {headlinesLoading ? 'Loading...' : "Today's Headlines"}
+              </button>
+              {headlinesError && <p className="text-red-300 mt-2">{headlinesError}</p>}
+              {headlineWords.length > 0 && (
+                <ul className="mt-4 text-left list-disc list-inside space-y-1">
+                  {headlineWords.map(w => (
+                    <li key={w.word}>
+                      <strong>{w.word}</strong>: {w.example}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
             <div className="mt-4 text-sm text-gray-300">
                 <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`.</p>
