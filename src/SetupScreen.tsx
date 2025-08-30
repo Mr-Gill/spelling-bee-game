@@ -1,16 +1,19 @@
 import React, { useState, useEffect, FC } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { GameConfig, OptionsState } from './types/game';
-import { Participant, Team } from './types/participant';
+import type { Participant } from './types/participant';
+import type { Team } from '../../types/team';
 import { parseWordList } from './utils/parseWordList';
-
-type GameMode = 'team' | 'individual';
+import TeamForm from './components/TeamForm';
 import WordListPrompt from './components/WordListPrompt';
 import useRoster from '../hooks/useRoster';
+import { getRandomAvatar } from '../constants/avatars';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
+
+type GameMode = 'team' | 'individual';
 
 type WordDatabase = {
   easy: any[];
@@ -77,9 +80,15 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
     return {
       id: uuidv4(),
       name,
-      students: [],
+      participants: [],
+      teamId: uuidv4(),
+      avatar,
+      difficulty: 1,
       score: 0,
-      lives: startingLives
+      lives: startingLives,
+      attempted: 0,
+      correct: 0,
+      difficultyLevel: 'easy'
     };
   };
 
@@ -212,7 +221,7 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
   
   useEffect(() => {
     const savedTeams = localStorage.getItem('teams');
-    if (savedTeams) try { setTeams(JSON.parse(savedTeams).map((t: Participant) => ({ ...t, avatar: t.avatar || availableAvatars[Math.floor(Math.random() * availableAvatars.length)] }))); } catch {}
+    if (savedTeams) try { setTeams(JSON.parse(savedTeams).map((t: Team) => ({ ...t, avatar: t.avatar || availableAvatars[Math.floor(Math.random() * availableAvatars.length)] }))); } catch {}
     const savedStudents = localStorage.getItem('students');
     if (savedStudents) try { setParticipants(JSON.parse(savedStudents).map((s: Participant) => ({ ...s, avatar: s.avatar || availableAvatars[Math.floor(Math.random() * availableAvatars.length)] }))); } catch {}
     const savedTheme = localStorage.getItem('theme');
@@ -270,11 +279,9 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
   }, []);
 
   const updateTeams = () => {
-    const updatedTeams = (teams || []).map(team => ({
+    const updatedTeams = teams.map(team => ({
       ...team,
-      students: (team.students || []).map(studentId => 
-        participants.find(p => p.id === studentId) || createParticipant('Unknown', 1)
-      )
+      participants: team.participants.map((p: Participant) => p.id)
     }));
     setTeams(updatedTeams);
   };
@@ -589,7 +596,7 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                   <TeamForm
                     teams={teams}
                     avatars={availableAvatars}
-                    addTeam={() => addTeam(createTeam())}
+                    addTeam={() => addTeam(createTeam(''))}
                     removeTeam={removeTeamByIndex}
                     updateTeamName={updateTeamNameByIndex}
                   />

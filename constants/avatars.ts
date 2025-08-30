@@ -5,3 +5,8 @@ export const avatars = {
   wizard: { name: 'Wizard', icon: '/img/avatars/bee.svg' },
   ninja: { name: 'Ninja', icon: '/img/avatars/book.svg' },
 };
+
+export function getRandomAvatar() {
+  const avatarKeys = Object.keys(avatars);
+  return avatarKeys[Math.floor(Math.random() * avatarKeys.length)];
+}
