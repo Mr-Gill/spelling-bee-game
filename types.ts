@@ -25,6 +25,17 @@ export interface Participant {
   wordsCorrect: number;
   accuracy?: number;
   avatar?: string;
+  /** Optional team assignment used during setup */
+  team?: string;
+}
+
+/**
+ * Represents a team in team mode. Extends `Participant` so existing logic that
+ * operates on participants (like score and life tracking) continues to work.
+ * Each team maintains a roster of students who will take turns in the game.
+ */
+export interface Team extends Participant {
+  students: Participant[];
 }
 
 export interface WordDatabase {
@@ -34,7 +45,11 @@ export interface WordDatabase {
 }
 
 export interface GameConfig {
-  participants: Participant[];
+  /**
+   * Participants in the game. In individual mode this is an array of
+   * `Participant` objects. In team mode it is an array of `Team` objects.
+   */
+  participants: Participant[] | Team[];
   gameMode: 'team' | 'individual';
   timerDuration: number;
   wordDatabase: WordDatabase;
