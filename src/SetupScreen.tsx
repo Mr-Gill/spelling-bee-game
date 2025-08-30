@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Participant, Team } from './types';
+import { Participant } from './types/participant';
+import { Team } from './types/team';
 import { v4 as uuidv4 } from 'uuid';
 import { GameConfig } from './types/game';
 import { OptionsState } from './types/game';
@@ -216,29 +217,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     return () => window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
   }, []);
 
-  const updateTeams = (newTeams: Participant[]) => {
-    const teamsToSave = newTeams.map(team => ({
+  const updateTeams = () => {
+    const updatedTeams = (teams || []).map(team => ({
       ...team,
-      students: team.students.map(student => ({
-        id: student.id,
-        name: student.name,
-        avatar: student.avatar,
-        score: student.score,
-        lives: student.lives,
-        points: student.points,
-        difficultyLevel: student.difficultyLevel,
-        streak: student.streak,
-        attempted: student.attempted,
-        correct: student.correct,
-        incorrect: student.incorrect
-      }))
+      students: team.students.map(studentId => 
+        participants.find(p => p.id === studentId) || createParticipant('Unknown', 1)
+      )
     }));
-    try {
-      localStorage.setItem('teams', JSON.stringify(teamsToSave));
-    } catch (error) {
-      console.error('Failed to save teams to localStorage', error);
-    }
-    setTeams(newTeams);
+    setTeams(updatedTeams);
   };
 
   const updateStudents = (newStudents: Participant[]) => {
@@ -252,7 +238,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   useEffect(() => {
     if (gameMode === 'team') {
-      updateTeams(teams.map(t => ({ ...t, lives: startingLives })));
+      updateTeams();
     } else {
       updateStudents(participants.map(s => ({ ...s, lives: startingLives })));
     }
@@ -670,9 +656,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         </div>
         <GameOptions 
           options={options} 
-          onOptionChange={(option: keyof OptionsState, value: any) => 
-            setOptions(prev => ({...prev, [option]: value}))
-          }
+          setOptions={setOptions}
         />
         
         <div className="bg-white/10 p-6 rounded-lg mb-8 mt-8">
