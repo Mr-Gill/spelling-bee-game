@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { GameConfig, Word } from './types';
+import { GameConfig, Word, Participant, OptionsState } from './types';
 import { parseWordList } from './utils/parseWordList';
-import bookImg from './img/avatars/book.svg';
+import BookSvg from './img/avatars/book.svg?component';
+import TeamForm from './components/TeamForm';
+import StudentRoster from './components/StudentRoster';
+import GameOptions from './components/GameOptions';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -14,11 +17,12 @@ interface SetupScreenProps {
 }
 
 const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
-  const avatars = [bookImg];
+  const avatars = [BookSvg];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [startingLives, setStartingLives] = useState(10);
+  const [timerDuration, setTimerDuration] = useState(60);
 
   const getDefaultTeams = (): Participant[] => [
     { name: 'Team Alpha', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
@@ -52,17 +56,29 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [selectedVoice, setSelectedVoice] = useState<string>(() => localStorage.getItem('selectedVoice') ?? '');
 
   const [options, setOptions] = useState<OptionsState>({
+    soundEnabled: true,
+    musicEnabled: true,
+    musicStyle: 'country',
+    musicVolume: 0.5,
+    teacherMode: false,
     skipPenaltyType: 'lives',
     skipPenaltyValue: 1,
     initialDifficulty: 0,
     progressionSpeed: 1,
-    soundEnabled: localStorage.getItem('soundEnabled') !== 'false',
     effectsEnabled: true,
-    theme: localStorage.getItem('theme') ?? 'light',
-    teacherMode: localStorage.getItem('teacherMode') === 'true',
-    musicStyle: localStorage.getItem('musicStyle') ?? 'Funk',
-    musicVolume: parseFloat(localStorage.getItem('musicVolume') ?? '1'),
+    theme: 'light'
   });
+
+  const [customWordListText, setCustomWordListText] = useState('');
+  const [parsedCustomWords, setParsedCustomWords] = useState<Word[]>([]);
+  const [error, setError] = useState('');
+  const [selectedBundledList, setSelectedBundledList] = useState('');
+  const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, Word[]>>({});
+  const [includeMissedWords, setIncludeMissedWords] = useState(false);
+  const [bundledWordLists, setBundledWordLists] = useState([
+    { file: 'example.json', label: 'Example List' },
+    { file: 'words.json', label: 'Standard Words' }
+  ]);
 
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
@@ -143,15 +159,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const createParticipant = (name: string, difficulty: number): Participant => ({
     name: name.trim(), lives: startingLives, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
+  });
 
-  const addTeam = () => {
-    const newTeam = { name: '', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() };
-    updateTeams([...teams, newTeam]);
-  };
-
-  const clearRoster = () => {
-    updateTeams([]);
-    updateStudents([]);
+  const addTeam = (): void => {
+    if (!teams || !setTeams || !createParticipant || !options) return;
+    setTeams([...teams, createParticipant('New Team', options.initialDifficulty)]);
   };
 
   const randomizeTeams = () => {
@@ -190,16 +202,20 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setRandomizeError('');
   };
   
-  const parseWordList = (content: string) => {
+  const parseWordList = (content: string): Word[] => {
     try {
-      const words = parseWordListUtil(content);
-      setParsedCustomWords(words);
-      setError('');
-    } catch (e: any) {
-      setError(e.message || 'Invalid word list format.');
+      return parseWordList(content);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Invalid word list format');
+      return [];
     }
   };
   
+  const handleParseWordList = (content: string) => {
+    const words = parseWordList(content);
+    setParsedCustomWords(words);
+  };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -253,7 +269,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   useEffect(() => {
     if (customWordListText) {
-      parseWordList(customWordListText);
+      handleParseWordList(customWordListText);
     }
   }, [customWordListText]);
 
@@ -321,218 +337,85 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       progressionSpeed: options.progressionSpeed,
       musicStyle: options.musicStyle,
       musicVolume: options.musicVolume,
+      wordDatabase: {
+        easy: finalWords,
+        medium: finalWords,
+        tricky: finalWords
+      }
     };
     onStartGame(config);
   };
   
+  const addStudent = () => {
+    if (!studentName.trim()) return;
+    updateStudents([...students, createParticipant(studentName, initialDifficulty)]);
+    setStudentName('');
+  };
+
+  const addBulkStudents = () => {
+    if (!bulkStudentText.trim()) return;
+    const names = bulkStudentText.split(/[\n,]+/).filter(name => name.trim());
+    updateStudents([...students, ...names.map(name => createParticipant(name, initialDifficulty))]);
+    setBulkStudentText('');
+  };
+
+  const updateStudentName = (index: number, name: string) => {
+    const updated = [...students];
+    updated[index] = {...updated[index], name};
+    updateStudents(updated);
+  };
+
+  const removeStudent = (index: number) => {
+    updateStudents(students.filter((_, i) => i !== index));
+  };
+
+  const updateTeamName = (index: number, name: string) => {
+    const updated = [...teams];
+    updated[index] = {...updated[index], name};
+    updateTeams(updated);
+  };
+
+  const removeTeam = (index: number) => {
+    updateTeams(teams.filter((_, i) => i !== index));
+  };
+
   return (
-    <div className="min-h-screen p-8 text-white font-body">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-3 mb-4">
-                <img src="icons/icon.svg" alt="Bee mascot" className="w-12 h-12 md:w-16 md:h-16" />
-                <h1 className="text-4xl md:text-6xl font-bold text-yellow-300 uppercase font-heading">🏆 SPELLING BEE CHAMPIONSHIP</h1>
+    <div className="setup-container">
+      <div className="content-wrapper">
+        {gameMode === 'individual' && (
+          <div className="student-section">
+            <div className="flex gap-4 mb-4">
+              <input type="text" value={studentName} onChange={e => setStudentName(e.target.value)} className="flex-grow p-2 rounded-md bg-white/20 text-white" placeholder="Student name" />
+              <button onClick={addStudent} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add</button>
             </div>
-            <p className="text-xl md:text-2xl">Get ready to spell your way to victory!</p>
-        </div>
-
-        <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4 text-center uppercase font-heading">Select Game Mode 🎮</h2>
-          <div className="flex justify-center gap-4">
-            <button onClick={() => setGameMode('team')} className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'team' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}>Team</button>
-            <button onClick={() => setGameMode('individual')} className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'individual' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}>Individual</button>
+            <div className="mb-4">
+              <textarea value={bulkStudentText} onChange={e => setBulkStudentText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white mb-2" placeholder="Paste names, one per line or separated by commas" rows={4}></textarea>
+              <button onClick={addBulkStudents} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add Names</button>
+              {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
+            </div>
+            <div className="mb-4">
+              <h3 className="text-xl font-bold mb-2">Randomize Teams</h3>
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <input type="number" min={1} value={randomTeamCount || ''} onChange={e => { setRandomTeamCount(Number(e.target.value)); setRandomTeamSize(0); }} placeholder="Number of teams" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
+                <span>or</span>
+                <input type="number" min={1} value={randomTeamSize || ''} onChange={e => { setRandomTeamSize(Number(e.target.value)); setRandomTeamCount(0); }} placeholder="Team size" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
+                <button onClick={randomizeTeams} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Randomize</button>
+              </div>
+              {randomizeError && <p className="text-red-300">{randomizeError}</p>}
+            </div>
+            {students.map((student, index) => (
+              <div key={index} className="flex items-center gap-2 mb-2">
+                <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
+                {students.length > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
+              </div>
+            ))}
           </div>
-        </div>
-        
-        <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4 uppercase font-heading">{gameMode === 'team' ? 'Teams 👥' : 'Students 🧑‍🎓'}</h2>
-          {gameMode === 'team' ? (
-            <TeamForm
-              teams={teams}
-              avatars={avatars}
-              addTeam={addTeam}
-              removeTeam={removeTeam}
-              updateTeamName={updateTeamName}
-            />
-          ) : (
-            <>
-              <div className="flex gap-4 mb-4">
-                <input type="text" value={studentName} onChange={e => setStudentName(e.target.value)} className="flex-grow p-2 rounded-md bg-white/20 text-white" placeholder="Student name" />
-                <button onClick={addStudent} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add</button>
-              </div>
-              <div className="mb-4">
-                <textarea value={bulkStudentText} onChange={e => setBulkStudentText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white mb-2" placeholder="Paste names, one per line or separated by commas" rows={4}></textarea>
-                <button onClick={addBulkStudents} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add Names</button>
-                {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
-              </div>
-              <div className="mb-4">
-                <h3 className="text-xl font-bold mb-2">Randomize Teams</h3>
-                <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <input type="number" min={1} value={randomTeamCount || ''} onChange={e => { setRandomTeamCount(Number(e.target.value)); setRandomTeamSize(0); }} placeholder="Number of teams" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
-                  <span>or</span>
-                  <input type="number" min={1} value={randomTeamSize || ''} onChange={e => { setRandomTeamSize(Number(e.target.value)); setRandomTeamCount(0); }} placeholder="Team size" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
-                  <button onClick={randomizeTeams} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Randomize</button>
-                </div>
-                {randomizeError && <p className="text-red-300">{randomizeError}</p>}
-              </div>
-              {students.map((student, index) => (
-                <div key={index} className="flex items-center gap-2 mb-2">
-                  <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
-                  <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
-                  {students.length > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
-                </div>
-              ))}
-            </>
-            <StudentRoster
-              students={students}
-              avatars={avatars}
-              addParticipant={addStudentParticipant}
-              removeStudent={removeStudent}
-              updateStudentName={updateStudentName}
-              createParticipant={createParticipant}
-              initialDifficulty={options.initialDifficulty}
-            />
-          )}
-          <button onClick={clearRoster} className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Clear Saved Roster</button>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Starting Lives ❤️</h2>
-                <input type="number" min={1} value={startingLives} onChange={e => setStartingLives(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full" />
-            </div>
-            <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Skip Penalty ⏭️</h2>
-                <div className="flex gap-4">
-                    <select value={skipPenaltyType} onChange={e => setSkipPenaltyType(e.target.value as 'lives' | 'points')} className="p-2 rounded-md bg-white/20 text-white">
-                        <option value="lives">Lives</option>
-                        <option value="points">Points</option>
-                    </select>
-                    <input type="number" min={0} value={skipPenaltyValue} onChange={e => setSkipPenaltyValue(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
-                </div>
-            </div>
-            <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Difficulty Settings 🎚️</h2>
-                <div className="flex gap-4">
-                    <div>
-                        <label className="block mb-2">Initial Difficulty</label>
-                        <select value={initialDifficulty} onChange={e => setInitialDifficulty(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white">
-                            <option value={0}>Easy</option>
-                            <option value={1}>Medium</option>
-                            <option value={2}>Tricky</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block mb-2">Progression Speed</label>
-                        <input type="number" min={1} value={progressionSpeed} onChange={e => setProgressionSpeed(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
-                    </div>
-                </div>
-            </div>
-            <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Audio & Effects 🔊✨</h2>
-                <label className="flex items-center space-x-3 mb-2"><input type="checkbox" checked={soundEnabled} onChange={e => setSoundEnabled(e.target.checked)} /><span>Enable Sound</span></label>
-                <label className="flex items-center space-x-3"><input type="checkbox" checked={effectsEnabled} onChange={e => setEffectsEnabled(e.target.checked)} /><span>Enable Visual Effects</span></label>
-                {voices.length > 0 && (
-                    <div className="mt-4">
-                        <label className="block mb-2">Voice</label>
-                        <select value={selectedVoice} onChange={e => setSelectedVoice(e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
-                            <option value="">Default</option>
-                            {voices.map(v => (
-                                <option key={v.voiceURI} value={v.voiceURI}>{`${v.name} (${v.lang})`}</option>
-                            ))}
-                        </select>
-                    </div>
-                )}
-            </div>
-            <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Theme 🎨</h2>
-                <select value={theme} onChange={e => { const t = e.target.value; setTheme(t); localStorage.setItem('theme', t); applyTheme(t); }} className="p-2 rounded-md bg-white/20 text-white">
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
-                    <option value="honeycomb">Honeycomb</option>
-                </select>
-            </div>
-            <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Teacher Mode 👩‍🏫</h2>
-                <label className="flex items-center gap-2 text-white"><input type="checkbox" checked={teacherMode} onChange={e => setTeacherMode(e.target.checked)} /><span>Enable larger fonts and spacing</span></label>
-            </div>
-             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Music 🎵</h2>
-                <div className="mb-4">
-                    <label className="block mb-2">Style</label>
-                    <select value={musicStyle} onChange={e => setMusicStyle(e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
-                        {musicStyles.map(style => (<option key={style} value={style}>{style}</option>))}
-                    </select>
-                </div>
-                <div>
-                    <label className="block mb-2">Volume: {Math.round(musicVolume * 100)}%</label>
-                    <input type="range" min={0} max={1} step={0.01} value={musicVolume} onChange={e => setMusicVolume(parseFloat(e.target.value))} className="w-full" />
-                </div>
-            </div>
-        </div>
-        <GameOptions options={options} setOptions={setOptions} />
-        
-        <div className="bg-white/10 p-6 rounded-lg mb-8 mt-8">
-            <h2 className="text-2xl font-bold mb-4">Add Custom Word List 📝</h2>
-            <div className="mb-6">
-                <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">Choose Bundled Word List</label>
-                <select id="bundled-list" value={selectedBundledList} onChange={e => setSelectedBundledList(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white">
-                    <option value="">-- Select a list --</option>
-                    {bundledWordLists.map(list => (<option key={list.file} value={list.file}>{list.label}</option>))}
-                </select>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label htmlFor="file-upload" className="block text-lg font-medium mb-2">Upload File</label>
-                    <p className="text-sm text-gray-300 mb-2">Upload a JSON or TSV file.</p>
-                    <input id="file-upload" type="file" accept=".json,.tsv,.txt,.csv" onChange={handleFileChange} className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-300 file:text-black hover:file:bg-yellow-400" />
-                </div>
-                <div>
-                    <label htmlFor="paste-area" className="block text-lg font-medium mb-2">Or Paste Spreadsheet Data</label>
-                    <p className="text-sm text-gray-300 mb-2">Paste data from Excel or Google Sheets (tab-separated).</p>
-                    <textarea id="paste-area" rows={4} value={customWordListText} onChange={e => setCustomWordListText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white" placeholder="Paste your tab-separated values here..."></textarea>
-                </div>
-            </div>
-            <div className="mt-6">
-                <div className="flex flex-col md:flex-row gap-2">
-                    <input type="number" min={1} value={aiGrade} onChange={e => setAiGrade(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="Grade" />
-                    <input type="text" value={aiTopic} onChange={e => setAiTopic(e.target.value)} className="p-2 rounded-md bg-white/20 text-white flex-1" placeholder="Topic (optional)" />
-                    <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="# Words" />
-                    <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
-                </div>
-                {aiError && <p className="text-red-300 mt-2">{aiError}</p>}
-            </div>
-            <div className="mt-4 text-sm text-gray-300">
-                <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`.</p>
-                <div className="mt-2">
-                    <a href="wordlists/example.csv" download className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Download Template</a>
-                </div>
-            </div>
-            <div className="mt-2">
-              <a href="wordlists/example.csv" download className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
-                Download Template
-              </a>
-            </div>
-        </div>
-        
-        {missedWordCount > 0 && (
-            <div className="bg-white/10 p-4 rounded-lg mb-8">
-                <label className="flex items-center space-x-3">
-                    <input type="checkbox" checked={includeMissedWords} onChange={e => setIncludeMissedWords(e.target.checked)} />
-                    <span>Include {missedWordCount} missed words from previous sessions</span>
-                </label>
-            </div>
         )}
-
-        {error && <p className="text-red-300 text-center mb-4">{error}</p>}
-        
-        <div className="flex flex-col md:flex-row gap-4 mt-8">
-            <button onClick={() => handleStart(false)} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Custom Game</button>
-            <button onClick={() => handleStart(true)} className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Session Challenge</button>
-        </div>
-        <div className="mt-4 text-center">
-            <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold">View Achievements</button>
-        </div>
+        <GameOptions 
+          options={options}
+          setOptions={setOptions}
+        />
       </div>
     </div>
   );

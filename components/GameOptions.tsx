@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
 
-export interface OptionsState {
+interface OptionsState {
+  soundEnabled: boolean;
+  musicEnabled: boolean;
+  musicStyle: string;
+  musicVolume: number;
+  teacherMode: boolean;
   skipPenaltyType: 'lives' | 'points';
   skipPenaltyValue: number;
   initialDifficulty: number;
   progressionSpeed: number;
-  soundEnabled: boolean;
   effectsEnabled: boolean;
   theme: string;
-  teacherMode: boolean;
-  musicStyle: string;
-  musicVolume: number;
 }
 
 interface GameOptionsProps {
@@ -27,6 +28,10 @@ const GameOptions: React.FC<GameOptionsProps> = ({ options, setOptions }) => {
   useEffect(() => {
     localStorage.setItem('soundEnabled', String(options.soundEnabled));
   }, [options.soundEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem('musicEnabled', String(options.musicEnabled));
+  }, [options.musicEnabled]);
 
   useEffect(() => {
     localStorage.setItem('musicStyle', options.musicStyle);
@@ -118,6 +123,14 @@ const GameOptions: React.FC<GameOptionsProps> = ({ options, setOptions }) => {
             onChange={e => setOptions(o => ({ ...o, soundEnabled: e.target.checked }))}
           />
           <span>Enable Sound</span>
+        </label>
+        <label className="flex items-center space-x-3 mb-2">
+          <input
+            type="checkbox"
+            checked={options.musicEnabled}
+            onChange={e => setOptions(o => ({ ...o, musicEnabled: e.target.checked }))}
+          />
+          <span>Enable Music</span>
         </label>
         <label className="flex items-center space-x-3">
           <input

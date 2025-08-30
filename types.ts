@@ -93,3 +93,24 @@ export const defaultAchievements: Achievement[] = [
     threshold: 100,
   },
 ];
+
+import React from 'react';
+
+export interface OptionsState {
+  soundEnabled: boolean;
+  musicEnabled: boolean;
+  musicStyle: string;
+  musicVolume: number;
+  teacherMode: boolean;
+  skipPenaltyType: 'lives' | 'points';
+  skipPenaltyValue: number;
+  initialDifficulty: number;
+  progressionSpeed: number;
+  effectsEnabled: boolean;
+  theme: string;
+}
+
+declare module '*.svg' {
+  const content: any;
+  export default content;
+}
