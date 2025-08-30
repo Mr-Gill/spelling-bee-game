@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { GameConfig, OptionsState } from './types/game';
 import { Participant, Team } from './types/participant';
 import { parseWordList } from './utils/parseWordList';
+
+type GameMode = 'team' | 'individual';
 import WordListPrompt from './components/WordListPrompt';
 import useRoster from '../hooks/useRoster';
 
@@ -91,7 +93,7 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
     const newParticipant: Participant = {
       id: uuidv4(),
       name: name.trim(),
-      avatar: availableAvatars[Math.floor(Math.random() * availableAvatars.length)],
+      avatar: getRandomAvatar(),
       score: 0,
       lives: startingLives,
       teamId: null,
@@ -103,17 +105,6 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
       incorrect: 0,
       wordsAttempted: 0,
       wordsCorrect: 0
-      avatar: getRandomAvatar(),
-      score: 0,
-      lives: 3,
-      teamId: '',
-      difficulty: difficulty,
-      wordsSpelledCorrectly: [],
-      wordsSpelledIncorrectly: [],
-      currentStreak: 0,
-      highestStreak: 0,
-      lastWord: '',
-      isActive: true
     };
     
     setParticipants(prev => [...prev, newParticipant]);

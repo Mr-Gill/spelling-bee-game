@@ -9,19 +9,74 @@ interface ShopScreenProps {
 type AvatarType = 'bee' | 'book' | 'trophy' | 'wizard' | 'ninja';
 
 interface ShopItem {
-  id: AvatarType | string;
+  id: string;
   name: string;
+  description: string;
   icon: string;
   price: number;
-  type: "avatar" | "accessory";
+  type: "avatar" | "accessory" | "help";
+  cooldown?: number; // in seconds
+  effect?: () => void;
 }
 
 const shopItems: ShopItem[] = [
-  { id: "wizard", name: "Wizard Avatar", icon: "/img/avatars/bee.svg", price: 50, type: "avatar" },
-  { id: "top-hat", name: "Top Hat", icon: "/img/avatars/book.svg", price: 30, type: "accessory" },
+  { 
+    id: "wizard", 
+    name: "Wizard Avatar", 
+    description: "A magical wizard avatar with special powers",
+    icon: "/img/avatars/bee.svg", 
+    price: 50, 
+    type: "avatar" 
+  },
+  { 
+    id: "top-hat", 
+    name: "Top Hat", 
+    description: "A fancy top hat for your avatar",
+    icon: "/img/avatars/book.svg", 
+    price: 30, 
+    type: "accessory" 
+  },
+  {
+    id: "hint-letter",
+    name: "Hint: Reveal a Letter",
+    description: "Reveals one correct letter in the current word",
+    icon: "?",
+    price: 20,
+    type: "help",
+    cooldown: 60
+  },
+  {
+    id: "hint-definition",
+    name: "Hint: Show Definition",
+    description: "Shows the definition of the current word",
+    icon: "D",
+    price: 15,
+    type: "help",
+    cooldown: 30
+  },
+  {
+    id: "extra-time",
+    name: "Extra Time",
+    description: "Adds 30 seconds to the current round's timer",
+    icon: "⏱️",
+    price: 25,
+    type: "help",
+    cooldown: 90
+  },
+  {
+    id: "skip-word",
+    name: "Skip Word",
+    description: "Skip the current word without penalty",
+    icon: "⏭️",
+    price: 40,
+    type: "help",
+    cooldown: 120
+  }
 ];
 
 const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
+  // Cooldown timers for help items
+  const [cooldowns, setCooldowns] = React.useState<Record<string, number>>({});
   const [coins, setCoins] = React.useState(() => {
     if (typeof window === "undefined") return 0;
     const stored = localStorage.getItem("coins");
@@ -57,8 +112,37 @@ const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
     localStorage.setItem("equippedAvatar", currentAvatar);
   }, [currentAvatar]);
 
+  // Update cooldowns every second
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCooldowns(prevCooldowns => {
+        const updated = { ...prevCooldowns };
+        Object.keys(updated).forEach(key => {
+          if (updated[key] > 0) {
+            updated[key]--;
+            if (updated[key] <= 0) {
+              delete updated[key];
+            }
+          }
+        });
+        return Object.keys(updated).length ? updated : {};
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   const purchaseItem = (item: ShopItem) => {
-    if (coins < item.price) return;
+    if (coins < item.price) {
+      alert('Not enough coins!');
+      return;
+    }
+    
+    // Check cooldown for help items
+    if (item.type === 'help' && cooldowns[item.id]) {
+      alert(`This item is on cooldown for ${cooldowns[item.id]} more seconds`);
+      return;
+    }
+
     const newCoins = coins - item.price;
     setCoins(newCoins);
     localStorage.setItem("coins", String(newCoins));
@@ -67,18 +151,47 @@ const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
       const updated = [...ownedAvatars, item.id];
       setOwnedAvatars(updated);
       localStorage.setItem("ownedAvatars", JSON.stringify(updated));
-    }
-    if (item.type === "accessory" && !ownedAccessories.includes(item.id)) {
+    } else if (item.type === "accessory" && !ownedAccessories.includes(item.id)) {
       const updated = [...ownedAccessories, item.id];
       setOwnedAccessories(updated);
       localStorage.setItem("ownedAccessories", JSON.stringify(updated));
+    } else if (item.type === 'help') {
+      // Apply help item effect
+      if (item.effect) {
+        item.effect();
+      }
+      
+      // Set cooldown
+      if (item.cooldown) {
+        setCooldowns(prev => ({
+          ...prev,
+          [item.id]: item.cooldown!
+        }));
+      }
+      
+      // Close shop after using a help item
+      onBack();
+      return; // Don't proceed with normal purchase flow
     }
   };
 
   const isOwned = (item: ShopItem) => {
-    return item.type === "avatar"
-      ? ownedAvatars.includes(item.id)
-      : ownedAccessories.includes(item.id);
+    if (item.type === "avatar") {
+      return ownedAvatars.includes(item.id);
+    } else if (item.type === "accessory") {
+      return ownedAccessories.includes(item.id);
+    }
+    return false; // Help items are never "owned"
+  };
+  
+  const isOnCooldown = (item: ShopItem) => {
+    return item.type === 'help' && cooldowns[item.id] > 0;
+  };
+  
+  const formatCooldown = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   // Focus management for accessibility
@@ -163,63 +276,77 @@ const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
           role="list"
           aria-label="List of available items for purchase"
         >
-          {shopItems.map((item) => {
-            const owned = isOwned(item);
-            return (
-              <article
-                key={item.id}
-                className={`bg-white/10 p-4 rounded-lg flex items-center justify-between ${
-                  owned ? 'ring-2 ring-green-400' : ''
-                }`}
-                aria-labelledby={`${item.id}-name`}
-                aria-describedby={`${item.id}-desc`}
-              >
-                <div className="flex items-center gap-4">
-                  <img 
-                    src={item.icon} 
-                    alt="" 
-                    className="w-16 h-16" 
-                    aria-hidden="true"
-                  />
-                  <div>
-                    <h3 
-                      id={`${item.id}-name`}
-                      className="font-bold text-lg"
-                    >
-                      {item.name}
-                    </h3>
-                    <p id={`${item.id}-desc`}>
-                      <span className="sr-only">Price: </span>
-                      <span aria-hidden="true">🪙</span>
-                      <span className="ml-1">{item.price} coins</span>
-                    </p>
+          {shopItems.map((item) => (
+            <div
+              key={item.id}
+              className={`p-4 border rounded-lg mb-4 ${
+                isOwned(item) 
+                  ? 'bg-green-50 border-green-200' 
+                  : isOnCooldown(item)
+                    ? 'bg-gray-50 opacity-75'
+                    : 'bg-white hover:shadow-md'
+              } transition-all`}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start space-x-4 flex-1">
+                  <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center bg-blue-100 rounded-lg">
+                    {item.icon.startsWith('/') ? (
+                      <img src={item.icon} alt="" className="w-8 h-8" />
+                    ) : (
+                      <span className="text-xl">{item.icon}</span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-gray-900">{item.name}</h3>
+                    {item.description && (
+                      <p className="text-sm text-gray-600 mt-1">
+                        {item.description}
+                      </p>
+                    )}
+                    <div className="mt-2 flex items-center justify-between">
+                      <span className="text-sm font-medium text-blue-700">
+                        {item.price} coins
+                      </span>
+                      {item.type === 'help' && item.cooldown && (
+                        <span className="text-xs text-gray-500">
+                          {isOnCooldown(item) 
+                            ? `Cooldown: ${formatCooldown(cooldowns[item.id])}`
+                            : `Cooldown: ${formatCooldown(item.cooldown)}`
+                          }
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-                {owned ? (
-                  <span 
-                    className="text-green-400 font-bold px-4 py-2"
-                    aria-label={`${item.name} already owned`}
-                  >
-                    Owned
-                  </span>
-                ) : (
+                <div className="flex-shrink-0">
                   <button
                     onClick={() => purchaseItem(item)}
-                    disabled={coins < item.price}
-                    className={`px-4 py-2 rounded font-medium focus:ring-2 focus:ring-offset-2 focus:outline-none ${
-                      coins >= item.price
-                        ? 'bg-green-500 hover:bg-green-600 text-white focus:ring-green-400'
-                        : 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                    disabled={isOwned(item) || isOnCooldown(item)}
+                    className={`px-3 py-1.5 rounded text-sm font-medium ${
+                      isOwned(item)
+                        ? 'bg-green-100 text-green-800 cursor-default'
+                        : isOnCooldown(item)
+                          ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                          : 'bg-blue-600 text-white hover:bg-blue-700'
                     }`}
-                    aria-label={`Buy ${item.name} for ${item.price} coins`}
-                    aria-disabled={coins < item.price}
+                    aria-label={
+                      isOwned(item) 
+                        ? 'Already owned' 
+                        : isOnCooldown(item)
+                          ? `On cooldown for ${formatCooldown(cooldowns[item.id])}`
+                          : `Buy ${item.name}`
+                    }
                   >
-                    Buy
+                    {isOwned(item) 
+                      ? 'Owned' 
+                      : isOnCooldown(item)
+                        ? 'On Cooldown'
+                        : 'Buy'}
                   </button>
-                )}
-              </article>
-            );
-          })}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </div>
@@ -227,4 +354,3 @@ const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
 };
 
 export default ShopScreen;
-

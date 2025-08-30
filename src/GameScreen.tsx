@@ -1,5 +1,6 @@
-import React from "react";
-import { SkipForward, Play, Pause, Volume2, VolumeX, Users } from "lucide-react";
+import { FC, useState, useEffect, useCallback } from 'react';
+import { config } from './config';
+import { Play, Pause, Volume2, VolumeX, SkipForward, Users } from 'lucide-react';
 import {
   GameConfig,
   Word,
@@ -15,7 +16,15 @@ import letterCorrectSoundFile from "../audio/letter-correct.mp3";
 import letterWrongSoundFile from "../audio/letter-wrong.mp3";
 import shopSoundFile from "../audio/shop.mp3";
 import loseLifeSoundFile from "../audio/lose-life.mp3";
-import beeImg from '../img/avatars/bee.svg';
+import { AvatarType } from './types/avatar';
+
+// Default avatar paths
+const defaultAvatars = {
+  bee: `${config.publicUrl}/img/avatars/bee.svg`,
+  book: `${config.publicUrl}/img/avatars/book.svg`,
+  trophy: `${config.publicUrl}/img/avatars/trophy.svg`
+} as const;
+
 import { launchConfetti } from "./utils/confetti";
 import { speak } from "./utils/tts";
 import useSound from "./utils/useSound";
@@ -24,10 +33,13 @@ import useWordSelection, { difficultyOrder } from "./utils/useWordSelection";
 import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
-import { AudioSettings } from "./components/AudioSettings";
+import { AudioSettings } from './components/AudioSettings';
 import { useAudio } from "./AudioContext";
 import CircularTimer from "./components/CircularTimer";
 import PhonicsBreakdown from "./components/PhonicsBreakdown";
+
+const difficultyOrder = ['easy', 'medium', 'hard'] as const;
+type Difficulty = typeof difficultyOrder[number];
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -35,6 +47,8 @@ interface GameScreenProps {
   config: GameConfig;
   onEndGame: (results: GameResults) => void;
 }
+
+type GameScreenComponent = FC<GameScreenProps>;
 
 interface Feedback {
   message: string;
@@ -45,7 +59,7 @@ interface Feedback {
 const MAX_SKIP_TURNS = 1;
 const MAX_ASK_FRIEND = 1;
 
-const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
+const GameScreen: GameScreenComponent = ({ config, onEndGame }) => {
   const isTeamMode = config.gameMode === "team";
   const [participants, setParticipants] = React.useState<
     (Participant | Team)[]
@@ -139,6 +153,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     if (typeof window === "undefined") return "";
     return localStorage.getItem("equippedAvatar") || "";
   });
+  const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>('medium');
   React.useEffect(() => {
     localStorage.setItem("equippedAvatar", currentAvatar);
   }, [currentAvatar]);
@@ -545,7 +560,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         </div>
       )}
       <div className="absolute top-8 left-8 flex gap-8 items-center">
-        <img src={`${process.env.PUBLIC_URL || ''}/img/bee.svg`} alt="Bee icon" className="w-12 h-12" />
+        <img src={`${config.publicUrl}/img/bee.svg`} alt="Bee icon" className="w-12 h-12" />
         {participants.map((p, index) => (
           <div key={index} className="text-center bg-white/10 p-4 rounded-lg">
             <div className="text-2xl font-bold">{p.name}</div>
@@ -604,7 +619,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
       {currentWord && (
         <div className="w-full max-w-4xl text-center">
-          <img src={`${process.env.PUBLIC_URL || ''}/img/books.svg`} alt="Book icon" className="w-10 h-10 mx-auto mb-6" />
+          <img src={`${config.publicUrl}/img/books.svg`} alt="Book icon" className="w-10 h-10 mx-auto mb-6" />
           <h2 className="text-4xl font-bold mb-6 uppercase font-sans">
             Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
           </h2>
