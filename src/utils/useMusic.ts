@@ -44,7 +44,9 @@ const useMusic = (
   const buildSrc = useCallback((trackStyle: string, trackVariant: 'instrumental' | 'vocal') => {
     const basePath = "audio/It's a Spelling Bee!";
     const variantSuffix = trackVariant === 'instrumental' ? ' Instrumental' : '';
-    return `${basePath} (${trackStyle}${variantSuffix}).mp3`;
+    // Map 'default' style to 'Country' since we don't have default versions
+    const style = trackStyle === 'default' ? 'Country' : trackStyle;
+    return `${basePath} (${style}${variantSuffix}).mp3`;
   }, []);
 
   const loadTracks = useCallback(
