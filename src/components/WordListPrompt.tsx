@@ -1,78 +1,84 @@
 import React, { useState } from 'react';
-import type { Word } from '../types';
-import { extractTextFromFile, generateWords } from '../utils/textExtractor';
+import { promptPresets, PromptCategory } from '../constants/promptPresets';
 
-const WordListPrompt: React.FC = () => {
-  const [bookTitle, setBookTitle] = useState('');
-  const [passage, setPassage] = useState('');
-  const [words, setWords] = useState<Word[]>([]);
-  const [loading, setLoading] = useState(false);
+interface WordListPromptProps {
+  value: string;
+  onChange: (value: string) => void;
+}
 
-  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+const tabLabels: Record<PromptCategory | 'custom', string> = {
+  currentEvents: 'Current Events',
+  books: 'Books',
+  subjects: 'Subjects',
+  custom: 'Saved',
+};
+
+const WordListPrompt: React.FC<WordListPromptProps> = ({ value, onChange }) => {
+  const [activeTab, setActiveTab] = useState<PromptCategory | 'custom'>('currentEvents');
+  const [customPrompts, setCustomPrompts] = useState<string[]>(() => {
     try {
-      const text = await extractTextFromFile(file);
-      setPassage(text);
-    } catch (err) {
-      console.error('Failed to extract text', err);
+      return JSON.parse(localStorage.getItem('customPrompts') || '[]');
+    } catch {
+      return [];
     }
+  });
+
+  const categories = { ...promptPresets, custom: customPrompts } as Record<PromptCategory | 'custom', string[]>;
+  const tabs = Object.keys(categories) as (PromptCategory | 'custom')[];
+
+  const handleSelectPrompt = (prompt: string) => {
+    onChange(prompt);
   };
 
-  const handleGenerate = async () => {
-    if (!bookTitle || !passage) return;
-    setLoading(true);
-    try {
-      const generated = await generateWords(passage, bookTitle);
-      setWords(generated);
-    } catch (err) {
-      console.error('Failed to generate words', err);
-    } finally {
-      setLoading(false);
-    }
+  const handleSavePrompt = () => {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    const updated = Array.from(new Set([...customPrompts, trimmed]));
+    setCustomPrompts(updated);
+    localStorage.setItem('customPrompts', JSON.stringify(updated));
   };
 
   return (
-    <div className="bg-white/10 p-6 rounded-lg">
-      <div className="mb-4">
-        <label className="block mb-2 font-bold">Book Title</label>
+    <div className="flex-1">
+      <div className="flex gap-2 mb-2">
+        {tabs.map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-2 py-1 rounded ${activeTab === tab ? 'bg-yellow-300 text-black' : 'bg-white/20 text-white'}`}
+          >
+            {tabLabels[tab]}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-2 mb-2">
+        {categories[activeTab].map(prompt => (
+          <button
+            key={prompt}
+            onClick={() => handleSelectPrompt(prompt)}
+            className="bg-purple-500 hover:bg-purple-600 text-white px-2 py-1 rounded"
+          >
+            {prompt}
+          </button>
+        ))}
+      </div>
+      <div className="flex gap-2">
         <input
           type="text"
-          value={bookTitle}
-          onChange={e => setBookTitle(e.target.value)}
-          className="w-full p-2 rounded-md bg-white/20 text-white"
-          placeholder="e.g., Alice in Wonderland"
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          className="p-2 rounded-md bg-white/20 text-white flex-1"
+          placeholder="Topic (optional)"
         />
+        <button
+          onClick={handleSavePrompt}
+          className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold"
+        >
+          Save
+        </button>
       </div>
-      <div className="mb-4">
-        <label className="block mb-2 font-bold">Paste Passage</label>
-        <textarea
-          rows={4}
-          value={passage}
-          onChange={e => setPassage(e.target.value)}
-          className="w-full p-2 rounded-md bg-white/20 text-white"
-          placeholder="Paste text here or upload a file below"
-        ></textarea>
-      </div>
-      <div className="mb-4">
-        <label className="block mb-2 font-bold">Upload Passage</label>
-        <input type="file" accept=".txt,.pdf" onChange={handleFile} className="w-full" />
-      </div>
-      <button
-        onClick={handleGenerate}
-        disabled={!bookTitle || !passage || loading}
-        className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md disabled:opacity-50"
-      >
-        {loading ? 'Generating...' : 'Generate Words'}
-      </button>
-      {words.length > 0 && (
-        <pre className="mt-4 bg-black/30 p-4 rounded text-sm overflow-x-auto">
-          {JSON.stringify(words, null, 2)}
-        </pre>
-      )}
     </div>
   );
 };
 
 export default WordListPrompt;
-
