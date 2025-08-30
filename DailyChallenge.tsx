@@ -1,4 +1,7 @@
 import { Word } from './types';
+import { useState } from 'react';
+import { getDailyChallenge } from './utils/challenges';
+import GameScreen from './GameScreen'; // Assuming GameScreen is a separate component
 
 const DATE_KEY = 'dailyChallengeDates';
 const HIGH_KEY = 'dailyChallengeHighest';
@@ -71,3 +74,17 @@ export const recordDailyCompletion = (): StreakInfo => {
   localStorage.setItem(HIGH_KEY, String(info.highestStreak));
   return info;
 };
+
+const DailyChallenge = () => {
+  const [todayChallenge, setTodayChallenge] = useState(getDailyChallenge());
+  
+  return (
+    <GameScreen 
+      mode="daily"
+      words={todayChallenge.words}
+      onComplete={(stats) => saveDailyChallengeResults(stats)}
+    />
+  );
+};
+
+export default DailyChallenge;

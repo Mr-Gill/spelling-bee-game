@@ -15,6 +15,8 @@ import useTimer from './utils/useTimer';
 import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
+import AvatarSelector from './components/AvatarSelector';
+import { audioManager } from './utils/audio';
 
 interface GameScreenProps {
   config: GameConfig;
@@ -61,34 +63,35 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [toast, setToast] = React.useState('');
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
+  const [currentAvatar, setCurrentAvatar] = React.useState('');
 
-    const playCorrect = useSound(correctSoundFile, config.soundEnabled);
-    const playWrong = useSound(wrongSoundFile, config.soundEnabled);
-    const playTimeout = useSound(timeoutSoundFile, config.soundEnabled);
-    const playLetterCorrect = useSound(letterCorrectSoundFile, config.soundEnabled);
-    const playLetterWrong = useSound(letterWrongSoundFile, config.soundEnabled);
-    const playShop = useSound(shopSoundFile, config.soundEnabled);
-    const playLoseLife = useSound(loseLifeSoundFile, config.soundEnabled);
+  const playCorrect = useSound(correctSoundFile, config.soundEnabled);
+  const playWrong = useSound(wrongSoundFile, config.soundEnabled);
+  const playTimeout = useSound(timeoutSoundFile, config.soundEnabled);
+  const playLetterCorrect = useSound(letterCorrectSoundFile, config.soundEnabled);
+  const playLetterWrong = useSound(letterWrongSoundFile, config.soundEnabled);
+  const playShop = useSound(shopSoundFile, config.soundEnabled);
+  const playLoseLife = useSound(loseLifeSoundFile, config.soundEnabled);
 
-    const {
-      timeLeft,
-      start: startTimer,
-      pause: pauseTimer,
-      resume: resumeTimer,
-      reset: resetTimer,
-      stop: stopTimer,
-      isPaused,
-    } = useTimer(config.timerDuration, () => {
-      playTimeout();
-      handleIncorrectAttempt();
-    });
-    React.useEffect(() => {
-      if (localStorage.getItem('teacherMode') === 'true') {
-        document.body.classList.add('teacher-mode');
-      } else {
-        document.body.classList.remove('teacher-mode');
-      }
-    }, []);
+  const {
+    timeLeft,
+    start: startTimer,
+    pause: pauseTimer,
+    resume: resumeTimer,
+    reset: resetTimer,
+    stop: stopTimer,
+    isPaused,
+  } = useTimer(config.timerDuration, () => {
+    playTimeout();
+    handleIncorrectAttempt();
+  });
+  React.useEffect(() => {
+    if (localStorage.getItem('teacherMode') === 'true') {
+      document.body.classList.add('teacher-mode');
+    } else {
+      document.body.classList.remove('teacher-mode');
+    }
+  }, []);
 
   React.useEffect(() => {
     if (currentWord) {
@@ -409,6 +412,20 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
           {isPaused ? 'Resume' : 'Pause'}
         </button>
       </div>
+
+      <audio-controls className="audio-controls">
+        <button 
+          className={`audio-btn ${audioManager.muted ? 'muted' : ''}`}
+          onClick={() => audioManager.toggleMute()}
+        >
+          {audioManager.muted ? '🔇' : '🔊'}
+        </button>
+      </audio-controls>
+
+      <AvatarSelector 
+        currentAvatar={currentAvatar}
+        onSelect={(avatar) => setCurrentAvatar(avatar)}
+      />
 
       {currentWord && (
         <div className="w-full max-w-4xl text-center">

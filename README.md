@@ -421,6 +421,30 @@ Whether you're teaching phonics to elementary students, vocabulary to middle sch
 
 ---
 
+## New Features
+
+### Audio System
+- Consolidated audio management with volume controls
+- Added mute toggle button in-game
+
+### UI Enhancements
+- Avatar selection system
+- Theme customization
+- Confetti animations on achievements
+
+### Game Modes
+- Daily Challenge mode
+- Teacher Mode toggle
+
+### Achievements System
+- First Victory
+- Perfect Game
+- Speed Demon
+- Word Master
+- Daily Streak
+
+---
+
 <div align="center">
 
 **Built with ❤️ for educators by educators**

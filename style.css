@@ -193,6 +193,35 @@ video {
     background: rgba(255, 255, 255, 0.5);
 }
 
+/* Audio controls */
+.audio-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    gap: 10px;
+}
+
+.audio-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.audio-btn:hover {
+    transform: scale(1.1);
+}
+
+.audio-btn.muted {
+    opacity: 0.5;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .text-8xl {
