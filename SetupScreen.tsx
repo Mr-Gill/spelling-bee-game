@@ -3,11 +3,18 @@ import { Word, Participant, GameConfig } from './types';
 import beeImg from './img/avatars/bee.svg';
 import bookImg from './img/avatars/book.svg';
 import trophyImg from './img/avatars/trophy.svg';
+<<<<<<< HEAD
 import { parseWordList as parseWordListUtil } from './utils/parseWordList';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
+=======
+import TeamForm from './components/TeamForm';
+import StudentRoster from './components/StudentRoster';
+import GameOptions, { OptionsState } from './components/GameOptions';
+import useRoster from './hooks/useRoster';
+>>>>>>> origin/codex/create-and-organize-setup-ui-subcomponents
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
@@ -27,7 +34,27 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     { name: 'Team Beta', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
   ];
 
+<<<<<<< HEAD
   const [teams, setTeams] = useState<Participant[]>(getDefaultTeams());
+=======
+  const {
+    participants: teams,
+    addParticipant: addTeamParticipant,
+    removeParticipant: removeTeam,
+    updateName: updateTeamName,
+    clear: clearTeams,
+  } = useRoster('teams', getDefaultTeams());
+
+  const {
+    participants: students,
+    addParticipant: addStudentParticipant,
+    removeParticipant: removeStudent,
+    updateName: updateStudentName,
+    clear: clearStudents,
+  } = useRoster('students', []);
+
+  const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
+>>>>>>> origin/codex/create-and-organize-setup-ui-subcomponents
   const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
   const [parsedCustomWords, setParsedCustomWords] = useState<Word[]>([]);
@@ -40,6 +67,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     { label: 'Example TSV', file: 'example.tsv' }
   ];
   const [selectedBundledList, setSelectedBundledList] = useState('');
+<<<<<<< HEAD
   const [students, setStudents] = useState<Participant[]>([]);
   const [studentName, setStudentName] = useState('');
   const [bulkStudentText, setBulkStudentText] = useState('');
@@ -127,43 +155,40 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const createParticipant = (name: string, difficulty: number): Participant => ({
     name: name.trim(), lives: startingLives, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
+=======
+
+  const [options, setOptions] = useState<OptionsState>({
+    skipPenaltyType: 'lives',
+    skipPenaltyValue: 1,
+    initialDifficulty: 0,
+    progressionSpeed: 1,
+    soundEnabled: localStorage.getItem('soundEnabled') !== 'false',
+    effectsEnabled: true,
+    theme: localStorage.getItem('theme') ?? 'light',
+    teacherMode: localStorage.getItem('teacherMode') === 'true',
+    musicStyle: localStorage.getItem('musicStyle') ?? 'Funk',
+    musicVolume: parseFloat(localStorage.getItem('musicVolume') ?? '1'),
+>>>>>>> origin/codex/create-and-organize-setup-ui-subcomponents
   });
 
-  const addTeam = () => updateTeams([...teams, createParticipant('', 0)]);
-  const removeTeam = (index: number) => updateTeams(teams.filter((_, i) => i !== index));
-  const updateTeamName = (index: number, name: string) => {
-    const newTeams = teams.map((team, i) => (i === index ? { ...team, name } : team));
-    updateTeams(newTeams);
-  };
+  const createParticipant = (name: string, difficulty: number): Participant => ({
+    name: name.trim(),
+    lives: 5,
+    points: 0,
+    difficultyLevel: difficulty,
+    streak: 0,
+    attempted: 0,
+    correct: 0,
+    wordsAttempted: 0,
+    wordsCorrect: 0,
+    avatar: getRandomAvatar(),
+  });
 
-  const addStudent = () => {
-    if (studentName.trim()) {
-      updateStudents([...students, createParticipant(studentName, initialDifficulty)]);
-      setStudentName('');
-    }
-  };
+  const addTeam = () => addTeamParticipant(createParticipant('', 0));
 
-  const removeStudent = (index: number) => updateStudents(students.filter((_, i) => i !== index));
-  const updateStudentName = (index: number, name: string) => {
-    const newStudents = students.map((student, i) => (i === index ? { ...student, name } : student));
-    updateStudents(newStudents);
-  };
-
-  const parseStudentNames = (text: string) =>
-    text.split(/\r?\n/).flatMap(line => line.split(',')).map(name => name.trim()).filter(name => name !== '');
-
-  const addBulkStudents = () => {
-    const names = parseStudentNames(bulkStudentText);
-    const existing = new Set(students.map(s => s.name));
-    const uniqueNames = Array.from(new Set(names)).filter(name => !existing.has(name));
-    if (uniqueNames.length === 0) {
-      setBulkStudentError('No new unique names detected.');
-      return;
-    }
-    const newStudents = uniqueNames.map(name => createParticipant(name, initialDifficulty));
-    updateStudents([...students, ...newStudents]);
-    setBulkStudentText('');
-    setBulkStudentError('');
+  const clearRoster = () => {
+    clearTeams();
+    clearStudents();
   };
 
   const randomizeTeams = () => {
@@ -298,16 +323,16 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             setError('Please add at least two teams with names.');
             return;
         }
-        finalParticipants = trimmedTeams.map(t => ({...t, difficultyLevel: initialDifficulty}));
+        finalParticipants = trimmedTeams.map(t => ({...t, difficultyLevel: options.initialDifficulty}));
     } else {
         const trimmedStudents = students.filter(student => student.name.trim() !== "");
         if (trimmedStudents.length < 1 && isSessionChallenge) {
-             finalParticipants = [createParticipant('Player 1', initialDifficulty)];
+             finalParticipants = [createParticipant('Player 1', options.initialDifficulty)];
         } else if (trimmedStudents.length < 2 && !isSessionChallenge) {
             setError('Please add at least two students for a custom game.');
             return;
         } else {
-             finalParticipants = trimmedStudents.map(s => ({...s, difficultyLevel: initialDifficulty}));
+             finalParticipants = trimmedStudents.map(s => ({...s, difficultyLevel: options.initialDifficulty}));
         }
     }
 
@@ -323,7 +348,16 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     
     const config: GameConfig = {
       participants: finalParticipants,
-      gameMode, timerDuration, skipPenaltyType, skipPenaltyValue, soundEnabled, effectsEnabled, difficultyLevel: initialDifficulty, progressionSpeed, musicStyle, musicVolume,
+      gameMode,
+      timerDuration,
+      skipPenaltyType: options.skipPenaltyType,
+      skipPenaltyValue: options.skipPenaltyValue,
+      soundEnabled: options.soundEnabled,
+      effectsEnabled: options.effectsEnabled,
+      difficultyLevel: options.initialDifficulty,
+      progressionSpeed: options.progressionSpeed,
+      musicStyle: options.musicStyle,
+      musicVolume: options.musicVolume,
     };
     onStartGame(config);
   };
@@ -350,17 +384,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         <div className="bg-white/10 p-6 rounded-lg mb-8">
           <h2 className="text-2xl font-bold mb-4">{gameMode === 'team' ? 'Teams 👥' : 'Students 🧑‍🎓'}</h2>
           {gameMode === 'team' ? (
-            <>
-              {teams.map((team, index) => (
-                <div key={index} className="flex items-center gap-2 mb-2">
-                  <img src={team.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
-                  <input type="text" value={team.name} onChange={e => updateTeamName(index, e.target.value)} placeholder={`Team ${index + 1} Name`} className="flex-grow p-2 rounded-md bg-white/20 text-white" />
-                  {teams.length > 1 && (<button onClick={() => removeTeam(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
-                </div>
-              ))}
-              <button onClick={addTeam} className="mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded">Add Team</button>
-            </>
+            <TeamForm
+              teams={teams}
+              avatars={avatars}
+              addTeam={addTeam}
+              removeTeam={removeTeam}
+              updateTeamName={updateTeamName}
+            />
           ) : (
+<<<<<<< HEAD
             <>
               <div className="flex gap-4 mb-4">
                 <input type="text" value={studentName} onChange={e => setStudentName(e.target.value)} className="flex-grow p-2 rounded-md bg-white/20 text-white" placeholder="Student name" />
@@ -389,10 +421,22 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
               ))}
             </>
+=======
+            <StudentRoster
+              students={students}
+              avatars={avatars}
+              addParticipant={addStudentParticipant}
+              removeStudent={removeStudent}
+              updateStudentName={updateStudentName}
+              createParticipant={createParticipant}
+              initialDifficulty={options.initialDifficulty}
+            />
+>>>>>>> origin/codex/create-and-organize-setup-ui-subcomponents
           )}
           <button onClick={clearRoster} className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Clear Saved Roster</button>
         </div>
 
+<<<<<<< HEAD
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Starting Lives ❤️</h2>
@@ -456,6 +500,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
             </div>
         </div>
+=======
+        <GameOptions options={options} setOptions={setOptions} />
+>>>>>>> origin/codex/create-and-organize-setup-ui-subcomponents
         
         <div className="bg-white/10 p-6 rounded-lg mb-8 mt-8">
             <h2 className="text-2xl font-bold mb-4">Add Custom Word List 📝</h2>
