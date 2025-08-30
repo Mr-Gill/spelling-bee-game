@@ -82,23 +82,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       playTimeout();
       handleIncorrectAttempt();
     });
-const [attemptedParticipants, setAttemptedParticipants] = React.useState<Set<number>>(new Set());
-    const [missedWords, setMissedWords] = React.useState<Word[]>([]);
-    const [unlockedAchievements, setUnlockedAchievements] = React.useState<string[]>(() => {
-      if (typeof window === 'undefined') return [];
-      try {
-        return JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
-      } catch {
-        return [];
-      }
-    });
-    React.useEffect(() => {
-      if (localStorage.getItem('teacherMode') === 'true') {
-        document.body.classList.add('teacher-mode');
-      } else {
-        document.body.classList.remove('teacher-mode');
-      }
-    }, []);
+
+  React.useEffect(() => {
+    if (localStorage.getItem('teacherMode') === 'true') {
+      document.body.classList.add('teacher-mode');
+    } else {
+      document.body.classList.remove('teacher-mode');
+    }
+  }, []);
 
   React.useEffect(() => {
     if (currentWord) {
