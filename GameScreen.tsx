@@ -451,7 +451,19 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       <div className="absolute top-8 left-8 flex gap-8 items-center">
         <img src="img/bee.svg" alt="Bee icon" className="w-12 h-12" />
         {participants.map((p, index) => (
-          <div key={index} className="text-center scorecard">
+          <div
+            key={index}
+            className={`text-center scorecard ${
+              index === currentParticipantIndex ? "active-player" : ""
+            }`}
+          >
+            {p.avatar && (
+              <img
+                src={p.avatar}
+                alt={`${p.name} avatar`}
+                className="w-12 h-12 mx-auto mb-2 rounded-full"
+              />
+            )}
             <div className="text-2xl font-bold">{p.name}</div>
             <div className="text-4xl font-bold text-yellow-300">
               {"❤️".repeat(p.lives)}

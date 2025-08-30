@@ -61,6 +61,25 @@ body.teacher-mode .scorecard {
     margin-bottom: 1.5em;
 }
 
+.scorecard {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.scorecard img {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.scorecard.active-player {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px var(--primary-color);
+    border-radius: 0.5rem;
+}
+
+.scorecard.active-player img {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px var(--primary-color);
+}
+
 img,
 video {
     max-width: 100%;
