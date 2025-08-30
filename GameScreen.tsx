@@ -427,7 +427,6 @@ const GameScreen: React.FC<GameScreenProps> = ({
       onToggleMusicPlaying();
     }
     onQuit();
-{{ ... }}
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
