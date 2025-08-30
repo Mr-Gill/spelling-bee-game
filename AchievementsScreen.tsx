@@ -14,11 +14,11 @@ type AchievementProps = {
 };
 
 const AchievementBadge = ({ unlocked, title, description, icon }: AchievementProps) => (
-  <div className={`achievement ${unlocked ? 'unlocked' : 'locked'}`}>
-    <img src={icon} alt={title} />
-    <h3>{title}</h3>
-    <p>{description}</p>
-  </div>
+    <div className={`achievement ${unlocked ? 'unlocked' : 'locked'} font-body`}>
+      <img src={icon} alt={title} />
+      <h3 className="uppercase font-heading">{title}</h3>
+      <p>{description}</p>
+    </div>
 );
 
 const AchievementsScreen: React.FC<AchievementsScreenProps> = ({ onBack }) => {
@@ -34,8 +34,8 @@ const AchievementsScreen: React.FC<AchievementsScreenProps> = ({ onBack }) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-600 to-teal-800 p-8 text-white">
-      <h1 className="text-4xl text-center mb-8">Achievements</h1>
+      <div className="min-h-screen bg-gradient-to-br from-green-600 to-teal-800 p-8 text-white font-body">
+        <h1 className="text-4xl text-center mb-8 uppercase font-heading">Achievements</h1>
       <div className="achievements-grid max-w-xl mx-auto">
         {Object.entries(achievements).map(([key, achievement]) => (
           <AchievementBadge

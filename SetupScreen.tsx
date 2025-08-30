@@ -262,18 +262,18 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
   
   return (
-    <div className="min-h-screen p-8 text-white">
+    <div className="min-h-screen p-8 text-white font-body">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
                 <img src="icons/icon.svg" alt="Bee mascot" className="w-12 h-12 md:w-16 md:h-16" />
-                <h1 className="text-4xl md:text-6xl font-bold text-yellow-300">🏆 SPELLING BEE CHAMPIONSHIP</h1>
+                <h1 className="text-4xl md:text-6xl font-bold text-yellow-300 uppercase font-heading">🏆 SPELLING BEE CHAMPIONSHIP</h1>
             </div>
             <p className="text-xl md:text-2xl">Get ready to spell your way to victory!</p>
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4 text-center">Select Game Mode 🎮</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center uppercase font-heading">Select Game Mode 🎮</h2>
           <div className="flex justify-center gap-4">
             <button onClick={() => setGameMode('team')} className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'team' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}>Team</button>
             <button onClick={() => setGameMode('individual')} className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'individual' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}>Individual</button>
@@ -281,7 +281,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         </div>
         
         <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4">{gameMode === 'team' ? 'Teams 👥' : 'Students 🧑‍🎓'}</h2>
+          <h2 className="text-2xl font-bold mb-4 uppercase font-heading">{gameMode === 'team' ? 'Teams 👥' : 'Students 🧑‍🎓'}</h2>
           {gameMode === 'team' ? (
             <>
               {teams.map((team, index) => (
@@ -318,7 +318,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Skip Penalty ⏭️</h2>
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Skip Penalty ⏭️</h2>
                 <div className="flex gap-4">
                     <select value={skipPenaltyType} onChange={e => setSkipPenaltyType(e.target.value as 'lives' | 'points')} className="p-2 rounded-md bg-white/20 text-white">
                         <option value="lives">Lives</option>
@@ -328,7 +328,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Difficulty Settings 🎚️</h2>
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Difficulty Settings 🎚️</h2>
                 <div className="flex gap-4">
                     <div>
                         <label className="block mb-2">Initial Difficulty</label>
@@ -345,12 +345,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Audio & Effects 🔊✨</h2>
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Audio & Effects 🔊✨</h2>
                 <label className="flex items-center space-x-3 mb-2"><input type="checkbox" checked={soundEnabled} onChange={e => setSoundEnabled(e.target.checked)} /><span>Enable Sound</span></label>
                 <label className="flex items-center space-x-3"><input type="checkbox" checked={effectsEnabled} onChange={e => setEffectsEnabled(e.target.checked)} /><span>Enable Visual Effects</span></label>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Theme 🎨</h2>
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Theme 🎨</h2>
                 <select value={theme} onChange={e => { const t = e.target.value; setTheme(t); localStorage.setItem('theme', t); applyTheme(t); }} className="p-2 rounded-md bg-white/20 text-white">
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
@@ -358,11 +358,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </select>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Teacher Mode 👩‍🏫</h2>
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Teacher Mode 👩‍🏫</h2>
                 <label className="flex items-center gap-2 text-white"><input type="checkbox" checked={teacherMode} onChange={e => setTeacherMode(e.target.checked)} /><span>Enable larger fonts and spacing</span></label>
             </div>
              <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Music 🎵</h2>
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Music 🎵</h2>
                 <div className="mb-4">
                     <label className="block mb-2">Style</label>
                     <select value={musicStyle} onChange={e => setMusicStyle(e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
@@ -377,7 +377,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         </div>
         
         <div className="bg-white/10 p-6 rounded-lg mb-8 mt-8">
-            <h2 className="text-2xl font-bold mb-4">Add Custom Word List 📝</h2>
+            <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Add Custom Word List 📝</h2>
             <div className="mb-6">
                 <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">Choose Bundled Word List</label>
                 <select id="bundled-list" value={selectedBundledList} onChange={e => setSelectedBundledList(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white">
