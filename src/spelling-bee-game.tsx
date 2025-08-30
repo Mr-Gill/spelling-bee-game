@@ -9,6 +9,8 @@ import ShopScreen from '../ShopScreen';
 import useMusic from './utils/useMusic';
 import { AudioProvider } from './AudioContext';
 
+// Import types
+import type { GameConfig } from './types';
 // --- Type Definitions ---
 type Participant = {
   // Add participant properties here
