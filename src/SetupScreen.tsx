@@ -1,29 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { GameConfig, OptionsState, WordType } from './types';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Participant, Team } from './types/participant';
-import { parseWordList } from './utils/parseWordList';
-import useRoster from '../hooks/useRoster';
-import beeImg from '../img/avatars/bee.svg';
-import bookImg from '../img/avatars/book.svg';
-import trophyImg from '../img/avatars/trophy.svg';
-import WordListPrompt from './components/WordListPrompt';
-import StudentRoster from './components/StudentRoster';
+import { v4 as uuidv4 } from 'uuid';
+import { GameConfig } from './types/game';
+import { OptionsState } from './types/game';
+import { WordType } from './types/word';
+import beeImg from '../img/bee.svg';
+import bookImg from '../img/book.svg';
+import trophyImg from '../img/trophy.svg';
 import TeamForm from './components/TeamForm';
-import GameOptions from './components/GameOptions';
+import StudentRoster from './components/StudentRoster';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
 type WordDatabase = {
-  easy: WordType[];
-  medium: WordType[];
-  tricky: WordType[];
+  easy: any[];
+  medium: any[];
+  tricky: any[];
 };
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
-  onAddCustomWords: (words: WordType[]) => void;
+  onAddCustomWords: (words: any[]) => void;
   onViewAchievements: () => void;
 }
 
@@ -35,12 +35,19 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [startingLives, setStartingLives] = useState(10);
 
   const getDefaultTeams = (): Participant[] => [
-    { name: 'Team Alpha', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
-    { name: 'Team Beta', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
+    { id: uuidv4(), name: 'Team Alpha', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, incorrect: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
+    { id: uuidv4(), name: 'Team Beta', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, incorrect: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
   ];
 
-  const [students, setStudents] = useState<Participant[]>([]);
-  const [teams, setTeams] = useState<Team[]>([]);
+  const [students, setStudents] = useState<Participant[]>([
+    { id: uuidv4(), name: '', avatar: '', score: 0, lives: 3, teamId: null, points: 0, difficultyLevel: 1, streak: 0, attempted: 0, correct: 0, incorrect: 0 },
+    { id: uuidv4(), name: '', avatar: '', score: 0, lives: 3, teamId: null, points: 0, difficultyLevel: 1, streak: 0, attempted: 0, correct: 0, incorrect: 0 },
+  ]);
+
+  const [teams, setTeams] = useState<Team[]>([
+    { id: uuidv4(), name: 'Team 1', students: [], score: 0, lives: 3 },
+    { id: uuidv4(), name: 'Team 2', students: [], score: 0, lives: 3 },
+  ]);
 
   const addStudentParticipant = (student: Participant) => {
     setStudents([...students, student]);
@@ -56,12 +63,18 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const addBulkStudents = (names: string[]) => {
     const newStudents = names.map(name => ({
-      id: `student-${Date.now()}-${Math.random()}`,
+      id: uuidv4(),
       name,
       avatar: avatars[Math.floor(Math.random() * avatars.length)],
       score: 0,
       lives: 3,
       teamId: null,
+      points: 0,
+      difficultyLevel: 1,
+      streak: 0,
+      attempted: 0,
+      correct: 0,
+      incorrect: 0,
     }));
     setStudents([...students, ...newStudents]);
   };
@@ -80,8 +93,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
-  const [parsedCustomWords, setParsedCustomWords] = useState<WordType[]>([]);
-  const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, WordType[]>>({});
+  const [parsedCustomWords, setParsedCustomWords] = useState<any[]>([]);
+  const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, any[]>>({});
   const [includeMissedWords, setIncludeMissedWords] = useState(false);
   const [error, setError] = useState('');
   const bundledWordLists = [
@@ -191,9 +204,22 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setStudentsParticipants([]);
   };
 
-  const createParticipant = (name: string, difficulty: number): Participant => ({
-    name: name.trim(), lives: startingLives, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
-  });
+  const createParticipant = (name: string, difficulty: number): Participant => {
+    return {
+      id: uuidv4(),
+      name,
+      avatar: '',
+      score: 0,
+      lives: 3,
+      teamId: null,
+      points: 0,
+      difficultyLevel: difficulty,
+      streak: 0,
+      attempted: 0,
+      correct: 0,
+      incorrect: 0,
+    };
+  };
 
   const [options, setOptions] = useState<OptionsState>({
     skipPenaltyType: 'lives',
@@ -345,7 +371,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const handleStart = async (isSessionChallenge = false) => {
     if (!options) return;
 
-    let challengeWords: WordType[] = [];
+    let challengeWords: any[] = [];
     if (isSessionChallenge) {
       try {
         const randomList = bundledWordLists[Math.floor(Math.random() * bundledWordLists.length)];
@@ -361,14 +387,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
     let finalParticipants: Participant[];
     if (gameMode === 'team') {
-        const trimmedTeams = teams.filter(team => team.name.trim() !== "");
+        const trimmedTeams = teams.filter(team => team.name && team.name.trim() !== "");
         if (trimmedTeams.length < 2) {
             setError('Please add at least two teams with names.');
             return;
         }
         finalParticipants = trimmedTeams.map(t => ({...t, difficultyLevel: options.initialDifficulty}));
     } else {
-        const trimmedStudents = students.filter(student => student.name.trim() !== "");
+        const trimmedStudents = students.filter(student => student.name && student.name.trim() !== "");
         if (trimmedStudents.length < 1 && isSessionChallenge) {
              finalParticipants = [createParticipant('Player 1', options.initialDifficulty)];
         } else if (trimmedStudents.length < 2 && !isSessionChallenge) {
@@ -381,7 +407,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
     setError('');
     
-    let finalWords: WordType[] = isSessionChallenge ? challengeWords : parsedCustomWords;
+    let finalWords: any[] = isSessionChallenge ? challengeWords : parsedCustomWords;
     if (includeMissedWords && !isSessionChallenge) {
       const extraWords = Object.values(missedWordsCollection).flat();
       finalWords = [...finalWords, ...extraWords];
