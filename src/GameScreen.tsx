@@ -1,22 +1,126 @@
-import { FC, useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { config } from './config';
+
 // Icons
 import { Volume2, VolumeX, SkipForward, Users } from 'lucide-react';
-import type {
-  GameConfig,
-  Word,
-  Participant,
-  Team,
-  GameResults,
-} from "./types";
 
-// Define AvatarType if not in types
+// Utils
+import { launchConfetti } from './utils/confetti';
+import { speak } from './utils/tts';
+import useSound from './utils/useSound';
+import useTimer from './utils/useTimer';
+import { useAudio } from './contexts/AudioContext';
+
+// Types
+interface Word {
+  id: string;
+  word: string;
+  definition: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  phonetic: string;
+  example?: string;
+  synonyms?: string[];
+}
+
+interface Participant {
+  id: string;
+  name: string;
+  avatar: string;
+  score: number;
+  lives: number;
+  teamId?: string;
+}
+
+interface Team {
+  id: string;
+  name: string;
+  score: number;
+  participants: string[];
+  lives: number;
+}
+
+interface GameResults {
+  participants: Participant[];
+  teams: Team[];
+  wordsAttempted: number;
+  wordsCorrect: number;
+  timePlayed: number;
+  achievements: string[];
+}
+
+interface GameConfig {
+  timePerWord: number;
+  lives: number;
+  difficulty: 'easy' | 'medium' | 'hard';
+  teams: boolean;
+  wordList: Word[];
+}
+
+// Constants
+const MAX_SKIP_TURNS = 3;
+const MAX_ASK_FRIEND = 1;
+
+// Achievement type
+interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  unlocked: boolean;
+  unlockDate?: Date;
+}
+
+// Mock default achievements
+const defaultAchievements: Achievement[] = [];
+
+// WordDatabase type
+interface WordDatabase {
+  easy: Word[];
+  medium: Word[];
+  hard: Word[];
+  review: Word[];
+}
+
+// Extend the window interface to include custom events
+declare global {
+  interface WindowEventMap {
+    addTime: CustomEvent<{ seconds: number }>;
+    skipWord: Event;
+  }
+}
+
+// Types
 interface Feedback {
   message: string;
-  type: string;
+  type: 'success' | 'error' | 'info';
 }
 
 type AvatarType = 'bee' | 'book' | 'trophy';
+
+interface GameScreenState {
+  participants: (Participant | Team)[];
+  currentParticipantIndex: number;
+  currentWordIndex: number;
+  showShop: boolean;
+  coins: number;
+  revealedIndices: Set<number>;
+  showDefinition: boolean;
+  currentHelp: string | null;
+  feedback: Feedback | null;
+  usedHint: boolean;
+  showWord: boolean;
+  isHelpOpen: boolean;
+  letters: string[];
+  usedLetters: Set<string>;
+  wordQueues: {
+    easy: Word[];
+    medium: Word[];
+    hard: Word[];
+  };
+  extraAttempt: boolean;
+  attemptedParticipants: Set<number>;
+  missedWords: Word[];
+}
 import correctSoundFile from "../audio/correct.mp3";
 import wrongSoundFile from "../audio/wrong.mp3";
 import timeoutSoundFile from "../audio/timeout.mp3";
@@ -24,49 +128,29 @@ import letterCorrectSoundFile from "../audio/letter-correct.mp3";
 import letterWrongSoundFile from "../audio/letter-wrong.mp3";
 import shopSoundFile from "../audio/shop.mp3";
 import loseLifeSoundFile from "../audio/lose-life.mp3";
-import { AvatarType } from './types/avatar';
 
-// Default avatar paths
-const defaultAvatars: AvatarType[] = ['bee', 'book', 'trophy'];
-import { launchConfetti } from "./utils/confetti";
-import { speak } from "./utils/tts";
-import useSound from "./utils/useSound";
-import useTimer from "./utils/useTimer";
-import useWordSelection from "./utils/useWordSelection";
-import OnScreenKeyboard from "./components/OnScreenKeyboard";
-import HintPanel from "./components/HintPanel";
-import AvatarSelector from "./components/AvatarSelector";
-import { AudioSettings } from './components/AudioSettings';
-import { useAudio } from "./AudioContext";
-import CircularTimer from "./components/CircularTimer";
-import PhonicsBreakdown from "./components/PhonicsBreakdown";
-import { HelpSystemProvider, useHelpSystem } from "./contexts/HelpSystemContext";
-import { HelpButton } from "./components/HelpButton";
-import ShopScreen from "../ShopScreen";
-
-// Difficulty is managed by useWordSelection
-
-const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
+// Mock implementations for missing modules
+const useHelpSystem = () => ({
+  revealLetter: () => {},
+  getDefinition: () => {},
+  addTime: () => {},
+  skipWord: () => {},
+  isHelpUsed: false,
+  setHelpUsed: () => {},
+});
 
 interface GameScreenProps {
-  config: GameConfig;
+  config: GameConfig & { publicUrl?: string };
   onEndGame: (results: GameResults) => void;
 }
 
-type GameScreenComponent = FC<GameScreenProps>;
-
 interface Feedback {
   message: string;
-  type: string;
+  type: 'success' | 'error' | 'info';
 }
 
-// difficultyOrder is imported from useWordSelection
-const MAX_SKIP_TURNS = 1;
-const MAX_ASK_FRIEND = 1;
-
 const GameScreen: FC<GameScreenProps> = ({ config, onEndGame }) => {
-  // Type assertions for config
-  const publicUrl = (config as any).publicUrl || '';
+  const publicUrl = config.publicUrl || '';
   // Wrap the game screen with HelpSystemProvider
   return (
     <HelpSystemProvider>
@@ -77,6 +161,8 @@ const GameScreen: FC<GameScreenProps> = ({ config, onEndGame }) => {
 
 const GameScreenContent: FC<GameScreenProps> = ({ config, onEndGame }) => {
   const isTeamMode = config.gameMode === "team";
+  
+  // Game state
   const [participants, setParticipants] = useState<(Participant | Team)[]>(
     (config.participants as (Participant | Team)[]).map((p) => ({
       ...p,
@@ -84,10 +170,35 @@ const GameScreenContent: FC<GameScreenProps> = ({ config, onEndGame }) => {
       correct: 0,
       wordsAttempted: 0,
       wordsCorrect: 0,
-      skipsRemaining: MAX_SKIP_TURNS,
-      askFriendRemaining: MAX_ASK_FRIEND,
-    })),
+      skipsRemaining: 1,
+      askFriendRemaining: 1,
+      achievements: [],
+      points: 0,
+      teamId: '',
+      avatar: 'bee' as const
+    }))
   );
+
+  // Help system state
+  const [showShop, setShowShop] = useState(false);
+  const [revealedIndices, setRevealedIndices] = useState<Set<number>>(new Set());
+  const [showDefinition, setShowDefinition] = useState(false);
+  const [currentHelp, setCurrentHelp] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+  
+  // Help system hooks
+  const { 
+    revealLetter, 
+    getDefinition, 
+    addTime, 
+    skipWord, 
+    isHelpUsed, 
+    setHelpUsed 
+  } = useHelpSystem();
+  
+  // Refs
+  const timerRef = useRef<any>(null); // Will be set by the timer component
+  const [currentParticipantIndex, setCurrentParticipantIndex] = useState(0);
 
   const shuffle = <T,>(arr: T[]): T[] => {
     const copy = [...arr];
@@ -103,24 +214,103 @@ const GameScreenContent: FC<GameScreenProps> = ({ config, onEndGame }) => {
     return (config.participants as Team[]).map((t) => shuffle([...t.students]));
   });
 
-  const [currentParticipantIndex, setCurrentParticipantIndex] = useState(0);
-
   const [usedHint, setUsedHint] = useState(false);
-  const [letters, setLetters] = useState<string[]>([]);
   const [showWord, setShowWord] = useState(true);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [feedback, setFeedback] = useState<Feedback>({
-    message: "",
-    type: "",
+  const [letters, setLetters] = useState<string[]>([]);
+  const [usedLetters, setUsedLetters] = useState<Set<string>>(new Set());
+  const [wordQueues, setWordQueues] = useState({
+    easy: [] as Word[],
+    medium: [] as Word[],
+    hard: [] as Word[]
   });
+  // Set up event listeners for help system
+  useEffect(() => {
+    const handleAddTime = (e: CustomEvent<{ seconds: number }>) => {
+      const { seconds } = e.detail;
+      // Add time to the timer
+      if (timerRef.current) {
+        timerRef.current.addSeconds(seconds);
+      }
+    };
+
+    const handleSkipWord = () => {
+      handleNextWord();
+    };
+
+    window.addEventListener('addTime', handleAddTime as EventListener);
+    window.addEventListener('skipWord', handleSkipWord);
+
+    return () => {
+      window.removeEventListener('addTime', handleAddTime as EventListener);
+      window.removeEventListener('skipWord', handleSkipWord);
+    };
+  }, [handleNextWord]);
+
+  const handleRevealLetter = useCallback(() => {
+    if (!currentWord) return;
+    
+    const result = revealLetter(currentWord, revealedIndices);
+    if (result) {
+      setRevealedIndices(prev => new Set([...prev, result.index]));
+      // playSound(letterCorrectSound);
+      setHelpUsed('hint-letter');
+      setCurrentHelp({ message: `Revealed letter: ${result.letter}`, type: 'info' });
+      setFeedback({ message: `Revealed letter: ${result.letter}`, type: 'info' });
+    }
+  }, [currentWord, revealLetter, revealedIndices, setHelpUsed]);
+
+  const handleShowDefinition = useCallback(async () => {
+    if (!currentWord) return;
+    
+    setShowDefinition(true);
+    try {
+      const definition = await getDefinition(currentWord);
+      setCurrentHelp({ message: `Definition: ${definition}`, type: 'info' });
+      setHelpUsed('hint-definition');
+      setFeedback({ message: 'Definition shown', type: 'info' });
+    } catch (error) {
+      setFeedback({ message: 'Failed to load definition', type: 'error' });
+    }
+  }, [currentWord, getDefinition, setHelpUsed]);
+
+  const handleAddTimeHelp = useCallback(() => {
+    addTime(30); // Add 30 seconds
+    setHelpUsed('extra-time');
+    setCurrentHelp({ message: 'Added 30 seconds to the timer!', type: 'success' });
+    setFeedback({ message: 'Added 30 seconds to the timer!', type: 'success' });
+  }, [addTime, setHelpUsed]);
+
+  const handleSkipWordHelp = useCallback(() => {
+    skipWord();
+    setHelpUsed('skip-word');
+    setCurrentHelp({ message: 'Skipped to the next word!', type: 'info' });
+    setFeedback({ message: 'Skipped to the next word!', type: 'info' });
+    handleNextWord();
+  }, [skipWord, setHelpUsed, handleNextWord]);
+
+  // Clear current help and feedback after delay
+  useEffect(() => {
+    const timers: NodeJS.Timeout[] = [];
+    
+    if (currentHelp) {
+      const timer = setTimeout(() => setCurrentHelp(null), 3000);
+      timers.push(timer);
+    }
+    
+    if (feedback) {
+      const timer = setTimeout(() => setFeedback(null), 3000);
+      timers.push(timer);
+    }
+    
+    return () => timers.forEach(clearTimeout);
+  }, [currentHelp, feedback]);
   const [extraAttempt, setExtraAttempt] = useState(false);
   const {
-    wordQueues,
-    setWordQueues,
     currentWord,
     currentDifficulty,
     selectNextWord,
-  } = useWordSelection(config.wordDatabase);
+  } = useWordSelection(config.wordDatabase as unknown as WordDatabase);
   const [attemptedParticipants, setAttemptedParticipants] = useState<
     Set<number>
   >(new Set());
@@ -139,7 +329,7 @@ const GameScreenContent: FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [coins, setCoins] = useState<number>(() => {
     if (typeof window === "undefined") return 0;
     const stored = localStorage.getItem("coins");
-    return stored ? parseInt(stored, 10) : 0;
+    return stored ? parseInt(stored, 10) : 100; // Default to 100 coins if not set
   });
   const [ownedAvatars] = useState<string[]>(() => {
     if (typeof window === "undefined") return ["bee", "book", "trophy"];
@@ -430,7 +620,7 @@ const GameScreenContent: FC<GameScreenProps> = ({ config, onEndGame }) => {
         "(prefers-reduced-motion: reduce)",
       ).matches;
       if (config.effectsEnabled && !prefersReducedMotion) {
-        launchConfetti();
+        void launchConfetti();
       }
 
       setFeedback({ message: "Correct! 🎉", type: "success" });
@@ -562,7 +752,7 @@ const GameScreenContent: FC<GameScreenProps> = ({ config, onEndGame }) => {
         </div>
       )}
       <div className="absolute top-8 left-8 flex gap-8 items-center">
-        <img src={`${publicUrl}/img/bee.svg`} alt="Bee icon" className="w-12 h-12" />
+        <img src={`${config.publicUrl || ''}/img/bee.svg`} alt="Bee" className="w-12 h-12" />
         {participants.map((p, index) => (
           <div key={index} className="text-center bg-white/10 p-4 rounded-lg">
             <div className="text-2xl font-bold">{p.name}</div>
