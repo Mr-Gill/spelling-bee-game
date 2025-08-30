@@ -1,12 +1,6 @@
-<<<<<<< HEAD:components/OnScreenKeyboard.tsx
 import React from "react";
 import useSound from "../utils/useSound";
 import letterSoundFile from "../audio/letter-correct.mp3";
-=======
-import React from 'react';
-import useSound from '../utils/useSound';
-import letterSoundFile from '../../audio/letter-correct.mp3';
->>>>>>> origin/codex/reorganize-project-structure-into-src-directory:src/components/OnScreenKeyboard.tsx
 
 interface OnScreenKeyboardProps {
   onLetter: (letter: string) => void;

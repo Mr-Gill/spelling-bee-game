@@ -4,7 +4,3 @@ build
 dist
 app.js
 .DS_Store
-
-# Tailwind build artifacts
-/tailwind.css
-/dist/tailwind.css

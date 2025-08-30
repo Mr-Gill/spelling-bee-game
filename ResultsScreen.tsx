@@ -1,14 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { GameResults, GameConfig, LeaderboardEntry } from './types';
-import applauseSoundFile from '../audio/applause.mp3';
+import applauseSoundFile from './audio/applause.mp3';
 import { launchConfetti } from './utils/confetti';
 import { recordDailyCompletion, StreakInfo } from './DailyChallenge';
-<<<<<<< HEAD:ResultsScreen.tsx
 import beeImg from './img/avatars/bee.svg';
 import MorphologyCard from './components/MorphologyCard';
-=======
-import beeImg from '../img/avatars/bee.svg';
->>>>>>> origin/codex/reorganize-project-structure-into-src-directory:src/ResultsScreen.tsx
 
 interface ResultsScreenProps {
   results: GameResults;

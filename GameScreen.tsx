@@ -1,4 +1,3 @@
-<<<<<<< HEAD:GameScreen.tsx
 import React from "react";
 import { SkipForward, Play, Pause, Volume2, VolumeX } from "lucide-react";
 import {
@@ -27,22 +26,6 @@ import { AudioSettings } from "./components/AudioSettings";
 import { useAudio } from "./AudioContext";
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
-=======
-import React from 'react';
-import { SkipForward } from 'lucide-react';
-import { GameConfig, Word, Participant, GameResults, defaultAchievements } from './types';
-import correctSoundFile from '../audio/correct.mp3';
-import wrongSoundFile from '../audio/wrong.mp3';
-import timeoutSoundFile from '../audio/timeout.mp3';
-import letterCorrectSoundFile from '../audio/letter-correct.mp3';
-import letterWrongSoundFile from '../audio/letter-wrong.mp3';
-import shopSoundFile from '../audio/shop.mp3';
-import loseLifeSoundFile from '../audio/lose-life.mp3';
-import { launchConfetti } from './utils/confetti';
-import { speak } from './utils/tts';
-import useSound from './utils/useSound';
-import OnScreenKeyboard from './components/OnScreenKeyboard';
->>>>>>> origin/codex/reorganize-project-structure-into-src-directory:src/GameScreen.tsx
 
 interface GameScreenProps {
   config: GameConfig;
