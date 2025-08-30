@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
-import { GameConfig, Word } from './types';
-import { parseWordList } from './utils/parseWordList';
+import React, { useState, useEffect } from 'react';
+import { GameConfig, Word, Participant } from './types';
+import useRoster from './hooks/useRoster';
+import TeamForm from './components/TeamForm';
+import StudentRoster from './components/StudentRoster';
+import GameOptions from './components/GameOptions';
+import beeImg from './img/avatars/bee.svg';
 import bookImg from './img/avatars/book.svg';
+import trophyImg from './img/avatars/trophy.svg';
+import { parseWordList } from './utils/parseWordList';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -11,9 +17,10 @@ interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
   onAddCustomWords: (words: Word[]) => void;
   onViewAchievements: () => void;
+  onStartWarmup: () => void;
 }
 
-const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
+const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onStartWarmup }) => {
   const avatars = [beeImg, bookImg, trophyImg];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
@@ -79,6 +86,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [aiError, setAiError] = useState('');
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<string>(() => localStorage.getItem('selectedVoice') ?? '');
+  const [warmupCompleted, setWarmupCompleted] = useState<boolean>(() => localStorage.getItem('warmupCompleted') === 'true');
+  const [showWarmupReminder, setShowWarmupReminder] = useState(false);
 
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
@@ -304,6 +313,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
 
   const handleStart = async (isSessionChallenge = false) => {
+    if (!warmupCompleted && !showWarmupReminder) {
+      setShowWarmupReminder(true);
+      return;
+    }
+
     let challengeWords: Word[] = [];
     if (isSessionChallenge) {
       try {
@@ -362,6 +376,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       musicVolume: options.musicVolume,
     };
     onStartGame(config);
+    localStorage.setItem('warmupCompleted', 'false');
+    setWarmupCompleted(false);
   };
   
   return (
@@ -570,9 +586,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         {error && <p className="text-red-300 text-center mb-4">{error}</p>}
         
         <div className="flex flex-col md:flex-row gap-4 mt-8">
+            <button onClick={onStartWarmup} className="w-full bg-green-500 hover:bg-green-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">Warm-Up</button>
             <button onClick={() => handleStart(false)} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Custom Game</button>
             <button onClick={() => handleStart(true)} className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Session Challenge</button>
         </div>
+        {showWarmupReminder && !warmupCompleted && (
+            <p className="text-center text-yellow-300 mt-4">A warm-up is recommended! Press Warm-Up or press Start again to continue.</p>
+        )}
         <div className="mt-4 text-center">
             <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold">View Achievements</button>
         </div>
