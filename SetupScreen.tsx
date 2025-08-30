@@ -70,6 +70,37 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     },
   ];
 
+  const getDefaultTeams = (): Team[] => [
+    {
+      name: 'Team Alpha',
+      lives: startingLives,
+      difficultyLevel: 0,
+      points: 0,
+      streak: 0,
+      attempted: 0,
+      correct: 0,
+      wordsAttempted: 0,
+      wordsCorrect: 0,
+      avatar: getRandomAvatar(),
+      team: '',
+      students: [],
+    },
+    {
+      name: 'Team Beta',
+      lives: startingLives,
+      difficultyLevel: 0,
+      points: 0,
+      streak: 0,
+      attempted: 0,
+      correct: 0,
+      wordsAttempted: 0,
+      wordsCorrect: 0,
+      avatar: getRandomAvatar(),
+      team: '',
+      students: [],
+    },
+  ];
+
 <<<<<<< HEAD
   const [teams, setTeams] = useState<Participant[]>(getDefaultTeams());
   const [students, setStudents] = useState<Participant[]>([]);
@@ -89,6 +120,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     clear: clearTeams,
     setParticipants: setTeams,
   } = useRoster<Team>('teams', getDefaultTeams());
+    setParticipants: setTeams,
+  } = useRoster<Team>('teams', getDefaultTeams());
 
   const {
     participants: students,
@@ -98,6 +131,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     clear: clearStudents,
     setParticipants: setStudents,
   } = useRoster<Participant>('students', []);
+    setParticipants: setStudents,
+  } = useRoster<Participant>('students', []);
 
   const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
@@ -105,6 +140,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, Word[]>>({});
   const [includeMissedWords, setIncludeMissedWords] = useState(false);
   const [error, setError] = useState('');
+  const [randomTeamCount, setRandomTeamCount] = useState(0);
+  const [randomTeamSize, setRandomTeamSize] = useState(0);
+  const [randomizeError, setRandomizeError] = useState('');
+  const [rosterError, setRosterError] = useState('');
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState<string>('');
+
   const bundledWordLists = [
     { label: 'Example JSON', file: 'example.json' },
     { label: 'Example CSV', file: 'example.csv' },
@@ -462,6 +504,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
 
     let finalParticipants: (Participant | Team)[];
+    let finalParticipants: (Participant | Team)[];
     if (gameMode === 'team') {
       const trimmedTeams = (teams as Team[]).filter(
         (team) => team.name.trim() !== '',
@@ -481,7 +524,41 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         return;
       }
       finalParticipants = teamsWithDifficulty;
+      const trimmedTeams = (teams as Team[]).filter(
+        (team) => team.name.trim() !== '',
+      );
+      if (trimmedTeams.length < 2) {
+        setError('Please add at least two teams with names.');
+        return;
+      }
+      // Ensure each team has its roster saved
+      const teamsWithDifficulty = trimmedTeams.map((t) => ({
+        ...t,
+        difficultyLevel: options.initialDifficulty,
+        students: students.filter((s) => s.team === t.name),
+      }));
+      if (teamsWithDifficulty.some((t) => t.students.length === 0)) {
+        setError('Each team must have at least one student assigned.');
+        return;
+      }
+      finalParticipants = teamsWithDifficulty;
     } else {
+      const trimmedStudents = students.filter(
+        (student) => student.name.trim() !== '',
+      );
+      if (trimmedStudents.length < 1 && isSessionChallenge) {
+        finalParticipants = [
+          createParticipant('Player 1', options.initialDifficulty),
+        ];
+      } else if (trimmedStudents.length < 2 && !isSessionChallenge) {
+        setError('Please add at least two students for a custom game.');
+        return;
+      } else {
+        finalParticipants = trimmedStudents.map((s) => ({
+          ...s,
+          difficultyLevel: options.initialDifficulty,
+        }));
+      }
       const trimmedStudents = students.filter(
         (student) => student.name.trim() !== '',
       );
@@ -702,11 +779,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Skip Penalty ⏭️</h2>
 >>>>>>> 75cbce2 (feat: add team rosters and hot seat)
                 <div className="flex gap-4">
-                    <select value={skipPenaltyType} onChange={e => setSkipPenaltyType(e.target.value as 'lives' | 'points')} className="p-2 rounded-md bg-white/20 text-white">
+                    <select value={options.skipPenaltyType} onChange={e => setOptions({ ...options, skipPenaltyType: e.target.value as 'lives' | 'points' })} className="p-2 rounded-md bg-white/20 text-white">
                         <option value="lives">Lives</option>
                         <option value="points">Points</option>
                     </select>
-                    <input type="number" min={0} value={skipPenaltyValue} onChange={e => setSkipPenaltyValue(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
+                    <input type="number" min={0} value={options.skipPenaltyValue} onChange={e => setOptions({ ...options, skipPenaltyValue: Number(e.target.value) })} className="p-2 rounded-md bg-white/20 text-white w-24" />
                 </div>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
@@ -714,7 +791,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <div className="flex gap-4">
                     <div>
                         <label className="block mb-2">Initial Difficulty</label>
-                        <select value={initialDifficulty} onChange={e => setInitialDifficulty(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white">
+                        <select value={options.initialDifficulty} onChange={e => setOptions({ ...options, initialDifficulty: Number(e.target.value) })} className="p-2 rounded-md bg-white/20 text-white">
                             <option value={0}>Easy</option>
                             <option value={1}>Medium</option>
                             <option value={2}>Tricky</option>
@@ -722,7 +799,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     </div>
                     <div>
                         <label className="block mb-2">Progression Speed</label>
-                        <input type="number" min={1} value={progressionSpeed} onChange={e => setProgressionSpeed(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
+                        <input type="number" min={1} value={options.progressionSpeed} onChange={e => setOptions({ ...options, progressionSpeed: Number(e.target.value) })} className="p-2 rounded-md bg-white/20 text-white w-24" />
                     </div>
                 </div>
             </div>
@@ -747,13 +824,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <h2 className="text-2xl font-bold mb-4">Music 🎵</h2>
                 <div className="mb-4">
                     <label className="block mb-2">Style</label>
-                    <select value={musicStyle} onChange={e => setMusicStyle(e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
+                    <select value={options.musicStyle} onChange={e => setOptions({ ...options, musicStyle: e.target.value })} className="p-2 rounded-md bg-white/20 text-white">
                         {musicStyles.map(style => (<option key={style} value={style}>{style}</option>))}
                     </select>
                 </div>
                 <div>
-                    <label className="block mb-2">Volume: {Math.round(musicVolume * 100)}%</label>
-                    <input type="range" min={0} max={1} step={0.01} value={musicVolume} onChange={e => setMusicVolume(parseFloat(e.target.value))} className="w-full" />
+                    <label className="block mb-2">Volume: {Math.round(options.musicVolume * 100)}%</label>
+                    <input type="range" min={0} max={1} step={0.01} value={options.musicVolume} onChange={e => setOptions({ ...options, musicVolume: parseFloat(e.target.value) })} className="w-full" />
                 </div>
             </div>
         </div>
@@ -821,5 +898,3 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     </div>
   );
 };
-
-export default SetupScreen;

@@ -590,11 +590,6 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
       {currentWord && (
         <div className="w-full max-w-4xl text-center">
-<<<<<<< HEAD
-          <img src="img/books.svg" alt="Book icon" className="w-10 h-10 mx-auto mb-4" />
-          <h2 className="text-4xl font-bold mb-4 uppercase font-heading">
-            Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
-=======
           <img
             src="img/books.svg"
             alt="Book icon"
@@ -604,7 +599,6 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             Word for {isTeamMode ? 'Team' : 'Student'}:{' '}
             {participants[currentParticipantIndex]?.name ||
               (isTeamMode ? 'Team' : 'Student')}
->>>>>>> 75cbce2 (feat: add team rosters and hot seat)
           </h2>
           {isTeamMode && currentStudent && (
             <div className="text-xl mb-4">Hot Seat: {currentStudent.name}</div>
