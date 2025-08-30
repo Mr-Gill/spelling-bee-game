@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GameConfig, Word } from './types';
 import { parseWordList } from './utils/parseWordList';
 import bookImg from './img/avatars/book.svg';
@@ -14,7 +14,7 @@ interface SetupScreenProps {
 }
 
 const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
-  const avatars = [beeImg, bookImg, trophyImg];
+  const avatars = [bookImg];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
@@ -26,35 +26,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   ];
 
   const [teams, setTeams] = useState<Participant[]>(getDefaultTeams());
-  const {
-    participants: teams,
-    addParticipant: addTeamParticipant,
-    removeParticipant: removeTeam,
-    updateName: updateTeamName,
-    clear: clearTeams,
-  } = useRoster('teams', getDefaultTeams());
-
-  const {
-    participants: students,
-    addParticipant: addStudentParticipant,
-    removeParticipant: removeStudent,
-    updateName: updateStudentName,
-    clear: clearStudents,
-  } = useRoster('students', []);
-
-  const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
-  const [timerDuration, setTimerDuration] = useState(30);
-  const [customWordListText, setCustomWordListText] = useState('');
-  const [parsedCustomWords, setParsedCustomWords] = useState<Word[]>([]);
-  const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, Word[]>>({});
-  const [includeMissedWords, setIncludeMissedWords] = useState(false);
-  const [error, setError] = useState('');
-  const bundledWordLists = [
-    { label: 'Example JSON', file: 'example.json' },
-    { label: 'Example CSV', file: 'example.csv' },
-    { label: 'Example TSV', file: 'example.tsv' }
-  ];
-  const [selectedBundledList, setSelectedBundledList] = useState('');
   const [students, setStudents] = useState<Participant[]>([]);
   const [studentName, setStudentName] = useState('');
   const [bulkStudentText, setBulkStudentText] = useState('');
@@ -79,6 +50,19 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [aiError, setAiError] = useState('');
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<string>(() => localStorage.getItem('selectedVoice') ?? '');
+
+  const [options, setOptions] = useState<OptionsState>({
+    skipPenaltyType: 'lives',
+    skipPenaltyValue: 1,
+    initialDifficulty: 0,
+    progressionSpeed: 1,
+    soundEnabled: localStorage.getItem('soundEnabled') !== 'false',
+    effectsEnabled: true,
+    theme: localStorage.getItem('theme') ?? 'light',
+    teacherMode: localStorage.getItem('teacherMode') === 'true',
+    musicStyle: localStorage.getItem('musicStyle') ?? 'Funk',
+    musicVolume: parseFloat(localStorage.getItem('musicVolume') ?? '1'),
+  });
 
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
@@ -160,37 +144,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const createParticipant = (name: string, difficulty: number): Participant => ({
     name: name.trim(), lives: startingLives, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
 
-  const [options, setOptions] = useState<OptionsState>({
-    skipPenaltyType: 'lives',
-    skipPenaltyValue: 1,
-    initialDifficulty: 0,
-    progressionSpeed: 1,
-    soundEnabled: localStorage.getItem('soundEnabled') !== 'false',
-    effectsEnabled: true,
-    theme: localStorage.getItem('theme') ?? 'light',
-    teacherMode: localStorage.getItem('teacherMode') === 'true',
-    musicStyle: localStorage.getItem('musicStyle') ?? 'Funk',
-    musicVolume: parseFloat(localStorage.getItem('musicVolume') ?? '1'),
-  });
-
-  const createParticipant = (name: string, difficulty: number): Participant => ({
-    name: name.trim(),
-    lives: 5,
-    points: 0,
-    difficultyLevel: difficulty,
-    streak: 0,
-    attempted: 0,
-    correct: 0,
-    wordsAttempted: 0,
-    wordsCorrect: 0,
-    avatar: getRandomAvatar(),
-  });
-
-  const addTeam = () => addTeamParticipant(createParticipant('', 0));
+  const addTeam = () => {
+    const newTeam = { name: '', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() };
+    updateTeams([...teams, newTeam]);
+  };
 
   const clearRoster = () => {
-    clearTeams();
-    clearStudents();
+    updateTeams([]);
+    updateStudents([]);
   };
 
   const randomizeTeams = () => {
@@ -437,15 +398,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white/10 p-6 rounded-lg">
-<<<<<<< HEAD
                 <h2 className="text-2xl font-bold mb-4">Starting Lives ❤️</h2>
                 <input type="number" min={1} value={startingLives} onChange={e => setStartingLives(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full" />
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Skip Penalty ⏭️</h2>
-=======
-                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Skip Penalty ⏭️</h2>
->>>>>>> origin/codex/import-google-fonts-and-configure-tailwind
                 <div className="flex gap-4">
                     <select value={skipPenaltyType} onChange={e => setSkipPenaltyType(e.target.value as 'lives' | 'points')} className="p-2 rounded-md bg-white/20 text-white">
                         <option value="lives">Lives</option>
@@ -455,7 +412,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Difficulty Settings 🎚️</h2>
+                <h2 className="text-2xl font-bold mb-4">Difficulty Settings 🎚️</h2>
                 <div className="flex gap-4">
                     <div>
                         <label className="block mb-2">Initial Difficulty</label>
@@ -472,7 +429,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Audio & Effects 🔊✨</h2>
+                <h2 className="text-2xl font-bold mb-4">Audio & Effects 🔊✨</h2>
                 <label className="flex items-center space-x-3 mb-2"><input type="checkbox" checked={soundEnabled} onChange={e => setSoundEnabled(e.target.checked)} /><span>Enable Sound</span></label>
                 <label className="flex items-center space-x-3"><input type="checkbox" checked={effectsEnabled} onChange={e => setEffectsEnabled(e.target.checked)} /><span>Enable Visual Effects</span></label>
                 {voices.length > 0 && (
@@ -488,7 +445,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 )}
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Theme 🎨</h2>
+                <h2 className="text-2xl font-bold mb-4">Theme 🎨</h2>
                 <select value={theme} onChange={e => { const t = e.target.value; setTheme(t); localStorage.setItem('theme', t); applyTheme(t); }} className="p-2 rounded-md bg-white/20 text-white">
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
@@ -496,11 +453,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </select>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Teacher Mode 👩‍🏫</h2>
+                <h2 className="text-2xl font-bold mb-4">Teacher Mode 👩‍🏫</h2>
                 <label className="flex items-center gap-2 text-white"><input type="checkbox" checked={teacherMode} onChange={e => setTeacherMode(e.target.checked)} /><span>Enable larger fonts and spacing</span></label>
             </div>
              <div className="bg-white/10 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Music 🎵</h2>
+                <h2 className="text-2xl font-bold mb-4">Music 🎵</h2>
                 <div className="mb-4">
                     <label className="block mb-2">Style</label>
                     <select value={musicStyle} onChange={e => setMusicStyle(e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
@@ -516,7 +473,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         <GameOptions options={options} setOptions={setOptions} />
         
         <div className="bg-white/10 p-6 rounded-lg mb-8 mt-8">
-            <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Add Custom Word List 📝</h2>
+            <h2 className="text-2xl font-bold mb-4">Add Custom Word List 📝</h2>
             <div className="mb-6">
                 <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">Choose Bundled Word List</label>
                 <select id="bundled-list" value={selectedBundledList} onChange={e => setSelectedBundledList(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white">

@@ -1,6 +1,5 @@
-<<<<<<< HEAD
 import React from "react";
-import { SkipForward } from "lucide-react";
+import { SkipForward, Play, Pause, Volume2, VolumeX } from "lucide-react";
 import {
   GameConfig,
   Word,
@@ -13,6 +12,8 @@ import wrongSoundFile from "./audio/wrong.mp3";
 import timeoutSoundFile from "./audio/timeout.mp3";
 import letterCorrectSoundFile from "./audio/letter-correct.mp3";
 import letterWrongSoundFile from "./audio/letter-wrong.mp3";
+import shopSoundFile from "./audio/shop.mp3";
+import loseLifeSoundFile from "./audio/lose-life.mp3";
 import { launchConfetti } from "./utils/confetti";
 import { speak } from "./utils/tts";
 import useSound from "./utils/useSound";
@@ -21,30 +22,9 @@ import useWordSelection, { difficultyOrder } from "./utils/useWordSelection";
 import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
-import { audioManager } from "./utils/audio";
-=======
-import React from 'react';
-import { SkipForward, Play, Pause, Volume2, VolumeX } from 'lucide-react';
-import { GameConfig, Word, Participant, GameResults, defaultAchievements } from './types';
-import correctSoundFile from './audio/correct.mp3';
-import wrongSoundFile from './audio/wrong.mp3';
-import timeoutSoundFile from './audio/timeout.mp3';
-import letterCorrectSoundFile from './audio/letter-correct.mp3';
-import letterWrongSoundFile from './audio/letter-wrong.mp3';
-import shopSoundFile from './audio/shop.mp3';
-import loseLifeSoundFile from './audio/lose-life.mp3';
-import { launchConfetti } from './utils/confetti';
-import { speak } from './utils/tts';
-import useSound from './utils/useSound';
-import useTimer from './utils/useTimer';
-import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
-import OnScreenKeyboard from './components/OnScreenKeyboard';
-import HintPanel from './components/HintPanel';
-import AvatarSelector from './components/AvatarSelector';
-import { AudioSettings } from './components/AudioSettings';
+import { AudioSettings } from "./components/AudioSettings";
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
->>>>>>> origin/codex/add-audio-settings-toggle-functionality
 
 interface GameScreenProps {
   config: GameConfig;
@@ -108,13 +88,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [toast, setToast] = React.useState("");
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
-<<<<<<< HEAD
-  const [currentAvatar, setCurrentAvatar] = React.useState("");
-=======
   const [currentAvatar, setCurrentAvatar] = React.useState('');
   const [darkMode, setDarkMode] = React.useState(false);
   const [showAudioSettings, setShowAudioSettings] = React.useState(false);
->>>>>>> origin/codex/add-audio-settings-toggle-functionality
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);
@@ -140,10 +116,6 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     handleIncorrectAttempt();
   });
   React.useEffect(() => {
-<<<<<<< HEAD
-    if (localStorage.getItem("teacherMode") === "true") {
-      document.body.classList.add("teacher-mode");
-=======
     if (!isPaused) {
       setShowAudioSettings(false);
     }
@@ -151,7 +123,6 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   React.useEffect(() => {
     if (localStorage.getItem('teacherMode') === 'true') {
       document.body.classList.add('teacher-mode');
->>>>>>> origin/codex/add-audio-settings-toggle-functionality
     } else {
       document.body.classList.remove("teacher-mode");
     }
@@ -548,21 +519,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
       {currentWord && (
         <div className="w-full max-w-4xl text-center">
-<<<<<<< HEAD
-          <img
-            src="img/books.svg"
-            alt="Book icon"
-            className="w-10 h-10 mx-auto mb-4"
-          />
-          <h2 className="text-4xl font-bold mb-4">
-            Word for {isTeamMode ? "Team" : "Student"}:{" "}
-            {participants[currentParticipantIndex]?.name ||
-              (isTeamMode ? "Team" : "Student")}
-=======
           <img src="img/books.svg" alt="Book icon" className="w-10 h-10 mx-auto mb-4" />
           <h2 className="text-4xl font-bold mb-4 uppercase font-heading">
             Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
->>>>>>> origin/codex/import-google-fonts-and-configure-tailwind
           </h2>
           <div className="relative mb-8 pt-10">
             {showWord && (
