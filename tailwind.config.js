@@ -2,7 +2,7 @@
 module.exports = {
   content: [
     './src/**/*.{js,jsx,ts,tsx}',
-    './**/*.{html,html.twig}',
+    './public/**/*.html',
   ],
   darkMode: 'class',
   theme: {
