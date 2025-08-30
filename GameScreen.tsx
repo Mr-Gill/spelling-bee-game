@@ -16,6 +16,7 @@ import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
 import AvatarSelector from './components/AvatarSelector';
+import { AudioSettings } from './components/AudioSettings';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -85,6 +86,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState('');
   const [darkMode, setDarkMode] = React.useState(false);
+  const [showAudioSettings, setShowAudioSettings] = React.useState(false);
 
   const playCorrect = useSound(correctSoundFile, soundEnabled);
   const playWrong = useSound(wrongSoundFile, soundEnabled);
@@ -106,6 +108,11 @@ const GameScreen: React.FC<GameScreenProps> = ({
     playTimeout();
     handleIncorrectAttempt();
   });
+  React.useEffect(() => {
+    if (!isPaused) {
+      setShowAudioSettings(false);
+    }
+  }, [isPaused]);
   React.useEffect(() => {
     if (localStorage.getItem('teacherMode') === 'true') {
       document.body.classList.add('teacher-mode');
@@ -560,9 +567,30 @@ const GameScreen: React.FC<GameScreenProps> = ({
         <SkipForward size={24} />
       </button>
 
-      {isPaused && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40">
-          Paused
+      {isPaused && !showAudioSettings && (
+        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-6xl font-bold z-40 gap-8">
+          <div>Paused</div>
+          <button
+            onClick={() => setShowAudioSettings(true)}
+            className="bg-yellow-300 text-black px-6 py-2 rounded-lg text-2xl"
+          >
+            Audio Settings
+          </button>
+        </div>
+      )}
+
+      {showAudioSettings && isPaused && (
+        <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg max-w-md w-full relative">
+            <button
+              onClick={() => setShowAudioSettings(false)}
+              className="absolute top-2 right-2 text-black"
+              aria-label="Close audio settings"
+            >
+              ✕
+            </button>
+            <AudioSettings />
+          </div>
         </div>
       )}
     </div>
