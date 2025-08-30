@@ -26287,6 +26287,7 @@ var GameScreen = ({ config, onEndGame }) => {
   const hiddenInputRef = import_react9.default.useRef(null);
   const [startTime] = import_react9.default.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = import_react9.default.useState("");
+  const [darkMode, setDarkMode] = import_react9.default.useState(false);
   const playCorrect = useSound_default(correct_default, config.soundEnabled);
   const playWrong = useSound_default(wrong_default, config.soundEnabled);
   const playTimeout = useSound_default(timeout_default, config.soundEnabled);
@@ -26332,6 +26333,9 @@ var GameScreen = ({ config, onEndGame }) => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentWord, isPaused, letters2]);
+  import_react9.default.useEffect(() => {
+    document.body.className = darkMode ? "dark-mode" : "";
+  }, [darkMode]);
   const selectNextWordForLevel = (level) => {
     const nextWord = selectNextWord(level);
     if (nextWord) {
@@ -26606,6 +26610,14 @@ var GameScreen = ({ config, onEndGame }) => {
       {
         currentAvatar,
         onSelect: (avatar) => setCurrentAvatar(avatar)
+      }
+    ),
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      "button",
+      {
+        className: "theme-toggle",
+        onClick: () => setDarkMode(!darkMode),
+        children: darkMode ? "\u2600\uFE0F" : "\u{1F319}"
       }
     ),
     currentWord && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "w-full max-w-4xl text-center", children: [

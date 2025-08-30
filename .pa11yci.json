@@ -1,0 +1,13 @@
+{
+  "defaults": {
+    "timeout": 5000,
+    "viewport": {
+      "width": 1280,
+      "height": 1024
+    },
+    "hideElements": ".audio-controls, .theme-toggle"
+  },
+  "urls": [
+    "http://localhost:3000"
+  ]
+}

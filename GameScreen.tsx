@@ -64,6 +64,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState('');
+  const [darkMode, setDarkMode] = React.useState(false);
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);
@@ -113,6 +114,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentWord, isPaused, letters]);
+
+  React.useEffect(() => {
+    document.body.className = darkMode ? 'dark-mode' : '';
+  }, [darkMode]);
 
   const selectNextWordForLevel = (level: number) => {
     const nextWord = selectNextWord(level);
@@ -368,6 +373,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     }
   }, [participants]);
 
+  const handleMuteToggle = () => {
+    audioManager.toggleMute();
+  };
+
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
       <input
@@ -413,19 +422,26 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         </button>
       </div>
 
-      <audio-controls className="audio-controls">
+      <div className="audio-controls">
         <button 
           className={`audio-btn ${audioManager.muted ? 'muted' : ''}`}
-          onClick={() => audioManager.toggleMute()}
+          onClick={handleMuteToggle}
         >
           {audioManager.muted ? '🔇' : '🔊'}
         </button>
-      </audio-controls>
+      </div>
 
       <AvatarSelector 
         currentAvatar={currentAvatar}
         onSelect={(avatar) => setCurrentAvatar(avatar)}
       />
+
+      <button 
+        className="theme-toggle"
+        onClick={() => setDarkMode(!darkMode)}
+      >
+        {darkMode ? '☀️' : '🌙'}
+      </button>
 
       {currentWord && (
         <div className="w-full max-w-4xl text-center">
