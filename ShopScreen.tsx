@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import AvatarSelector from "./src/components/AvatarSelector";
+import { useFocusTrap } from "./src/hooks/useFocusTrap";
 
 interface ShopScreenProps {
   onBack: () => void;
 }
 
+type AvatarType = 'bee' | 'book' | 'trophy' | 'wizard' | 'ninja';
+
 interface ShopItem {
-  id: string;
+  id: AvatarType | string;
   name: string;
   icon: string;
   price: number;
@@ -78,51 +81,147 @@ const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
       : ownedAccessories.includes(item.id);
   };
 
+  // Focus management for accessibility
+  const mainHeadingRef = useRef<HTMLHeadingElement>(null);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
+  
+  // Focus trap for keyboard navigation
+  const shopRef = useFocusTrap<HTMLDivElement>();
+  
+  // Set initial focus when component mounts
+  useEffect(() => {
+    if (mainHeadingRef.current) {
+      mainHeadingRef.current.focus();
+    }
+  }, []);
+
+  const handleBackClick = () => {
+    onBack();
+    // Return focus to the element that opened the shop
+    const lastFocused = document.activeElement as HTMLElement;
+    if (lastFocused) {
+      lastFocused.focus();
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-pink-500 text-white p-8">
+    <div 
+      ref={shopRef}
+      className="min-h-screen bg-gradient-to-br from-purple-600 to-pink-500 text-white p-8"
+      role="region"
+      aria-label="Shop"
+    >
       <button
-        onClick={onBack}
-        className="mb-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+        ref={backButtonRef}
+        onClick={handleBackClick}
+        className="mb-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 focus:outline-none"
+        aria-label="Go back to previous screen"
       >
         Back
       </button>
-      <h1 className="text-3xl font-bold mb-4">Shop</h1>
-      <div className="mb-4">Coins: {coins}</div>
-
-      <h2 className="text-2xl font-bold mb-2">Your Avatar</h2>
-      <AvatarSelector
-        currentAvatar={currentAvatar}
-        onSelect={setCurrentAvatar}
-        availableAvatars={ownedAvatars}
-      />
-
-      <h2 className="text-2xl font-bold mt-8 mb-2">Items</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {shopItems.map((item) => (
-          <div
-            key={item.id}
-            className="bg-white/10 p-4 rounded-lg flex items-center justify-between"
-          >
-            <div className="flex items-center gap-4">
-              <img src={item.icon} alt={item.name} className="w-16 h-16" />
-              <div>
-                <div className="font-bold">{item.name}</div>
-                <div>{item.price} coins</div>
-              </div>
-            </div>
-            {isOwned(item) ? (
-              <span className="text-green-400 font-bold">Owned</span>
-            ) : (
-              <button
-                onClick={() => purchaseItem(item)}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-              >
-                Buy
-              </button>
-            )}
-          </div>
-        ))}
+      <h1 
+        ref={mainHeadingRef}
+        className="text-3xl font-bold mb-4"
+        tabIndex={-1}
+      >
+        Shop
+      </h1>
+      <div 
+        className="mb-4 text-xl font-semibold"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <span className="sr-only">You have</span>
+        <span aria-hidden="true">🪙</span>
+        <span className="ml-2">{coins} coins</span>
       </div>
+
+      <section aria-labelledby="avatar-heading">
+        <h2 
+          id="avatar-heading"
+          className="text-2xl font-bold mb-2"
+        >
+          Your Avatar
+        </h2>
+        <AvatarSelector
+          currentAvatar={currentAvatar as AvatarType}
+          onSelect={setCurrentAvatar}
+          availableAvatars={ownedAvatars as AvatarType[]}
+          aria-label="Select your avatar"
+        />
+      </section>
+
+      <section aria-labelledby="items-heading" className="mt-8">
+        <h2 
+          id="items-heading"
+          className="text-2xl font-bold mb-4"
+        >
+          Available Items
+        </h2>
+        <div 
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          role="list"
+          aria-label="List of available items for purchase"
+        >
+          {shopItems.map((item) => {
+            const owned = isOwned(item);
+            return (
+              <article
+                key={item.id}
+                className={`bg-white/10 p-4 rounded-lg flex items-center justify-between ${
+                  owned ? 'ring-2 ring-green-400' : ''
+                }`}
+                aria-labelledby={`${item.id}-name`}
+                aria-describedby={`${item.id}-desc`}
+              >
+                <div className="flex items-center gap-4">
+                  <img 
+                    src={item.icon} 
+                    alt="" 
+                    className="w-16 h-16" 
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <h3 
+                      id={`${item.id}-name`}
+                      className="font-bold text-lg"
+                    >
+                      {item.name}
+                    </h3>
+                    <p id={`${item.id}-desc`}>
+                      <span className="sr-only">Price: </span>
+                      <span aria-hidden="true">🪙</span>
+                      <span className="ml-1">{item.price} coins</span>
+                    </p>
+                  </div>
+                </div>
+                {owned ? (
+                  <span 
+                    className="text-green-400 font-bold px-4 py-2"
+                    aria-label={`${item.name} already owned`}
+                  >
+                    Owned
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => purchaseItem(item)}
+                    disabled={coins < item.price}
+                    className={`px-4 py-2 rounded font-medium focus:ring-2 focus:ring-offset-2 focus:outline-none ${
+                      coins >= item.price
+                        ? 'bg-green-500 hover:bg-green-600 text-white focus:ring-green-400'
+                        : 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                    }`}
+                    aria-label={`Buy ${item.name} for ${item.price} coins`}
+                    aria-disabled={coins < item.price}
+                  >
+                    Buy
+                  </button>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 };

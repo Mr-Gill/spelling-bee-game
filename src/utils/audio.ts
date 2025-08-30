@@ -5,16 +5,14 @@ import type { AudioSettings } from './audioManager';
 // Preload common sounds
 const loadAudioAssets = () => {
   try {
-    // Sound effects
-    audioManager.loadSound('ui_click', '/sounds/click.mp3');
+    // Sound effects - using only the audio files that exist in the public directory
+    audioManager.loadSound('ui_click', '/sounds/ui_click.mp3');
     audioManager.loadSound('correct', '/sounds/correct.mp3');
     audioManager.loadSound('wrong', '/sounds/wrong.mp3');
-    audioManager.loadSound('letter_correct', '/sounds/letter-correct.mp3');
-    audioManager.loadSound('letter_wrong', '/sounds/letter-wrong.mp3');
     
-    // Music
-    audioManager.loadMusic('background', '/music/background.mp3');
-    audioManager.loadMusic('menu', '/music/menu.mp3');
+    // Music - using the correct file names from the public directory
+    audioManager.loadMusic('background', '/music/background_music.mp3');
+    audioManager.loadMusic('menu', '/music/menu_music.mp3');
   } catch (error) {
     console.error('Error loading audio assets:', error);
   }

@@ -1,29 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Participant } from './types/participant';
-import { Team } from './types/team';
+import React, { useState, useEffect, FC } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { GameConfig } from './types/game';
-import { OptionsState } from './types/game';
-import { WordType } from './types/word';
-import beeImg from './img/avatars/bee.svg';
-import bookImg from './img/avatars/book.svg';
-import trophyImg from './img/avatars/trophy.svg';
-import TeamForm from './components/TeamForm';
-import StudentRoster from './components/StudentRoster';
-import GameOptions from './components/GameOptions';
+import { GameConfig, OptionsState } from './types/game';
+import { Participant, Team } from './types/participant';
 import { parseWordList } from './utils/parseWordList';
-import WordListPrompt from './components/WordListPrompt';
-
-// Gather available music styles.
-// This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
-const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
-
-type WordDatabase = {
-  easy: any[];
-  medium: any[];
-  tricky: any[];
-};
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
@@ -31,11 +10,17 @@ interface SetupScreenProps {
   onViewAchievements: () => void;
 }
 
-const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
-  const availableAvatars = [beeImg, bookImg, trophyImg];
-  const getRandomAvatar = () => availableAvatars[Math.floor(Math.random() * availableAvatars.length)];
+// Using direct paths to assets in the public directory
+const beeImg = '/img/bee.svg';
+const bookImg = '/img/book.svg';
+const trophyImg = '/img/trophy.svg';
 
-  const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
+// Available avatars for participants
+const availableAvatars = [beeImg, bookImg, trophyImg];
+
+const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
+
+  const [gameMode, setGameMode] = useState<GameMode>('team');
   const [startingLives, setStartingLives] = useState(10);
 
   const [options, setOptions] = useState<OptionsState>({
@@ -74,18 +59,53 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     wordsCorrect: 0
   });
 
-  const createTeam = (): Team => ({
-    id: uuidv4(),
-    name: `Team ${teams.length + 1}`,
-    students: []
-  });
+  const createTeam = (name: string, avatar: string = availableAvatars[Math.floor(Math.random() * availableAvatars.length)]): Team => {
+    return {
+      id: uuidv4(),
+      name,
+      students: [],
+      score: 0,
+      lives: startingLives
+    };
+  };
 
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
+  const [allParticipants, setAllParticipants] = useState<(Participant | Team)[]>([]);
 
   const handleAddParticipant = (name: string) => {
-    const newParticipant = createParticipant(name, options.initialDifficulty);
-    setParticipants([...participants, newParticipant]);
+    if (name.trim() === '') return null;
+    
+    const newParticipant: Participant = {
+      id: uuidv4(),
+      name: name.trim(),
+      avatar: availableAvatars[Math.floor(Math.random() * availableAvatars.length)],
+      score: 0,
+      lives: startingLives,
+      teamId: null,
+      points: 0,
+      difficultyLevel: 1,
+      streak: 0,
+      attempted: 0,
+      correct: 0,
+      incorrect: 0,
+      wordsAttempted: 0,
+      wordsCorrect: 0
+      avatar: getRandomAvatar(),
+      score: 0,
+      lives: 3,
+      teamId: '',
+      difficulty: difficulty,
+      wordsSpelledCorrectly: [],
+      wordsSpelledIncorrectly: [],
+      currentStreak: 0,
+      highestStreak: 0,
+      lastWord: '',
+      isActive: true
+    };
+    
+    setParticipants(prev => [...prev, newParticipant]);
+    return newParticipant;
   };
 
   const addTeam = (team: Team) => {
@@ -438,76 +458,62 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       finalWords = [...finalWords, ...extraWords];
     }
     
-    onAddCustomWords(finalWords);
-    
     const config: GameConfig = {
-      participants: finalParticipants,
-      gameMode,
-      timerDuration,
-      skipPenaltyType: options.skipPenaltyType,
-      skipPenaltyValue: options.skipPenaltyValue,
-      soundEnabled: options.soundEnabled,
-      effectsEnabled: options.effectsEnabled,
-      difficultyLevel: options.initialDifficulty,
-      progressionSpeed: options.progressionSpeed,
-      musicStyle: options.musicStyle,
-      musicVolume: options.musicVolume,
-      wordDatabase: {
-        easy: finalWords.filter(w => w.difficulty === 'easy'),
-        medium: finalWords.filter(w => w.difficulty === 'medium'),
-        tricky: finalWords.filter(w => w.difficulty === 'tricky')
+      teams: gameMode === 'team' ? teams : [],
+      participants: gameMode === 'individual' ? participants : [],
+      options: {
+        audioEnabled: options.audioEnabled,
+        soundEffectsEnabled: options.soundEffectsEnabled,
+        wordSource: options.wordSource,
+        timerDuration: options.timerDuration,
+        startingLives
       }
     };
     onStartGame(config);
   };
-  
-  const getCircularReplacer = () => {
-    const seen = new WeakSet();
-    return (key: string, value: any) => {
-      if (typeof value === "object" && value !== null) {
-        if (seen.has(value)) {
-          return;
-        }
-        seen.add(value);
+
+  onStartGame(config);
+};
+
+const getCircularReplacer = () => {
+  const seen = new WeakSet();
+  return (key: string, value: any) => {
+    if (typeof value === "object" && value !== null) {
+      if (seen.has(value)) {
+        return;
       }
-      return value;
-    };
+      seen.add(value);
+    }
+    return value;
   };
+};
 
-  const handleOptionChange = (option: keyof OptionsState, value: any) => {
-    setOptions(prev => ({
-      ...prev,
-      [option]: value,
-    }));
-  };
+const handleOptionChange = (option: keyof OptionsState, value: any) => {
+  setOptions(prev => ({
+    ...prev,
+    [option]: value,
+  }));
+};
 
-  const addBulkStudents = (students: Participant[]) => {
-    setParticipants([...participants, ...students]);
-  };
+const addBulkStudents = (students: Participant[]) => {
+  setParticipants([...participants, ...students]);
+};
 
-  const handleTeamSelect = (team: Team) => {
-    setAllParticipants(prev => [...prev, team]);
-  };
+const handleTeamSelect = (team: Team) => {
+  setAllParticipants(prev => [...prev, team]);
+};
 
-  const handleTeamRemove = (id: string) => {
-    setTeams(teams.filter(t => t.id !== id));
-  };
+const handleTeamRemove = (id: string) => {
+  setTeams(teams.filter(t => t.id !== id));
+};
 
-  const handleTeamRename = (id: string, name: string) => {
-    setTeams(teams.map(t => t.id === id ? {...t, name} : t));
-  };
+const handleTeamRename = (id: string, name: string) => {
+  setTeams(teams.map(t => t.id === id ? {...t, name} : t));
+};
 
-  const handleParticipantRemove = (index: number) => {
-    setParticipants(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const handleParticipantEdit = (index: number, name: string) => {
-    setParticipants(prev => prev.map((p, i) => i === index ? {...p, name} : p));
-  };
-
-  type ParticipantOrTeam = Participant | Team;
-  const [allParticipants, setAllParticipants] = useState<ParticipantOrTeam[]>([
-    ...participants,
+const handleParticipantRemove = (index: number) => {
+  setParticipants(prev => prev.filter((_, i) => i !== index));
+};
     ...teams
   ]);
 
@@ -520,10 +526,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           <div className="flex flex-col items-center mb-4">
             <div className="mb-2">
               <img 
-                src={`${process.env.PUBLIC_URL || ''}/icons/icon.svg`} 
+                src="/icons/icon.svg" 
                 alt="Bee mascot" 
                 className="w-16 h-16 md:w-20 md:h-20 mx-auto"
-                onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL || ''}/img/bee.svg`}
+                onError={(e) => e.currentTarget.src = "/img/bee.svg"}
               />
             </div>
             <h1 className="text-3xl md:text-5xl font-bold text-yellow-300 uppercase font-sans tracking-wide">
