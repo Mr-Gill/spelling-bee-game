@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { GameConfig, Word, Participant, OptionsState } from './types';
 import { parseWordList } from './utils/parseWordList';
-import bookSvgUrl from './img/avatars/book.svg';
+import beeImg from './img/avatars/bee.svg';
+import bookImg from './img/avatars/book.svg';
+import trophyImg from './img/avatars/trophy.svg';
 import TeamForm from './components/TeamForm';
 import StudentRoster from './components/StudentRoster';
 import GameOptions from './components/GameOptions';
