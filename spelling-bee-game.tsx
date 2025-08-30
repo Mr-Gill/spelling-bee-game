@@ -14,6 +14,10 @@ const SpellingBeeGame = () => {
     const [gameResults, setGameResults] = useState(null);
     const [customWords, setCustomWords] = useState({ easy: [], medium: [], tricky: [] });
     const [wordDatabase, setWordDatabase] = useState({ easy: [], medium: [], tricky: [] });
+    const [musicStyle, setMusicStyle] = useState('Funk');
+    const [musicVolume, setMusicVolume] = useState(0.5);
+    const [soundEnabled, setSoundEnabled] = useState(true);
+    const [isMusicPlaying, setIsMusicPlaying] = useState(true);
 
     useEffect(() => {
         fetch('words.json')
@@ -41,6 +45,10 @@ const SpellingBeeGame = () => {
             };
         }
         setGameConfig({ ...config, wordDatabase: finalWordDatabase });
+        setMusicStyle(config.musicStyle);
+        setMusicVolume(config.musicVolume);
+        setSoundEnabled(config.soundEnabled);
+        setIsMusicPlaying(true);
         setGameState("playing");
     };
 
@@ -76,17 +84,28 @@ const SpellingBeeGame = () => {
     }, []);
 
     // Handle background music on different screens
-    const musicStyle = gameConfig?.musicStyle || 'Funk';
-    const musicVolume = gameConfig?.musicVolume ?? 0.5;
     const screen = gameState === 'playing' ? 'game' : 'menu';
     const trackVariant = screen === 'game' ? 'instrumental' : 'vocal';
-    useMusic(musicStyle, trackVariant, musicVolume, gameConfig?.soundEnabled ?? true, screen);
+    useMusic(musicStyle, trackVariant, musicVolume, soundEnabled && isMusicPlaying, screen);
 
     if (gameState === "setup") {
         return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
     }
     if (gameState === "playing") {
-        return <GameScreen config={gameConfig} onEndGame={handleEndGame} />;
+        return (
+            <GameScreen
+                config={gameConfig}
+                onEndGame={handleEndGame}
+                musicStyle={musicStyle}
+                musicVolume={musicVolume}
+                onMusicStyleChange={setMusicStyle}
+                onMusicVolumeChange={setMusicVolume}
+                soundEnabled={soundEnabled}
+                onSoundEnabledChange={setSoundEnabled}
+                isMusicPlaying={isMusicPlaying}
+                onToggleMusicPlaying={() => setIsMusicPlaying(prev => !prev)}
+            />
+        );
     }
     if (gameState === "results") {
         return <ResultsScreen results={gameResults} config={gameConfig} onRestart={handleRestart} onViewLeaderboard={handleViewLeaderboard} />;
