@@ -21,6 +21,7 @@ import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
 import { audioManager } from "./utils/audio";
+import { addReviewWord } from "./utils/reviewQueue";
 
 interface GameScreenProps {
   config: GameConfig;
@@ -175,7 +176,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     }
 
     setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
-    if (currentWord) setMissedWords((prev) => [...prev, currentWord]);
+    if (currentWord) {
+      setMissedWords((prev) => [...prev, currentWord]);
+      addReviewWord(currentWord.word);
+    }
 
     const updatedParticipants = participants.map((p, index) => {
       if (index === currentParticipantIndex) {
@@ -383,6 +387,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         ...prev,
         review: [...prev.review, currentWord],
       }));
+      addReviewWord(currentWord.word);
     }
     setAttemptedParticipants(new Set());
 
