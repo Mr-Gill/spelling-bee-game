@@ -16,10 +16,14 @@ import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
 import AvatarSelector from './components/AvatarSelector';
+<<<<<<< HEAD
 import { useNotifications, NotificationContainer } from './components/Notification.jsx';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 import FlyingBee from './components/FlyingBee';
+=======
+import ScoreCard from './components/ScoreCard';
+>>>>>>> origin/codex/highlight-active-player-in-gamescreen
 import { audioManager } from './utils/audio';
 
 interface GameScreenProps {
@@ -444,11 +448,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         </button>
         <img src="img/bee.svg" alt="Bee icon" className="w-12 h-12" />
         {participants.map((p, index) => (
-          <div key={index} className="text-center scorecard">
-            <div className="text-2xl font-bold">{p.name}</div>
-            <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(p.lives)}</div>
-            <div className="text-xl font-bold text-green-400">{p.points} pts</div>
-          </div>
+          <ScoreCard key={index} participant={p} isActive={index === currentParticipantIndex} />
         ))}
       </div>
       
