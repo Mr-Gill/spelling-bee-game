@@ -120,7 +120,7 @@ messages:
       corrected JSON array.
   - role: user
     content: >
-      Create {N} spelling-bee words about: "{TOPIC}".
+      Create 10 spelling-bee words about: "MUSIC".
 
 
       Audience: Years 7–8 (Australia). Tone: witty, classroom-safe. Difficulty:
@@ -142,4 +142,10 @@ messages:
           "pronunciation": "string"
         }
       ]
-model: openai/gpt-4o
+model: openai/gpt-4.1-mini
+modelParameters:
+  max_completion_tokens: 26920
+  temperature: 0.5
+  top_p: 0.9
+  frequency_penalty: 2
+responseFormat: json_object
