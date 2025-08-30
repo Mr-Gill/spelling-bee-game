@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GameConfig, Word } from './types';
 import { parseWordList } from './utils/parseWordList';
 import bookImg from './img/avatars/book.svg';
+import WordListPrompt from './WordListPrompt';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -46,6 +47,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
   const [parsedCustomWords, setParsedCustomWords] = useState<Word[]>([]);
+  const [showWordPrompt, setShowWordPrompt] = useState(false);
   const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, Word[]>>({});
   const [includeMissedWords, setIncludeMissedWords] = useState(false);
   const [error, setError] = useState('');
@@ -517,6 +519,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         
         <div className="bg-white/10 p-6 rounded-lg mb-8 mt-8">
             <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Add Custom Word List 📝</h2>
+            <button
+                onClick={() => setShowWordPrompt(true)}
+                className="mb-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+            >
+                Generate Word List
+            </button>
             <div className="mb-6">
                 <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">Choose Bundled Word List</label>
                 <select id="bundled-list" value={selectedBundledList} onChange={e => setSelectedBundledList(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white">
@@ -577,6 +585,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold">View Achievements</button>
         </div>
       </div>
+      {showWordPrompt && (
+        <WordListPrompt
+          onAddWords={ws => setParsedCustomWords(prev => [...prev, ...ws])}
+          onClose={() => setShowWordPrompt(false)}
+        />
+      )}
     </div>
   );
 };
