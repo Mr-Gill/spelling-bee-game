@@ -20,6 +20,7 @@ import useWordSelection, { difficultyOrder } from "./utils/useWordSelection";
 import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
+import EncouragementBanner from "./components/EncouragementBanner";
 import { audioManager } from "./utils/audio";
 
 interface GameScreenProps {
@@ -85,6 +86,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState("");
+  const [showEncouragement, setShowEncouragement] = React.useState(false);
+  const [encouragementKey, setEncouragementKey] = React.useState(0);
+
+  const triggerEncouragement = () => {
+    setEncouragementKey((k) => k + 1);
+    setShowEncouragement(true);
+  };
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);
@@ -162,7 +170,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     );
   };
 
-  function handleIncorrectAttempt() {
+  function handleIncorrectAttempt(showBanner = true) {
+    if (showBanner) triggerEncouragement();
     if (extraAttempt) {
       setFeedback({
         message: "Incorrect. You still have one more attempt!",
@@ -266,6 +275,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const handleSpellingSubmit = () => {
     if (!currentWord) return;
     stopTimer();
+    triggerEncouragement();
 
     const guess = letters.join("").trim().toLowerCase();
     const isCorrect = guess === currentWord.word.toLowerCase();
@@ -349,11 +359,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
     // This part only runs if the answer was incorrect
     playWrong();
-    handleIncorrectAttempt();
+    handleIncorrectAttempt(false);
   };
 
   const skipWord = () => {
     stopTimer();
+    triggerEncouragement();
     const isLivesPenalty = config.skipPenaltyType === "lives";
     const deduction = isLivesPenalty
       ? `-${config.skipPenaltyValue} life${config.skipPenaltyValue > 1 ? "s" : ""}`
@@ -596,6 +607,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40">
           Paused
         </div>
+      )}
+      {showEncouragement && (
+        <EncouragementBanner
+          key={encouragementKey}
+          onDone={() => setShowEncouragement(false)}
+        />
       )}
     </div>
   );

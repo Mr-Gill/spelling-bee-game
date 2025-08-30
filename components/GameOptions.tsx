@@ -11,6 +11,7 @@ export interface OptionsState {
   teacherMode: boolean;
   musicStyle: string;
   musicVolume: number;
+  customPhrases: string;
 }
 
 interface GameOptionsProps {
@@ -35,6 +36,14 @@ const GameOptions: React.FC<GameOptionsProps> = ({ options, setOptions }) => {
   useEffect(() => {
     localStorage.setItem('musicVolume', String(options.musicVolume));
   }, [options.musicVolume]);
+
+  useEffect(() => {
+    const lines = options.customPhrases
+      .split('\n')
+      .map(p => p.trim())
+      .filter(Boolean);
+    localStorage.setItem('encouragementPhrases', JSON.stringify(lines));
+  }, [options.customPhrases]);
 
   useEffect(() => {
     if (options.teacherMode) {
@@ -184,6 +193,19 @@ const GameOptions: React.FC<GameOptionsProps> = ({ options, setOptions }) => {
             className="w-full"
           />
         </div>
+      </div>
+
+      <div className="bg-white/10 p-6 rounded-lg md:col-span-2 lg:col-span-3">
+        <h2 className="text-2xl font-bold mb-4">Encouragement Phrases 💬</h2>
+        <textarea
+          value={options.customPhrases}
+          onChange={e =>
+            setOptions(o => ({ ...o, customPhrases: e.target.value }))
+          }
+          className="w-full p-2 rounded-md bg-white/20 text-white"
+          placeholder="Enter phrases, one per line"
+          rows={3}
+        />
       </div>
     </div>
   );
