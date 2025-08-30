@@ -1083,7 +1083,7 @@ var require_react_development = __commonJS({
           }
           return dispatcher.useContext(Context);
         }
-        function useState6(initialState) {
+        function useState8(initialState) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useState(initialState);
         }
@@ -1091,11 +1091,11 @@ var require_react_development = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useReducer(reducer, initialArg, init);
         }
-        function useRef4(initialValue) {
+        function useRef5(initialValue) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useRef(initialValue);
         }
-        function useEffect7(create2, deps) {
+        function useEffect9(create2, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useEffect(create2, deps);
         }
@@ -1107,7 +1107,7 @@ var require_react_development = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useLayoutEffect(create2, deps);
         }
-        function useCallback3(callback, deps) {
+        function useCallback5(callback, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useCallback(callback, deps);
         }
@@ -1874,19 +1874,19 @@ var require_react_development = __commonJS({
         exports.memo = memo;
         exports.startTransition = startTransition;
         exports.unstable_act = act;
-        exports.useCallback = useCallback3;
+        exports.useCallback = useCallback5;
         exports.useContext = useContext;
         exports.useDebugValue = useDebugValue;
         exports.useDeferredValue = useDeferredValue;
-        exports.useEffect = useEffect7;
+        exports.useEffect = useEffect9;
         exports.useId = useId;
         exports.useImperativeHandle = useImperativeHandle;
         exports.useInsertionEffect = useInsertionEffect;
         exports.useLayoutEffect = useLayoutEffect;
         exports.useMemo = useMemo;
         exports.useReducer = useReducer;
-        exports.useRef = useRef4;
-        exports.useState = useState6;
+        exports.useRef = useRef5;
+        exports.useState = useState8;
         exports.useSyncExternalStore = useSyncExternalStore;
         exports.useTransition = useTransition;
         exports.version = ReactVersion;
@@ -2382,9 +2382,9 @@ var require_react_dom_development = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React7 = require_react();
+        var React8 = require_react();
         var Scheduler = require_scheduler();
-        var ReactSharedInternals = React7.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React8.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -3991,7 +3991,7 @@ var require_react_dom_development = __commonJS({
           {
             if (props.value == null) {
               if (typeof props.children === "object" && props.children !== null) {
-                React7.Children.forEach(props.children, function(child) {
+                React8.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -23587,7 +23587,7 @@ var require_react_jsx_runtime_development = __commonJS({
     if (true) {
       (function() {
         "use strict";
-        var React7 = require_react();
+        var React8 = require_react();
         var REACT_ELEMENT_TYPE = Symbol.for("react.element");
         var REACT_PORTAL_TYPE = Symbol.for("react.portal");
         var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
@@ -23613,7 +23613,7 @@ var require_react_jsx_runtime_development = __commonJS({
           }
           return null;
         }
-        var ReactSharedInternals = React7.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React8.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         function error(format) {
           {
             {
@@ -24463,11 +24463,11 @@ var require_react_jsx_runtime_development = __commonJS({
             return jsxWithValidation(type, props, key, false);
           }
         }
-        var jsx8 = jsxWithValidationDynamic;
-        var jsxs7 = jsxWithValidationStatic;
+        var jsx9 = jsxWithValidationDynamic;
+        var jsxs8 = jsxWithValidationStatic;
         exports.Fragment = REACT_FRAGMENT_TYPE;
-        exports.jsx = jsx8;
-        exports.jsxs = jsxs7;
+        exports.jsx = jsx9;
+        exports.jsxs = jsxs8;
       })();
     }
   }
@@ -24486,7 +24486,7 @@ var require_jsx_runtime = __commonJS({
 });
 
 // spelling-bee-game.tsx
-var import_react10 = __toESM(require_react());
+var import_react13 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // LeaderboardScreen.tsx
@@ -24499,6 +24499,7 @@ var bee_default = "./bee-JMGRCQTT.svg";
 var import_jsx_runtime = __toESM(require_jsx_runtime());
 var LeaderboardScreen = ({ onBack }) => {
   const [entries, setEntries] = (0, import_react.useState)([]);
+  const [error, setError] = (0, import_react.useState)("");
   (0, import_react.useEffect)(() => {
     const storedData = localStorage.getItem("leaderboard");
     if (storedData) {
@@ -24506,10 +24507,17 @@ var LeaderboardScreen = ({ onBack }) => {
       const sorted = parsedEntries.sort((a, b) => b.score - a.score).slice(0, 10);
       setEntries(sorted);
     } else {
-      fetch("leaderboard.json").then((res) => res.json()).then((data) => {
+      fetch("leaderboard.json").then((res) => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+      }).then((data) => {
         const sorted = data.sort((a, b) => b.score - a.score).slice(0, 10);
         setEntries(sorted);
-      }).catch((err) => console.error("Could not load default leaderboard", err));
+        setError("");
+      }).catch((err) => {
+        console.error("Could not load default leaderboard", err);
+        setError("Failed to load leaderboard.");
+      });
     }
   }, []);
   (0, import_react.useEffect)(() => {
@@ -24521,7 +24529,7 @@ var LeaderboardScreen = ({ onBack }) => {
   }, []);
   return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center", children: [
     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-6xl font-bold mb-8 text-yellow-300", children: "\u{1F3C5} Leaderboard" }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md scorecard", children: entries.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-xl", children: "No scores yet." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ol", { className: "text-xl space-y-2", children: entries.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "flex justify-between items-center py-1", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md scorecard", children: error ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-xl text-red-300", children: error }) : entries.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-xl", children: "No scores yet." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ol", { className: "text-xl space-y-2", children: entries.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "flex justify-between items-center py-1", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "flex items-center font-bold", children: [
         index < 3 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "mr-2", children: ["\u{1F947}", "\u{1F948}", "\u{1F949}"][index] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
@@ -24724,7 +24732,16 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
   };
   (0, import_react2.useEffect)(() => {
     if (selectedBundledList) {
-      fetch(`wordlists/${selectedBundledList}`).then((res) => res.text()).then((text) => setCustomWordListText(text));
+      fetch(`wordlists/${selectedBundledList}`).then((res) => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.text();
+      }).then((text) => {
+        setCustomWordListText(text);
+        setError("");
+      }).catch((err) => {
+        console.error("Failed to load bundled word list", err);
+        setError("Failed to load bundled word list.");
+      });
     }
   }, [selectedBundledList]);
   (0, import_react2.useEffect)(() => {
@@ -24745,7 +24762,8 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
         const response = await fetch(`wordlists/${randomList.file}`);
         const text = await response.text();
         challengeWords = JSON.parse(text);
-      } catch {
+      } catch (err) {
+        console.error("Failed to load session challenge words", err);
         setError("Failed to load session challenge words.");
         return;
       }
@@ -24953,7 +24971,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
 var SetupScreen_default = SetupScreen;
 
 // GameScreen.tsx
-var import_react6 = __toESM(require_react());
+var import_react9 = __toESM(require_react());
 
 // node_modules/lucide-react/dist/esm/createLucideIcon.js
 var import_react4 = __toESM(require_react());
@@ -25811,6 +25829,86 @@ var useSound = (src, enabled = true) => {
 };
 var useSound_default = useSound;
 
+// utils/useTimer.ts
+var import_react6 = __toESM(require_react());
+var useTimer = (duration, onExpire) => {
+  const [timeLeft, setTimeLeft] = (0, import_react6.useState)(duration);
+  const [isPaused, setIsPaused] = (0, import_react6.useState)(false);
+  const intervalRef = (0, import_react6.useRef)(null);
+  const clear = () => clearInterval(intervalRef.current);
+  const tick = (0, import_react6.useCallback)(() => {
+    setTimeLeft((prev) => {
+      if (prev <= 1) {
+        clear();
+        onExpire();
+        return 0;
+      }
+      return prev - 1;
+    });
+  }, [onExpire]);
+  const start = (0, import_react6.useCallback)(() => {
+    clear();
+    setTimeLeft(duration);
+    intervalRef.current = setInterval(tick, 1e3);
+    setIsPaused(false);
+  }, [duration, tick]);
+  const pause = (0, import_react6.useCallback)(() => {
+    clear();
+    setIsPaused(true);
+  }, []);
+  const resume = (0, import_react6.useCallback)(() => {
+    if (!isPaused) return;
+    intervalRef.current = setInterval(tick, 1e3);
+    setIsPaused(false);
+  }, [isPaused, tick]);
+  const reset = (0, import_react6.useCallback)(() => setTimeLeft(duration), [duration]);
+  const stop = (0, import_react6.useCallback)(() => {
+    clear();
+  }, []);
+  (0, import_react6.useEffect)(() => () => clear(), []);
+  return { timeLeft, start, pause, resume, reset, stop, isPaused };
+};
+var useTimer_default = useTimer;
+
+// utils/useWordSelection.ts
+var import_react7 = __toESM(require_react());
+var difficultyOrder = ["easy", "medium", "tricky", "review"];
+var shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
+var useWordSelection = (db) => {
+  const [wordQueues, setWordQueues] = (0, import_react7.useState)({
+    easy: shuffleArray(db.easy),
+    medium: shuffleArray(db.medium),
+    tricky: shuffleArray(db.tricky),
+    review: []
+  });
+  const [currentWord, setCurrentWord] = (0, import_react7.useState)(null);
+  const [currentDifficulty, setCurrentDifficulty] = (0, import_react7.useState)("easy");
+  const selectNextWord = (0, import_react7.useCallback)(
+    (level) => {
+      let index = Math.min(level, difficultyOrder.length - 1);
+      let nextWord = null;
+      let nextDifficulty = difficultyOrder[index];
+      while (index < difficultyOrder.length) {
+        const diff = difficultyOrder[index];
+        const queue = wordQueues[diff];
+        if (queue.length > 0) {
+          nextWord = queue[0];
+          setWordQueues((prev) => ({ ...prev, [diff]: prev[diff].slice(1) }));
+          nextDifficulty = diff;
+          break;
+        }
+        index++;
+      }
+      setCurrentDifficulty(nextDifficulty);
+      setCurrentWord(nextWord);
+      return nextWord;
+    },
+    [wordQueues]
+  );
+  return { wordQueues, setWordQueues, currentWord, currentDifficulty, selectNextWord, setCurrentWord };
+};
+var useWordSelection_default = useWordSelection;
+
 // components/OnScreenKeyboard.tsx
 var import_jsx_runtime3 = __toESM(require_jsx_runtime());
 var letters = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
@@ -25857,11 +25955,259 @@ var OnScreenKeyboard = ({ onLetter, onBackspace, onSubmit, soundEnabled }) => {
 };
 var OnScreenKeyboard_default = OnScreenKeyboard;
 
-// GameScreen.tsx
+// components/HintPanel.tsx
+var import_react8 = __toESM(require_react());
 var import_jsx_runtime4 = __toESM(require_jsx_runtime());
-var difficultyOrder = ["easy", "medium", "tricky", "review"];
+var HintPanel = ({
+  word,
+  participantPoints,
+  participantIndex,
+  spendPoints,
+  isTeamMode,
+  showWord,
+  onHintUsed,
+  onExtraAttempt
+}) => {
+  const [showHint, setShowHint] = (0, import_react8.useState)(false);
+  const [showDefinition, setShowDefinition] = (0, import_react8.useState)(false);
+  const [showOrigin, setShowOrigin] = (0, import_react8.useState)(false);
+  const [showSentence, setShowSentence] = (0, import_react8.useState)(false);
+  const [showPrefix, setShowPrefix] = (0, import_react8.useState)(false);
+  const [showSuffix, setShowSuffix] = (0, import_react8.useState)(false);
+  const [revealedLetters, setRevealedLetters] = (0, import_react8.useState)([]);
+  const [revealedSyllables, setRevealedSyllables] = (0, import_react8.useState)([]);
+  (0, import_react8.useEffect)(() => {
+    setRevealedLetters(Array(word.word.length).fill(false));
+    setRevealedSyllables(Array(word.syllables.length).fill(false));
+    setShowHint(false);
+    setShowDefinition(false);
+    setShowOrigin(false);
+    setShowSentence(false);
+    setShowPrefix(false);
+    setShowSuffix(false);
+  }, [word]);
+  (0, import_react8.useEffect)(() => {
+    if (!showWord) {
+      setRevealedSyllables(Array(word.syllables.length).fill(false));
+    }
+  }, [showWord, word.syllables.length]);
+  const handleRevealSyllable = (idx) => {
+    const cost = 3;
+    if (participantPoints < cost) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
+    setRevealedSyllables((prev) => {
+      const updated = [...prev];
+      updated[idx] = true;
+      return updated;
+    });
+  };
+  const handleHangmanReveal = () => {
+    const cost = 6;
+    if (participantPoints < cost) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
+    const unrevealed = revealedLetters.map((r, i) => !r ? i : null).filter((i) => i !== null);
+    if (unrevealed.length === 0) return;
+    const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+    setRevealedLetters((prev) => {
+      const updated = [...prev];
+      updated[randomIndex] = true;
+      return updated;
+    });
+  };
+  const handleVowelReveal = () => {
+    const cost = 4;
+    if (participantPoints < cost) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
+    setRevealedLetters(word.word.split("").map((l, idx) => revealedLetters[idx] || "aeiou".includes(l.toLowerCase())));
+  };
+  const handleFriendSubstitution = () => {
+    const cost = 4;
+    if (participantPoints < cost) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
+    onExtraAttempt();
+  };
+  const handlePrefixReveal = () => {
+    const cost = 3;
+    if (participantPoints < cost || !word.prefix) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
+    setShowPrefix(true);
+  };
+  const handleSuffixReveal = () => {
+    const cost = 3;
+    if (participantPoints < cost || !word.suffix) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
+    setShowSuffix(true);
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8", children: [
+    revealedLetters.some((r) => r) && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "text-3xl font-mono mb-4", children: word.word.split("").map((letter, idx) => revealedLetters[idx] ? letter : "_").join(" ") }),
+    showDefinition && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "text-2xl mb-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("strong", { className: "text-yellow-300", children: "Definition:" }),
+      " ",
+      word.definition
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      "button",
+      {
+        onClick: () => {
+          setShowHint(!showHint);
+          if (!showHint) onHintUsed();
+        },
+        className: "mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold",
+        children: showHint ? "Hide Hint" : "Show Hint"
+      }
+    ),
+    showHint && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mt-4 flex flex-col items-center gap-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: word.syllables.map((syllable, idx) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "button",
+        {
+          onClick: () => speak(syllable),
+          disabled: !revealedSyllables[idx] || !showWord,
+          className: "bg-yellow-100 text-black px-2 py-1 rounded disabled:opacity-50",
+          children: showWord && revealedSyllables[idx] ? syllable : "???"
+        },
+        idx
+      )) }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: word.syllables.map(
+        (_, idx) => !revealedSyllables[idx] && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+          "button",
+          {
+            onClick: () => handleRevealSyllable(idx),
+            disabled: participantPoints < 3,
+            className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
+            children: `Reveal syllable ${idx + 1} (-3)`
+          },
+          `reveal-${idx}`
+        )
+      ) })
+    ] }),
+    showOrigin && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "text-xl mb-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("strong", { className: "text-yellow-300", children: "Origin:" }),
+      " ",
+      word.origin
+    ] }),
+    showSentence && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "text-xl", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("strong", { className: "text-yellow-300", children: "Example:" }),
+      ' "',
+      word.example,
+      '"'
+    ] }),
+    showPrefix && showWord && word.prefix && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "text-xl mb-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("strong", { className: "text-yellow-300", children: "Prefix:" }),
+      " ",
+      word.prefix
+    ] }),
+    showSuffix && showWord && word.suffix && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "text-xl mb-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("strong", { className: "text-yellow-300", children: "Suffix:" }),
+      " ",
+      word.suffix
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mt-4 flex gap-4 justify-center", children: [
+      !showDefinition && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "button",
+        {
+          onClick: () => {
+            if (participantPoints < 1) return;
+            spendPoints(participantIndex, 1);
+            onHintUsed();
+            setShowDefinition(true);
+          },
+          disabled: participantPoints < 1,
+          className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
+          children: "Buy Definition (-1)"
+        }
+      ),
+      !showOrigin && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "button",
+        {
+          onClick: () => {
+            if (participantPoints < 1) return;
+            spendPoints(participantIndex, 1);
+            onHintUsed();
+            setShowOrigin(true);
+          },
+          disabled: participantPoints < 1,
+          className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
+          children: "Buy Origin (-1)"
+        }
+      ),
+      !showSentence && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "button",
+        {
+          onClick: () => {
+            if (participantPoints < 1) return;
+            spendPoints(participantIndex, 1);
+            onHintUsed();
+            setShowSentence(true);
+          },
+          disabled: participantPoints < 1,
+          className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
+          children: "Buy Sentence (-1)"
+        }
+      )
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mt-4 flex gap-4 justify-center", children: [
+      !showPrefix && word.prefix && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "button",
+        {
+          onClick: handlePrefixReveal,
+          disabled: participantPoints < 3,
+          className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
+          children: "Reveal Prefix (-3)"
+        }
+      ),
+      !showSuffix && word.suffix && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "button",
+        {
+          onClick: handleSuffixReveal,
+          disabled: participantPoints < 3,
+          className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
+          children: "Reveal Suffix (-3)"
+        }
+      )
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mt-6 flex justify-center gap-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "button",
+        {
+          onClick: handleHangmanReveal,
+          disabled: participantPoints < 5 || !isTeamMode,
+          className: "bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg",
+          children: "Hangman Reveal (-5)"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "button",
+        {
+          onClick: handleVowelReveal,
+          disabled: participantPoints < 3 || !isTeamMode,
+          className: "bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg",
+          children: "Vowel Reveal (-3)"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "button",
+        {
+          onClick: handleFriendSubstitution,
+          disabled: participantPoints < 4 || !isTeamMode,
+          className: "bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg",
+          children: "Friend Sub (-4)"
+        }
+      )
+    ] })
+  ] });
+};
+var HintPanel_default = HintPanel;
+
+// GameScreen.tsx
+var import_jsx_runtime5 = __toESM(require_jsx_runtime());
 var GameScreen = ({ config, onEndGame }) => {
-  const [participants, setParticipants] = import_react6.default.useState(
+  const [participants, setParticipants] = import_react9.default.useState(
     config.participants.map((p) => ({
       ...p,
       attempted: 0,
@@ -25870,48 +26216,18 @@ var GameScreen = ({ config, onEndGame }) => {
       wordsCorrect: 0
     }))
   );
-  const [currentParticipantIndex, setCurrentParticipantIndex] = import_react6.default.useState(0);
-  const [currentWord, setCurrentWord] = import_react6.default.useState(null);
-  const [timeLeft, setTimeLeft] = import_react6.default.useState(config.timerDuration);
+  const [currentParticipantIndex, setCurrentParticipantIndex] = import_react9.default.useState(0);
   const isTeamMode = config.gameMode === "team";
-  const [showWord, setShowWord] = import_react6.default.useState(true);
-  const [showHint, setShowHint] = import_react6.default.useState(false);
-  const [usedHint, setUsedHint] = import_react6.default.useState(false);
-  const [showDefinition, setShowDefinition] = import_react6.default.useState(false);
-  const [showOrigin, setShowOrigin] = import_react6.default.useState(false);
-  const [showSentence, setShowSentence] = import_react6.default.useState(false);
-  const [showPrefix, setShowPrefix] = import_react6.default.useState(false);
-  const [showSuffix, setShowSuffix] = import_react6.default.useState(false);
-  const [letters2, setLetters] = import_react6.default.useState([]);
-  const [feedback, setFeedback] = import_react6.default.useState({ message: "", type: "" });
-  const timerRef = import_react6.default.useRef(null);
-  const [startTime] = import_react6.default.useState(Date.now());
-  const [revealedLetters, setRevealedLetters] = import_react6.default.useState([]);
-  const [revealedSyllables, setRevealedSyllables] = import_react6.default.useState([]);
-  const [extraAttempt, setExtraAttempt] = import_react6.default.useState(false);
-  const [isHelpOpen, setIsHelpOpen] = import_react6.default.useState(false);
-  const [isPaused, setIsPaused] = import_react6.default.useState(false);
-  const playCorrect = useSound_default(correct_default, config.soundEnabled);
-  const playWrong = useSound_default(wrong_default, config.soundEnabled);
-  const playTimeout = useSound_default(timeout_default, config.soundEnabled);
-  const playLetterCorrect = useSound_default(letter_correct_default, config.soundEnabled);
-  const playLetterWrong = useSound_default(letter_wrong_default, config.soundEnabled);
-  const playShop = useSound_default(shop_default, config.soundEnabled);
-  const playLoseLife = useSound_default(lose_life_default, config.soundEnabled);
-  const hiddenInputRef = import_react6.default.useRef(null);
-  const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
-  const [wordQueues, setWordQueues] = import_react6.default.useState({
-    easy: shuffleArray(config.wordDatabase.easy),
-    medium: shuffleArray(config.wordDatabase.medium),
-    tricky: shuffleArray(config.wordDatabase.tricky),
-    review: []
-  });
-  const [currentDifficulty, setCurrentDifficulty] = import_react6.default.useState(
-    difficultyOrder[Math.min(config.difficultyLevel, difficultyOrder.length - 1)]
-  );
-  const [attemptedParticipants, setAttemptedParticipants] = import_react6.default.useState(/* @__PURE__ */ new Set());
-  const [missedWords, setMissedWords] = import_react6.default.useState([]);
-  const [unlockedAchievements, setUnlockedAchievements] = import_react6.default.useState(() => {
+  const [showWord, setShowWord] = import_react9.default.useState(true);
+  const [usedHint, setUsedHint] = import_react9.default.useState(false);
+  const [letters2, setLetters] = import_react9.default.useState([]);
+  const [feedback, setFeedback] = import_react9.default.useState({ message: "", type: "" });
+  const [extraAttempt, setExtraAttempt] = import_react9.default.useState(false);
+  const [isHelpOpen, setIsHelpOpen] = import_react9.default.useState(false);
+  const { wordQueues, setWordQueues, currentWord, currentDifficulty, selectNextWord } = useWordSelection_default(config.wordDatabase);
+  const [attemptedParticipants, setAttemptedParticipants] = import_react9.default.useState(/* @__PURE__ */ new Set());
+  const [missedWords, setMissedWords] = import_react9.default.useState([]);
+  const [unlockedAchievements, setUnlockedAchievements] = import_react9.default.useState(() => {
     if (typeof window === "undefined") return [];
     try {
       return JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
@@ -25919,45 +26235,41 @@ var GameScreen = ({ config, onEndGame }) => {
       return [];
     }
   });
-  const [toast, setToast] = import_react6.default.useState("");
-  import_react6.default.useEffect(() => {
+  const [toast, setToast] = import_react9.default.useState("");
+  const hiddenInputRef = import_react9.default.useRef(null);
+  const [startTime] = import_react9.default.useState(Date.now());
+  const playCorrect = useSound_default(correct_default, config.soundEnabled);
+  const playWrong = useSound_default(wrong_default, config.soundEnabled);
+  const playTimeout = useSound_default(timeout_default, config.soundEnabled);
+  const playLetterCorrect = useSound_default(letter_correct_default, config.soundEnabled);
+  const playLetterWrong = useSound_default(letter_wrong_default, config.soundEnabled);
+  const playShop = useSound_default(shop_default, config.soundEnabled);
+  const playLoseLife = useSound_default(lose_life_default, config.soundEnabled);
+  const {
+    timeLeft,
+    start: startTimer,
+    pause: pauseTimer,
+    resume: resumeTimer,
+    reset: resetTimer,
+    stop: stopTimer,
+    isPaused
+  } = useTimer_default(config.timerDuration, () => {
+    playTimeout();
+    handleIncorrectAttempt();
+  });
+  import_react9.default.useEffect(() => {
     if (localStorage.getItem("teacherMode") === "true") {
       document.body.classList.add("teacher-mode");
     } else {
       document.body.classList.remove("teacher-mode");
     }
   }, []);
-  const startTimer = () => {
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
-          playTimeout();
-          clearInterval(timerRef.current);
-          handleIncorrectAttempt();
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1e3);
-  };
-  const pauseTimer = () => {
-    clearInterval(timerRef.current);
-    setIsPaused(true);
-  };
-  const resumeTimer = () => {
-    setIsPaused(false);
-  };
-  import_react6.default.useEffect(() => {
-    if (!currentWord || isPaused) return;
-    startTimer();
-    return () => clearInterval(timerRef.current);
-  }, [currentWord, config.soundEnabled, isPaused]);
-  import_react6.default.useEffect(() => {
+  import_react9.default.useEffect(() => {
     if (currentWord) {
       setLetters(Array.from({ length: currentWord.word.length }, () => ""));
     }
   }, [currentWord]);
-  import_react6.default.useEffect(() => {
+  import_react9.default.useEffect(() => {
     const handleKeyDown = (e) => {
       if (!currentWord || isPaused) return;
       if (/^[a-zA-Z]$/.test(e.key)) {
@@ -25971,47 +26283,19 @@ var GameScreen = ({ config, onEndGame }) => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentWord, isPaused, letters2]);
-  import_react6.default.useEffect(() => {
-    if (!showWord && currentWord) {
-      setRevealedSyllables(Array(currentWord.syllables.length).fill(false));
-    }
-  }, [showWord, currentWord]);
-  const selectNextWord = (level) => {
-    let index = Math.min(level, difficultyOrder.length - 1);
-    let nextWord = null;
-    let nextDifficulty = difficultyOrder[index];
-    while (index < difficultyOrder.length) {
-      const diff = difficultyOrder[index];
-      const queue = wordQueues[diff];
-      if (queue.length > 0) {
-        nextWord = queue[0];
-        setWordQueues((prev) => ({ ...prev, [diff]: prev[diff].slice(1) }));
-        nextDifficulty = diff;
-        break;
-      }
-      index++;
-    }
+  const selectNextWordForLevel = (level) => {
+    const nextWord = selectNextWord(level);
     if (nextWord) {
-      setCurrentDifficulty(nextDifficulty);
-      setCurrentWord(nextWord);
-      setTimeLeft(config.timerDuration);
       setAttemptedParticipants(/* @__PURE__ */ new Set());
-      setRevealedLetters(Array(nextWord.word.length).fill(false));
-      setRevealedSyllables(Array(nextWord.syllables.length).fill(false));
       setExtraAttempt(false);
       setIsHelpOpen(false);
-      setShowHint(false);
       setUsedHint(false);
-      setShowDefinition(false);
-      setShowOrigin(false);
-      setShowSentence(false);
-      setShowPrefix(false);
-      setShowSuffix(false);
       setLetters(Array(nextWord.word.length).fill(""));
       if (hiddenInputRef.current) {
         hiddenInputRef.current.focus();
       }
       speak(nextWord.word);
+      startTimer();
     } else {
       onEndGameWithMissedWords();
     }
@@ -26019,12 +26303,12 @@ var GameScreen = ({ config, onEndGame }) => {
   const nextTurn = () => {
     setCurrentParticipantIndex((prevIndex) => (prevIndex + 1) % participants.length);
   };
-  const handleIncorrectAttempt = () => {
+  function handleIncorrectAttempt() {
     if (extraAttempt) {
       setFeedback({ message: "Incorrect. You still have one more attempt!", type: "error" });
       setExtraAttempt(false);
       if (currentWord) setLetters(Array(currentWord.word.length).fill(""));
-      setTimeLeft(config.timerDuration);
+      startTimer();
       return;
     }
     setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
@@ -26053,16 +26337,16 @@ var GameScreen = ({ config, onEndGame }) => {
         }
         setAttemptedParticipants(/* @__PURE__ */ new Set());
         const nextIndex = (currentParticipantIndex + 1) % participants.length;
-        selectNextWord(updatedParticipants[nextIndex].difficultyLevel);
+        selectNextWordForLevel(updatedParticipants[nextIndex].difficultyLevel);
         nextTurn();
       } else {
         setAttemptedParticipants(newAttempted);
         setUsedHint(false);
         nextTurn();
-        setTimeLeft(config.timerDuration);
+        startTimer();
       }
     }, 2e3);
-  };
+  }
   const spendPoints = (participantIndex, cost) => {
     setParticipants(
       (prev) => prev.map((p, index) => {
@@ -26073,58 +26357,6 @@ var GameScreen = ({ config, onEndGame }) => {
       })
     );
     playShop();
-  };
-  const handleHangmanReveal = () => {
-    const cost = 6;
-    if (participants[currentParticipantIndex].points < cost || !currentWord) return;
-    spendPoints(currentParticipantIndex, cost);
-    setUsedHint(true);
-    const unrevealed = revealedLetters.map((rev, idx) => !rev ? idx : null).filter((idx) => idx !== null);
-    if (unrevealed.length === 0) return;
-    const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
-    const newRevealed = [...revealedLetters];
-    newRevealed[randomIndex] = true;
-    setRevealedLetters(newRevealed);
-  };
-  const handleVowelReveal = () => {
-    const cost = 4;
-    if (participants[currentParticipantIndex].points < cost || !currentWord) return;
-    spendPoints(currentParticipantIndex, cost);
-    setUsedHint(true);
-    const newRevealed = currentWord.word.split("").map((letter, idx) => revealedLetters[idx] || "aeiou".includes(letter.toLowerCase()));
-    setRevealedLetters(newRevealed);
-  };
-  const handleFriendSubstitution = () => {
-    const cost = 4;
-    if (participants[currentParticipantIndex].points < cost) return;
-    spendPoints(currentParticipantIndex, cost);
-    setExtraAttempt(true);
-    setUsedHint(true);
-  };
-  const handlePrefixReveal = () => {
-    const cost = 3;
-    if (participants[currentParticipantIndex].points < cost || !currentWord) return;
-    spendPoints(currentParticipantIndex, cost);
-    setUsedHint(true);
-    setShowPrefix(true);
-  };
-  const handleSuffixReveal = () => {
-    const cost = 3;
-    if (participants[currentParticipantIndex].points < cost || !currentWord) return;
-    spendPoints(currentParticipantIndex, cost);
-    setUsedHint(true);
-    setShowSuffix(true);
-  };
-  const handleRevealSyllable = (index) => {
-    const cost = 3;
-    if (!currentWord || participants[currentParticipantIndex].points < cost) return;
-    spendPoints(currentParticipantIndex, cost);
-    setUsedHint(true);
-    setRevealedSyllables((prev) => {
-      const updated = [...prev];
-      updated[index] = true;
-      return updated;
-    });
   };
   const typeLetter = (letter) => {
     if (!currentWord) return;
@@ -26154,7 +26386,7 @@ var GameScreen = ({ config, onEndGame }) => {
   };
   const handleSpellingSubmit = () => {
     if (!currentWord) return;
-    clearInterval(timerRef.current);
+    stopTimer();
     const guess = letters2.join("").trim().toLowerCase();
     const isCorrect = guess === currentWord.word.toLowerCase();
     const shouldCountWord = isCorrect || !extraAttempt;
@@ -26202,7 +26434,7 @@ var GameScreen = ({ config, onEndGame }) => {
         const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
         const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
         setFeedback({ message: "", type: "" });
-        selectNextWord(nextDifficulty);
+        selectNextWordForLevel(nextDifficulty);
         nextTurn();
       }, 2e3);
       return;
@@ -26211,7 +26443,7 @@ var GameScreen = ({ config, onEndGame }) => {
     handleIncorrectAttempt();
   };
   const skipWord = () => {
-    clearInterval(timerRef.current);
+    stopTimer();
     const isLivesPenalty = config.skipPenaltyType === "lives";
     const deduction = isLivesPenalty ? `-${config.skipPenaltyValue} life${config.skipPenaltyValue > 1 ? "s" : ""}` : `-${config.skipPenaltyValue} pts`;
     const updatedParticipants = participants.map((p, index) => {
@@ -26235,7 +26467,7 @@ var GameScreen = ({ config, onEndGame }) => {
       const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
       setFeedback({ message: "", type: "" });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(""));
-      selectNextWord(nextDifficulty);
+      selectNextWordForLevel(nextDifficulty);
       nextTurn();
     }, 1500);
   };
@@ -26258,20 +26490,20 @@ var GameScreen = ({ config, onEndGame }) => {
       missedWords
     });
   };
-  import_react6.default.useEffect(() => {
+  import_react9.default.useEffect(() => {
     if (config.participants.length > 0) {
-      selectNextWord(config.participants[0].difficultyLevel);
+      selectNextWordForLevel(config.participants[0].difficultyLevel);
     }
   }, []);
-  import_react6.default.useEffect(() => {
+  import_react9.default.useEffect(() => {
     if (!participants || participants.length === 0) return;
     const activeParticipants = participants.filter((p) => p.lives > 0);
     if (activeParticipants.length <= 1) {
       onEndGameWithMissedWords();
     }
   }, [participants]);
-  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
       "input",
       {
         ref: hiddenInputRef,
@@ -26281,29 +26513,29 @@ var GameScreen = ({ config, onEndGame }) => {
         tabIndex: -1
       }
     ),
-    toast && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50", children: toast }),
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "absolute top-8 left-8 flex gap-8 items-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("img", { src: "img/bee.svg", alt: "Bee icon", className: "w-12 h-12" }),
-      participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "text-center scorecard", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "text-2xl font-bold", children: p.name }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "text-4xl font-bold text-yellow-300", children: "\u2764\uFE0F".repeat(p.lives) }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "text-xl font-bold text-green-400", children: [
+    toast && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50", children: toast }),
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "absolute top-8 left-8 flex gap-8 items-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("img", { src: "img/bee.svg", alt: "Bee icon", className: "w-12 h-12" }),
+      participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-center scorecard", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "text-2xl font-bold", children: p.name }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "text-4xl font-bold text-yellow-300", children: "\u2764\uFE0F".repeat(p.lives) }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-xl font-bold text-green-400", children: [
           p.points,
           " pts"
         ] })
       ] }, index))
     ] }),
-    feedback.message && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+    feedback.message && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
       "div",
       {
         className: `absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${feedback.type === "success" ? "bg-green-500" : feedback.type === "error" ? "bg-red-500" : "bg-blue-500"}`,
         children: feedback.message
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "absolute top-8 right-8 text-center z-50", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: `text-6xl font-bold ${timeLeft <= 10 ? "text-red-500" : "text-yellow-300"}`, children: timeLeft }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "text-lg", children: "seconds left" }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "absolute top-8 right-8 text-center z-50", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: `text-6xl font-bold ${timeLeft <= 10 ? "text-red-500" : "text-yellow-300"}`, children: timeLeft }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "text-lg", children: "seconds left" }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
         "button",
         {
           onClick: isPaused ? resumeTimer : pauseTimer,
@@ -26312,20 +26544,20 @@ var GameScreen = ({ config, onEndGame }) => {
         }
       )
     ] }),
-    currentWord && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "w-full max-w-4xl text-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("img", { src: "img/books.svg", alt: "Book icon", className: "w-10 h-10 mx-auto mb-4" }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("h2", { className: "text-4xl font-bold mb-4", children: [
+    currentWord && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "w-full max-w-4xl text-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("img", { src: "img/books.svg", alt: "Book icon", className: "w-10 h-10 mx-auto mb-4" }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("h2", { className: "text-4xl font-bold mb-4", children: [
         "Word for ",
         isTeamMode ? "Team" : "Student",
         ": ",
         participants[currentParticipantIndex]?.name || (isTeamMode ? "Team" : "Student")
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "relative mb-8 pt-10", children: [
-        showWord && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "relative mb-8 pt-10", children: [
+        showWord && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg", children: [
           currentWord.word,
-          currentWord.pronunciation && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "ml-4 text-5xl text-yellow-300", children: currentWord.pronunciation })
+          currentWord.pronunciation && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "ml-4 text-5xl text-yellow-300", children: currentWord.pronunciation })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
           "button",
           {
             onClick: () => speak(currentWord.word),
@@ -26333,7 +26565,7 @@ var GameScreen = ({ config, onEndGame }) => {
             children: "Replay Word"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
           "button",
           {
             onClick: () => setShowWord(!showWord),
@@ -26342,132 +26574,20 @@ var GameScreen = ({ config, onEndGame }) => {
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8", children: [
-        revealedLetters.some((r) => r) && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "text-3xl font-mono mb-4", children: currentWord.word.split("").map((letter, idx) => revealedLetters[idx] ? letter : "_").join(" ") }),
-        showDefinition && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "text-2xl mb-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("strong", { className: "text-yellow-300", children: "Definition:" }),
-          " ",
-          currentWord.definition
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-          "button",
-          {
-            onClick: () => {
-              setShowHint(!showHint);
-              if (!showHint) setUsedHint(true);
-            },
-            className: "mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold",
-            children: showHint ? "Hide Hint" : "Show Hint"
-          }
-        ),
-        showHint && currentWord && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mt-4 flex flex-col items-center gap-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: currentWord.syllables.map((syllable, idx) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-            "button",
-            {
-              onClick: () => speak(syllable),
-              disabled: !revealedSyllables[idx] || !showWord,
-              className: "bg-yellow-100 text-black px-2 py-1 rounded disabled:opacity-50",
-              children: showWord && revealedSyllables[idx] ? syllable : "???"
-            },
-            idx
-          )) }),
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: currentWord.syllables.map(
-            (_, idx) => !revealedSyllables[idx] && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-              "button",
-              {
-                onClick: () => handleRevealSyllable(idx),
-                disabled: participants[currentParticipantIndex].points < 3,
-                className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
-                children: `Reveal syllable ${idx + 1} (-3)`
-              },
-              `reveal-${idx}`
-            )
-          ) })
-        ] }),
-        showOrigin && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "text-xl mb-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("strong", { className: "text-yellow-300", children: "Origin:" }),
-          " ",
-          currentWord.origin
-        ] }),
-        showSentence && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "text-xl", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("strong", { className: "text-yellow-300", children: "Example:" }),
-          ' "',
-          currentWord.example,
-          '"'
-        ] }),
-        showPrefix && showWord && currentWord.prefix && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "text-xl mb-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("strong", { className: "text-yellow-300", children: "Prefix:" }),
-          " ",
-          currentWord.prefix
-        ] }),
-        showSuffix && showWord && currentWord.suffix && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "text-xl mb-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("strong", { className: "text-yellow-300", children: "Suffix:" }),
-          " ",
-          currentWord.suffix
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mt-4 flex gap-4 justify-center", children: [
-          !showDefinition && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-            "button",
-            {
-              onClick: () => {
-                if (participants[currentParticipantIndex].points < 1) return;
-                spendPoints(currentParticipantIndex, 1);
-                setShowDefinition(true);
-              },
-              disabled: participants[currentParticipantIndex].points < 1,
-              className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
-              children: "Buy Definition (-1)"
-            }
-          ),
-          !showOrigin && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-            "button",
-            {
-              onClick: () => {
-                if (participants[currentParticipantIndex].points < 1) return;
-                spendPoints(currentParticipantIndex, 1);
-                setShowOrigin(true);
-              },
-              disabled: participants[currentParticipantIndex].points < 1,
-              className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
-              children: "Buy Origin (-1)"
-            }
-          ),
-          !showSentence && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-            "button",
-            {
-              onClick: () => {
-                if (participants[currentParticipantIndex].points < 1) return;
-                spendPoints(currentParticipantIndex, 1);
-                setShowSentence(true);
-              },
-              disabled: participants[currentParticipantIndex].points < 1,
-              className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
-              children: "Buy Sentence (-1)"
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mt-4 flex gap-4 justify-center", children: [
-          !showPrefix && currentWord.prefix && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-            "button",
-            {
-              onClick: handlePrefixReveal,
-              disabled: participants[currentParticipantIndex].points < 3,
-              className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
-              children: "Reveal Prefix (-3)"
-            }
-          ),
-          !showSuffix && currentWord.suffix && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-            "button",
-            {
-              onClick: handleSuffixReveal,
-              disabled: participants[currentParticipantIndex].points < 3,
-              className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
-              children: "Reveal Suffix (-3)"
-            }
-          )
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "flex gap-2 justify-center mb-4", children: letters2.map((letter, idx) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+        HintPanel_default,
+        {
+          word: currentWord,
+          participantPoints: participants[currentParticipantIndex].points,
+          participantIndex: currentParticipantIndex,
+          spendPoints,
+          isTeamMode,
+          showWord,
+          onHintUsed: () => setUsedHint(true),
+          onExtraAttempt: () => setExtraAttempt(true)
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "flex gap-2 justify-center mb-4", children: letters2.map((letter, idx) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
         "div",
         {
           className: `w-12 h-16 text-4xl flex items-center justify-center rounded-lg border-b-2 ${letter ? letter.toLowerCase() === currentWord.word[idx].toLowerCase() ? "bg-green-500" : "bg-red-500" : "bg-white/20"}`,
@@ -26475,7 +26595,7 @@ var GameScreen = ({ config, onEndGame }) => {
         },
         idx
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
         OnScreenKeyboard_default,
         {
           onLetter: handleVirtualLetter,
@@ -26483,52 +26603,23 @@ var GameScreen = ({ config, onEndGame }) => {
           onSubmit: handleSpellingSubmit,
           soundEnabled: config.soundEnabled
         }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mt-6 flex justify-center gap-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-          "button",
-          {
-            onClick: handleHangmanReveal,
-            disabled: participants[currentParticipantIndex].points < 5 || isTeamMode === false,
-            className: "bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg",
-            children: "Hangman Reveal (-5)"
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-          "button",
-          {
-            onClick: handleVowelReveal,
-            disabled: participants[currentParticipantIndex].points < 3 || isTeamMode === false,
-            className: "bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg",
-            children: "Vowel Reveal (-3)"
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-          "button",
-          {
-            onClick: handleFriendSubstitution,
-            disabled: participants[currentParticipantIndex].points < 4 || isTeamMode === false,
-            className: "bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg",
-            children: "Friend Sub (-4)"
-          }
-        )
-      ] })
+      )
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
       "button",
       {
         onClick: skipWord,
         className: "absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl",
-        children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(SkipForward, { size: 24 })
+        children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(SkipForward, { size: 24 })
       }
     ),
-    isPaused && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40", children: "Paused" })
+    isPaused && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40", children: "Paused" })
   ] });
 };
 var GameScreen_default = GameScreen;
 
 // ResultsScreen.tsx
-var import_react7 = __toESM(require_react());
+var import_react10 = __toESM(require_react());
 
 // audio/applause.mp3
 var applause_default = "./applause-I345E7HE.mp3";
@@ -26585,29 +26676,29 @@ var recordDailyCompletion = () => {
 };
 
 // ResultsScreen.tsx
-var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+var import_jsx_runtime6 = __toESM(require_jsx_runtime());
 var ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
-  const applauseAudio = (0, import_react7.useRef)(new Audio(applause_default));
+  const applauseAudio = (0, import_react10.useRef)(new Audio(applause_default));
   const totalScore = results.participants.reduce((sum, p) => sum + p.points, 0);
-  const [bestClassScore, setBestClassScore] = (0, import_react7.useState)(0);
-  const [isBestScore, setIsBestScore] = (0, import_react7.useState)(false);
-  const [streakInfo, setStreakInfo] = (0, import_react7.useState)(null);
-  const [bonus, setBonus] = (0, import_react7.useState)(0);
-  (0, import_react7.useEffect)(() => {
+  const [bestClassScore, setBestClassScore] = (0, import_react10.useState)(0);
+  const [isBestScore, setIsBestScore] = (0, import_react10.useState)(false);
+  const [streakInfo, setStreakInfo] = (0, import_react10.useState)(null);
+  const [bonus, setBonus] = (0, import_react10.useState)(0);
+  (0, import_react10.useEffect)(() => {
     if (config.dailyChallenge) {
       const info = recordDailyCompletion();
       setStreakInfo(info);
       setBonus(info.currentStreak > 1 ? (info.currentStreak - 1) * 10 : 0);
     }
   }, [config.dailyChallenge]);
-  (0, import_react7.useEffect)(() => {
+  (0, import_react10.useEffect)(() => {
     if (localStorage.getItem("teacherMode") === "true") {
       document.body.classList.add("teacher-mode");
     } else {
       document.body.classList.remove("teacher-mode");
     }
   }, []);
-  (0, import_react7.useEffect)(() => {
+  (0, import_react10.useEffect)(() => {
     const stored = JSON.parse(localStorage.getItem("leaderboard") || "[]");
     const newEntries = results.participants.map((p) => ({
       name: p.name,
@@ -26618,7 +26709,7 @@ var ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
     const updated = [...stored, ...newEntries].sort((a, b) => b.score - a.score).slice(0, 10);
     localStorage.setItem("leaderboard", JSON.stringify(updated));
   }, [results, config.dailyChallenge, bonus]);
-  (0, import_react7.useEffect)(() => {
+  (0, import_react10.useEffect)(() => {
     const history = JSON.parse(localStorage.getItem("sessionHistory") || "[]");
     history.push({ date: (/* @__PURE__ */ new Date()).toISOString(), score: totalScore });
     localStorage.setItem("sessionHistory", JSON.stringify(history));
@@ -26631,7 +26722,7 @@ var ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
       setBestClassScore(storedBest);
     }
   }, [totalScore]);
-  (0, import_react7.useEffect)(() => {
+  (0, import_react10.useEffect)(() => {
     if (results.winner) {
       if (config.soundEnabled) {
         applauseAudio.current.play();
@@ -26661,31 +26752,31 @@ var ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
     }
     return "No one wins this round!";
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300", children: "\u{1F3C6} Game Over! \u{1F3C6}" }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-4xl mb-8", children: getWinnerMessage() }),
-    results?.duration && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-2xl mb-6", children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300", children: "\u{1F3C6} Game Over! \u{1F3C6}" }),
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-4xl mb-8", children: getWinnerMessage() }),
+    results?.duration && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "text-2xl mb-6", children: [
       "Game Duration: ",
       results.duration,
       " seconds"
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-xl mb-4", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "text-xl mb-4", children: [
       "Session Score: ",
       totalScore
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-xl mb-8", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "text-xl mb-8", children: [
       "Best Class Score: ",
       bestClassScore,
-      isBestScore && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-green-400 font-bold ml-2", children: "New High Score!" })
+      isBestScore && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "text-green-400 font-bold ml-2", children: "New High Score!" })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md scorecard", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h3", { className: "text-3xl font-bold mb-4", children: "\u{1F4CA} Final Scores" }),
-      results && results.participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-left text-xl mb-3", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex items-center gap-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("img", { src: p.avatar || bee_default, alt: `${p.name} avatar`, className: "w-6 h-6 rounded-full" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "font-bold", children: p.name })
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md scorecard", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h3", { className: "text-3xl font-bold mb-4", children: "\u{1F4CA} Final Scores" }),
+      results && results.participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "text-left text-xl mb-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("img", { src: p.avatar || bee_default, alt: `${p.name} avatar`, className: "w-6 h-6 rounded-full" }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "font-bold", children: p.name })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-yellow-300", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "text-yellow-300", children: [
           p.wordsCorrect,
           "/",
           p.wordsAttempted,
@@ -26699,8 +26790,8 @@ var ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
         ] })
       ] }, index))
     ] }),
-    config.dailyChallenge && streakInfo && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-4 rounded-lg w-full max-w-md mt-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-xl", children: [
+    config.dailyChallenge && streakInfo && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-4 rounded-lg w-full max-w-md mt-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "text-xl", children: [
         "\u{1F525} Streak: ",
         streakInfo.currentStreak,
         " day",
@@ -26709,33 +26800,33 @@ var ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
         streakInfo.highestStreak,
         ")"
       ] }),
-      bonus > 0 && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-yellow-300", children: [
+      bonus > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "text-yellow-300", children: [
         "Bonus Points: +",
         bonus
       ] })
     ] }),
-    results.missedWords && results.missedWords.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md mt-8 scorecard", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h3", { className: "text-3xl font-bold mb-4", children: "\u274C Missed Words" }),
-      results.missedWords.map((w, index) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-left text-xl mb-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "font-bold", children: w.word }),
+    results.missedWords && results.missedWords.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md mt-8 scorecard", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h3", { className: "text-3xl font-bold mb-4", children: "\u274C Missed Words" }),
+      results.missedWords.map((w, index) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "text-left text-xl mb-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "font-bold", children: w.word }),
         " - ",
         w.definition
       ] }, index))
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex gap-6 mt-12 flex-wrap justify-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: handleExport, className: "bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold", children: "\u{1F4E4} Export Results" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: onViewLeaderboard, className: "bg-purple-500 hover:bg-purple-600 px-8 py-5 rounded-xl text-2xl font-bold", children: "\u{1F4C8} View Leaderboard" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: onRestart, className: "bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold", children: "\u{1F504} Play Again" })
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex gap-6 mt-12 flex-wrap justify-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: handleExport, className: "bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold", children: "\u{1F4E4} Export Results" }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: onViewLeaderboard, className: "bg-purple-500 hover:bg-purple-600 px-8 py-5 rounded-xl text-2xl font-bold", children: "\u{1F4C8} View Leaderboard" }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: onRestart, className: "bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold", children: "\u{1F504} Play Again" })
     ] })
   ] });
 };
 var ResultsScreen_default = ResultsScreen;
 
 // AchievementsScreen.tsx
-var import_react8 = __toESM(require_react());
-var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+var import_react11 = __toESM(require_react());
+var import_jsx_runtime7 = __toESM(require_jsx_runtime());
 var AchievementsScreen = ({ onBack }) => {
-  const unlocked = import_react8.default.useMemo(() => {
+  const unlocked = import_react11.default.useMemo(() => {
     if (typeof window === "undefined") return [];
     try {
       return JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
@@ -26743,26 +26834,26 @@ var AchievementsScreen = ({ onBack }) => {
       return [];
     }
   }, []);
-  return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-green-600 to-teal-800 p-8 text-white", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h1", { className: "text-4xl text-center mb-8", children: "Achievements" }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "grid gap-6 max-w-xl mx-auto", children: defaultAchievements.map((ach) => {
+  return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-green-600 to-teal-800 p-8 text-white", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h1", { className: "text-4xl text-center mb-8", children: "Achievements" }),
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "grid gap-6 max-w-xl mx-auto", children: defaultAchievements.map((ach) => {
       const earned = unlocked.includes(ach.id);
-      return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
         "div",
         {
           className: `flex items-center gap-4 p-4 rounded-lg ${earned ? "bg-white/20" : "bg-white/5 opacity-50"}`,
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "text-3xl", children: ach.icon }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "font-bold text-xl", children: ach.name }),
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "text-sm", children: ach.description })
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "text-3xl", children: ach.icon }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "font-bold text-xl", children: ach.name }),
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "text-sm", children: ach.description })
             ] })
           ]
         },
         ach.id
       );
     }) }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
       "button",
       {
         onClick: onBack,
@@ -26775,89 +26866,94 @@ var AchievementsScreen = ({ onBack }) => {
 var AchievementsScreen_default = AchievementsScreen;
 
 // utils/useMusic.ts
-var import_react9 = __toESM(require_react());
-var DEFAULT_STYLE = "Funk";
-var useMusic = (initialStyle = DEFAULT_STYLE) => {
-  const menuRef = (0, import_react9.useRef)(null);
-  const gameRef = (0, import_react9.useRef)(null);
-  const [style, setStyle] = (0, import_react9.useState)(initialStyle);
-  const [volume, setVolume] = (0, import_react9.useState)(1);
-  const stop = (0, import_react9.useCallback)(() => {
-    if (menuRef.current) {
-      menuRef.current.pause();
-      menuRef.current.currentTime = 0;
-    }
-    if (gameRef.current) {
-      gameRef.current.pause();
-      gameRef.current.currentTime = 0;
-    }
+var import_react12 = __toESM(require_react());
+var useMusic = (style, variant, volume, enabled, screen) => {
+  const menuRef = (0, import_react12.useRef)({
+    instrumental: null,
+    vocal: null
+  });
+  const gameRef = (0, import_react12.useRef)({
+    instrumental: null,
+    vocal: null
+  });
+  const stop = (0, import_react12.useCallback)(() => {
+    ["instrumental", "vocal"].forEach((v) => {
+      const menuAudio = menuRef.current[v];
+      if (menuAudio) {
+        menuAudio.pause();
+        menuAudio.currentTime = 0;
+      }
+      const gameAudio = gameRef.current[v];
+      if (gameAudio) {
+        gameAudio.pause();
+        gameAudio.currentTime = 0;
+      }
+    });
   }, []);
-  const loadTracks = (0, import_react9.useCallback)((trackStyle) => {
+  const buildSrc = (0, import_react12.useCallback)((trackStyle, trackVariant) => {
     const basePath = "audio/It's a Spelling Bee!";
-    const menuSrc = `${basePath} (${trackStyle}).mp3`;
-    const gameSrc = `${basePath} (${trackStyle} Instrumental).mp3`;
-    const menuAudio = new Audio(menuSrc);
-    menuAudio.loop = true;
-    menuAudio.volume = volume;
-    menuAudio.onerror = () => {
-      console.warn(`Menu music file not found: ${menuSrc}`);
-      if (menuRef.current === menuAudio) menuRef.current = null;
-    };
-    const gameAudio = new Audio(gameSrc);
-    gameAudio.loop = true;
-    gameAudio.volume = volume;
-    gameAudio.onerror = () => {
-      console.warn(`Gameplay music file not found: ${gameSrc}`);
-      if (gameRef.current === gameAudio) gameRef.current = null;
-    };
-    menuRef.current = menuAudio;
-    gameRef.current = gameAudio;
-  }, [volume]);
-  (0, import_react9.useEffect)(() => {
+    const variantSuffix = trackVariant === "instrumental" ? " Instrumental" : "";
+    return `${basePath} (${trackStyle}${variantSuffix}).mp3`;
+  }, []);
+  const loadTracks = (0, import_react12.useCallback)(
+    (trackStyle) => {
+      ["instrumental", "vocal"].forEach((trackVariant) => {
+        const menuSrc = buildSrc(trackStyle, trackVariant);
+        const gameSrc = buildSrc(trackStyle, trackVariant);
+        const menuAudio = new Audio(menuSrc);
+        menuAudio.loop = true;
+        menuAudio.volume = volume;
+        menuAudio.onerror = () => {
+          console.warn(`Menu music file not found: ${menuSrc}`);
+          menuRef.current[trackVariant] = null;
+        };
+        const gameAudio = new Audio(gameSrc);
+        gameAudio.loop = true;
+        gameAudio.volume = volume;
+        gameAudio.onerror = () => {
+          console.warn(`Gameplay music file not found: ${gameSrc}`);
+          gameRef.current[trackVariant] = null;
+        };
+        menuRef.current[trackVariant] = menuAudio;
+        gameRef.current[trackVariant] = gameAudio;
+      });
+    },
+    [buildSrc, volume]
+  );
+  (0, import_react12.useEffect)(() => {
+    stop();
     loadTracks(style);
-    return () => {
+  }, [style, loadTracks, stop]);
+  (0, import_react12.useEffect)(() => {
+    ["instrumental", "vocal"].forEach((v) => {
+      if (menuRef.current[v]) menuRef.current[v].volume = volume;
+      if (gameRef.current[v]) gameRef.current[v].volume = volume;
+    });
+  }, [volume]);
+  (0, import_react12.useEffect)(() => {
+    if (!enabled) {
       stop();
-    };
-  }, [loadTracks, style, stop]);
-  const playMenu = (0, import_react9.useCallback)(() => {
+      return;
+    }
+    const refs = screen === "menu" ? menuRef.current : gameRef.current;
+    const track = refs[variant];
     stop();
-    menuRef.current?.play().catch(() => {
+    track?.play().catch(() => {
     });
-  }, [stop]);
-  const playGame = (0, import_react9.useCallback)(() => {
-    stop();
-    gameRef.current?.play().catch(() => {
-    });
-  }, [stop]);
-  const changeStyle = (0, import_react9.useCallback)((newStyle) => {
-    setStyle(newStyle);
-  }, []);
-  const changeVolume = (0, import_react9.useCallback)((v) => {
-    setVolume(v);
-    if (menuRef.current) menuRef.current.volume = v;
-    if (gameRef.current) gameRef.current.volume = v;
-  }, []);
-  return {
-    playMenu,
-    playGame,
-    stop,
-    setStyle: changeStyle,
-    setVolume: changeVolume,
-    style,
-    volume
-  };
+  }, [screen, variant, enabled, stop]);
+  (0, import_react12.useEffect)(() => () => stop(), [stop]);
 };
 var useMusic_default = useMusic;
 
 // spelling-bee-game.tsx
-var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+var import_jsx_runtime8 = __toESM(require_jsx_runtime());
 var SpellingBeeGame = () => {
-  const [gameState, setGameState] = (0, import_react10.useState)("setup");
-  const [gameConfig, setGameConfig] = (0, import_react10.useState)(null);
-  const [gameResults, setGameResults] = (0, import_react10.useState)(null);
-  const [customWords, setCustomWords] = (0, import_react10.useState)({ easy: [], medium: [], tricky: [] });
-  const [wordDatabase, setWordDatabase] = (0, import_react10.useState)({ easy: [], medium: [], tricky: [] });
-  (0, import_react10.useEffect)(() => {
+  const [gameState, setGameState] = (0, import_react13.useState)("setup");
+  const [gameConfig, setGameConfig] = (0, import_react13.useState)(null);
+  const [gameResults, setGameResults] = (0, import_react13.useState)(null);
+  const [customWords, setCustomWords] = (0, import_react13.useState)({ easy: [], medium: [], tricky: [] });
+  const [wordDatabase, setWordDatabase] = (0, import_react13.useState)({ easy: [], medium: [], tricky: [] });
+  (0, import_react13.useEffect)(() => {
     fetch("words.json").then((res) => res.json()).then((data) => setWordDatabase(data)).catch((err) => console.error("Failed to load word list", err));
   }, []);
   const handleAddCustomWords = (newWords) => {
@@ -26898,7 +26994,7 @@ var SpellingBeeGame = () => {
   const handleBackToSetup = () => {
     setGameState("setup");
   };
-  (0, import_react10.useEffect)(() => {
+  (0, import_react13.useEffect)(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
       document.body.classList.remove("theme-light", "theme-dark", "theme-honeycomb");
@@ -26907,22 +27003,23 @@ var SpellingBeeGame = () => {
   }, []);
   const musicStyle = gameConfig?.musicStyle || "Funk";
   const musicVolume = gameConfig?.musicVolume ?? 0.5;
-  const trackVariant = gameState === "playing" ? "instrumental" : "vocal";
-  useMusic_default(musicStyle, trackVariant, musicVolume, gameConfig?.soundEnabled ?? true);
+  const screen = gameState === "playing" ? "game" : "menu";
+  const trackVariant = screen === "game" ? "instrumental" : "vocal";
+  useMusic_default(musicStyle, trackVariant, musicVolume, gameConfig?.soundEnabled ?? true, screen);
   if (gameState === "setup") {
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(SetupScreen_default, { onStartGame: handleStartGame, onAddCustomWords: handleAddCustomWords, onViewAchievements: handleViewAchievements });
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SetupScreen_default, { onStartGame: handleStartGame, onAddCustomWords: handleAddCustomWords, onViewAchievements: handleViewAchievements });
   }
   if (gameState === "playing") {
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(GameScreen_default, { config: gameConfig, onEndGame: handleEndGame });
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(GameScreen_default, { config: gameConfig, onEndGame: handleEndGame });
   }
   if (gameState === "results") {
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(ResultsScreen_default, { results: gameResults, config: gameConfig, onRestart: handleRestart, onViewLeaderboard: handleViewLeaderboard });
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(ResultsScreen_default, { results: gameResults, config: gameConfig, onRestart: handleRestart, onViewLeaderboard: handleViewLeaderboard });
   }
   if (gameState === "leaderboard") {
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(LeaderboardScreen_default, { onBack: handleBackToSetup });
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(LeaderboardScreen_default, { onBack: handleBackToSetup });
   }
   if (gameState === "achievements") {
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AchievementsScreen_default, { onBack: handleBackToSetup });
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(AchievementsScreen_default, { onBack: handleBackToSetup });
   }
   return null;
 };
@@ -26930,7 +27027,7 @@ var container = document.getElementById("root");
 if (container) {
   const root = import_client.default.createRoot(container);
   root.render(
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_react10.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(SpellingBeeGame, {}) })
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(import_react13.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(SpellingBeeGame, {}) })
   );
 }
 /*! Bundled license information:
