@@ -1,19 +1,21 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-
-// Default music style
-const DEFAULT_STYLE = 'Funk';
+import { useEffect, useRef, useCallback } from 'react';
 
 /**
  * React hook to manage background music for the app.
- * Loads menu and gameplay tracks for a given style and
- * exposes controls to play, stop, change style and adjust volume.
+ *
+ * @param style The musical style to load.
+ * @param variant Whether to play the vocal or instrumental version.
+ * @param volume Playback volume (0-1).
+ * @param enabled Whether music should be playing at all.
  */
-const useMusic = (initialStyle: string = DEFAULT_STYLE) => {
+const useMusic = (
+  style: string,
+  variant: 'instrumental' | 'vocal',
+  volume: number,
+  enabled: boolean,
+) => {
   const menuRef = useRef<HTMLAudioElement | null>(null);
   const gameRef = useRef<HTMLAudioElement | null>(null);
-
-  const [style, setStyle] = useState(initialStyle);
-  const [volume, setVolume] = useState(1);
 
   const stop = useCallback(() => {
     if (menuRef.current) {
@@ -26,67 +28,65 @@ const useMusic = (initialStyle: string = DEFAULT_STYLE) => {
     }
   }, []);
 
-  const loadTracks = useCallback((trackStyle: string) => {
+  const buildSrc = useCallback((trackStyle: string, trackVariant: 'instrumental' | 'vocal') => {
     const basePath = "audio/It's a Spelling Bee!";
-    const menuSrc = `${basePath} (${trackStyle}).mp3`;
-    const gameSrc = `${basePath} (${trackStyle} Instrumental).mp3`;
+    const variantSuffix = trackVariant === 'instrumental' ? ' Instrumental' : '';
+    return `${basePath} (${trackStyle}${variantSuffix}).mp3`;
+  }, []);
 
-    const menuAudio = new Audio(menuSrc);
-    menuAudio.loop = true;
-    menuAudio.volume = volume;
-    menuAudio.onerror = () => {
-      console.warn(`Menu music file not found: ${menuSrc}`);
-      if (menuRef.current === menuAudio) menuRef.current = null;
-    };
+  const loadTracks = useCallback(
+    (trackStyle: string, trackVariant: 'instrumental' | 'vocal') => {
+      const menuSrc = buildSrc(trackStyle, trackVariant);
+      const gameSrc = buildSrc(trackStyle, trackVariant);
 
-    const gameAudio = new Audio(gameSrc);
-    gameAudio.loop = true;
-    gameAudio.volume = volume;
-    gameAudio.onerror = () => {
-      console.warn(`Gameplay music file not found: ${gameSrc}`);
-      if (gameRef.current === gameAudio) gameRef.current = null;
-    };
+      const menuAudio = new Audio(menuSrc);
+      menuAudio.loop = true;
+      menuAudio.volume = volume;
+      menuAudio.onerror = () => {
+        console.warn(`Menu music file not found: ${menuSrc}`);
+        if (menuRef.current === menuAudio) menuRef.current = null;
+      };
 
-    menuRef.current = menuAudio;
-    gameRef.current = gameAudio;
+      const gameAudio = new Audio(gameSrc);
+      gameAudio.loop = true;
+      gameAudio.volume = volume;
+      gameAudio.onerror = () => {
+        console.warn(`Gameplay music file not found: ${gameSrc}`);
+        if (gameRef.current === gameAudio) gameRef.current = null;
+      };
+
+      menuRef.current = menuAudio;
+      gameRef.current = gameAudio;
+    },
+    [buildSrc, volume],
+  );
+
+  // Load tracks whenever style or variant changes
+  useEffect(() => {
+    stop();
+    loadTracks(style, variant);
+  }, [style, variant, loadTracks, stop]);
+
+  // Keep volumes in sync with state
+  useEffect(() => {
+    if (menuRef.current) menuRef.current.volume = volume;
+    if (gameRef.current) gameRef.current.volume = volume;
   }, [volume]);
 
+  // Play the correct track based on variant and enabled flag
   useEffect(() => {
-    loadTracks(style);
-    return () => {
+    if (!enabled) {
       stop();
-    };
-  }, [loadTracks, style, stop]);
+      return;
+    }
 
-  const playMenu = useCallback(() => {
+    const track = variant === 'instrumental' ? gameRef.current : menuRef.current;
     stop();
-    menuRef.current?.play().catch(() => {});
-  }, [stop]);
+    track?.play().catch(() => {});
+  }, [variant, enabled, stop]);
 
-  const playGame = useCallback(() => {
-    stop();
-    gameRef.current?.play().catch(() => {});
-  }, [stop]);
-
-  const changeStyle = useCallback((newStyle: string) => {
-    setStyle(newStyle);
-  }, []);
-
-  const changeVolume = useCallback((v: number) => {
-    setVolume(v);
-    if (menuRef.current) menuRef.current.volume = v;
-    if (gameRef.current) gameRef.current.volume = v;
-  }, []);
-
-  return {
-    playMenu,
-    playGame,
-    stop,
-    setStyle: changeStyle,
-    setVolume: changeVolume,
-    style,
-    volume,
-  };
+  // Clean up on unmount
+  useEffect(() => () => stop(), [stop]);
 };
 
 export default useMusic;
