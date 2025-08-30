@@ -1,6 +1,6 @@
 import React from 'react';
 import { SkipForward } from 'lucide-react';
-import { GameConfig, Word, Participant, GameResults, defaultAchievements } from './types';
+import { GameConfig, Word, Participant, GameResults, defaultAchievements, defaultScoringConfig } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
 import timeoutSoundFile from './audio/timeout.mp3';
@@ -237,10 +237,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
     const updatedParticipants = participants.map((p, index) => {
       if (index === currentParticipantIndex) {
-        const multipliers: Record<string, number> = { easy: 1, medium: 2, tricky: 3 };
-        const basePoints = 5;
-        const multiplier = multipliers[currentDifficulty] || 1;
-        const bonus = p.streak * 2;
+        const { basePoints, difficultyMultipliers, streakBonus } = config.scoringConfig || defaultScoringConfig;
+        const multiplier = difficultyMultipliers[currentDifficulty] || 1;
+        const bonus = p.streak * streakBonus;
         const pointsEarned = basePoints * multiplier + bonus;
         return {
           ...p,

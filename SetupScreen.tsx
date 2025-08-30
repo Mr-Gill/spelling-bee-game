@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Word, Participant, GameConfig } from './types';
+import { Word, Participant, GameConfig, defaultScoringConfig } from './types';
 import beeImg from './img/avatars/bee.svg';
 import bookImg from './img/avatars/book.svg';
 import trophyImg from './img/avatars/trophy.svg';
@@ -51,6 +51,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState('light');
   const [teacherMode, setTeacherMode] = useState<boolean>(() => localStorage.getItem('teacherMode') === 'true');
+  const [basePoints, setBasePoints] = useState(defaultScoringConfig.basePoints);
+  const [easyMultiplier, setEasyMultiplier] = useState(defaultScoringConfig.difficultyMultipliers.easy);
+  const [mediumMultiplier, setMediumMultiplier] = useState(defaultScoringConfig.difficultyMultipliers.medium);
+  const [trickyMultiplier, setTrickyMultiplier] = useState(defaultScoringConfig.difficultyMultipliers.tricky);
+  const [streakBonus, setStreakBonus] = useState(defaultScoringConfig.streakBonus);
 
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
@@ -253,10 +258,28 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
     
     onAddCustomWords(finalWords);
-    
+
     const config: GameConfig = {
       participants: finalParticipants,
-      gameMode, timerDuration, skipPenaltyType, skipPenaltyValue, soundEnabled, effectsEnabled, difficultyLevel: initialDifficulty, progressionSpeed, musicStyle, musicVolume,
+      gameMode,
+      timerDuration,
+      skipPenaltyType,
+      skipPenaltyValue,
+      soundEnabled,
+      effectsEnabled,
+      difficultyLevel: initialDifficulty,
+      progressionSpeed,
+      musicStyle,
+      musicVolume,
+      scoringConfig: {
+        basePoints,
+        difficultyMultipliers: {
+          easy: easyMultiplier,
+          medium: mediumMultiplier,
+          tricky: trickyMultiplier,
+        },
+        streakBonus,
+      },
     };
     onStartGame(config);
   };
@@ -361,7 +384,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <h2 className="text-2xl font-bold mb-4">Teacher Mode 👩‍🏫</h2>
                 <label className="flex items-center gap-2 text-white"><input type="checkbox" checked={teacherMode} onChange={e => setTeacherMode(e.target.checked)} /><span>Enable larger fonts and spacing</span></label>
             </div>
-             <div className="bg-white/10 p-6 rounded-lg">
+            <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Music 🎵</h2>
                 <div className="mb-4">
                     <label className="block mb-2">Style</label>
@@ -374,6 +397,61 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     <input type="range" min={0} max={1} step={0.01} value={musicVolume} onChange={e => setMusicVolume(parseFloat(e.target.value))} className="w-full" />
                 </div>
             </div>
+            {teacherMode && (
+              <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4">Scoring ⚖️</h2>
+                <div className="mb-4">
+                  <label className="block mb-2">Base Points</label>
+                  <input
+                    type="number"
+                    value={basePoints}
+                    onChange={e => setBasePoints(Number(e.target.value))}
+                    className="p-2 rounded-md bg-white/20 text-white w-full"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block mb-2">Difficulty Multipliers</label>
+                  <div className="flex gap-2">
+                    <div className="flex flex-col">
+                      <span className="text-sm">Easy</span>
+                      <input
+                        type="number"
+                        value={easyMultiplier}
+                        onChange={e => setEasyMultiplier(Number(e.target.value))}
+                        className="p-2 rounded-md bg-white/20 text-white w-20"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm">Medium</span>
+                      <input
+                        type="number"
+                        value={mediumMultiplier}
+                        onChange={e => setMediumMultiplier(Number(e.target.value))}
+                        className="p-2 rounded-md bg-white/20 text-white w-20"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm">Tricky</span>
+                      <input
+                        type="number"
+                        value={trickyMultiplier}
+                        onChange={e => setTrickyMultiplier(Number(e.target.value))}
+                        className="p-2 rounded-md bg-white/20 text-white w-20"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label className="block mb-2">Streak Bonus Per Word</label>
+                  <input
+                    type="number"
+                    value={streakBonus}
+                    onChange={e => setStreakBonus(Number(e.target.value))}
+                    className="p-2 rounded-md bg-white/20 text-white w-full"
+                  />
+                </div>
+              </div>
+            )}
         </div>
         
         <div className="bg-white/10 p-6 rounded-lg mb-8 mt-8">
