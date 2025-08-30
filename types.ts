@@ -21,6 +21,10 @@ export interface Participant {
   wordsCorrect: number;
   accuracy?: number;
   avatar?: string;
+  /** Remaining skip turns available for this participant */
+  skipsRemaining?: number;
+  /** Remaining "ask a friend" opportunities */
+  askFriendRemaining?: number;
 }
 
 export interface WordDatabase {
