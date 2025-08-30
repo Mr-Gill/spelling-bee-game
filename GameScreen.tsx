@@ -16,6 +16,7 @@ import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
 import AvatarSelector from './components/AvatarSelector';
+import FlyingBee from './components/FlyingBee';
 import { audioManager } from './utils/audio';
 
 interface GameScreenProps {
@@ -64,6 +65,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState('');
+  const [showBee, setShowBee] = React.useState(false);
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);
@@ -98,6 +100,19 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       setLetters(Array.from({ length: currentWord.word.length }, () => ''));
     }
   }, [currentWord]);
+
+  React.useEffect(() => {
+    if (!config.effectsEnabled) return;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+    const interval = setInterval(() => {
+      if (Math.random() < 0.3) {
+        setShowBee(true);
+        setTimeout(() => setShowBee(false), 8000);
+      }
+    }, 120000);
+    return () => clearInterval(interval);
+  }, [config.effectsEnabled]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -489,6 +504,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
           />
         </div>
       )}
+
+      {showBee && <FlyingBee />}
 
       <button
         onClick={skipWord}

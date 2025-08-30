@@ -92,6 +92,31 @@ video {
     }
 }
 
+@keyframes bee-fly {
+    0% {
+        transform: translateX(-10vw);
+    }
+    100% {
+        transform: translateX(110vw);
+    }
+}
+
+.flying-bee {
+    position: fixed;
+    top: 50vh;
+    left: -10vw;
+    width: 80px;
+    z-index: 1000;
+    pointer-events: none;
+    animation: bee-fly 8s linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flying-bee {
+        animation: none;
+    }
+}
+
 .animate-pulse {
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
