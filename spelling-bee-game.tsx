@@ -5,11 +5,12 @@ import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
+import PracticeScreen from './PracticeScreen';
 import useMusic from './utils/useMusic';
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
-    const [gameState, setGameState] = useState("setup");
+    const [gameState, setGameState] = useState<'setup' | 'warmup' | 'playing' | 'results' | 'leaderboard' | 'achievements'>("setup");
     const [gameConfig, setGameConfig] = useState(null);
     const [gameResults, setGameResults] = useState(null);
     const [customWords, setCustomWords] = useState({ easy: [], medium: [], tricky: [] });
@@ -44,11 +45,22 @@ const SpellingBeeGame = () => {
                 tricky: [...wordDatabase.tricky, ...customWords.tricky],
             };
         }
-        setSoundEnabled(gameConfig.soundEnabled);
+        setSoundEnabled(config.soundEnabled);
         setMusicStyle(config.musicStyle);
         setMusicVolume(config.musicVolume);
         setIsMusicPlaying(true);
+        setGameConfig({ ...config, wordDatabase: finalWordDatabase });
+        localStorage.setItem('warmupCompleted', 'false');
         setGameState("playing");
+    };
+
+    const handleStartWarmup = () => {
+        setGameState('warmup');
+    };
+
+    const handleWarmupComplete = () => {
+        localStorage.setItem('warmupCompleted', 'true');
+        setGameState('setup');
     };
 
     const handleEndGame = (results) => {
@@ -92,7 +104,10 @@ const SpellingBeeGame = () => {
     useMusic(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
 
     if (gameState === "setup") {
-        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
+        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} onStartWarmup={handleStartWarmup} />;
+    }
+    if (gameState === 'warmup') {
+        return <PracticeScreen words={[...wordDatabase.easy, ...customWords.easy]} onComplete={handleWarmupComplete} />;
     }
     if (gameState === "playing") {
         return (
