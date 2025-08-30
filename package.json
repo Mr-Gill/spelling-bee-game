@@ -4,6 +4,7 @@
   "description": "A comprehensive, classroom-ready spelling bee game with rich educational content and advanced features",
   "private": true,
   "main": "index.html",
+  "homepage": "https://squidgyg.github.io/spelling-bee-game/",
   "scripts": {
     "start": "npx serve dist",
     "serve": "npx serve dist",
@@ -37,7 +38,6 @@
   "bugs": {
     "url": "https://github.com/SquidgyG/spelling-bee-game/issues"
   },
-  "homepage": "https://squidgyg.github.io/spelling-bee-game/",
   "dependencies": {
     "canvas-confetti": "^1.9.3",
     "fs-extra": "^11.3.1",
@@ -55,7 +55,7 @@
     "@types/react-dom": "^19.1.9",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.9",
-    "gh-pages": "^6.0.0",
+    "gh-pages": "^6.1.0",
     "pa11y-ci": "^4.0.1",
     "postcss": "^8.5.6",
     "prettier": "^3.0.3",

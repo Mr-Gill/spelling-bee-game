@@ -516,86 +516,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   return (
     <div className="min-h-screen p-4 md:p-8 text-white font-body bg-gradient-to-b from-blue-900 to-purple-900">
       <div className="max-w-7xl mx-auto">
-<<<<<<< HEAD
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <img src={`${process.env.PUBLIC_URL || ''}/icons/icon.svg`} alt="Bee mascot" className="w-12 h-12 md:w-16 md:h-16" onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL || ''}/img/bee.svg`} />
-            <h1 className="text-4xl md:text-6xl font-bold text-yellow-300 uppercase font-heading">🏆 SPELLING BEE CHAMPIONSHIP</h1>
-          </div>
-          <p className="text-xl md:text-2xl text-blue-100">Get ready to spell your way to victory!</p>
-        </div>
-
-        <div className="bg-white/10 p-6 rounded-lg mb-20">
-          <h2 className="text-2xl font-bold mb-4 uppercase font-heading">{gameMode === 'team' ? 'Teams 👥' : 'Students 🧑‍🎓'}</h2>
-          {gameMode === 'team' ? (
-    <>
-      <TeamForm
-        teams={teams}
-        avatars={availableAvatars}
-        addTeam={(team: Team) => addTeam(team)}
-        removeTeam={(id: string) => removeTeam(id)}
-        updateTeamName={(id: string, name: string) => updateTeam(id, { name })}
-      />
-    </>
-  ) : (
-    <>
-              <div className="flex gap-4 mb-4">
-                <input 
-                  type="text" 
-                  value={studentName} 
-                  onChange={e => setStudentName(e.target.value)} 
-                  className="flex-grow p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-300" 
-                  placeholder="Student name" 
-                />
-                <button 
-                  onClick={addStudent} 
-                  className="px-5 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg transition duration-200 ease-in-out transform hover:scale-105"
-                >
-                  Add
-                </button>
-              </div>
-              <div className="mb-4">
-                <textarea 
-                  value={bulkStudentText} 
-                  onChange={e => setBulkStudentText(e.target.value)} 
-                  className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 mb-2" 
-                  placeholder="Paste names, one per line or separated by commas" 
-                  rows={4}
-                ></textarea>
-                <button 
-                  onClick={() => addBulkStudents(bulkStudentText.split('\n').map(name => createParticipant(name, options.initialDifficulty)))} 
-                  className="px-5 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg transition duration-200 ease-in-out transform hover:scale-105"
-                >
-                  Add Names
-                </button>
-                {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
-              </div>
-              <div className="mb-4">
-                <h3 className="text-xl font-bold mb-2">Randomize Teams</h3>
-                <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <input 
-                    type="number" 
-                    min={1} 
-                    value={randomTeamCount || ''} 
-                    onChange={e => { setRandomTeamCount(Number(e.target.value)); setRandomTeamSize(0); }} 
-                    placeholder="Number of teams" 
-                    className="p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 flex-grow" 
-                  />
-                  <span>or</span>
-                  <input 
-                    type="number" 
-                    min={1} 
-                    value={randomTeamSize || ''} 
-                    onChange={e => { setRandomTeamSize(Number(e.target.value)); setRandomTeamCount(0); }} 
-                    placeholder="Team size" 
-                    className="p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 flex-grow" 
-                  />
-                  <button 
-                    onClick={randomizeTeams} 
-                    className="px-5 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg transition duration-200 ease-in-out transform hover:scale-105"
-                  >
-                    Randomize
-=======
         <div className="text-center mb-8 md:mb-12">
           <div className="flex flex-col items-center mb-4">
             <div className="mb-2">
@@ -642,7 +562,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           {activeTab === 'setup' && (
             <>
               <div className="mb-8">
-                <h2 className="text-xl font-bold mb-4 text-center uppercase font-heading">Select Game Mode</h2>
+                <h2 className="text-xl font-bold mb-4 uppercase font-heading">Select Game Mode</h2>
                 <div className="flex flex-wrap justify-center gap-4">
                   <button 
                     onClick={() => setGameMode('team')} 
@@ -655,42 +575,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     className={`px-6 py-3 rounded-lg text-lg font-bold transition-all ${gameMode === 'individual' ? 'bg-yellow-300 text-black scale-105' : 'bg-blue-500 hover:bg-blue-400'}`}
                   >
                     Individual Mode
->>>>>>> feature/consolidate-ai-wordlist
                   </button>
                 </div>
               </div>
-<<<<<<< HEAD
-              {participants.map((student, index) => (
-                <div key={index} className="flex items-center gap-3 mb-3">
-                  <img src={student.avatar || availableAvatars[0]} alt="avatar" className="w-10 h-10 rounded-full" />
-                  <input 
-                    type="text" 
-                    value={student.name} 
-                    onChange={e => updateStudentName(index, e.target.value)} 
-                    placeholder="Student name" 
-                    className="flex-grow p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-300" 
-                  />
-                  {index > 0 && (
-                    <button 
-                      onClick={() => removeStudent(index)} 
-                      className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition duration-200 ease-in-out"
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
-              ))}
-              <StudentRoster
-                participants={participants || []}  // Ensure we always pass an array
-                avatars={availableAvatars}
-                onAdd={createParticipant}
-                onRemove={handleParticipantRemove}
-                onEdit={handleParticipantEdit}
-                onAddBulk={addBulkStudents}
-                initialDifficulty={options.initialDifficulty}
-              />
-=======
-              
               <div className="mb-8">
                 <h2 className="text-xl font-bold mb-4 uppercase font-heading">
                   {gameMode === 'team' ? 'Teams' : 'Students'}
@@ -744,159 +631,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 )}
                 <button onClick={clearRoster} className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Clear Saved Roster</button>
               </div>
->>>>>>> feature/consolidate-ai-wordlist
             </>
           )}
 
-<<<<<<< HEAD
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
-          <div className="bg-white/10 p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Skip Penalty ⏭️</h2>
-            <div className="flex gap-4">
-              <select 
-                value={options.skipPenaltyType} 
-                onChange={e => handleOptionChange('skipPenaltyType', e.target.value)} 
-                className="w-full p-3 rounded-lg bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-yellow-300"
-              >
-                <option value="lives">Lives</option>
-                <option value="points">Points</option>
-              </select>
-              <input 
-                type="number" 
-                min={0} 
-                value={options.skipPenaltyValue} 
-                onChange={e => handleOptionChange('skipPenaltyValue', Number(e.target.value))} 
-                className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-300" 
-              />
-            </div>
-          </div>
-  
-          <div className="bg-white/10 p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Difficulty Settings 🎚️</h2>
-            <div className="flex gap-4">
-              <div className="w-full">
-                <label className="block mb-2">Initial Difficulty</label>
-                <select 
-                  value={options.initialDifficulty} 
-                  onChange={e => handleOptionChange('initialDifficulty', Number(e.target.value))} 
-                  className="w-full p-3 rounded-lg bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-yellow-300"
-                >
-                  <option value={0}>Easy</option>
-                  <option value={1}>Medium</option>
-                  <option value={2}>Tricky</option>
-                </select>
-              </div>
-              <div className="w-full">
-                <label className="block mb-2">Progression Speed</label>
-                <input 
-                  type="number" 
-                  min={1} 
-                  value={options.progressionSpeed} 
-                  onChange={e => handleOptionChange('progressionSpeed', Number(e.target.value))} 
-                  className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-300" 
-                />
-              </div>
-            </div>
-          </div>
-  
-          <div className="bg-white/10 p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Audio & Effects 🔊✨</h2>
-            <label className="flex items-center space-x-3 mb-2">
-              <input 
-                type="checkbox" 
-                checked={options.soundEnabled} 
-                onChange={e => handleOptionChange('soundEnabled', e.target.checked)} 
-                className="form-checkbox h-5 w-5 text-yellow-300 rounded focus:ring-yellow-300" 
-              />
-              <span>Enable Sound</span>
-            </label>
-            <label className="flex items-center space-x-3">
-              <input 
-                type="checkbox" 
-                checked={options.effectsEnabled} 
-                onChange={e => handleOptionChange('effectsEnabled', e.target.checked)} 
-                className="form-checkbox h-5 w-5 text-yellow-300 rounded focus:ring-yellow-300" 
-              />
-              <span>Enable Visual Effects</span>
-            </label>
-            {voices.length > 0 && (
-              <div className="mt-4">
-                <label className="block mb-2">Voice</label>
-                <select 
-                  value={selectedVoice} 
-                  onChange={e => setSelectedVoice(e.target.value)} 
-                  className="w-full p-3 rounded-lg bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-yellow-300"
-                >
-                  <option value="">Default</option>
-                  {voices.map(v => (
-                    <option key={v.voiceURI} value={v.voiceURI}>{`${v.name} (${v.lang})`}</option>
-                  ))}
-                </select>
-              </div>
-            )}
-          </div>
-  
-          <div className="bg-white/10 p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Theme 🎨</h2>
-            <select 
-              value={theme} 
-              onChange={e => { const t = e.target.value; setTheme(t); try { localStorage.setItem('theme', t); } catch (error) { console.error('Failed to save theme to localStorage', error); } applyTheme(t); }} 
-              className="w-full p-3 rounded-lg bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-yellow-300"
-            >
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-              <option value="honeycomb">Honeycomb</option>
-            </select>
-          </div>
-  
-          <div className="bg-white/10 p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Teacher Mode 👩‍🏫</h2>
-            <label className="flex items-center gap-2 text-white">
-              <input 
-                type="checkbox" 
-                checked={teacherMode} 
-                onChange={e => setTeacherMode(e.target.checked)} 
-                className="form-checkbox h-5 w-5 text-yellow-300 rounded focus:ring-yellow-300" 
-              />
-              <span>Enable larger fonts and spacing</span>
-            </label>
-          </div>
-  
-          <div className="bg-white/10 p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Music 🎵</h2>
-            <div className="mb-4">
-              <label className="block mb-2">Style</label>
-              <select 
-                value={options.musicStyle} 
-                onChange={e => handleOptionChange('musicStyle', e.target.value)} 
-                className="w-full p-3 rounded-lg bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-yellow-300"
-              >
-                {musicStyles.map(style => (<option key={style} value={style}>{style}</option>))}
-              </select>
-            </div>
-            <div>
-              <label className="block mb-2">Volume: {Math.round(options.musicVolume * 100)}%</label>
-              <input 
-                type="range" 
-                min={0} 
-                max={1} 
-                step={0.01} 
-                value={options.musicVolume} 
-                onChange={e => handleOptionChange('musicVolume', parseFloat(e.target.value))} 
-                className="w-full" 
-              />
-            </div>
-          </div>
-        </div>
-        <GameOptions 
-          options={options} 
-          setOptions={setOptions}
-        />
-        
-        <div className="bg-white/10 p-6 rounded-lg mb-10">
-            <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Add Custom Word List 📝</h2>
-            <div className="mb-6">
-=======
           {activeTab === 'settings' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-white/10 p-6 rounded-lg">
@@ -974,7 +711,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             <div>
               <h2 className="text-xl font-bold mb-4 uppercase font-heading">Word List</h2>
               <div className="mb-6">
->>>>>>> feature/consolidate-ai-wordlist
                 <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">Choose Bundled Word List</label>
                 <select id="bundled-list" value={selectedBundledList} onChange={e => setSelectedBundledList(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white">
                   <option value="">-- Select a list --</option>
