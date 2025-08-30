@@ -109,6 +109,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     playTimeout();
     handleIncorrectAttempt();
   });
+
+  const {
+    timeLeft: sessionTimeLeft,
+    start: startSessionTimer,
+    stop: stopSessionTimer,
+  } = useTimer(config.sessionDuration, () => {
+    onEndGameWithMissedWords();
+  });
   React.useEffect(() => {
     if (localStorage.getItem("teacherMode") === "true") {
       document.body.classList.add("teacher-mode");
@@ -398,6 +406,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   };
 
   const onEndGameWithMissedWords = () => {
+    stopSessionTimer();
     const lessonKey = new Date().toISOString().split("T")[0];
     const stored = JSON.parse(
       localStorage.getItem("missedWordsCollection") || "{}",
@@ -423,6 +432,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   React.useEffect(() => {
     if (config.participants.length > 0) {
       selectNextWordForLevel(config.participants[0].difficultyLevel);
+      startSessionTimer();
     }
   }, []);
 
@@ -484,6 +494,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
           {timeLeft}
         </div>
         <div className="text-lg">seconds left</div>
+        <div
+          className={`mt-2 text-sm font-bold ${
+            sessionTimeLeft <= 120 ? "text-red-500 animate-pulse" : "text-white"
+          }`}
+        >
+          Session {Math.floor(sessionTimeLeft / 60)}:
+          {String(sessionTimeLeft % 60).padStart(2, "0")}
+        </div>
         <button
           onClick={isPaused ? resumeTimer : pauseTimer}
           className="mt-2 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"

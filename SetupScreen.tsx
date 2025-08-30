@@ -44,6 +44,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [timerDuration, setTimerDuration] = useState(30);
+  const [sessionDuration, setSessionDuration] = useState(20);
   const [customWordListText, setCustomWordListText] = useState('');
   const [parsedCustomWords, setParsedCustomWords] = useState<Word[]>([]);
   const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, Word[]>>({});
@@ -352,6 +353,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       participants: finalParticipants,
       gameMode,
       timerDuration,
+      sessionDuration: sessionDuration * 60,
       skipPenaltyType: options.skipPenaltyType,
       skipPenaltyValue: options.skipPenaltyValue,
       soundEnabled: options.soundEnabled,
@@ -513,8 +515,19 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
             </div>
         </div>
+        <div className="bg-white/10 p-6 rounded-lg mb-8">
+            <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Session Duration ⏳</h2>
+            <input
+                type="number"
+                min={1}
+                value={sessionDuration}
+                onChange={e => setSessionDuration(Number(e.target.value))}
+                className="p-2 rounded-md bg-white/20 text-white w-full"
+            />
+            <div className="text-sm mt-1">minutes</div>
+        </div>
         <GameOptions options={options} setOptions={setOptions} />
-        
+
         <div className="bg-white/10 p-6 rounded-lg mb-8 mt-8">
             <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Add Custom Word List 📝</h2>
             <div className="mb-6">

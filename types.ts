@@ -33,6 +33,8 @@ export interface GameConfig {
   participants: Participant[];
   gameMode: 'team' | 'individual';
   timerDuration: number;
+  /** Total session length in seconds (default 20 minutes) */
+  sessionDuration: number;
   wordDatabase: WordDatabase;
   skipPenaltyType: 'lives' | 'points';
   skipPenaltyValue: number;
