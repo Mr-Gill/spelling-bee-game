@@ -511,9 +511,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     ...teams
   ]);
 
+  const [activeTab, setActiveTab] = useState<'setup' | 'settings' | 'words'>('setup');
+
   return (
-    <div className="min-h-screen p-8 text-white font-body">
+    <div className="min-h-screen p-4 md:p-8 text-white font-body bg-gradient-to-b from-blue-900 to-purple-900">
       <div className="max-w-7xl mx-auto">
+<<<<<<< HEAD
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-6">
             <img src={`${process.env.PUBLIC_URL || ''}/icons/icon.svg`} alt="Bee mascot" className="w-12 h-12 md:w-16 md:h-16" onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL || ''}/img/bee.svg`} />
@@ -592,10 +595,71 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     className="px-5 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg transition duration-200 ease-in-out transform hover:scale-105"
                   >
                     Randomize
+=======
+        <div className="text-center mb-8 md:mb-12">
+          <div className="flex flex-col items-center mb-4">
+            <div className="mb-2">
+              <img 
+                src={`${process.env.PUBLIC_URL || ''}/icons/icon.svg`} 
+                alt="Bee mascot" 
+                className="w-16 h-16 md:w-20 md:h-20 mx-auto"
+                onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL || ''}/img/bee.svg`}
+              />
+            </div>
+            <h1 className="text-3xl md:text-5xl font-bold text-yellow-300 uppercase font-heading tracking-wide">
+              Spelling Bee Championship
+            </h1>
+          </div>
+          <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
+            Get ready to spell your way to victory!
+          </p>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="flex mb-6 border-b border-blue-400">
+          <button
+            className={`px-4 py-2 font-medium ${activeTab === 'setup' ? 'text-yellow-300 border-b-2 border-yellow-300' : 'text-blue-200'}`}
+            onClick={() => setActiveTab('setup')}
+          >
+            Game Setup
+          </button>
+          <button
+            className={`px-4 py-2 font-medium ${activeTab === 'settings' ? 'text-yellow-300 border-b-2 border-yellow-300' : 'text-blue-200'}`}
+            onClick={() => setActiveTab('settings')}
+          >
+            Settings
+          </button>
+          <button
+            className={`px-4 py-2 font-medium ${activeTab === 'words' ? 'text-yellow-300 border-b-2 border-yellow-300' : 'text-blue-200'}`}
+            onClick={() => setActiveTab('words')}
+          >
+            Word List
+          </button>
+        </div>
+
+        {/* Tab Content */}
+        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 shadow-lg">
+          {activeTab === 'setup' && (
+            <>
+              <div className="mb-8">
+                <h2 className="text-xl font-bold mb-4 text-center uppercase font-heading">Select Game Mode</h2>
+                <div className="flex flex-wrap justify-center gap-4">
+                  <button 
+                    onClick={() => setGameMode('team')} 
+                    className={`px-6 py-3 rounded-lg text-lg font-bold transition-all ${gameMode === 'team' ? 'bg-yellow-300 text-black scale-105' : 'bg-blue-500 hover:bg-blue-400'}`}
+                  >
+                    Team Mode
+                  </button>
+                  <button 
+                    onClick={() => setGameMode('individual')} 
+                    className={`px-6 py-3 rounded-lg text-lg font-bold transition-all ${gameMode === 'individual' ? 'bg-yellow-300 text-black scale-105' : 'bg-blue-500 hover:bg-blue-400'}`}
+                  >
+                    Individual Mode
+>>>>>>> feature/consolidate-ai-wordlist
                   </button>
                 </div>
-                {randomizeError && <p className="text-red-300">{randomizeError}</p>}
               </div>
+<<<<<<< HEAD
               {participants.map((student, index) => (
                 <div key={index} className="flex items-center gap-3 mb-3">
                   <img src={student.avatar || availableAvatars[0]} alt="avatar" className="w-10 h-10 rounded-full" />
@@ -625,11 +689,66 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 onAddBulk={addBulkStudents}
                 initialDifficulty={options.initialDifficulty}
               />
+=======
+              
+              <div className="mb-8">
+                <h2 className="text-xl font-bold mb-4 uppercase font-heading">
+                  {gameMode === 'team' ? 'Teams' : 'Students'}
+                </h2>
+                {gameMode === 'team' ? (
+                  <TeamForm
+                    teams={teams}
+                    avatars={availableAvatars}
+                    addTeam={(team: Team) => addTeam(team)}
+                    removeTeam={(id: string) => removeTeam(id)}
+                    updateTeamName={(id: string, name: string) => updateTeam(id, { name })}
+                  />
+                ) : (
+                  <>
+                    <div className="flex gap-4 mb-4">
+                      <input type="text" value={studentName} onChange={e => setStudentName(e.target.value)} className="flex-grow p-2 rounded-md bg-white/20 text-white" placeholder="Student name" />
+                      <button onClick={addStudent} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add</button>
+                    </div>
+                    <div className="mb-4">
+                      <textarea value={bulkStudentText} onChange={e => setBulkStudentText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white mb-2" placeholder="Paste names, one per line or separated by commas" rows={4}></textarea>
+                      <button onClick={() => addBulkStudents(bulkStudentText.split('\n').map(name => createParticipant(name, options.initialDifficulty)))} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add Names</button>
+                      {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
+                    </div>
+                    <div className="mb-4">
+                      <h3 className="text-xl font-bold mb-2">Randomize Teams</h3>
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <input type="number" min={1} value={randomTeamCount || ''} onChange={e => { setRandomTeamCount(Number(e.target.value)); setRandomTeamSize(0); }} placeholder="Number of teams" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
+                        <span>or</span>
+                        <input type="number" min={1} value={randomTeamSize || ''} onChange={e => { setRandomTeamSize(Number(e.target.value)); setRandomTeamCount(0); }} placeholder="Team size" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
+                        <button onClick={randomizeTeams} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Randomize</button>
+                      </div>
+                      {randomizeError && <p className="text-red-300">{randomizeError}</p>}
+                    </div>
+                    {participants.map((student, index) => (
+                      <div key={index} className="flex items-center gap-2 mb-2">
+                        <img src={student.avatar || availableAvatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                        <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
+                        {index > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
+                      </div>
+                    ))}
+                    <StudentRoster
+                      participants={participants || []}  // Ensure we always pass an array
+                      avatars={availableAvatars}
+                      onAdd={createParticipant}
+                      onRemove={handleParticipantRemove}
+                      onEdit={handleParticipantEdit}
+                      onAddBulk={addBulkStudents}
+                      initialDifficulty={options.initialDifficulty}
+                    />
+                  </>
+                )}
+                <button onClick={clearRoster} className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Clear Saved Roster</button>
+              </div>
+>>>>>>> feature/consolidate-ai-wordlist
             </>
           )}
-          <button onClick={clearRoster} className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Clear Saved Roster</button>
-        </div>
 
+<<<<<<< HEAD
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
           <div className="bg-white/10 p-6 rounded-lg">
             <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Skip Penalty ⏭️</h2>
@@ -777,58 +896,139 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         <div className="bg-white/10 p-6 rounded-lg mb-10">
             <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Add Custom Word List 📝</h2>
             <div className="mb-6">
+=======
+          {activeTab === 'settings' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Skip Penalty ⏭️</h2>
+                <div className="flex gap-4">
+                  <select value={options.skipPenaltyType} onChange={e => handleOptionChange('skipPenaltyType', e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
+                    <option value="lives">Lives</option>
+                    <option value="points">Points</option>
+                  </select>
+                  <input type="number" min={0} value={options.skipPenaltyValue} onChange={e => handleOptionChange('skipPenaltyValue', Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
+                </div>
+              </div>
+              <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Difficulty Settings 🎚️</h2>
+                <div className="flex gap-4">
+                  <div>
+                    <label className="block mb-2">Initial Difficulty</label>
+                    <select value={options.initialDifficulty} onChange={e => handleOptionChange('initialDifficulty', Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white">
+                      <option value={0}>Easy</option>
+                      <option value={1}>Medium</option>
+                      <option value={2}>Tricky</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block mb-2">Progression Speed</label>
+                    <input type="number" min={1} value={options.progressionSpeed} onChange={e => handleOptionChange('progressionSpeed', Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Audio & Effects 🔊✨</h2>
+                <label className="flex items-center space-x-3 mb-2"><input type="checkbox" checked={options.soundEnabled} onChange={e => handleOptionChange('soundEnabled', e.target.checked)} /><span>Enable Sound</span></label>
+                <label className="flex items-center space-x-3"><input type="checkbox" checked={options.effectsEnabled} onChange={e => handleOptionChange('effectsEnabled', e.target.checked)} /><span>Enable Visual Effects</span></label>
+                {voices.length > 0 && (
+                  <div className="mt-4">
+                    <label className="block mb-2">Voice</label>
+                    <select value={selectedVoice} onChange={e => setSelectedVoice(e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
+                      <option value="">Default</option>
+                      {voices.map(v => (
+                        <option key={v.voiceURI} value={v.voiceURI}>{`${v.name} (${v.lang})`}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+              <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Theme 🎨</h2>
+                <select value={theme} onChange={e => { const t = e.target.value; setTheme(t); try { localStorage.setItem('theme', t); } catch (error) { console.error('Failed to save theme to localStorage', error); } applyTheme(t); }} className="p-2 rounded-md bg-white/20 text-white">
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                  <option value="honeycomb">Honeycomb</option>
+                </select>
+              </div>
+              <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Teacher Mode 👩‍🏫</h2>
+                <label className="flex items-center gap-2 text-white"><input type="checkbox" checked={teacherMode} onChange={e => setTeacherMode(e.target.checked)} /><span>Enable larger fonts and spacing</span></label>
+              </div>
+               <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Music 🎵</h2>
+                <div className="mb-4">
+                  <label className="block mb-2">Style</label>
+                  <select value={options.musicStyle} onChange={e => handleOptionChange('musicStyle', e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
+                    {musicStyles.map(style => (<option key={style} value={style}>{style}</option>))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block mb-2">Volume: {Math.round(options.musicVolume * 100)}%</label>
+                  <input type="range" min={0} max={1} step={0.01} value={options.musicVolume} onChange={e => handleOptionChange('musicVolume', parseFloat(e.target.value))} className="w-full" />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'words' && (
+            <div>
+              <h2 className="text-xl font-bold mb-4 uppercase font-heading">Word List</h2>
+              <div className="mb-6">
+>>>>>>> feature/consolidate-ai-wordlist
                 <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">Choose Bundled Word List</label>
                 <select id="bundled-list" value={selectedBundledList} onChange={e => setSelectedBundledList(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white">
-                    <option value="">-- Select a list --</option>
-                    {bundledWordLists.map(list => (<option key={list.file} value={list.file}>{list.label}</option>))}
+                  <option value="">-- Select a list --</option>
+                  {bundledWordLists.map(list => (<option key={list.file} value={list.file}>{list.label}</option>))}
                 </select>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label htmlFor="file-upload" className="block text-lg font-medium mb-2">Upload File</label>
-                    <p className="text-sm text-gray-300 mb-2">Upload a JSON or TSV file.</p>
-                    <input id="file-upload" type="file" accept=".json,.tsv,.txt,.csv" onChange={handleFileChange} className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-300 file:text-black hover:file:bg-yellow-400" />
+                  <label htmlFor="file-upload" className="block text-lg font-medium mb-2">Upload File</label>
+                  <p className="text-sm text-gray-300 mb-2">Upload a JSON or TSV file.</p>
+                  <input id="file-upload" type="file" accept=".json,.tsv,.txt,.csv" onChange={handleFileChange} className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-300 file:text-black hover:file:bg-yellow-400" />
                 </div>
                 <div>
-                    <label htmlFor="paste-area" className="block text-lg font-medium mb-2">Or Paste Spreadsheet Data</label>
-                    <p className="text-sm text-gray-300 mb-2">Paste data from Excel or Google Sheets (tab-separated).</p>
-                    <textarea id="paste-area" rows={4} value={customWordListText} onChange={e => setCustomWordListText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white" placeholder="Paste your tab-separated values here..."></textarea>
+                  <label htmlFor="paste-area" className="block text-lg font-medium mb-2">Or Paste Spreadsheet Data</label>
+                  <p className="text-sm text-gray-300 mb-2">Paste data from Excel or Google Sheets (tab-separated).</p>
+                  <textarea id="paste-area" rows={4} value={customWordListText} onChange={e => setCustomWordListText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white" placeholder="Paste your tab-separated values here..."></textarea>
                 </div>
-            </div>
-            <div className="mt-6">
+              </div>
+              <div className="mt-6">
                 <div className="flex flex-col md:flex-row gap-2 mb-2">
-                    <input type="number" min={1} value={aiGrade} onChange={e => setAiGrade(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="Grade" />
-                    <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="# Words" />
-                    <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
+                  <input type="number" min={1} value={aiGrade} onChange={e => setAiGrade(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="Grade" />
+                  <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="# Words" />
+                  <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
                 </div>
                 <WordListPrompt value={aiTopic} onChange={setAiTopic} />
                 {aiError && <p className="text-red-300 mt-2">{aiError}</p>}
-            </div>
-            <div className="mt-4 text-sm text-gray-300">
+              </div>
+              <div className="mt-4 text-sm text-gray-300">
                 <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`.</p>
                 <div className="mt-2">
-                    <a href="wordlists/example.csv" download className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Download Template</a>
+                  <a href="wordlists/example.csv" download className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Download Template</a>
                 </div>
+              </div>
             </div>
+          )}
         </div>
-        
+
         {missedWordCount > 0 && (
-            <div className="bg-white/10 p-4 rounded-lg mb-8">
-                <label className="flex items-center space-x-3">
-                    <input type="checkbox" checked={includeMissedWords} onChange={e => setIncludeMissedWords(e.target.checked)} />
-                    <span>Include {missedWordCount} missed words from previous sessions</span>
-                </label>
-            </div>
+          <div className="bg-white/10 p-4 rounded-lg mb-8">
+            <label className="flex items-center space-x-3">
+              <input type="checkbox" checked={includeMissedWords} onChange={e => setIncludeMissedWords(e.target.checked)} />
+              <span>Include {missedWordCount} missed words from previous sessions</span>
+            </label>
+          </div>
         )}
 
         {error && <p className="text-red-300 text-center mb-4">{error}</p>}
         
         <div className="flex flex-col md:flex-row gap-4 mt-8">
-            <button onClick={() => handleStart(false)} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Custom Game</button>
-            <button onClick={() => handleStart(true)} className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Session Challenge</button>
+          <button onClick={() => handleStart(false)} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Custom Game</button>
+          <button onClick={() => handleStart(true)} className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Session Challenge</button>
         </div>
         <div className="mt-4 text-center">
-            <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold">View Achievements</button>
+          <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold">View Achievements</button>
         </div>
       </div>
     </div>
