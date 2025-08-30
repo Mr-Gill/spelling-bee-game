@@ -1,23 +1,29 @@
 /* Custom styles for Spelling Bee Championship */
 
-<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.cdnfonts.com/css/open-dyslexic');
 
 :root {
   --primary-color: #2563eb; /* Improved contrast blue */
   --text-color: #1e293b; /* Darker text for better readability */
   --bg-color: #f8fafc; /* Light background */
-  
+
   /* Dark mode variables */
   --dark-primary: #3b82f6;
   --dark-text: #f1f5f9;
   --dark-bg: #0f172a;
+
+  /* Accessibility settings */
+  --app-font: 'Roboto', sans-serif;
+  --app-font-size: 16px;
 }
 
-=======
->>>>>>> origin/codex/import-google-fonts-and-configure-tailwind
 * {
     box-sizing: border-box;
+}
+
+html {
+    font-size: var(--app-font-size);
 }
 
 body {
@@ -27,6 +33,12 @@ body {
     background-image: url('img/bee-honeycomb.svg');
     background-size: 200px 173px;
     background-repeat: repeat;
+    font-family: var(--app-font) !important;
+}
+
+.font-body,
+.font-heading {
+    font-family: var(--app-font) !important;
 }
 
 body.theme-light {
