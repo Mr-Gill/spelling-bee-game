@@ -5,7 +5,7 @@ import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
-import ShopScreen from './ShopScreen';
+import ShopScreen from '../ShopScreen';
 import useMusic from './utils/useMusic';
 import { AudioProvider } from "./AudioContext";
 
