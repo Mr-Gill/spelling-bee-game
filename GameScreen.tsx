@@ -85,6 +85,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState("");
+  const [resultModal, setResultModal] = React.useState<{
+    visible: boolean;
+    word: Word | null;
+    correct: boolean;
+    allAttempted: boolean;
+  }>({ visible: false, word: null, correct: false, allAttempted: false });
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);
@@ -121,6 +127,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     if (currentWord) {
       setLetters(Array.from({ length: currentWord.word.length }, () => ""));
     }
+  }, [currentWord]);
+
+  React.useEffect(() => {
+    setResultModal((prev) => ({ ...prev, visible: false }));
   }, [currentWord]);
 
   React.useEffect(() => {
@@ -198,27 +208,20 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
     const newAttempted = new Set(attemptedParticipants);
     newAttempted.add(currentParticipantIndex);
+    const allAttempted = newAttempted.size >= participants.length;
 
-    setTimeout(() => {
-      setFeedback({ message: "", type: "" });
-      if (newAttempted.size >= participants.length) {
-        if (currentWord) {
-          setWordQueues((prev) => ({
-            ...prev,
-            review: [...prev.review, currentWord],
-          }));
-        }
-        setAttemptedParticipants(new Set());
-        const nextIndex = (currentParticipantIndex + 1) % participants.length;
-        selectNextWordForLevel(updatedParticipants[nextIndex].difficultyLevel);
-        nextTurn();
-      } else {
-        setAttemptedParticipants(newAttempted);
-        setUsedHint(false);
-        nextTurn();
-        startTimer();
-      }
-    }, 2000);
+    if (allAttempted) {
+      setAttemptedParticipants(new Set());
+    } else {
+      setAttemptedParticipants(newAttempted);
+    }
+
+    setResultModal({
+      visible: true,
+      word: currentWord,
+      correct: false,
+      allAttempted,
+    });
   }
 
   const spendPoints = (participantIndex: number, cost: number) => {
@@ -335,14 +338,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
       setFeedback({ message: "Correct! 🎉", type: "success" });
 
-      setTimeout(() => {
-        const nextIndex =
-          (currentParticipantIndex + 1) % updatedParticipants.length;
-        const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
-        setFeedback({ message: "", type: "" });
-        selectNextWordForLevel(nextDifficulty);
-        nextTurn();
-      }, 2000);
+      setResultModal({
+        visible: true,
+        word: currentWord,
+        correct: true,
+        allAttempted: false,
+      });
 
       return; // Stop execution for the correct case
     }
@@ -350,6 +351,36 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     // This part only runs if the answer was incorrect
     playWrong();
     handleIncorrectAttempt();
+  };
+
+  const handleNextWord = () => {
+    setResultModal((prev) => ({ ...prev, visible: false }));
+    setFeedback({ message: "", type: "" });
+
+    if (resultModal.correct) {
+      const nextIndex = (currentParticipantIndex + 1) % participants.length;
+      const nextDifficulty = participants[nextIndex].difficultyLevel;
+      selectNextWordForLevel(nextDifficulty);
+      nextTurn();
+      return;
+    }
+
+    if (resultModal.allAttempted) {
+      if (resultModal.word) {
+        setWordQueues((prev) => ({
+          ...prev,
+          review: [...prev.review, resultModal.word!],
+        }));
+      }
+      const nextIndex = (currentParticipantIndex + 1) % participants.length;
+      const nextDifficulty = participants[nextIndex].difficultyLevel;
+      selectNextWordForLevel(nextDifficulty);
+      nextTurn();
+    } else {
+      setUsedHint(false);
+      nextTurn();
+      startTimer();
+    }
   };
 
   const skipWord = () => {
@@ -591,6 +622,28 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       >
         <SkipForward size={24} />
       </button>
+
+      {resultModal.visible && !isPaused && resultModal.word && (
+        <div className="modal-overlay fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white text-black p-6 rounded-lg max-w-lg w-full text-center">
+            <h3 className="text-3xl font-bold mb-4">
+              {resultModal.word.word}
+            </h3>
+            <p className="mb-2">
+              <strong>Definition:</strong> {resultModal.word.definition}
+            </p>
+            <p className="mb-4">
+              <strong>Origin:</strong> {resultModal.word.origin}
+            </p>
+            <button
+              onClick={handleNextWord}
+              className="mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+            >
+              Next Word
+            </button>
+          </div>
+        </div>
+      )}
 
       {isPaused && (
         <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40">
