@@ -1,12 +1,27 @@
 // components/AudioSettings.jsx
 import React from 'react';
 import { audioManager } from '../utils/audio';
+import { PLAYLIST } from '../audio/playlist';
 
-export function AudioSettings() {
+export function AudioSettings({ currentTrack, onTrackChange }) {
   const [musicVolume, setMusicVolume] = React.useState(audioManager.volume.music * 100);
   const [sfxVolume, setSfxVolume] = React.useState(audioManager.volume.sfx * 100);
   const [isMusicMuted, setIsMusicMuted] = React.useState(audioManager.isMusicMuted);
   const [areSoundsMuted, setAreSoundsMuted] = React.useState(audioManager.areSoundsMuted);
+  const [track, setTrack] = React.useState(
+    currentTrack || localStorage.getItem('musicStyle') || PLAYLIST[0].style,
+  );
+
+  React.useEffect(() => {
+    if (currentTrack) setTrack(currentTrack);
+  }, [currentTrack]);
+
+  const handleTrackChange = (e) => {
+    const style = e.target.value;
+    setTrack(style);
+    localStorage.setItem('musicStyle', style);
+    if (onTrackChange) onTrackChange(style);
+  };
 
   const handleMusicVolumeChange = (e) => {
     const volume = parseInt(e.target.value) / 100;
@@ -37,6 +52,21 @@ export function AudioSettings() {
       </div>
 
       <div className="space-y-4">
+        <div className="bg-white bg-opacity-80 rounded-lg p-4 shadow-md">
+          <label className="text-sm font-semibold text-gray-700">Playlist</label>
+          <select
+            value={track}
+            onChange={handleTrackChange}
+            className="mt-2 w-full p-2 border rounded"
+          >
+            {PLAYLIST.map((t) => (
+              <option key={t.style} value={t.style}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="bg-white bg-opacity-80 rounded-lg p-4 shadow-md">
           <div className="flex items-center justify-between mb-3">
             <label className="text-sm font-semibold text-gray-700">Music Volume</label>
