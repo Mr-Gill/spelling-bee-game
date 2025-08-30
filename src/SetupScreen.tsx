@@ -31,8 +31,8 @@ interface SetupScreenProps {
 }
 
 const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
-  const avatars = [beeImg, bookImg, trophyImg];
-  const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
+  const availableAvatars = [beeImg, bookImg, trophyImg];
+  const getRandomAvatar = () => availableAvatars[Math.floor(Math.random() * availableAvatars.length)];
 
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [startingLives, setStartingLives] = useState(10);
@@ -59,9 +59,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const createParticipant = (name: string, difficulty: number): Participant => ({
     id: uuidv4(),
     name,
-    avatar: '',
+    avatar: availableAvatars[Math.floor(Math.random() * availableAvatars.length)],
     score: 0,
-    lives: 3,
+    lives: options.initialDifficulty,
     teamId: null,
     points: 0,
     difficultyLevel: difficulty,
@@ -70,13 +70,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     correct: 0,
     incorrect: 0,
     wordsAttempted: 0,
-    wordsCorrect: 0,
+    wordsCorrect: 0
   });
 
-  const createTeam = (name: string): Team => ({
+  const createTeam = (): Team => ({
     id: uuidv4(),
-    name,
-    students: [],
+    name: `Team ${teams.length + 1}`,
+    students: []
   });
 
   const [participants, setParticipants] = useState<Participant[]>([]);
@@ -504,11 +504,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
 
   const handleTeamRemove = (id: string) => {
-    // Add implementation here
+    setTeams(teams.filter(t => t.id !== id));
   };
 
   const handleTeamRename = (id: string, name: string) => {
-    // Add implementation here
+    setTeams(teams.map(t => t.id === id ? {...t, name} : t));
   };
 
   const handleParticipantRemove = (index: number) => {
@@ -518,6 +518,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const handleParticipantEdit = (index: number, name: string) => {
     // Add implementation here
   };
+
+  type ParticipantOrTeam = Participant | Team;
+  const [allParticipants, setAllParticipants] = useState<ParticipantOrTeam[]>([
+    ...participants,
+    ...teams
+  ]);
 
   return (
     <div className="min-h-screen p-8 text-white font-body">
@@ -544,7 +550,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     <>
       <TeamForm
         teams={teams}
-        avatars={avatars}
+        avatars={availableAvatars}
         addTeam={(team: Team) => addTeam(team)}
         removeTeam={(id: string) => removeTeam(id)}
         updateTeamName={(id: string, name: string) => updateTeam(id, { name })}
@@ -573,14 +579,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               </div>
               {participants.map((student, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
-                  <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                  <img src={student.avatar || availableAvatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
                   <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
                   {index > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
                 </div>
               ))}
               <StudentRoster
-                participants={participants}
-                avatars={avatars}
+                participants={participants || []}  // Ensure we always pass an array
+                avatars={availableAvatars}
                 onAdd={createParticipant}
                 onRemove={handleParticipantRemove}
                 onEdit={handleParticipantEdit}
@@ -662,10 +668,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
             </div>
         </div>
-        <GameOptions
-          options={options}
+        <GameOptions 
+          options={options} 
           onOptionChange={(option: keyof OptionsState, value: any) => 
-            setOptions({...options, [option]: value})
+            setOptions(prev => ({...prev, [option]: value}))
           }
         />
         

@@ -16,7 +16,7 @@ interface StudentRosterProps {
 }
 
 const StudentRoster: React.FC<StudentRosterProps> = ({
-  students,
+  students = [], // Default to empty array
   avatars,
   addParticipant,
   removeStudent,
@@ -58,7 +58,48 @@ const StudentRoster: React.FC<StudentRosterProps> = ({
   };
 
   return (
-    <>
+    <div className="student-roster">
+      <h3>Participants</h3>
+      {(students || []).map((student, index) => (
+        <div key={index} className="participant-item">
+          <div className="flex items-center gap-2 mb-2">
+            <img
+              src={student.avatar || avatars[0]}
+              alt="avatar"
+              className="w-8 h-8 rounded-full"
+            />
+            <input
+              type="text"
+              value={student.name}
+              onChange={(e) => updateStudentName(index, e.target.value)}
+              placeholder="Student name"
+              className="flex-grow p-2 rounded-md bg-white/20 text-white"
+            />
+            {teams.length > 0 && (
+              <select
+                value={student.team || ''}
+                onChange={(e) => onAssignTeam && onAssignTeam(index, e.target.value)}
+                className="p-2 rounded-md bg-white/20 text-white"
+              >
+                <option value="">No Team</option>
+                {teams.map((t, i) => (
+                  <option key={i} value={t.name}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+            )}
+            {students.length > 0 && (
+              <button
+                onClick={() => removeStudent(index)}
+                className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded"
+              >
+                Remove
+              </button>
+            )}
+          </div>
+        </div>
+      ))}
       <div className="flex gap-4 mb-4">
         <input
           type="text"
@@ -90,45 +131,7 @@ const StudentRoster: React.FC<StudentRosterProps> = ({
         </button>
         {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
       </div>
-      {students.map((student, index) => (
-        <div key={index} className="flex items-center gap-2 mb-2">
-          <img
-            src={student.avatar || avatars[0]}
-            alt="avatar"
-            className="w-8 h-8 rounded-full"
-          />
-          <input
-            type="text"
-            value={student.name}
-            onChange={(e) => updateStudentName(index, e.target.value)}
-            placeholder="Student name"
-            className="flex-grow p-2 rounded-md bg-white/20 text-white"
-          />
-          {teams.length > 0 && (
-            <select
-              value={student.team || ''}
-              onChange={(e) => onAssignTeam && onAssignTeam(index, e.target.value)}
-              className="p-2 rounded-md bg-white/20 text-white"
-            >
-              <option value="">No Team</option>
-              {teams.map((t, i) => (
-                <option key={i} value={t.name}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
-          )}
-          {students.length > 0 && (
-            <button
-              onClick={() => removeStudent(index)}
-              className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded"
-            >
-              Remove
-            </button>
-          )}
-        </div>
-      ))}
-    </>
+    </div>
   );
 };
 
