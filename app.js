@@ -1083,7 +1083,7 @@ var require_react_development = __commonJS({
           }
           return dispatcher.useContext(Context);
         }
-        function useState14(initialState) {
+        function useState13(initialState) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useState(initialState);
         }
@@ -1091,11 +1091,11 @@ var require_react_development = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useReducer(reducer, initialArg, init);
         }
-        function useRef5(initialValue) {
+        function useRef6(initialValue) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useRef(initialValue);
         }
-        function useEffect11(create2, deps) {
+        function useEffect9(create2, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useEffect(create2, deps);
         }
@@ -1107,7 +1107,7 @@ var require_react_development = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useLayoutEffect(create2, deps);
         }
-        function useCallback5(callback, deps) {
+        function useCallback6(callback, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useCallback(callback, deps);
         }
@@ -1874,19 +1874,19 @@ var require_react_development = __commonJS({
         exports.memo = memo;
         exports.startTransition = startTransition;
         exports.unstable_act = act;
-        exports.useCallback = useCallback5;
+        exports.useCallback = useCallback6;
         exports.useContext = useContext2;
         exports.useDebugValue = useDebugValue;
         exports.useDeferredValue = useDeferredValue;
-        exports.useEffect = useEffect11;
+        exports.useEffect = useEffect9;
         exports.useId = useId;
         exports.useImperativeHandle = useImperativeHandle;
         exports.useInsertionEffect = useInsertionEffect;
         exports.useLayoutEffect = useLayoutEffect;
         exports.useMemo = useMemo2;
         exports.useReducer = useReducer;
-        exports.useRef = useRef5;
-        exports.useState = useState14;
+        exports.useRef = useRef6;
+        exports.useState = useState13;
         exports.useSyncExternalStore = useSyncExternalStore;
         exports.useTransition = useTransition;
         exports.version = ReactVersion;
@@ -2382,9 +2382,9 @@ var require_react_dom_development = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React15 = require_react();
+        var React14 = require_react();
         var Scheduler = require_scheduler();
-        var ReactSharedInternals = React15.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React14.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -2433,7 +2433,7 @@ var require_react_dom_development = __commonJS({
         var HostPortal = 4;
         var HostComponent = 5;
         var HostText = 6;
-        var Fragment4 = 7;
+        var Fragment3 = 7;
         var Mode = 8;
         var ContextConsumer = 9;
         var ContextProvider = 10;
@@ -3590,7 +3590,7 @@ var require_react_dom_development = __commonJS({
               return "DehydratedFragment";
             case ForwardRef:
               return getWrappedName$1(type, type.render, "ForwardRef");
-            case Fragment4:
+            case Fragment3:
               return "Fragment";
             case HostComponent:
               return type;
@@ -3991,7 +3991,7 @@ var require_react_dom_development = __commonJS({
           {
             if (props.value == null) {
               if (typeof props.children === "object" && props.children !== null) {
-                React15.Children.forEach(props.children, function(child) {
+                React14.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -12019,7 +12019,7 @@ var require_react_dom_development = __commonJS({
             }
           }
           function updateFragment2(returnFiber, current2, fragment, lanes, key) {
-            if (current2 === null || current2.tag !== Fragment4) {
+            if (current2 === null || current2.tag !== Fragment3) {
               var created = createFiberFromFragment(fragment, returnFiber.mode, lanes, key);
               created.return = returnFiber;
               return created;
@@ -12422,7 +12422,7 @@ var require_react_dom_development = __commonJS({
               if (child.key === key) {
                 var elementType = element.type;
                 if (elementType === REACT_FRAGMENT_TYPE) {
-                  if (child.tag === Fragment4) {
+                  if (child.tag === Fragment3) {
                     deleteRemainingChildren(returnFiber, child.sibling);
                     var existing = useFiber(child, element.props.children);
                     existing.return = returnFiber;
@@ -17898,7 +17898,7 @@ var require_react_dom_development = __commonJS({
               var _resolvedProps2 = workInProgress2.elementType === type ? _unresolvedProps2 : resolveDefaultProps(type, _unresolvedProps2);
               return updateForwardRef(current2, workInProgress2, type, _resolvedProps2, renderLanes2);
             }
-            case Fragment4:
+            case Fragment3:
               return updateFragment(current2, workInProgress2, renderLanes2);
             case Mode:
               return updateMode(current2, workInProgress2, renderLanes2);
@@ -18170,7 +18170,7 @@ var require_react_dom_development = __commonJS({
             case SimpleMemoComponent:
             case FunctionComponent:
             case ForwardRef:
-            case Fragment4:
+            case Fragment3:
             case Mode:
             case Profiler:
             case ContextConsumer:
@@ -22431,7 +22431,7 @@ var require_react_dom_development = __commonJS({
           return fiber;
         }
         function createFiberFromFragment(elements, mode, lanes, key) {
-          var fiber = createFiber(Fragment4, elements, key, mode);
+          var fiber = createFiber(Fragment3, elements, key, mode);
           fiber.lanes = lanes;
           return fiber;
         }
@@ -23587,7 +23587,7 @@ var require_react_jsx_runtime_development = __commonJS({
     if (true) {
       (function() {
         "use strict";
-        var React15 = require_react();
+        var React14 = require_react();
         var REACT_ELEMENT_TYPE = Symbol.for("react.element");
         var REACT_PORTAL_TYPE = Symbol.for("react.portal");
         var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
@@ -23613,7 +23613,7 @@ var require_react_jsx_runtime_development = __commonJS({
           }
           return null;
         }
-        var ReactSharedInternals = React15.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React14.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         function error(format) {
           {
             {
@@ -24463,11 +24463,11 @@ var require_react_jsx_runtime_development = __commonJS({
             return jsxWithValidation(type, props, key, false);
           }
         }
-        var jsx19 = jsxWithValidationDynamic;
-        var jsxs15 = jsxWithValidationStatic;
+        var jsx18 = jsxWithValidationDynamic;
+        var jsxs14 = jsxWithValidationStatic;
         exports.Fragment = REACT_FRAGMENT_TYPE;
-        exports.jsx = jsx19;
-        exports.jsxs = jsxs15;
+        exports.jsx = jsx18;
+        exports.jsxs = jsxs14;
       })();
     }
   }
@@ -24486,7 +24486,7 @@ var require_jsx_runtime = __commonJS({
 });
 
 // src/spelling-bee-game.tsx
-var import_react22 = __toESM(require_react());
+var import_react20 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // src/LeaderboardScreen.tsx
@@ -24559,152 +24559,109 @@ var LeaderboardScreen = ({ onBack }) => {
 var LeaderboardScreen_default = LeaderboardScreen;
 
 // src/SetupScreen.tsx
-var import_react6 = __toESM(require_react());
+var import_react4 = __toESM(require_react());
 
-// hooks/useRoster.ts
-var import_react2 = __toESM(require_react());
-var useRoster = (storageKey, defaultParticipants = []) => {
-  const [participants, setParticipants] = (0, import_react2.useState)(() => {
-    const saved = localStorage.getItem(storageKey);
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return defaultParticipants;
-      }
+// node_modules/uuid/dist/esm-browser/stringify.js
+var byteToHex = [];
+for (let i = 0; i < 256; ++i) {
+  byteToHex.push((i + 256).toString(16).slice(1));
+}
+function unsafeStringify(arr, offset = 0) {
+  return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+}
+
+// node_modules/uuid/dist/esm-browser/rng.js
+var getRandomValues;
+var rnds8 = new Uint8Array(16);
+function rng() {
+  if (!getRandomValues) {
+    if (typeof crypto === "undefined" || !crypto.getRandomValues) {
+      throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");
     }
-    return defaultParticipants;
-  });
-  (0, import_react2.useEffect)(() => {
-    localStorage.setItem(storageKey, JSON.stringify(participants));
-  }, [storageKey, participants]);
-  const addParticipant = (participant) => setParticipants((prev) => [...prev, participant]);
-  const removeParticipant = (index) => setParticipants((prev) => prev.filter((_, i) => i !== index));
-  const updateName = (index, name) => setParticipants(
-    (prev) => prev.map(
-      (p, i) => i === index ? { ...p, name } : p
-    )
-  );
-  const clear = () => {
-    localStorage.removeItem(storageKey);
-    setParticipants(defaultParticipants);
-  };
-  return {
-    participants,
-    addParticipant,
-    removeParticipant,
-    updateName,
-    clear,
-    setParticipants
-  };
-};
-var useRoster_default = useRoster;
+    getRandomValues = crypto.getRandomValues.bind(crypto);
+  }
+  return getRandomValues(rnds8);
+}
 
-// img/avatars/book.svg
+// node_modules/uuid/dist/esm-browser/native.js
+var randomUUID = typeof crypto !== "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto);
+var native_default = { randomUUID };
+
+// node_modules/uuid/dist/esm-browser/v4.js
+function v4(options, buf, offset) {
+  if (native_default.randomUUID && !buf && !options) {
+    return native_default.randomUUID();
+  }
+  options = options || {};
+  const rnds = options.random ?? options.rng?.() ?? rng();
+  if (rnds.length < 16) {
+    throw new Error("Random bytes length must be >= 16");
+  }
+  rnds[6] = rnds[6] & 15 | 64;
+  rnds[8] = rnds[8] & 63 | 128;
+  if (buf) {
+    offset = offset || 0;
+    if (offset < 0 || offset + 16 > buf.length) {
+      throw new RangeError(`UUID byte range ${offset}:${offset + 15} is out of buffer bounds`);
+    }
+    for (let i = 0; i < 16; ++i) {
+      buf[offset + i] = rnds[i];
+    }
+    return buf;
+  }
+  return unsafeStringify(rnds);
+}
+var v4_default = v4;
+
+// src/img/avatars/bee.svg
+var bee_default2 = "./bee-JMGRCQTT.svg";
+
+// src/img/avatars/book.svg
 var book_default = "./book-6U2LI7OV.svg";
 
-// img/avatars/trophy.svg
+// src/img/avatars/trophy.svg
 var trophy_default = "./trophy-3YRZKM4U.svg";
 
-// src/components/WordListPrompt.tsx
-var import_react3 = __toESM(require_react());
-
-// constants/promptPresets.ts
-var promptPresets = {
-  currentEvents: [
-    "Climate change headlines",
-    "Global technology trends",
-    "Recent space exploration missions"
-  ],
-  books: [
-    "Harry Potter universe vocabulary",
-    "Words from classic literature",
-    "Themes from contemporary novels"
-  ],
-  subjects: [
-    "Science fair terminology",
-    "Mathematics concepts",
-    "World history events"
-  ]
-};
-
-// src/components/WordListPrompt.tsx
+// src/components/TeamForm.tsx
 var import_jsx_runtime2 = __toESM(require_jsx_runtime());
-var tabLabels = {
-  currentEvents: "Current Events",
-  books: "Books",
-  subjects: "Subjects",
-  custom: "Saved"
-};
-var WordListPrompt = ({ value, onChange }) => {
-  const [activeTab, setActiveTab] = (0, import_react3.useState)("currentEvents");
-  const [customPrompts, setCustomPrompts] = (0, import_react3.useState)(() => {
-    try {
-      return JSON.parse(localStorage.getItem("customPrompts") || "[]");
-    } catch {
-      return [];
-    }
-  });
-  const categories = { ...promptPresets, custom: customPrompts };
-  const tabs = Object.keys(categories);
-  const handleSelectPrompt = (prompt) => {
-    onChange(prompt);
-  };
-  const handleSavePrompt = () => {
-    const trimmed = value.trim();
-    if (!trimmed) return;
-    const updated = Array.from(/* @__PURE__ */ new Set([...customPrompts, trimmed]));
-    setCustomPrompts(updated);
-    localStorage.setItem("customPrompts", JSON.stringify(updated));
-  };
-  return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex-1", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "flex gap-2 mb-2", children: tabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+var TeamForm = ({
+  teams,
+  avatars: avatars2,
+  addTeam,
+  removeTeam,
+  updateTeamName
+}) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_jsx_runtime2.Fragment, { children: [
+  teams.map((team, index) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("img", { src: team.avatar || avatars2[0], alt: "avatar", className: "w-8 h-8 rounded-full" }),
+    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+      "input",
+      {
+        type: "text",
+        value: team.name,
+        onChange: (e) => updateTeamName(index, e.target.value),
+        placeholder: `Team ${index + 1} Name`,
+        className: "flex-grow p-2 rounded-md bg-white/20 text-white"
+      }
+    ),
+    teams.length > 1 && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
       "button",
       {
-        onClick: () => setActiveTab(tab),
-        className: `px-2 py-1 rounded ${activeTab === tab ? "bg-yellow-300 text-black" : "bg-white/20 text-white"}`,
-        children: tabLabels[tab]
-      },
-      tab
-    )) }),
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "flex flex-wrap gap-2 mb-2", children: categories[activeTab].map((prompt) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-      "button",
-      {
-        onClick: () => handleSelectPrompt(prompt),
-        className: "bg-purple-500 hover:bg-purple-600 text-white px-2 py-1 rounded",
-        children: prompt
-      },
-      prompt
-    )) }),
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex gap-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-        "input",
-        {
-          type: "text",
-          value,
-          onChange: (e) => onChange(e.target.value),
-          className: "p-2 rounded-md bg-white/20 text-white flex-1",
-          placeholder: "Topic (optional)"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-        "button",
-        {
-          onClick: handleSavePrompt,
-          className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold",
-          children: "Save"
-        }
-      )
-    ] })
-  ] });
-};
-var WordListPrompt_default = WordListPrompt;
+        onClick: () => removeTeam(index),
+        className: "px-2 py-1 bg-red-500 hover:bg-red-600 rounded",
+        children: "Remove"
+      }
+    )
+  ] }, index)),
+  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { onClick: addTeam, className: "mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded", children: "Add Team" })
+] });
+var TeamForm_default = TeamForm;
 
 // src/components/StudentRoster.tsx
-var import_react4 = __toESM(require_react());
+var import_react2 = __toESM(require_react());
 var import_jsx_runtime3 = __toESM(require_jsx_runtime());
 var StudentRoster = ({
-  students,
+  students = [],
+  // Default to empty array
   avatars: avatars2,
   addParticipant,
   removeStudent,
@@ -24714,17 +24671,17 @@ var StudentRoster = ({
   teams = [],
   onAssignTeam
 }) => {
-  const [studentName, setStudentName] = (0, import_react4.useState)("");
-  const [bulkStudentText, setBulkStudentText] = (0, import_react4.useState)("");
-  const [bulkStudentError, setBulkStudentError] = (0, import_react4.useState)("");
-  const addStudent2 = () => {
+  const [studentName, setStudentName] = (0, import_react2.useState)("");
+  const [bulkStudentText, setBulkStudentText] = (0, import_react2.useState)("");
+  const [bulkStudentError, setBulkStudentError] = (0, import_react2.useState)("");
+  const addStudent = () => {
     if (studentName.trim()) {
       addParticipant(createParticipant(studentName, initialDifficulty));
       setStudentName("");
     }
   };
   const parseStudentNames = (text) => text.split(/\r?\n/).flatMap((line) => line.split(",")).map((name) => name.trim()).filter((name) => name !== "");
-  const addBulkStudents2 = () => {
+  const addBulkStudents = () => {
     const names = parseStudentNames(bulkStudentText);
     const existing = new Set(students.map((s) => s.name));
     const uniqueNames = Array.from(new Set(names)).filter((name) => !existing.has(name));
@@ -24736,49 +24693,9 @@ var StudentRoster = ({
     setBulkStudentText("");
     setBulkStudentError("");
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex gap-4 mb-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        "input",
-        {
-          type: "text",
-          value: studentName,
-          onChange: (e) => setStudentName(e.target.value),
-          className: "flex-grow p-2 rounded-md bg-white/20 text-white",
-          placeholder: "Student name"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        "button",
-        {
-          onClick: addStudent2,
-          className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold",
-          children: "Add"
-        }
-      )
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "mb-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        "textarea",
-        {
-          value: bulkStudentText,
-          onChange: (e) => setBulkStudentText(e.target.value),
-          className: "w-full p-2 rounded-md bg-white/20 text-white mb-2",
-          placeholder: "Paste names, one per line or separated by commas",
-          rows: 4
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        "button",
-        {
-          onClick: addBulkStudents2,
-          className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold",
-          children: "Add Names"
-        }
-      ),
-      bulkStudentError && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "text-red-300 mt-2", children: bulkStudentError })
-    ] }),
-    students.map((student, index) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "student-roster", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { children: "Participants" }),
+    (students || []).map((student, index) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "participant-item", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
         "img",
         {
@@ -24817,330 +24734,276 @@ var StudentRoster = ({
           children: "Remove"
         }
       )
-    ] }, index))
+    ] }) }, index)),
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex gap-4 mb-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+        "input",
+        {
+          type: "text",
+          value: studentName,
+          onChange: (e) => setStudentName(e.target.value),
+          className: "flex-grow p-2 rounded-md bg-white/20 text-white",
+          placeholder: "Student name"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+        "button",
+        {
+          onClick: addStudent,
+          className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold",
+          children: "Add"
+        }
+      )
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "mb-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+        "textarea",
+        {
+          value: bulkStudentText,
+          onChange: (e) => setBulkStudentText(e.target.value),
+          className: "w-full p-2 rounded-md bg-white/20 text-white mb-2",
+          placeholder: "Paste names, one per line or separated by commas",
+          rows: 4
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+        "button",
+        {
+          onClick: addBulkStudents,
+          className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold",
+          children: "Add Names"
+        }
+      ),
+      bulkStudentError && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "text-red-300 mt-2", children: bulkStudentError })
+    ] })
   ] });
 };
 var StudentRoster_default = StudentRoster;
 
-// src/components/TeamForm.tsx
+// src/utils/parseWordList.ts
+function parseWordList(content) {
+  return [];
+}
+
+// src/components/WordListPrompt.tsx
+var import_react3 = __toESM(require_react());
+
+// constants/promptPresets.ts
+var promptPresets = {
+  currentEvents: [
+    "Climate change headlines",
+    "Global technology trends",
+    "Recent space exploration missions"
+  ],
+  books: [
+    "Harry Potter universe vocabulary",
+    "Words from classic literature",
+    "Themes from contemporary novels"
+  ],
+  subjects: [
+    "Science fair terminology",
+    "Mathematics concepts",
+    "World history events"
+  ]
+};
+
+// src/components/WordListPrompt.tsx
 var import_jsx_runtime4 = __toESM(require_jsx_runtime());
-var TeamForm = ({
-  teams,
-  avatars: avatars2,
-  addTeam,
-  removeTeam,
-  updateTeamName
-}) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
-  teams.map((team, index) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("img", { src: team.avatar || avatars2[0], alt: "avatar", className: "w-8 h-8 rounded-full" }),
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-      "input",
-      {
-        type: "text",
-        value: team.name,
-        onChange: (e) => updateTeamName(index, e.target.value),
-        placeholder: `Team ${index + 1} Name`,
-        className: "flex-grow p-2 rounded-md bg-white/20 text-white"
-      }
-    ),
-    teams.length > 1 && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+var tabLabels = {
+  currentEvents: "Current Events",
+  books: "Books",
+  subjects: "Subjects",
+  custom: "Saved"
+};
+var WordListPrompt = ({ value, onChange }) => {
+  const [activeTab, setActiveTab] = (0, import_react3.useState)("currentEvents");
+  const [customPrompts, setCustomPrompts] = (0, import_react3.useState)(() => {
+    try {
+      return JSON.parse(localStorage.getItem("customPrompts") || "[]");
+    } catch {
+      return [];
+    }
+  });
+  const categories = { ...promptPresets, custom: customPrompts };
+  const tabs = Object.keys(categories);
+  const handleSelectPrompt = (prompt) => {
+    onChange(prompt);
+  };
+  const handleSavePrompt = () => {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    const updated = Array.from(/* @__PURE__ */ new Set([...customPrompts, trimmed]));
+    setCustomPrompts(updated);
+    localStorage.setItem("customPrompts", JSON.stringify(updated));
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex-1", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "flex gap-2 mb-2", children: tabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
       "button",
       {
-        onClick: () => removeTeam(index),
-        className: "px-2 py-1 bg-red-500 hover:bg-red-600 rounded",
-        children: "Remove"
-      }
-    )
-  ] }, index)),
-  /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: addTeam, className: "mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded", children: "Add Team" })
-] });
-var TeamForm_default = TeamForm;
-
-// src/components/GameOptions.tsx
-var import_react5 = __toESM(require_react());
-var import_jsx_runtime5 = __toESM(require_jsx_runtime());
-var GameOptions = ({ options, setOptions }) => {
-  const applyTheme = (t) => {
-    document.body.classList.remove("theme-light", "theme-dark", "theme-honeycomb");
-    document.body.classList.add(`theme-${t}`);
-  };
-  (0, import_react5.useEffect)(() => {
-    localStorage.setItem("soundEnabled", String(options.soundEnabled));
-  }, [options.soundEnabled]);
-  (0, import_react5.useEffect)(() => {
-    localStorage.setItem("musicEnabled", String(options.musicEnabled));
-  }, [options.musicEnabled]);
-  (0, import_react5.useEffect)(() => {
-    localStorage.setItem("musicStyle", options.musicStyle);
-  }, [options.musicStyle]);
-  (0, import_react5.useEffect)(() => {
-    localStorage.setItem("musicVolume", String(options.musicVolume));
-  }, [options.musicVolume]);
-  (0, import_react5.useEffect)(() => {
-    if (options.teacherMode) {
-      document.body.classList.add("teacher-mode");
-    } else {
-      document.body.classList.remove("teacher-mode");
-    }
-    localStorage.setItem("teacherMode", String(options.teacherMode));
-  }, [options.teacherMode]);
-  (0, import_react5.useEffect)(() => {
-    applyTheme(options.theme);
-    localStorage.setItem("theme", options.theme);
-  }, [options.theme]);
-  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "grid md:grid-cols-2 lg:grid-cols-3 gap-8", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-2xl font-bold mb-4", children: "Skip Penalty \u23ED\uFE0F" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex gap-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
-          "select",
-          {
-            value: options.skipPenaltyType,
-            onChange: (e) => setOptions((o) => ({ ...o, skipPenaltyType: e.target.value })),
-            className: "p-2 rounded-md bg-white/20 text-white",
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: "lives", children: "Lives" }),
-              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: "points", children: "Points" })
-            ]
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          "input",
-          {
-            type: "number",
-            min: 0,
-            value: options.skipPenaltyValue,
-            onChange: (e) => setOptions((o) => ({ ...o, skipPenaltyValue: Number(e.target.value) })),
-            className: "p-2 rounded-md bg-white/20 text-white w-24"
-          }
-        )
-      ] })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-2xl font-bold mb-4", children: "Difficulty Settings \u{1F39A}\uFE0F" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex gap-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { className: "block mb-2", children: "Initial Difficulty" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
-            "select",
-            {
-              value: options.initialDifficulty,
-              onChange: (e) => setOptions((o) => ({ ...o, initialDifficulty: Number(e.target.value) })),
-              className: "p-2 rounded-md bg-white/20 text-white",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: 0, children: "Easy" }),
-                /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: 1, children: "Medium" }),
-                /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: 2, children: "Tricky" })
-              ]
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { className: "block mb-2", children: "Progression Speed" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-            "input",
-            {
-              type: "number",
-              min: 1,
-              value: options.progressionSpeed,
-              onChange: (e) => setOptions((o) => ({ ...o, progressionSpeed: Number(e.target.value) })),
-              className: "p-2 rounded-md bg-white/20 text-white w-24"
-            }
-          )
-        ] })
-      ] })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-2xl font-bold mb-4", children: "Audio & Effects \u{1F50A}\u2728" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "flex items-center space-x-3 mb-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          "input",
-          {
-            type: "checkbox",
-            checked: options.soundEnabled,
-            onChange: (e) => setOptions((o) => ({ ...o, soundEnabled: e.target.checked }))
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: "Enable Sound" })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "flex items-center space-x-3 mb-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          "input",
-          {
-            type: "checkbox",
-            checked: options.musicEnabled,
-            onChange: (e) => setOptions((o) => ({ ...o, musicEnabled: e.target.checked }))
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: "Enable Music" })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "flex items-center space-x-3", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          "input",
-          {
-            type: "checkbox",
-            checked: options.effectsEnabled,
-            onChange: (e) => setOptions((o) => ({ ...o, effectsEnabled: e.target.checked }))
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: "Enable Visual Effects" })
-      ] })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-2xl font-bold mb-4", children: "Theme \u{1F3A8}" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
-        "select",
+        onClick: () => setActiveTab(tab),
+        className: `px-2 py-1 rounded ${activeTab === tab ? "bg-yellow-300 text-black" : "bg-white/20 text-white"}`,
+        children: tabLabels[tab]
+      },
+      tab
+    )) }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "flex flex-wrap gap-2 mb-2", children: categories[activeTab].map((prompt) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      "button",
+      {
+        onClick: () => handleSelectPrompt(prompt),
+        className: "bg-purple-500 hover:bg-purple-600 text-white px-2 py-1 rounded",
+        children: prompt
+      },
+      prompt
+    )) }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex gap-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "input",
         {
-          value: options.theme,
-          onChange: (e) => setOptions((o) => ({ ...o, theme: e.target.value })),
-          className: "p-2 rounded-md bg-white/20 text-white",
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: "light", children: "Light" }),
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: "dark", children: "Dark" }),
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: "honeycomb", children: "Honeycomb" })
-          ]
+          type: "text",
+          value,
+          onChange: (e) => onChange(e.target.value),
+          className: "p-2 rounded-md bg-white/20 text-white flex-1",
+          placeholder: "Topic (optional)"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "button",
+        {
+          onClick: handleSavePrompt,
+          className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold",
+          children: "Save"
         }
       )
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-2xl font-bold mb-4", children: "Teacher Mode \u{1F469}\u200D\u{1F3EB}" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "flex items-center gap-2 text-white", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          "input",
-          {
-            type: "checkbox",
-            checked: options.teacherMode,
-            onChange: (e) => setOptions((o) => ({ ...o, teacherMode: e.target.checked }))
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: "Enable larger fonts and spacing" })
-      ] })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-2xl font-bold mb-4", children: "Music \u{1F3B5}" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mb-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { className: "block mb-2", children: "Style" }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          "select",
-          {
-            value: options.musicStyle,
-            onChange: (e) => setOptions((o) => ({ ...o, musicStyle: e.target.value })),
-            className: "p-2 rounded-md bg-white/20 text-white",
-            children: ["Funk", "Country", "Deep Bass", "Rock", "Jazz", "Classical"].map((style) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: style, children: style }, style))
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "block mb-2", children: [
-          "Volume: ",
-          Math.round(options.musicVolume * 100),
-          "%"
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          "input",
-          {
-            type: "range",
-            min: 0,
-            max: 1,
-            step: 0.01,
-            value: options.musicVolume,
-            onChange: (e) => setOptions((o) => ({ ...o, musicVolume: parseFloat(e.target.value) })),
-            className: "w-full"
-          }
-        )
-      ] })
     ] })
   ] });
 };
-var GameOptions_default = GameOptions;
+var WordListPrompt_default = WordListPrompt;
 
 // src/SetupScreen.tsx
-var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+var import_jsx_runtime5 = __toESM(require_jsx_runtime());
 var musicStyles = ["Funk", "Country", "Deep Bass", "Rock", "Jazz", "Classical"];
 var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
-  const avatars2 = [bee_default, book_default, trophy_default];
-  const getRandomAvatar = () => avatars2[Math.floor(Math.random() * avatars2.length)];
-  const [gameMode, setGameMode] = (0, import_react6.useState)("team");
-  const [startingLives, setStartingLives] = (0, import_react6.useState)(10);
-  const getDefaultTeams = () => [
-    { name: "Team Alpha", lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
-    { name: "Team Beta", lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
-  ];
-  const {
-    participants: teams,
-    addParticipant: addTeamParticipant,
-    removeParticipant: removeTeam,
-    updateName: updateTeamName,
-    clear: clearTeams,
-    setParticipants: setTeamsParticipants
-  } = useRoster_default("teams", getDefaultTeams());
-  const {
-    participants: students,
-    addParticipant: addStudentParticipant,
-    removeParticipant: removeStudent,
-    updateName: updateStudentName,
-    clear: clearStudents,
-    setParticipants: setStudentsParticipants
-  } = useRoster_default("students", []);
-  const [timerDuration, setTimerDuration] = (0, import_react6.useState)(30);
-  const [customWordListText, setCustomWordListText] = (0, import_react6.useState)("");
-  const [parsedCustomWords, setParsedCustomWords] = (0, import_react6.useState)([]);
-  const [missedWordsCollection, setMissedWordsCollection] = (0, import_react6.useState)({});
-  const [includeMissedWords, setIncludeMissedWords] = (0, import_react6.useState)(false);
-  const [error, setError] = (0, import_react6.useState)("");
+  const availableAvatars = [bee_default2, book_default, trophy_default];
+  const getRandomAvatar = () => availableAvatars[Math.floor(Math.random() * availableAvatars.length)];
+  const [gameMode, setGameMode] = (0, import_react4.useState)("team");
+  const [startingLives, setStartingLives] = (0, import_react4.useState)(10);
+  const [options, setOptions] = (0, import_react4.useState)({
+    gameMode: "individual",
+    audioEnabled: true,
+    soundEffectsEnabled: true,
+    wordSource: "curriculum",
+    timerDuration: 60,
+    skipPenaltyType: "points",
+    skipPenaltyValue: 5,
+    progressionSpeed: 1,
+    musicStyle: "default",
+    musicVolume: 0.8,
+    initialDifficulty: 1,
+    soundEnabled: true,
+    effectsEnabled: true,
+    teacherMode: false,
+    theme: "light",
+    musicEnabled: true
+  });
+  const createParticipant = (name, difficulty) => ({
+    id: v4_default(),
+    name,
+    avatar: availableAvatars[Math.floor(Math.random() * availableAvatars.length)],
+    score: 0,
+    lives: options.initialDifficulty,
+    teamId: null,
+    points: 0,
+    difficultyLevel: difficulty,
+    streak: 0,
+    attempted: 0,
+    correct: 0,
+    incorrect: 0,
+    wordsAttempted: 0,
+    wordsCorrect: 0
+  });
+  const createTeam = () => ({
+    id: v4_default(),
+    name: `Team ${teams.length + 1}`,
+    students: []
+  });
+  const [participants, setParticipants] = (0, import_react4.useState)([]);
+  const [teams, setTeams] = (0, import_react4.useState)([]);
+  const handleAddParticipant = (name) => {
+    const newParticipant = createParticipant(name, options.initialDifficulty);
+    setParticipants([...participants, newParticipant]);
+  };
+  const addTeam = (team) => {
+    setTeams([...teams, team]);
+  };
+  const removeTeam = (id) => {
+    setTeams(teams.filter((t) => t.id !== id));
+  };
+  const updateTeam = (id, updates) => {
+    setTeams(teams.map((t) => t.id === id ? { ...t, ...updates } : t));
+  };
+  const [timerDuration, setTimerDuration] = (0, import_react4.useState)(30);
+  const [customWordListText, setCustomWordListText] = (0, import_react4.useState)("");
+  const [parsedCustomWords, setParsedCustomWords] = (0, import_react4.useState)([]);
+  const [missedWordsCollection, setMissedWordsCollection] = (0, import_react4.useState)({});
+  const [includeMissedWords, setIncludeMissedWords] = (0, import_react4.useState)(false);
+  const [error, setError] = (0, import_react4.useState)("");
   const bundledWordLists = [
     { label: "Example JSON", file: "example.json" },
     { label: "Example CSV", file: "example.csv" },
     { label: "Example TSV", file: "example.tsv" }
   ];
-  const [selectedBundledList, setSelectedBundledList] = (0, import_react6.useState)("");
-  const [studentName, setStudentName] = (0, import_react6.useState)("");
-  const [bulkStudentText, setBulkStudentText] = (0, import_react6.useState)("");
-  const [bulkStudentError, setBulkStudentError] = (0, import_react6.useState)("");
-  const [randomTeamCount, setRandomTeamCount] = (0, import_react6.useState)(0);
-  const [randomTeamSize, setRandomTeamSize] = (0, import_react6.useState)(0);
-  const [randomizeError, setRandomizeError] = (0, import_react6.useState)("");
-  const [skipPenaltyType, setSkipPenaltyType] = (0, import_react6.useState)("lives");
-  const [skipPenaltyValue, setSkipPenaltyValue] = (0, import_react6.useState)(1);
-  const [soundEnabled, setSoundEnabled] = (0, import_react6.useState)(() => localStorage.getItem("soundEnabled") !== "false");
-  const [effectsEnabled, setEffectsEnabled] = (0, import_react6.useState)(true);
-  const [musicStyle, setMusicStyle] = (0, import_react6.useState)(() => localStorage.getItem("musicStyle") ?? "Funk");
-  const [musicVolume, setMusicVolume] = (0, import_react6.useState)(() => parseFloat(localStorage.getItem("musicVolume") ?? "1"));
-  const [initialDifficulty, setInitialDifficulty] = (0, import_react6.useState)(0);
-  const [progressionSpeed, setProgressionSpeed] = (0, import_react6.useState)(1);
-  const [theme, setTheme] = (0, import_react6.useState)("light");
-  const [teacherMode, setTeacherMode] = (0, import_react6.useState)(() => localStorage.getItem("teacherMode") === "true");
-  const [aiGrade, setAiGrade] = (0, import_react6.useState)(5);
-  const [aiTopic, setAiTopic] = (0, import_react6.useState)("");
-  const [aiCount, setAiCount] = (0, import_react6.useState)(10);
-  const [aiLoading, setAiLoading] = (0, import_react6.useState)(false);
-  const [aiError, setAiError] = (0, import_react6.useState)("");
-  const [voices, setVoices] = (0, import_react6.useState)([]);
-  const [selectedVoice, setSelectedVoice] = (0, import_react6.useState)(() => localStorage.getItem("selectedVoice") ?? "");
+  const [selectedBundledList, setSelectedBundledList] = (0, import_react4.useState)("");
+  const [studentName, setStudentName] = (0, import_react4.useState)("");
+  const [bulkStudentText, setBulkStudentText] = (0, import_react4.useState)("");
+  const [bulkStudentError, setBulkStudentError] = (0, import_react4.useState)("");
+  const [randomTeamCount, setRandomTeamCount] = (0, import_react4.useState)(0);
+  const [randomTeamSize, setRandomTeamSize] = (0, import_react4.useState)(0);
+  const [randomizeError, setRandomizeError] = (0, import_react4.useState)("");
+  const [skipPenaltyType, setSkipPenaltyType] = (0, import_react4.useState)("lives");
+  const [skipPenaltyValue, setSkipPenaltyValue] = (0, import_react4.useState)(1);
+  const [soundEnabled, setSoundEnabled] = (0, import_react4.useState)(() => localStorage.getItem("soundEnabled") !== "false");
+  const [effectsEnabled, setEffectsEnabled] = (0, import_react4.useState)(true);
+  const [musicStyle, setMusicStyle] = (0, import_react4.useState)(() => localStorage.getItem("musicStyle") ?? "Funk");
+  const [musicVolume, setMusicVolume] = (0, import_react4.useState)(() => parseFloat(localStorage.getItem("musicVolume") ?? "1"));
+  const [initialDifficulty, setInitialDifficulty] = (0, import_react4.useState)(0);
+  const [progressionSpeed, setProgressionSpeed] = (0, import_react4.useState)(1);
+  const [theme, setTheme] = (0, import_react4.useState)("light");
+  const [teacherMode, setTeacherMode] = (0, import_react4.useState)(() => localStorage.getItem("teacherMode") === "true");
+  const [aiGrade, setAiGrade] = (0, import_react4.useState)(5);
+  const [aiTopic, setAiTopic] = (0, import_react4.useState)("");
+  const [aiCount, setAiCount] = (0, import_react4.useState)(10);
+  const [aiLoading, setAiLoading] = (0, import_react4.useState)(false);
+  const [aiError, setAiError] = (0, import_react4.useState)("");
+  const [voices, setVoices] = (0, import_react4.useState)([]);
+  const [selectedVoice, setSelectedVoice] = (0, import_react4.useState)(() => localStorage.getItem("selectedVoice") ?? "");
   const applyTheme = (t) => {
     document.body.classList.remove("theme-light", "theme-dark", "theme-honeycomb");
     document.body.classList.add(`theme-${t}`);
   };
-  (0, import_react6.useEffect)(() => {
+  (0, import_react4.useEffect)(() => {
     if (teacherMode) {
       document.body.classList.add("teacher-mode");
     } else {
       document.body.classList.remove("teacher-mode");
     }
-    localStorage.setItem("teacherMode", String(teacherMode));
+    try {
+      localStorage.setItem("teacherMode", String(teacherMode));
+    } catch (error2) {
+      console.error("Failed to save teacherMode to localStorage", error2);
+    }
   }, [teacherMode]);
-  (0, import_react6.useEffect)(() => {
+  (0, import_react4.useEffect)(() => {
     setStartingLives(gameMode === "team" ? 10 : 5);
   }, [gameMode]);
-  (0, import_react6.useEffect)(() => {
+  (0, import_react4.useEffect)(() => {
     const savedTeams = localStorage.getItem("teams");
     if (savedTeams) try {
-      setTeamsParticipants(JSON.parse(savedTeams).map((t) => ({ ...t, avatar: t.avatar || getRandomAvatar() })));
+      setTeams(JSON.parse(savedTeams).map((t) => ({ ...t, avatar: t.avatar || getRandomAvatar() })));
     } catch {
     }
     const savedStudents = localStorage.getItem("students");
     if (savedStudents) try {
-      setStudentsParticipants(JSON.parse(savedStudents).map((s) => ({ ...s, avatar: s.avatar || getRandomAvatar() })));
+      setParticipants(JSON.parse(savedStudents).map((s) => ({ ...s, avatar: s.avatar || getRandomAvatar() })));
     } catch {
     }
     const savedTheme = localStorage.getItem("theme");
@@ -25151,72 +25014,108 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
       applyTheme(theme);
     }
   }, []);
-  (0, import_react6.useEffect)(() => localStorage.setItem("soundEnabled", String(soundEnabled)), [soundEnabled]);
-  (0, import_react6.useEffect)(() => localStorage.setItem("musicStyle", musicStyle), [musicStyle]);
-  (0, import_react6.useEffect)(() => localStorage.setItem("musicVolume", String(musicVolume)), [musicVolume]);
-  (0, import_react6.useEffect)(() => {
+  (0, import_react4.useEffect)(() => {
+    try {
+      localStorage.setItem("soundEnabled", String(soundEnabled));
+    } catch (error2) {
+      console.error("Failed to save soundEnabled to localStorage", error2);
+    }
+  }, [soundEnabled]);
+  (0, import_react4.useEffect)(() => {
+    try {
+      localStorage.setItem("musicStyle", musicStyle);
+    } catch (error2) {
+      console.error("Failed to save musicStyle to localStorage", error2);
+    }
+  }, [musicStyle]);
+  (0, import_react4.useEffect)(() => {
+    try {
+      localStorage.setItem("musicVolume", String(musicVolume));
+    } catch (error2) {
+      console.error("Failed to save musicVolume to localStorage", error2);
+    }
+  }, [musicVolume]);
+  (0, import_react4.useEffect)(() => {
     if (selectedVoice) {
-      localStorage.setItem("selectedVoice", selectedVoice);
+      try {
+        localStorage.setItem("selectedVoice", selectedVoice);
+      } catch (error2) {
+        console.error("Failed to save selectedVoice to localStorage", error2);
+      }
     } else {
-      localStorage.removeItem("selectedVoice");
+      try {
+        localStorage.removeItem("selectedVoice");
+      } catch (error2) {
+        console.error("Failed to remove selectedVoice from localStorage", error2);
+      }
     }
   }, [selectedVoice]);
-  (0, import_react6.useEffect)(() => {
+  (0, import_react4.useEffect)(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     const loadVoices = () => setVoices(window.speechSynthesis.getVoices());
     loadVoices();
     window.speechSynthesis.addEventListener("voiceschanged", loadVoices);
     return () => window.speechSynthesis.removeEventListener("voiceschanged", loadVoices);
   }, []);
-  const updateTeams = (newTeams) => {
-    setTeamsParticipants(newTeams);
-    localStorage.setItem("teams", JSON.stringify(newTeams));
+  const updateTeams = () => {
+    const updatedTeams = (teams || []).map((team) => ({
+      ...team,
+      students: (team.students || []).map(
+        (studentId) => participants.find((p) => p.id === studentId) || createParticipant("Unknown", 1)
+      )
+    }));
+    setTeams(updatedTeams);
   };
   const updateStudents = (newStudents) => {
-    setStudentsParticipants(newStudents);
-    localStorage.setItem("students", JSON.stringify(newStudents));
+    setParticipants(newStudents);
+    try {
+      localStorage.setItem("students", JSON.stringify(newStudents, getCircularReplacer()));
+    } catch (error2) {
+      console.error("Failed to save students to localStorage", error2);
+    }
   };
-  (0, import_react6.useEffect)(() => {
+  (0, import_react4.useEffect)(() => {
     if (gameMode === "team") {
-      updateTeams(teams.map((t) => ({ ...t, lives: startingLives })));
+      updateTeams();
     } else {
-      updateStudents(students.map((s) => ({ ...s, lives: startingLives })));
+      updateStudents(participants.map((s) => ({ ...s, lives: startingLives })));
     }
   }, [startingLives, gameMode]);
   const clearRoster = () => {
-    localStorage.removeItem("teams");
-    localStorage.removeItem("students");
-    setTeamsParticipants(getDefaultTeams());
-    setStudentsParticipants([]);
+    try {
+      localStorage.removeItem("teams");
+    } catch (error2) {
+      console.error("Failed to remove teams from localStorage", error2);
+    }
+    try {
+      localStorage.removeItem("students");
+    } catch (error2) {
+      console.error("Failed to remove students from localStorage", error2);
+    }
+    setTeams([]);
+    setParticipants([]);
   };
-  const createParticipant = (name, difficulty) => ({
-    name: name.trim(),
-    lives: startingLives,
-    points: 0,
-    difficultyLevel: difficulty,
-    streak: 0,
-    attempted: 0,
-    correct: 0,
-    wordsAttempted: 0,
-    wordsCorrect: 0,
-    avatar: getRandomAvatar()
-  });
-  const [options, setOptions] = (0, import_react6.useState)({
-    skipPenaltyType: "lives",
-    skipPenaltyValue: 1,
-    initialDifficulty: 0,
-    progressionSpeed: 1,
-    soundEnabled: localStorage.getItem("soundEnabled") !== "false",
-    effectsEnabled: true,
-    theme: localStorage.getItem("theme") ?? "light",
-    teacherMode: localStorage.getItem("teacherMode") === "true",
-    musicEnabled: true,
-    musicStyle: localStorage.getItem("musicStyle") ?? "Funk",
-    musicVolume: parseFloat(localStorage.getItem("musicVolume") ?? "1")
-  });
-  const addTeam = () => addTeamParticipant(createParticipant("", 0));
+  const addStudent = () => {
+    if (studentName.trim()) {
+      const newStudent = createParticipant(studentName, options.initialDifficulty);
+      setParticipants([...participants, newStudent]);
+      setStudentName("");
+    }
+  };
+  const updateStudentName = (index, name) => {
+    const updatedStudents = [...participants];
+    updatedStudents[index].name = name;
+    setParticipants(updatedStudents);
+  };
+  const removeStudent = (index) => {
+    const updatedStudents = [...participants];
+    updatedStudents.splice(index, 1);
+    setParticipants(updatedStudents);
+  };
+  const setTeamsParticipants = (teams2) => setTeams(teams2);
+  const setStudentsParticipants = (students) => setParticipants(students);
   const randomizeTeams = () => {
-    if (students.length < 2) {
+    if (participants.length < 2) {
       setRandomizeError("Add at least two students to create teams.");
       return;
     }
@@ -25224,13 +25123,13 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
     if (randomTeamCount > 0) {
       count = randomTeamCount;
     } else if (randomTeamSize > 0) {
-      count = Math.ceil(students.length / randomTeamSize);
+      count = Math.ceil(participants.length / randomTeamSize);
     }
     if (count <= 0) {
       setRandomizeError("Specify number of teams or team size.");
       return;
     }
-    const shuffled = [...students];
+    const shuffled = [...participants];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -25241,16 +25140,16 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
     });
     const newTeams = groups.filter((group) => group.length > 0).map((group, index) => {
       const teamName = `Team ${index + 1}: ${group.map((s) => s.name).join(", ")}`;
-      const participant = createParticipant(teamName, initialDifficulty);
+      const participant = createParticipant(teamName, options.initialDifficulty);
       participant.avatar = teams[index]?.avatar || participant.avatar;
       return participant;
     });
     updateTeams(newTeams);
     setRandomizeError("");
   };
-  const parseWordList = (content) => {
+  const parseCustomWordList = (content) => {
     try {
-      const words = parseWordListUtil(content);
+      const words = parseWordList(content);
       setParsedCustomWords(words);
       setError("");
     } catch (e) {
@@ -25288,7 +25187,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
       setAiLoading(false);
     }
   };
-  (0, import_react6.useEffect)(() => {
+  (0, import_react4.useEffect)(() => {
     if (selectedBundledList) {
       fetch(`wordlists/${selectedBundledList}`).then((res) => {
         if (!res.ok) throw new Error("Network response was not ok");
@@ -25302,12 +25201,12 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
       });
     }
   }, [selectedBundledList]);
-  (0, import_react6.useEffect)(() => {
+  (0, import_react4.useEffect)(() => {
     if (customWordListText) {
-      parseWordList(customWordListText);
+      parseCustomWordList(customWordListText);
     }
   }, [customWordListText]);
-  (0, import_react6.useEffect)(() => {
+  (0, import_react4.useEffect)(() => {
     const stored = JSON.parse(localStorage.getItem("missedWordsCollection") || "{}");
     setMissedWordsCollection(stored);
   }, []);
@@ -25329,14 +25228,14 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
     }
     let finalParticipants;
     if (gameMode === "team") {
-      const trimmedTeams = teams.filter((team) => team.name.trim() !== "");
+      const trimmedTeams = teams.filter((team) => team.name && team.name.trim() !== "");
       if (trimmedTeams.length < 2) {
         setError("Please add at least two teams with names.");
         return;
       }
       finalParticipants = trimmedTeams.map((t) => ({ ...t, difficultyLevel: options.initialDifficulty }));
     } else {
-      const trimmedStudents = students.filter((student) => student.name.trim() !== "");
+      const trimmedStudents = participants.filter((student) => student.name && student.name.trim() !== "");
       if (trimmedStudents.length < 1 && isSessionChallenge) {
         finalParticipants = [createParticipant("Player 1", options.initialDifficulty)];
       } else if (trimmedStudents.length < 2 && !isSessionChallenge) {
@@ -25364,227 +25263,327 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
       difficultyLevel: options.initialDifficulty,
       progressionSpeed: options.progressionSpeed,
       musicStyle: options.musicStyle,
-      musicVolume: options.musicVolume
+      musicVolume: options.musicVolume,
+      wordDatabase: {
+        easy: finalWords.filter((w) => w.difficulty === "easy"),
+        medium: finalWords.filter((w) => w.difficulty === "medium"),
+        tricky: finalWords.filter((w) => w.difficulty === "tricky")
+      }
     };
     onStartGame(config);
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "min-h-screen p-8 text-white font-body", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "max-w-7xl mx-auto", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "text-center mb-12", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex items-center justify-center gap-3 mb-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("img", { src: "icons/icon.svg", alt: "Bee mascot", className: "w-12 h-12 md:w-16 md:h-16" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h1", { className: "text-4xl md:text-6xl font-bold text-yellow-300 uppercase font-heading", children: "\u{1F3C6} SPELLING BEE CHAMPIONSHIP" })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-xl md:text-2xl", children: "Get ready to spell your way to victory!" })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 text-center uppercase font-heading", children: "Select Game Mode \u{1F3AE}" }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex justify-center gap-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => setGameMode("team"), className: `px-6 py-3 rounded-lg text-xl font-bold ${gameMode === "team" ? "bg-yellow-300 text-black" : "bg-blue-500 hover:bg-blue-400"}`, children: "Team" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => setGameMode("individual"), className: `px-6 py-3 rounded-lg text-xl font-bold ${gameMode === "individual" ? "bg-yellow-300 text-black" : "bg-blue-500 hover:bg-blue-400"}`, children: "Individual" })
-      ] })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: gameMode === "team" ? "Teams \u{1F465}" : "Students \u{1F9D1}\u200D\u{1F393}" }),
-      gameMode === "team" ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(import_jsx_runtime6.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-        TeamForm_default,
-        {
-          teams,
-          avatars: avatars2,
-          addTeam,
-          removeTeam,
-          updateTeamName
+  const getCircularReplacer = () => {
+    const seen = /* @__PURE__ */ new WeakSet();
+    return (key, value) => {
+      if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+          return;
         }
-      ) }) : /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex gap-4 mb-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "text", value: studentName, onChange: (e) => setStudentName(e.target.value), className: "flex-grow p-2 rounded-md bg-white/20 text-white", placeholder: "Student name" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: addStudent, className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold", children: "Add" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mb-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("textarea", { value: bulkStudentText, onChange: (e) => setBulkStudentText(e.target.value), className: "w-full p-2 rounded-md bg-white/20 text-white mb-2", placeholder: "Paste names, one per line or separated by commas", rows: 4 }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: addBulkStudents, className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold", children: "Add Names" }),
-          bulkStudentError && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-red-300 mt-2", children: bulkStudentError })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mb-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h3", { className: "text-xl font-bold mb-2", children: "Randomize Teams" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex flex-wrap items-center gap-2 mb-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "number", min: 1, value: randomTeamCount || "", onChange: (e) => {
-              setRandomTeamCount(Number(e.target.value));
-              setRandomTeamSize(0);
-            }, placeholder: "Number of teams", className: "p-2 rounded-md bg-white/20 text-white flex-grow" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: "or" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "number", min: 1, value: randomTeamSize || "", onChange: (e) => {
-              setRandomTeamSize(Number(e.target.value));
-              setRandomTeamCount(0);
-            }, placeholder: "Team size", className: "p-2 rounded-md bg-white/20 text-white flex-grow" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: randomizeTeams, className: "bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded", children: "Randomize" })
-          ] }),
-          randomizeError && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-red-300", children: randomizeError })
-        ] }),
-        students.map((student, index) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("img", { src: student.avatar || avatars2[0], alt: "avatar", className: "w-8 h-8 rounded-full" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "text", value: student.name, onChange: (e) => updateStudentName(index, e.target.value), placeholder: "Student name", className: "flex-grow p-2 rounded-md bg-white/20 text-white" }),
-          students.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => removeStudent(index), className: "px-2 py-1 bg-red-500 hover:bg-red-600 rounded", children: "Remove" })
-        ] }, index)),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-          StudentRoster_default,
+        seen.add(value);
+      }
+      return value;
+    };
+  };
+  const handleOptionChange = (option, value) => {
+    setOptions((prev) => ({
+      ...prev,
+      [option]: value
+    }));
+  };
+  const addBulkStudents = (students) => {
+    setParticipants([...participants, ...students]);
+  };
+  const handleTeamSelect = (team) => {
+    setAllParticipants((prev) => [...prev, team]);
+  };
+  const handleTeamRemove = (id) => {
+    setTeams(teams.filter((t) => t.id !== id));
+  };
+  const handleTeamRename = (id, name) => {
+    setTeams(teams.map((t) => t.id === id ? { ...t, name } : t));
+  };
+  const handleParticipantRemove = (index) => {
+    setParticipants((prev) => prev.filter((_, i) => i !== index));
+  };
+  const handleParticipantEdit = (index, name) => {
+    setParticipants((prev) => prev.map((p, i) => i === index ? { ...p, name } : p));
+  };
+  const [allParticipants, setAllParticipants] = (0, import_react4.useState)([
+    ...participants,
+    ...teams
+  ]);
+  const [activeTab, setActiveTab] = (0, import_react4.useState)("setup");
+  return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "min-h-screen p-4 md:p-8 text-white font-body bg-gradient-to-b from-blue-900 to-purple-900", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "max-w-7xl mx-auto", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-center mb-8 md:mb-12", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-col items-center mb-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "mb-2", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          "img",
           {
-            students,
-            avatars: avatars2,
-            addParticipant: addStudentParticipant,
-            removeStudent,
-            updateStudentName,
-            createParticipant,
-            initialDifficulty: options.initialDifficulty
+            src: `${process.env.PUBLIC_URL || ""}/icons/icon.svg`,
+            alt: "Bee mascot",
+            className: "w-16 h-16 md:w-20 md:h-20 mx-auto",
+            onError: (e) => e.currentTarget.src = `${process.env.PUBLIC_URL || ""}/img/bee.svg`
           }
-        )
+        ) }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h1", { className: "text-3xl md:text-5xl font-bold text-yellow-300 uppercase font-heading tracking-wide", children: "Spelling Bee Championship" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: clearRoster, className: "mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded", children: "Clear Saved Roster" })
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-lg md:text-xl text-blue-100 max-w-2xl mx-auto", children: "Get ready to spell your way to victory!" })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "grid md:grid-cols-2 lg:grid-cols-3 gap-8", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: "Skip Penalty \u23ED\uFE0F" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex gap-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("select", { value: skipPenaltyType, onChange: (e) => setSkipPenaltyType(e.target.value), className: "p-2 rounded-md bg-white/20 text-white", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "lives", children: "Lives" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "points", children: "Points" })
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex mb-6 border-b border-blue-400", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+        "button",
+        {
+          className: `px-4 py-2 font-medium ${activeTab === "setup" ? "text-yellow-300 border-b-2 border-yellow-300" : "text-blue-200"}`,
+          onClick: () => setActiveTab("setup"),
+          children: "Game Setup"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+        "button",
+        {
+          className: `px-4 py-2 font-medium ${activeTab === "settings" ? "text-yellow-300 border-b-2 border-yellow-300" : "text-blue-200"}`,
+          onClick: () => setActiveTab("settings"),
+          children: "Settings"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+        "button",
+        {
+          className: `px-4 py-2 font-medium ${activeTab === "words" ? "text-yellow-300 border-b-2 border-yellow-300" : "text-blue-200"}`,
+          onClick: () => setActiveTab("words"),
+          children: "Word List"
+        }
+      )
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 shadow-lg", children: [
+      activeTab === "setup" && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mb-8", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-xl font-bold mb-4 uppercase font-heading", children: "Select Game Mode" }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-wrap justify-center gap-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+              "button",
+              {
+                onClick: () => setGameMode("team"),
+                className: `px-6 py-3 rounded-lg text-lg font-bold transition-all ${gameMode === "team" ? "bg-yellow-300 text-black scale-105" : "bg-blue-500 hover:bg-blue-400"}`,
+                children: "Team Mode"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+              "button",
+              {
+                onClick: () => setGameMode("individual"),
+                className: `px-6 py-3 rounded-lg text-lg font-bold transition-all ${gameMode === "individual" ? "bg-yellow-300 text-black scale-105" : "bg-blue-500 hover:bg-blue-400"}`,
+                children: "Individual Mode"
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mb-8", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-xl font-bold mb-4 uppercase font-heading", children: gameMode === "team" ? "Teams" : "Students" }),
+          gameMode === "team" ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+            TeamForm_default,
+            {
+              teams,
+              avatars: availableAvatars,
+              addTeam: (team) => addTeam(team),
+              removeTeam: (id) => removeTeam(id),
+              updateTeamName: (id, name) => updateTeam(id, { name })
+            }
+          ) : /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex gap-4 mb-4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "text", value: studentName, onChange: (e) => setStudentName(e.target.value), className: "flex-grow p-2 rounded-md bg-white/20 text-white", placeholder: "Student name" }),
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: addStudent, className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold", children: "Add" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mb-4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("textarea", { value: bulkStudentText, onChange: (e) => setBulkStudentText(e.target.value), className: "w-full p-2 rounded-md bg-white/20 text-white mb-2", placeholder: "Paste names, one per line or separated by commas", rows: 4 }),
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: () => addBulkStudents(bulkStudentText.split("\n").map((name) => createParticipant(name, options.initialDifficulty))), className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold", children: "Add Names" }),
+              bulkStudentError && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-red-300 mt-2", children: bulkStudentError })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mb-4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h3", { className: "text-xl font-bold mb-2", children: "Randomize Teams" }),
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-wrap items-center gap-2 mb-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "number", min: 1, value: randomTeamCount || "", onChange: (e) => {
+                  setRandomTeamCount(Number(e.target.value));
+                  setRandomTeamSize(0);
+                }, placeholder: "Number of teams", className: "p-2 rounded-md bg-white/20 text-white flex-grow" }),
+                /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: "or" }),
+                /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "number", min: 1, value: randomTeamSize || "", onChange: (e) => {
+                  setRandomTeamSize(Number(e.target.value));
+                  setRandomTeamCount(0);
+                }, placeholder: "Team size", className: "p-2 rounded-md bg-white/20 text-white flex-grow" }),
+                /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: randomizeTeams, className: "bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded", children: "Randomize" })
+              ] }),
+              randomizeError && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-red-300", children: randomizeError })
+            ] }),
+            participants.map((student, index) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("img", { src: student.avatar || availableAvatars[0], alt: "avatar", className: "w-8 h-8 rounded-full" }),
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "text", value: student.name, onChange: (e) => updateStudentName(index, e.target.value), placeholder: "Student name", className: "flex-grow p-2 rounded-md bg-white/20 text-white" }),
+              index > 0 && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: () => removeStudent(index), className: "px-2 py-1 bg-red-500 hover:bg-red-600 rounded", children: "Remove" })
+            ] }, index)),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+              StudentRoster_default,
+              {
+                participants: participants || [],
+                avatars: availableAvatars,
+                onAdd: createParticipant,
+                onRemove: handleParticipantRemove,
+                onEdit: handleParticipantEdit,
+                onAddBulk: addBulkStudents,
+                initialDifficulty: options.initialDifficulty
+              }
+            )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "number", min: 0, value: skipPenaltyValue, onChange: (e) => setSkipPenaltyValue(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-24" })
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: clearRoster, className: "mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded", children: "Clear Saved Roster" })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: "Difficulty Settings \u{1F39A}\uFE0F" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex gap-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { className: "block mb-2", children: "Initial Difficulty" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("select", { value: initialDifficulty, onChange: (e) => setInitialDifficulty(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: 0, children: "Easy" }),
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: 1, children: "Medium" }),
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: 2, children: "Tricky" })
+      activeTab === "settings" && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: "Skip Penalty \u23ED\uFE0F" }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex gap-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("select", { value: options.skipPenaltyType, onChange: (e) => handleOptionChange("skipPenaltyType", e.target.value), className: "p-2 rounded-md bg-white/20 text-white", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: "lives", children: "Lives" }),
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: "points", children: "Points" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "number", min: 0, value: options.skipPenaltyValue, onChange: (e) => handleOptionChange("skipPenaltyValue", Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-24" })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: "Difficulty Settings \u{1F39A}\uFE0F" }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex gap-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { className: "block mb-2", children: "Initial Difficulty" }),
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("select", { value: options.initialDifficulty, onChange: (e) => handleOptionChange("initialDifficulty", Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: 0, children: "Easy" }),
+                /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: 1, children: "Medium" }),
+                /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: 2, children: "Tricky" })
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { className: "block mb-2", children: "Progression Speed" }),
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "number", min: 1, value: options.progressionSpeed, onChange: (e) => handleOptionChange("progressionSpeed", Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-24" })
             ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: "Audio & Effects \u{1F50A}\u2728" }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "flex items-center space-x-3 mb-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "checkbox", checked: options.soundEnabled, onChange: (e) => handleOptionChange("soundEnabled", e.target.checked) }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: "Enable Sound" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { className: "block mb-2", children: "Progression Speed" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "number", min: 1, value: progressionSpeed, onChange: (e) => setProgressionSpeed(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-24" })
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "flex items-center space-x-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "checkbox", checked: options.effectsEnabled, onChange: (e) => handleOptionChange("effectsEnabled", e.target.checked) }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: "Enable Visual Effects" })
+          ] }),
+          voices.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mt-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { className: "block mb-2", children: "Voice" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("select", { value: selectedVoice, onChange: (e) => setSelectedVoice(e.target.value), className: "p-2 rounded-md bg-white/20 text-white", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: "", children: "Default" }),
+              voices.map((v) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: v.voiceURI, children: `${v.name} (${v.lang})` }, v.voiceURI))
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: "Theme \u{1F3A8}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("select", { value: theme, onChange: (e) => {
+            const t = e.target.value;
+            setTheme(t);
+            try {
+              localStorage.setItem("theme", t);
+            } catch (error2) {
+              console.error("Failed to save theme to localStorage", error2);
+            }
+            applyTheme(t);
+          }, className: "p-2 rounded-md bg-white/20 text-white", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: "light", children: "Light" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: "dark", children: "Dark" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: "honeycomb", children: "Honeycomb" })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: "Teacher Mode \u{1F469}\u200D\u{1F3EB}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "flex items-center gap-2 text-white", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "checkbox", checked: teacherMode, onChange: (e) => setTeacherMode(e.target.checked) }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: "Enable larger fonts and spacing" })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: "Music \u{1F3B5}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mb-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { className: "block mb-2", children: "Style" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("select", { value: options.musicStyle, onChange: (e) => handleOptionChange("musicStyle", e.target.value), className: "p-2 rounded-md bg-white/20 text-white", children: musicStyles.map((style) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: style, children: style }, style)) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "block mb-2", children: [
+              "Volume: ",
+              Math.round(options.musicVolume * 100),
+              "%"
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "range", min: 0, max: 1, step: 0.01, value: options.musicVolume, onChange: (e) => handleOptionChange("musicVolume", parseFloat(e.target.value)), className: "w-full" })
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: "Audio & Effects \u{1F50A}\u2728" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { className: "flex items-center space-x-3 mb-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "checkbox", checked: soundEnabled, onChange: (e) => setSoundEnabled(e.target.checked) }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: "Enable Sound" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { className: "flex items-center space-x-3", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "checkbox", checked: effectsEnabled, onChange: (e) => setEffectsEnabled(e.target.checked) }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: "Enable Visual Effects" })
-        ] }),
-        voices.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mt-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { className: "block mb-2", children: "Voice" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("select", { value: selectedVoice, onChange: (e) => setSelectedVoice(e.target.value), className: "p-2 rounded-md bg-white/20 text-white", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "", children: "Default" }),
-            voices.map((v) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: v.voiceURI, children: `${v.name} (${v.lang})` }, v.voiceURI))
+      activeTab === "words" && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "text-xl font-bold mb-4 uppercase font-heading", children: "Word List" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mb-6", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { htmlFor: "bundled-list", className: "block text-lg font-medium mb-2", children: "Choose Bundled Word List" }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("select", { id: "bundled-list", value: selectedBundledList, onChange: (e) => setSelectedBundledList(e.target.value), className: "w-full p-2 rounded-md bg-white/20 text-white", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: "", children: "-- Select a list --" }),
+            bundledWordLists.map((list) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: list.file, children: list.label }, list.file))
           ] })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: "Theme \u{1F3A8}" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("select", { value: theme, onChange: (e) => {
-          const t = e.target.value;
-          setTheme(t);
-          localStorage.setItem("theme", t);
-          applyTheme(t);
-        }, className: "p-2 rounded-md bg-white/20 text-white", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "light", children: "Light" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "dark", children: "Dark" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "honeycomb", children: "Honeycomb" })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: "Teacher Mode \u{1F469}\u200D\u{1F3EB}" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { className: "flex items-center gap-2 text-white", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "checkbox", checked: teacherMode, onChange: (e) => setTeacherMode(e.target.checked) }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: "Enable larger fonts and spacing" })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: "Music \u{1F3B5}" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mb-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { className: "block mb-2", children: "Style" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("select", { value: musicStyle, onChange: (e) => setMusicStyle(e.target.value), className: "p-2 rounded-md bg-white/20 text-white", children: musicStyles.map((style) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: style, children: style }, style)) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { className: "block mb-2", children: [
-            "Volume: ",
-            Math.round(musicVolume * 100),
-            "%"
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { htmlFor: "file-upload", className: "block text-lg font-medium mb-2", children: "Upload File" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-sm text-gray-300 mb-2", children: "Upload a JSON or TSV file." }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { id: "file-upload", type: "file", accept: ".json,.tsv,.txt,.csv", onChange: handleFileChange, className: "block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-300 file:text-black hover:file:bg-yellow-400" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "range", min: 0, max: 1, step: 0.01, value: musicVolume, onChange: (e) => setMusicVolume(parseFloat(e.target.value)), className: "w-full" })
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { htmlFor: "paste-area", className: "block text-lg font-medium mb-2", children: "Or Paste Spreadsheet Data" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-sm text-gray-300 mb-2", children: "Paste data from Excel or Google Sheets (tab-separated)." }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("textarea", { id: "paste-area", rows: 4, value: customWordListText, onChange: (e) => setCustomWordListText(e.target.value), className: "w-full p-2 rounded-md bg-white/20 text-white", placeholder: "Paste your tab-separated values here..." })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mt-6", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-col md:flex-row gap-2 mb-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "number", min: 1, value: aiGrade, onChange: (e) => setAiGrade(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-full md:w-24", placeholder: "Grade" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "number", min: 1, value: aiCount, onChange: (e) => setAiCount(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-full md:w-24", placeholder: "# Words" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: generateAIWords, disabled: aiLoading, className: "bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto", children: aiLoading ? "Generating..." : "Generate with AI" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(WordListPrompt_default, { value: aiTopic, onChange: setAiTopic }),
+          aiError && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-red-300 mt-2", children: aiError })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mt-4 text-sm text-gray-300", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("p", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: "Format:" }),
+            " The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`."
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "mt-2", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("a", { href: "wordlists/example.csv", download: true, className: "inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded", children: "Download Template" }) })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(GameOptions_default, { options, setOptions }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8 mt-8", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-heading", children: "Add Custom Word List \u{1F4DD}" }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mb-6", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { htmlFor: "bundled-list", className: "block text-lg font-medium mb-2", children: "Choose Bundled Word List" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("select", { id: "bundled-list", value: selectedBundledList, onChange: (e) => setSelectedBundledList(e.target.value), className: "w-full p-2 rounded-md bg-white/20 text-white", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "", children: "-- Select a list --" }),
-          bundledWordLists.map((list) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: list.file, children: list.label }, list.file))
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { htmlFor: "file-upload", className: "block text-lg font-medium mb-2", children: "Upload File" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-sm text-gray-300 mb-2", children: "Upload a JSON or TSV file." }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { id: "file-upload", type: "file", accept: ".json,.tsv,.txt,.csv", onChange: handleFileChange, className: "block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-300 file:text-black hover:file:bg-yellow-400" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { htmlFor: "paste-area", className: "block text-lg font-medium mb-2", children: "Or Paste Spreadsheet Data" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-sm text-gray-300 mb-2", children: "Paste data from Excel or Google Sheets (tab-separated)." }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("textarea", { id: "paste-area", rows: 4, value: customWordListText, onChange: (e) => setCustomWordListText(e.target.value), className: "w-full p-2 rounded-md bg-white/20 text-white", placeholder: "Paste your tab-separated values here..." })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mt-6", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex flex-col md:flex-row gap-2 mb-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "number", min: 1, value: aiGrade, onChange: (e) => setAiGrade(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-full md:w-24", placeholder: "Grade" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "number", min: 1, value: aiCount, onChange: (e) => setAiCount(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-full md:w-24", placeholder: "# Words" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: generateAIWords, disabled: aiLoading, className: "bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto", children: aiLoading ? "Generating..." : "Generate with AI" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(WordListPrompt_default, { value: aiTopic, onChange: setAiTopic }),
-        aiError && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-red-300 mt-2", children: aiError })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mt-4 text-sm text-gray-300", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("p", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("strong", { children: "Format:" }),
-          " The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`."
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "mt-2", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("a", { href: "wordlists/example.csv", download: true, className: "inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded", children: "Download Template" }) })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "mt-2", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("a", { href: "wordlists/example.csv", download: true, className: "inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded", children: "Download Template" }) })
-    ] }),
-    missedWordCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "bg-white/10 p-4 rounded-lg mb-8", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { className: "flex items-center space-x-3", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "checkbox", checked: includeMissedWords, onChange: (e) => setIncludeMissedWords(e.target.checked) }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("span", { children: [
+    missedWordCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "bg-white/10 p-4 rounded-lg mb-8", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "flex items-center space-x-3", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "checkbox", checked: includeMissedWords, onChange: (e) => setIncludeMissedWords(e.target.checked) }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { children: [
         "Include ",
         missedWordCount,
         " missed words from previous sessions"
       ] })
     ] }) }),
-    error && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-red-300 text-center mb-4", children: error }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex flex-col md:flex-row gap-4 mt-8", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => handleStart(false), className: "w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold", children: "Start Custom Game" }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => handleStart(true), className: "w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold", children: "Start Session Challenge" })
+    error && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-red-300 text-center mb-4", children: error }),
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-col md:flex-row gap-4 mt-8", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: () => handleStart(false), className: "w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold", children: "Start Custom Game" }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: () => handleStart(true), className: "w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold", children: "Start Session Challenge" })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "mt-4 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: onViewAchievements, className: "bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold", children: "View Achievements" }) })
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "mt-4 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: onViewAchievements, className: "bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold", children: "View Achievements" }) })
   ] }) });
 };
 var SetupScreen_default = SetupScreen;
 
 // src/GameScreen.tsx
-var import_react15 = __toESM(require_react());
+var import_react13 = __toESM(require_react());
 
 // node_modules/lucide-react/dist/esm/createLucideIcon.js
-var import_react8 = __toESM(require_react());
+var import_react6 = __toESM(require_react());
 
 // node_modules/lucide-react/dist/esm/shared/src/utils.js
 var toKebabCase = (string) => string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
@@ -25593,7 +25592,7 @@ var mergeClasses = (...classes) => classes.filter((className, index, array) => {
 }).join(" ").trim();
 
 // node_modules/lucide-react/dist/esm/Icon.js
-var import_react7 = __toESM(require_react());
+var import_react5 = __toESM(require_react());
 
 // node_modules/lucide-react/dist/esm/defaultAttributes.js
 var defaultAttributes = {
@@ -25609,7 +25608,7 @@ var defaultAttributes = {
 };
 
 // node_modules/lucide-react/dist/esm/Icon.js
-var Icon = (0, import_react7.forwardRef)(
+var Icon = (0, import_react5.forwardRef)(
   ({
     color = "currentColor",
     size = 24,
@@ -25620,7 +25619,7 @@ var Icon = (0, import_react7.forwardRef)(
     iconNode,
     ...rest
   }, ref) => {
-    return (0, import_react7.createElement)(
+    return (0, import_react5.createElement)(
       "svg",
       {
         ref,
@@ -25633,7 +25632,7 @@ var Icon = (0, import_react7.forwardRef)(
         ...rest
       },
       [
-        ...iconNode.map(([tag, attrs]) => (0, import_react7.createElement)(tag, attrs)),
+        ...iconNode.map(([tag, attrs]) => (0, import_react5.createElement)(tag, attrs)),
         ...Array.isArray(children) ? children : [children]
       ]
     );
@@ -25642,8 +25641,8 @@ var Icon = (0, import_react7.forwardRef)(
 
 // node_modules/lucide-react/dist/esm/createLucideIcon.js
 var createLucideIcon = (iconName, iconNode) => {
-  const Component = (0, import_react8.forwardRef)(
-    ({ className, ...props }, ref) => (0, import_react8.createElement)(Icon, {
+  const Component = (0, import_react6.forwardRef)(
+    ({ className, ...props }, ref) => (0, import_react6.createElement)(Icon, {
       ref,
       iconNode,
       className: mergeClasses(`lucide-${toKebabCase(iconName)}`, className),
@@ -25658,6 +25657,14 @@ var createLucideIcon = (iconName, iconNode) => {
 var SkipForward = createLucideIcon("SkipForward", [
   ["polygon", { points: "5 4 15 12 5 20 5 4", key: "16p6eg" }],
   ["line", { x1: "19", x2: "19", y1: "5", y2: "19", key: "futhcm" }]
+]);
+
+// node_modules/lucide-react/dist/esm/icons/users.js
+var Users = createLucideIcon("Users", [
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+  ["path", { d: "M22 21v-2a4 4 0 0 0-3-3.87", key: "kshegd" }],
+  ["path", { d: "M16 3.13a4 4 0 0 1 0 7.75", key: "1da9ce" }]
 ]);
 
 // src/types.ts
@@ -26437,10 +26444,10 @@ var speak = (text, options = {}) => {
 };
 
 // src/utils/useSound.ts
-var import_react9 = __toESM(require_react());
+var import_react7 = __toESM(require_react());
 var useSound = (src, enabled = true) => {
-  const audioRef = (0, import_react9.useRef)(null);
-  (0, import_react9.useEffect)(() => {
+  const audioRef = (0, import_react7.useRef)(null);
+  (0, import_react7.useEffect)(() => {
     const audio = new Audio(src);
     audio.load();
     audioRef.current = audio;
@@ -26449,7 +26456,7 @@ var useSound = (src, enabled = true) => {
       audioRef.current = null;
     };
   }, [src]);
-  const play = (0, import_react9.useCallback)(() => {
+  const play = (0, import_react7.useCallback)(() => {
     if (!enabled || !audioRef.current) return;
     audioRef.current.currentTime = 0;
     const playPromise = audioRef.current.play();
@@ -26464,13 +26471,13 @@ var useSound = (src, enabled = true) => {
 var useSound_default = useSound;
 
 // src/utils/useTimer.ts
-var import_react10 = __toESM(require_react());
+var import_react8 = __toESM(require_react());
 var useTimer = (duration, onExpire) => {
-  const [timeLeft, setTimeLeft] = (0, import_react10.useState)(duration);
-  const [isPaused, setIsPaused] = (0, import_react10.useState)(false);
-  const intervalRef = (0, import_react10.useRef)(null);
+  const [timeLeft, setTimeLeft] = (0, import_react8.useState)(duration);
+  const [isPaused, setIsPaused] = (0, import_react8.useState)(false);
+  const intervalRef = (0, import_react8.useRef)(null);
   const clear = () => clearInterval(intervalRef.current);
-  const tick = (0, import_react10.useCallback)(() => {
+  const tick = (0, import_react8.useCallback)(() => {
     setTimeLeft((prev) => {
       if (prev <= 1) {
         clear();
@@ -26480,44 +26487,44 @@ var useTimer = (duration, onExpire) => {
       return prev - 1;
     });
   }, [onExpire]);
-  const start = (0, import_react10.useCallback)(() => {
+  const start = (0, import_react8.useCallback)(() => {
     clear();
     setTimeLeft(duration);
     intervalRef.current = setInterval(tick, 1e3);
     setIsPaused(false);
   }, [duration, tick]);
-  const pause = (0, import_react10.useCallback)(() => {
+  const pause = (0, import_react8.useCallback)(() => {
     clear();
     setIsPaused(true);
   }, []);
-  const resume = (0, import_react10.useCallback)(() => {
+  const resume = (0, import_react8.useCallback)(() => {
     if (!isPaused) return;
     intervalRef.current = setInterval(tick, 1e3);
     setIsPaused(false);
   }, [isPaused, tick]);
-  const reset = (0, import_react10.useCallback)(() => setTimeLeft(duration), [duration]);
-  const stop = (0, import_react10.useCallback)(() => {
+  const reset = (0, import_react8.useCallback)(() => setTimeLeft(duration), [duration]);
+  const stop = (0, import_react8.useCallback)(() => {
     clear();
   }, []);
-  (0, import_react10.useEffect)(() => () => clear(), []);
+  (0, import_react8.useEffect)(() => () => clear(), []);
   return { timeLeft, start, pause, resume, reset, stop, isPaused };
 };
 var useTimer_default = useTimer;
 
 // src/utils/useWordSelection.ts
-var import_react11 = __toESM(require_react());
+var import_react9 = __toESM(require_react());
 var difficultyOrder = ["easy", "medium", "tricky", "review"];
 var shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
 var useWordSelection = (db) => {
-  const [wordQueues, setWordQueues] = (0, import_react11.useState)({
+  const [wordQueues, setWordQueues] = (0, import_react9.useState)({
     easy: shuffleArray(db.easy),
     medium: shuffleArray(db.medium),
     tricky: shuffleArray(db.tricky),
     review: []
   });
-  const [currentWord, setCurrentWord] = (0, import_react11.useState)(null);
-  const [currentDifficulty, setCurrentDifficulty] = (0, import_react11.useState)("easy");
-  const selectNextWord = (0, import_react11.useCallback)(
+  const [currentWord, setCurrentWord] = (0, import_react9.useState)(null);
+  const [currentDifficulty, setCurrentDifficulty] = (0, import_react9.useState)("easy");
+  const selectNextWord = (0, import_react9.useCallback)(
     (level) => {
       let index = Math.min(level, difficultyOrder.length - 1);
       let nextWord = null;
@@ -26544,7 +26551,7 @@ var useWordSelection = (db) => {
 var useWordSelection_default = useWordSelection;
 
 // src/components/OnScreenKeyboard.tsx
-var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+var import_jsx_runtime6 = __toESM(require_jsx_runtime());
 var letters = Array.from(
   { length: 26 },
   (_, i) => String.fromCharCode(65 + i)
@@ -26557,11 +26564,11 @@ var OnScreenKeyboard = ({
   usedLetters
 }) => {
   const playKey = useSound_default(letter_correct_default, soundEnabled);
-  return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex flex-wrap justify-center gap-2 mt-4", children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex flex-wrap justify-center gap-2 mt-4", children: [
     letters.map((letter) => {
       const lower = letter.toLowerCase();
       const isUsed = usedLetters.has(lower);
-      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
         "button",
         {
           onClick: () => {
@@ -26575,7 +26582,7 @@ var OnScreenKeyboard = ({
         letter
       );
     }),
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
       "button",
       {
         onClick: () => {
@@ -26584,10 +26591,10 @@ var OnScreenKeyboard = ({
         },
         className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold transition-transform active:scale-95",
         "aria-label": "Backspace",
-        children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { "aria-hidden": "true", children: "\u232B" })
+        children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { "aria-hidden": "true", children: "\u232B" })
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
       "button",
       {
         onClick: () => {
@@ -26596,7 +26603,7 @@ var OnScreenKeyboard = ({
         },
         className: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold transition-transform active:scale-95",
         "aria-label": "Submit",
-        children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { "aria-hidden": "true", children: "\u2705" })
+        children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { "aria-hidden": "true", children: "\u2705" })
       }
     )
   ] });
@@ -26604,8 +26611,8 @@ var OnScreenKeyboard = ({
 var OnScreenKeyboard_default = OnScreenKeyboard;
 
 // src/components/HintPanel.tsx
-var import_react12 = __toESM(require_react());
-var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+var import_react10 = __toESM(require_react());
+var import_jsx_runtime7 = __toESM(require_jsx_runtime());
 var HintPanel = ({
   word,
   participantPoints,
@@ -26616,15 +26623,15 @@ var HintPanel = ({
   onHintUsed,
   onExtraAttempt
 }) => {
-  const [showHint, setShowHint] = (0, import_react12.useState)(false);
-  const [showDefinition, setShowDefinition] = (0, import_react12.useState)(false);
-  const [showOrigin, setShowOrigin] = (0, import_react12.useState)(false);
-  const [showSentence, setShowSentence] = (0, import_react12.useState)(false);
-  const [showPrefix, setShowPrefix] = (0, import_react12.useState)(false);
-  const [showSuffix, setShowSuffix] = (0, import_react12.useState)(false);
-  const [revealedLetters, setRevealedLetters] = (0, import_react12.useState)([]);
-  const [revealedSyllables, setRevealedSyllables] = (0, import_react12.useState)([]);
-  (0, import_react12.useEffect)(() => {
+  const [showHint, setShowHint] = (0, import_react10.useState)(false);
+  const [showDefinition, setShowDefinition] = (0, import_react10.useState)(false);
+  const [showOrigin, setShowOrigin] = (0, import_react10.useState)(false);
+  const [showSentence, setShowSentence] = (0, import_react10.useState)(false);
+  const [showPrefix, setShowPrefix] = (0, import_react10.useState)(false);
+  const [showSuffix, setShowSuffix] = (0, import_react10.useState)(false);
+  const [revealedLetters, setRevealedLetters] = (0, import_react10.useState)([]);
+  const [revealedSyllables, setRevealedSyllables] = (0, import_react10.useState)([]);
+  (0, import_react10.useEffect)(() => {
     setRevealedLetters(Array(word.word.length).fill(false));
     setRevealedSyllables(Array(word.syllables.length).fill(false));
     setShowHint(false);
@@ -26634,7 +26641,7 @@ var HintPanel = ({
     setShowPrefix(false);
     setShowSuffix(false);
   }, [word]);
-  (0, import_react12.useEffect)(() => {
+  (0, import_react10.useEffect)(() => {
     if (!showWord) {
       setRevealedSyllables(Array(word.syllables.length).fill(false));
     }
@@ -26692,14 +26699,14 @@ var HintPanel = ({
     onHintUsed();
     setShowSuffix(true);
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8", children: [
-    revealedLetters.some((r) => r) && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "text-3xl font-mono mb-4", children: word.word.split("").map((letter, idx) => revealedLetters[idx] ? letter : "_").join(" ") }),
-    showDefinition && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "text-2xl mb-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { className: "text-yellow-300", children: "Definition:" }),
+  return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8", children: [
+    revealedLetters.some((r) => r) && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "text-3xl font-mono mb-4", children: word.word.split("").map((letter, idx) => revealedLetters[idx] ? letter : "_").join(" ") }),
+    showDefinition && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("p", { className: "text-2xl mb-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("strong", { className: "text-yellow-300", children: "Definition:" }),
       " ",
       word.definition
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
       "button",
       {
         onClick: () => {
@@ -26710,8 +26717,8 @@ var HintPanel = ({
         children: showHint ? "Hide Hint" : "Show Hint"
       }
     ),
-    showHint && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "mt-4 flex flex-col items-center gap-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: word.syllables.map((syllable, idx) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    showHint && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "mt-4 flex flex-col items-center gap-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: word.syllables.map((syllable, idx) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         "button",
         {
           onClick: () => speak(syllable),
@@ -26721,8 +26728,8 @@ var HintPanel = ({
         },
         idx
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: word.syllables.map(
-        (_, idx) => !revealedSyllables[idx] && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: word.syllables.map(
+        (_, idx) => !revealedSyllables[idx] && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
           "button",
           {
             onClick: () => handleRevealSyllable(idx),
@@ -26734,29 +26741,29 @@ var HintPanel = ({
         )
       ) })
     ] }),
-    showOrigin && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "text-xl mb-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { className: "text-yellow-300", children: "Origin:" }),
+    showOrigin && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("p", { className: "text-xl mb-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("strong", { className: "text-yellow-300", children: "Origin:" }),
       " ",
       word.origin
     ] }),
-    showSentence && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "text-xl", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { className: "text-yellow-300", children: "Example:" }),
+    showSentence && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("p", { className: "text-xl", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("strong", { className: "text-yellow-300", children: "Example:" }),
       ' "',
       word.example,
       '"'
     ] }),
-    showPrefix && showWord && word.prefix && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "text-xl mb-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { className: "text-yellow-300", children: "Prefix:" }),
+    showPrefix && showWord && word.prefix && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("p", { className: "text-xl mb-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("strong", { className: "text-yellow-300", children: "Prefix:" }),
       " ",
       word.prefix
     ] }),
-    showSuffix && showWord && word.suffix && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "text-xl mb-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { className: "text-yellow-300", children: "Suffix:" }),
+    showSuffix && showWord && word.suffix && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("p", { className: "text-xl mb-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("strong", { className: "text-yellow-300", children: "Suffix:" }),
       " ",
       word.suffix
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "mt-4 flex gap-4 justify-center", children: [
-      !showDefinition && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "mt-4 flex gap-4 justify-center", children: [
+      !showDefinition && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         "button",
         {
           onClick: () => {
@@ -26770,7 +26777,7 @@ var HintPanel = ({
           children: "Buy Definition (-1)"
         }
       ),
-      !showOrigin && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      !showOrigin && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         "button",
         {
           onClick: () => {
@@ -26784,7 +26791,7 @@ var HintPanel = ({
           children: "Buy Origin (-1)"
         }
       ),
-      !showSentence && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      !showSentence && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         "button",
         {
           onClick: () => {
@@ -26799,8 +26806,8 @@ var HintPanel = ({
         }
       )
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "mt-4 flex gap-4 justify-center", children: [
-      !showPrefix && word.prefix && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "mt-4 flex gap-4 justify-center", children: [
+      !showPrefix && word.prefix && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         "button",
         {
           onClick: handlePrefixReveal,
@@ -26809,7 +26816,7 @@ var HintPanel = ({
           children: "Reveal Prefix (-3)"
         }
       ),
-      !showSuffix && word.suffix && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      !showSuffix && word.suffix && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         "button",
         {
           onClick: handleSuffixReveal,
@@ -26819,8 +26826,8 @@ var HintPanel = ({
         }
       )
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "mt-6 flex justify-center gap-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "mt-6 flex justify-center gap-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         "button",
         {
           onClick: handleHangmanReveal,
@@ -26829,7 +26836,7 @@ var HintPanel = ({
           children: "Hangman Reveal (-5)"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         "button",
         {
           onClick: handleVowelReveal,
@@ -26838,7 +26845,7 @@ var HintPanel = ({
           children: "Vowel Reveal (-3)"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         "button",
         {
           onClick: handleFriendSubstitution,
@@ -26862,24 +26869,24 @@ var avatars = {
 };
 
 // src/components/AvatarSelector.tsx
-var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+var import_jsx_runtime8 = __toESM(require_jsx_runtime());
 function AvatarSelector({ currentAvatar, onSelect, availableAvatars }) {
   const displayAvatars = availableAvatars ? Object.fromEntries(
     availableAvatars.filter((key) => avatars[key]).map((key) => [key, avatars[key]])
   ) : avatars;
-  return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "avatar-selector", children: Object.entries(displayAvatars).map(([key, avatar]) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "avatar-selector", children: Object.entries(displayAvatars).map(([key, avatar]) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
     "button",
     {
       className: `avatar-option ${currentAvatar === key ? "selected" : ""}`,
       onClick: () => onSelect(key),
-      children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("img", { src: avatar.icon, alt: avatar.name })
+      children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("img", { src: avatar.icon, alt: avatar.name })
     },
     key
   )) });
 }
 
 // src/components/AudioSettings.jsx
-var import_react13 = __toESM(require_react());
+var import_react11 = __toESM(require_react());
 
 // src/utils/audio.js
 var AudioManager = class {
@@ -26949,12 +26956,12 @@ var AudioManager = class {
 var audioManager = new AudioManager();
 
 // src/components/AudioSettings.jsx
-var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+var import_jsx_runtime9 = __toESM(require_jsx_runtime());
 function AudioSettings() {
-  const [musicVolume, setMusicVolume] = import_react13.default.useState(audioManager.volume.music * 100);
-  const [sfxVolume, setSfxVolume] = import_react13.default.useState(audioManager.volume.sfx * 100);
-  const [isMusicMuted, setIsMusicMuted] = import_react13.default.useState(audioManager.isMusicMuted);
-  const [areSoundsMuted, setAreSoundsMuted] = import_react13.default.useState(audioManager.areSoundsMuted);
+  const [musicVolume, setMusicVolume] = import_react11.default.useState(audioManager.volume.music * 100);
+  const [sfxVolume, setSfxVolume] = import_react11.default.useState(audioManager.volume.sfx * 100);
+  const [isMusicMuted, setIsMusicMuted] = import_react11.default.useState(audioManager.isMusicMuted);
+  const [areSoundsMuted, setAreSoundsMuted] = import_react11.default.useState(audioManager.areSoundsMuted);
   const handleMusicVolumeChange = (e) => {
     const volume = parseInt(e.target.value) / 100;
     setMusicVolume(volume * 100);
@@ -26973,26 +26980,26 @@ function AudioSettings() {
     const isEnabled = audioManager.toggleSound();
     setAreSoundsMuted(!isEnabled);
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "space-y-6 p-6", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "text-center mb-6", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { className: "section-header", children: "Audio Settings" }) }),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "bg-white bg-opacity-80 rounded-lg p-4 shadow-md", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex items-center justify-between mb-3", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("label", { className: "text-sm font-semibold text-gray-700", children: "Music Volume" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "space-y-6 p-6", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "text-center mb-6", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { className: "section-header", children: "Audio Settings" }) }),
+    /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "space-y-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "bg-white bg-opacity-80 rounded-lg p-4 shadow-md", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex items-center justify-between mb-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("label", { className: "text-sm font-semibold text-gray-700", children: "Music Volume" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             "button",
             {
               onClick: toggleMusicMute,
               className: "p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200",
               "aria-label": isMusicMuted ? "Unmute music" : "Mute music",
-              children: isMusicMuted ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("svg", { className: "w-5 h-5 text-gray-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z", clipRule: "evenodd" }),
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" })
-              ] }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("svg", { className: "w-5 h-5 text-indigo-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" }) })
+              children: isMusicMuted ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("svg", { className: "w-5 h-5 text-gray-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z", clipRule: "evenodd" }),
+                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" })
+              ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("svg", { className: "w-5 h-5 text-indigo-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" }) })
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
           "input",
           {
             type: "range",
@@ -27004,36 +27011,36 @@ function AudioSettings() {
             disabled: isMusicMuted
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex justify-between text-xs text-gray-500 mt-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "0%" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex justify-between text-xs text-gray-500 mt-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "0%" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { children: [
             Math.round(musicVolume),
             "%"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "100%" })
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "100%" })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "bg-white bg-opacity-80 rounded-lg p-4 shadow-md", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex items-center justify-between mb-3", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("label", { className: "text-sm font-semibold text-gray-700", children: "Sound Effects" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "bg-white bg-opacity-80 rounded-lg p-4 shadow-md", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex items-center justify-between mb-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("label", { className: "text-sm font-semibold text-gray-700", children: "Sound Effects" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             "button",
             {
               onClick: toggleSoundsMute,
               className: "p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200",
               "aria-label": areSoundsMuted ? "Unmute sound effects" : "Mute sound effects",
-              children: areSoundsMuted ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("svg", { className: "w-5 h-5 text-gray-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z", clipRule: "evenodd" }),
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" })
-              ] }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("svg", { className: "w-5 h-5 text-indigo-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z", clipRule: "evenodd" }),
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" }),
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M15.536 8.464a5 5 0 010 7.072" })
+              children: areSoundsMuted ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("svg", { className: "w-5 h-5 text-gray-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z", clipRule: "evenodd" }),
+                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" })
+              ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("svg", { className: "w-5 h-5 text-indigo-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z", clipRule: "evenodd" }),
+                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" }),
+                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M15.536 8.464a5 5 0 010 7.072" })
               ] })
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
           "input",
           {
             type: "range",
@@ -27045,48 +27052,52 @@ function AudioSettings() {
             disabled: areSoundsMuted
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex justify-between text-xs text-gray-500 mt-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "0%" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex justify-between text-xs text-gray-500 mt-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "0%" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { children: [
             Math.round(sfxVolume),
             "%"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "100%" })
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "100%" })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "text-center mt-6", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "text-xs text-gray-500", children: "Audio settings are saved automatically" }) })
+    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "text-center mt-6", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "text-xs text-gray-500", children: "Audio settings are saved automatically" }) })
   ] });
 }
 
 // src/AudioContext.tsx
-var import_react14 = __toESM(require_react());
-var import_jsx_runtime11 = __toESM(require_jsx_runtime());
-var AudioContext = (0, import_react14.createContext)({
+var import_react12 = __toESM(require_react());
+var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+var AudioContext = (0, import_react12.createContext)({
   muted: false,
   toggleMute: () => {
   }
 });
 var AudioProvider = ({ children }) => {
-  const [muted, setMuted] = (0, import_react14.useState)(false);
+  const [muted, setMuted] = (0, import_react12.useState)(false);
   const toggleMute = () => {
     setMuted(!muted);
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(AudioContext.Provider, { value: { muted, toggleMute }, children });
+  return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(AudioContext.Provider, { value: { muted, toggleMute }, children });
 };
-var useAudio = () => (0, import_react14.useContext)(AudioContext);
+var useAudio = () => (0, import_react12.useContext)(AudioContext);
 
 // src/GameScreen.tsx
-var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+var MAX_SKIP_TURNS = 1;
+var MAX_ASK_FRIEND = 1;
 var GameScreen = ({ config, onEndGame }) => {
   const isTeamMode = config.gameMode === "team";
-  const [participants, setParticipants] = import_react15.default.useState(
+  const [participants, setParticipants] = import_react13.default.useState(
     config.participants.map((p) => ({
       ...p,
       attempted: 0,
       correct: 0,
       wordsAttempted: 0,
-      wordsCorrect: 0
+      wordsCorrect: 0,
+      skipsRemaining: MAX_SKIP_TURNS,
+      askFriendRemaining: MAX_ASK_FRIEND
     }))
   );
   const shuffle = (arr) => {
@@ -27097,29 +27108,29 @@ var GameScreen = ({ config, onEndGame }) => {
     }
     return copy;
   };
-  const [teamQueues, setTeamQueues] = import_react15.default.useState(() => {
+  const [teamQueues, setTeamQueues] = import_react13.default.useState(() => {
     if (!isTeamMode) return [];
     return config.participants.map((t) => shuffle([...t.students]));
   });
-  const [currentParticipantIndex, setCurrentParticipantIndex] = import_react15.default.useState(0);
-  const currentStudent = import_react15.default.useMemo(() => {
+  const [currentParticipantIndex, setCurrentParticipantIndex] = import_react13.default.useState(0);
+  const currentStudent = import_react13.default.useMemo(() => {
     if (!isTeamMode) return null;
     const queue = teamQueues[currentParticipantIndex] || [];
     return queue[0] || null;
   }, [teamQueues, currentParticipantIndex, isTeamMode]);
-  const [showWord, setShowWord] = import_react15.default.useState(true);
-  const [usedHint, setUsedHint] = import_react15.default.useState(false);
-  const [letters2, setLetters] = import_react15.default.useState([]);
-  const usedLetters = import_react15.default.useMemo(
+  const [showWord, setShowWord] = import_react13.default.useState(true);
+  const [usedHint, setUsedHint] = import_react13.default.useState(false);
+  const [letters2, setLetters] = import_react13.default.useState([]);
+  const usedLetters = import_react13.default.useMemo(
     () => new Set(letters2.filter((l) => l !== "").map((l) => l.toLowerCase())),
     [letters2]
   );
-  const [feedback, setFeedback] = import_react15.default.useState({
+  const [feedback, setFeedback] = import_react13.default.useState({
     message: "",
     type: ""
   });
-  const [extraAttempt, setExtraAttempt] = import_react15.default.useState(false);
-  const [isHelpOpen, setIsHelpOpen] = import_react15.default.useState(false);
+  const [extraAttempt, setExtraAttempt] = import_react13.default.useState(false);
+  const [isHelpOpen, setIsHelpOpen] = import_react13.default.useState(false);
   const {
     wordQueues,
     setWordQueues,
@@ -27127,9 +27138,9 @@ var GameScreen = ({ config, onEndGame }) => {
     currentDifficulty,
     selectNextWord
   } = useWordSelection_default(config.wordDatabase);
-  const [attemptedParticipants, setAttemptedParticipants] = import_react15.default.useState(/* @__PURE__ */ new Set());
-  const [missedWords, setMissedWords] = import_react15.default.useState([]);
-  const [unlockedAchievements, setUnlockedAchievements] = import_react15.default.useState(() => {
+  const [attemptedParticipants, setAttemptedParticipants] = import_react13.default.useState(/* @__PURE__ */ new Set());
+  const [missedWords, setMissedWords] = import_react13.default.useState([]);
+  const [unlockedAchievements, setUnlockedAchievements] = import_react13.default.useState(() => {
     if (typeof window === "undefined") return [];
     try {
       return JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
@@ -27137,15 +27148,15 @@ var GameScreen = ({ config, onEndGame }) => {
       return [];
     }
   });
-  const [toast, setToast] = import_react15.default.useState("");
-  const hiddenInputRef = import_react15.default.useRef(null);
-  const [startTime] = import_react15.default.useState(Date.now());
-  const [coins, setCoins] = import_react15.default.useState(() => {
+  const [toast, setToast] = import_react13.default.useState("");
+  const hiddenInputRef = import_react13.default.useRef(null);
+  const [startTime] = import_react13.default.useState(Date.now());
+  const [coins, setCoins] = import_react13.default.useState(() => {
     if (typeof window === "undefined") return 0;
     const stored = localStorage.getItem("coins");
     return stored ? parseInt(stored, 10) : 0;
   });
-  const [ownedAvatars] = import_react15.default.useState(() => {
+  const [ownedAvatars] = import_react13.default.useState(() => {
     if (typeof window === "undefined") return ["bee", "book", "trophy"];
     try {
       return JSON.parse(
@@ -27155,11 +27166,11 @@ var GameScreen = ({ config, onEndGame }) => {
       return ["bee", "book", "trophy"];
     }
   });
-  const [currentAvatar, setCurrentAvatar] = import_react15.default.useState(() => {
+  const [currentAvatar, setCurrentAvatar] = import_react13.default.useState(() => {
     if (typeof window === "undefined") return "";
     return localStorage.getItem("equippedAvatar") || "";
   });
-  import_react15.default.useEffect(() => {
+  import_react13.default.useEffect(() => {
     localStorage.setItem("equippedAvatar", currentAvatar);
   }, [currentAvatar]);
   const { muted, toggleMute } = useAudio();
@@ -27185,24 +27196,24 @@ var GameScreen = ({ config, onEndGame }) => {
     playTimeout();
     handleIncorrectAttempt();
   });
-  import_react15.default.useEffect(() => {
+  import_react13.default.useEffect(() => {
     if (!isPaused) {
       setShowAudioSettings(false);
     }
   }, [isPaused]);
-  import_react15.default.useEffect(() => {
+  import_react13.default.useEffect(() => {
     if (localStorage.getItem("teacherMode") === "true") {
       document.body.classList.add("teacher-mode");
     } else {
       document.body.classList.remove("teacher-mode");
     }
   }, []);
-  import_react15.default.useEffect(() => {
+  import_react13.default.useEffect(() => {
     if (currentWord) {
       setLetters(Array.from({ length: currentWord.word.length }, () => ""));
     }
   }, [currentWord]);
-  import_react15.default.useEffect(() => {
+  import_react13.default.useEffect(() => {
     const handleKeyDown = (e) => {
       if (!currentWord || isPaused) return;
       if (/^[a-zA-Z]$/.test(e.key)) {
@@ -27416,41 +27427,49 @@ var GameScreen = ({ config, onEndGame }) => {
     playWrong();
     handleIncorrectAttempt();
   };
-  const skipWord = () => {
+  const handleSkipTurn = () => {
+    if (!currentWord) return;
     stopTimer();
-    const isLivesPenalty = config.skipPenaltyType === "lives";
-    const deduction = isLivesPenalty ? `-${config.skipPenaltyValue} life${config.skipPenaltyValue > 1 ? "s" : ""}` : `-${config.skipPenaltyValue} pts`;
-    const updatedParticipants = participants.map((p, index) => {
-      if (index === currentParticipantIndex) {
-        const updated = {
-          ...p,
-          streak: 0,
-          wordsAttempted: p.wordsAttempted + 1
-        };
-        return isLivesPenalty ? { ...updated, lives: p.lives - config.skipPenaltyValue } : { ...updated, points: p.points - config.skipPenaltyValue };
-      }
-      return p;
-    });
+    const updatedParticipants = participants.map(
+      (p, index) => index === currentParticipantIndex ? { ...p, skipsRemaining: (p.skipsRemaining || 0) - 1 } : p
+    );
     setParticipants(updatedParticipants);
-    if (isLivesPenalty) {
-      playLoseLife();
+    try {
+      const existing = JSON.parse(localStorage.getItem("skippedTurns") || "[]");
+      existing.push({
+        name: participants[currentParticipantIndex].name,
+        word: currentWord.word,
+        time: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      localStorage.setItem("skippedTurns", JSON.stringify(existing));
+    } catch {
     }
-    setFeedback({ message: `Word Skipped (${deduction})`, type: "info" });
-    if (currentWord) {
-      setWordQueues((prev) => ({
-        ...prev,
-        review: [...prev.review, currentWord]
-      }));
-    }
+    setWordQueues((prev) => ({
+      ...prev,
+      review: [...prev.review, currentWord]
+    }));
+    setFeedback({ message: "Turn Skipped", type: "info" });
     setAttemptedParticipants(/* @__PURE__ */ new Set());
     setTimeout(() => {
       const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
       const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
       setFeedback({ message: "", type: "" });
-      if (currentWord) setLetters(Array(currentWord.word.length).fill(""));
+      setLetters(Array(currentWord.word.length).fill(""));
       selectNextWordForLevel(nextDifficulty);
       nextTurn();
-    }, 1500);
+    }, 1e3);
+  };
+  const handleAskFriend = () => {
+    const remaining = participants[currentParticipantIndex].askFriendRemaining || 0;
+    if (remaining <= 0) return;
+    setParticipants(
+      (prev) => prev.map(
+        (p, index) => index === currentParticipantIndex ? { ...p, askFriendRemaining: remaining - 1 } : p
+      )
+    );
+    setIsHelpOpen(true);
+    setFeedback({ message: "A teammate may help!", type: "info" });
+    setTimeout(() => setFeedback({ message: "", type: "" }), 2e3);
   };
   const onEndGameWithMissedWords = () => {
     const lessonKey = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
@@ -27473,21 +27492,21 @@ var GameScreen = ({ config, onEndGame }) => {
       missedWords
     });
   };
-  import_react15.default.useEffect(() => {
+  import_react13.default.useEffect(() => {
     if (config.participants.length > 0) {
       selectNextWordForLevel(config.participants[0].difficultyLevel);
     }
   }, []);
-  import_react15.default.useEffect(() => {
+  import_react13.default.useEffect(() => {
     if (!participants || participants.length === 0) return;
     const activeParticipants = participants.filter((p) => p.lives > 0);
     if (activeParticipants.length <= 1) {
       onEndGameWithMissedWords();
     }
   }, [participants]);
-  const [showAudioSettings, setShowAudioSettings] = import_react15.default.useState(false);
-  return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center font-body", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+  const [showAudioSettings, setShowAudioSettings] = import_react13.default.useState(false);
+  return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center font-body", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
       "input",
       {
         ref: hiddenInputRef,
@@ -27497,35 +27516,29 @@ var GameScreen = ({ config, onEndGame }) => {
         tabIndex: -1
       }
     ),
-    toast && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50", children: toast }),
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "absolute top-8 left-8 flex gap-8 items-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("img", { src: "img/bee.svg", alt: "Bee icon", className: "w-12 h-12" }),
-      participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "text-center scorecard", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "text-2xl font-bold", children: p.name }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "text-4xl font-bold text-yellow-300", children: "\u2764\uFE0F".repeat(p.lives) }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "text-xl font-bold text-green-400", children: [
+    toast && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50", children: toast }),
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "absolute top-8 left-8 flex gap-8 items-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("img", { src: `${process.env.PUBLIC_URL || ""}/img/bee.svg`, alt: "Bee icon", className: "w-12 h-12" }),
+      participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "text-center bg-white/10 p-4 rounded-lg", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "text-2xl font-bold", children: p.name }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "text-4xl font-bold text-yellow-300", children: "\u2764\uFE0F".repeat(p.lives) }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "text-xl font-bold text-green-400", children: [
           p.points,
           " pts"
         ] })
       ] }, index))
     ] }),
-    feedback.message && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+    feedback.message && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
       "div",
       {
         className: `absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${feedback.type === "success" ? "bg-green-500" : feedback.type === "error" ? "bg-red-500" : "bg-blue-500"}`,
         children: feedback.message
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "absolute top-8 right-8 text-center z-50", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        "div",
-        {
-          className: `text-6xl font-bold ${timeLeft <= 10 ? "text-red-500" : "text-yellow-300"}`,
-          children: timeLeft
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "text-lg", children: "seconds left" }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "absolute top-8 right-8 text-center z-50 bg-white/10 p-4 rounded-lg", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: `text-6xl font-bold ${timeLeft <= 10 ? "text-red-500" : "text-yellow-300"}`, children: timeLeft }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "text-lg", children: "seconds left" }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         "button",
         {
           onClick: isPaused ? resumeTimer : pauseTimer,
@@ -27534,7 +27547,7 @@ var GameScreen = ({ config, onEndGame }) => {
         }
       )
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
       AvatarSelector,
       {
         currentAvatar,
@@ -27542,24 +27555,24 @@ var GameScreen = ({ config, onEndGame }) => {
         availableAvatars: ownedAvatars
       }
     ),
-    currentWord && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "w-full max-w-4xl text-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("img", { src: "img/books.svg", alt: "Book icon", className: "w-10 h-10 mx-auto mb-4" }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("h2", { className: "text-4xl font-bold mb-2 uppercase font-heading", children: [
+    currentWord && /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "w-full max-w-4xl text-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("img", { src: `${process.env.PUBLIC_URL || ""}/img/books.svg`, alt: "Book icon", className: "w-10 h-10 mx-auto mb-6" }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("h2", { className: "text-4xl font-bold mb-6 uppercase font-heading", children: [
         "Word for ",
         isTeamMode ? "Team" : "Student",
         ": ",
         participants[currentParticipantIndex]?.name || (isTeamMode ? "Team" : "Student")
       ] }),
-      isTeamMode && currentStudent && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "text-xl mb-4", children: [
+      isTeamMode && currentStudent && /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "text-xl mb-6", children: [
         "Hot Seat: ",
         currentStudent.name
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "relative mb-8 pt-10", children: [
-        showWord && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "relative mb-10 pt-12", children: [
+        showWord && /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg", children: [
           currentWord.word,
-          currentWord.pronunciation && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "ml-4 text-5xl text-yellow-300", children: currentWord.pronunciation })
+          currentWord.pronunciation && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "ml-4 text-5xl text-yellow-300", children: currentWord.pronunciation })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
           "button",
           {
             onClick: () => speak(currentWord.word),
@@ -27567,7 +27580,7 @@ var GameScreen = ({ config, onEndGame }) => {
             children: "Replay Word"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
           "button",
           {
             onClick: () => setShowWord(!showWord),
@@ -27576,7 +27589,7 @@ var GameScreen = ({ config, onEndGame }) => {
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         HintPanel_default,
         {
           word: currentWord,
@@ -27589,7 +27602,7 @@ var GameScreen = ({ config, onEndGame }) => {
           onExtraAttempt: () => setExtraAttempt(true)
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "flex gap-2 justify-center mb-4", children: letters2.map((letter, idx) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "flex gap-2 justify-center mb-8", children: letters2.map((letter, idx) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         "div",
         {
           className: `w-12 h-16 text-4xl flex items-center justify-center rounded-lg border-b-2 ${letter ? letter.toLowerCase() === currentWord.word[idx].toLowerCase() ? "bg-green-500" : "bg-red-500" : "bg-white/20"}`,
@@ -27597,7 +27610,7 @@ var GameScreen = ({ config, onEndGame }) => {
         },
         idx
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         OnScreenKeyboard_default,
         {
           onLetter: handleVirtualLetter,
@@ -27608,27 +27621,46 @@ var GameScreen = ({ config, onEndGame }) => {
         }
       )
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-      "button",
-      {
-        onClick: skipWord,
-        className: "absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl",
-        children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SkipForward, { size: 24 })
-      }
-    ),
-    isPaused && !showAudioSettings && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-6xl font-bold z-40 gap-8", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { children: "Paused" }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "absolute bottom-8 right-8 flex flex-col gap-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
+        "button",
+        {
+          onClick: handleSkipTurn,
+          disabled: (participants[currentParticipantIndex].skipsRemaining || 0) <= 0,
+          className: "bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl disabled:opacity-50 flex items-center",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SkipForward, { size: 24, className: "mr-2" }),
+            " Skip Turn"
+          ]
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
+        "button",
+        {
+          onClick: handleAskFriend,
+          disabled: (participants[currentParticipantIndex].askFriendRemaining || 0) <= 0,
+          className: "bg-blue-500 hover:bg-blue-600 p-4 rounded-lg text-xl disabled:opacity-50 flex items-center",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Users, { size: 24, className: "mr-2" }),
+            " Ask a Friend"
+          ]
+        }
+      )
+    ] }),
+    isHelpOpen && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "absolute bottom-32 right-8 bg-blue-500 p-4 rounded-lg text-xl", children: "Friend assisting..." }),
+    isPaused && !showAudioSettings && /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-6xl font-bold z-40 gap-8", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { children: "Paused" }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         "button",
         {
           onClick: () => setShowAudioSettings(true),
-          className: "bg-yellow-300 text-black px-6 py-2 rounded-lg text-2xl",
+          className: "bg-yellow-300 text-black px-6 py-3 rounded-lg text-2xl font-bold hover:bg-yellow-400 transition-colors",
           children: "Audio Settings"
         }
       )
     ] }),
-    showAudioSettings && isPaused && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "absolute inset-0 bg-black/70 flex items-center justify-center z-50", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "bg-white rounded-lg max-w-md w-full relative", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+    showAudioSettings && isPaused && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "absolute inset-0 bg-black/70 flex items-center justify-center z-50", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "bg-white rounded-lg max-w-md w-full relative", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         "button",
         {
           onClick: () => setShowAudioSettings(false),
@@ -27637,21 +27669,21 @@ var GameScreen = ({ config, onEndGame }) => {
           children: "\u2715"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(AudioSettings, {})
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(AudioSettings, {})
     ] }) })
   ] });
 };
 var GameScreen_default = GameScreen;
 
 // src/ResultsScreen.tsx
-var import_react18 = __toESM(require_react());
+var import_react16 = __toESM(require_react());
 
 // audio/applause.mp3
 var applause_default = "./applause-I345E7HE.mp3";
 
 // src/DailyChallenge.tsx
-var import_react16 = __toESM(require_react());
-var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+var import_react14 = __toESM(require_react());
+var import_jsx_runtime12 = __toESM(require_jsx_runtime());
 var DATE_KEY = "dailyChallengeDates";
 var HIGH_KEY = "dailyChallengeHighest";
 var computeCurrentStreak = (dates) => {
@@ -27703,41 +27735,41 @@ var recordDailyCompletion = () => {
 };
 
 // src/components/MorphologyCard.tsx
-var import_react17 = __toESM(require_react());
-var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+var import_react15 = __toESM(require_react());
+var import_jsx_runtime13 = __toESM(require_jsx_runtime());
 var MorphologyCard = ({ word, database }) => {
-  const allWords = (0, import_react17.useMemo)(
+  const allWords = (0, import_react15.useMemo)(
     () => Object.values(database).flat(),
     [database]
   );
-  const prefixExamples = (0, import_react17.useMemo)(() => {
+  const prefixExamples = (0, import_react15.useMemo)(() => {
     if (!word.prefix) return [];
     return allWords.filter((w) => w.word !== word.word && w.prefix === word.prefix).map((w) => w.word).slice(0, 3);
   }, [allWords, word]);
-  const suffixExamples = (0, import_react17.useMemo)(() => {
+  const suffixExamples = (0, import_react15.useMemo)(() => {
     if (!word.suffix) return [];
     return allWords.filter((w) => w.word !== word.word && w.suffix === word.suffix).map((w) => w.word).slice(0, 3);
   }, [allWords, word]);
   if (!word.prefix && !word.suffix) return null;
-  return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "bg-white/10 p-3 rounded-md mt-2 text-sm", children: [
-    word.prefix && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "mb-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "font-bold", children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "bg-white/10 p-3 rounded-md mt-2 text-sm", children: [
+    word.prefix && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "mb-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "font-bold", children: [
         "Prefix: ",
         word.prefix
       ] }),
-      word.prefixMeaning && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-gray-200", children: word.prefixMeaning }),
-      prefixExamples.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-gray-300", children: [
+      word.prefixMeaning && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "text-gray-200", children: word.prefixMeaning }),
+      prefixExamples.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "text-gray-300", children: [
         "Example words: ",
         prefixExamples.join(", ")
       ] })
     ] }),
-    word.suffix && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "font-bold", children: [
+    word.suffix && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "font-bold", children: [
         "Suffix: ",
         word.suffix
       ] }),
-      word.suffixMeaning && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-gray-200", children: word.suffixMeaning }),
-      suffixExamples.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-gray-300", children: [
+      word.suffixMeaning && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "text-gray-200", children: word.suffixMeaning }),
+      suffixExamples.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "text-gray-300", children: [
         "Example words: ",
         suffixExamples.join(", ")
       ] })
@@ -27747,29 +27779,29 @@ var MorphologyCard = ({ word, database }) => {
 var MorphologyCard_default = MorphologyCard;
 
 // src/ResultsScreen.tsx
-var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+var import_jsx_runtime14 = __toESM(require_jsx_runtime());
 var ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
-  const applauseAudio = (0, import_react18.useRef)(new Audio(applause_default));
+  const applauseAudio = (0, import_react16.useRef)(new Audio(applause_default));
   const totalScore = results.participants.reduce((sum, p) => sum + p.points, 0);
-  const [bestClassScore, setBestClassScore] = (0, import_react18.useState)(0);
-  const [isBestScore, setIsBestScore] = (0, import_react18.useState)(false);
-  const [streakInfo, setStreakInfo] = (0, import_react18.useState)(null);
-  const [bonus, setBonus] = (0, import_react18.useState)(0);
-  (0, import_react18.useEffect)(() => {
+  const [bestClassScore, setBestClassScore] = (0, import_react16.useState)(0);
+  const [isBestScore, setIsBestScore] = (0, import_react16.useState)(false);
+  const [streakInfo, setStreakInfo] = (0, import_react16.useState)(null);
+  const [bonus, setBonus] = (0, import_react16.useState)(0);
+  (0, import_react16.useEffect)(() => {
     if (config.dailyChallenge) {
       const info = recordDailyCompletion();
       setStreakInfo(info);
       setBonus(info.currentStreak > 1 ? (info.currentStreak - 1) * 10 : 0);
     }
   }, [config.dailyChallenge]);
-  (0, import_react18.useEffect)(() => {
+  (0, import_react16.useEffect)(() => {
     if (localStorage.getItem("teacherMode") === "true") {
       document.body.classList.add("teacher-mode");
     } else {
       document.body.classList.remove("teacher-mode");
     }
   }, []);
-  (0, import_react18.useEffect)(() => {
+  (0, import_react16.useEffect)(() => {
     const stored = JSON.parse(localStorage.getItem("leaderboard") || "[]");
     const newEntries = results.participants.map((p) => ({
       name: p.name,
@@ -27780,7 +27812,7 @@ var ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
     const updated = [...stored, ...newEntries].sort((a, b) => b.score - a.score).slice(0, 10);
     localStorage.setItem("leaderboard", JSON.stringify(updated));
   }, [results, config.dailyChallenge, bonus]);
-  (0, import_react18.useEffect)(() => {
+  (0, import_react16.useEffect)(() => {
     const history = JSON.parse(localStorage.getItem("sessionHistory") || "[]");
     history.push({ date: (/* @__PURE__ */ new Date()).toISOString(), score: totalScore });
     localStorage.setItem("sessionHistory", JSON.stringify(history));
@@ -27793,7 +27825,7 @@ var ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
       setBestClassScore(storedBest);
     }
   }, [totalScore]);
-  (0, import_react18.useEffect)(() => {
+  (0, import_react16.useEffect)(() => {
     if (results.winner) {
       if (config.soundEnabled) {
         applauseAudio.current.play();
@@ -27823,31 +27855,31 @@ var ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
     }
     return "No one wins this round!";
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center font-body", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300 uppercase font-heading", children: "\u{1F3C6} Game Over! \u{1F3C6}" }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h2", { className: "text-4xl mb-8 uppercase font-heading", children: getWinnerMessage() }),
-    results?.duration && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "text-2xl mb-6", children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center font-body", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300 uppercase font-heading", children: "\u{1F3C6} Game Over! \u{1F3C6}" }),
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h2", { className: "text-4xl mb-8 uppercase font-heading", children: getWinnerMessage() }),
+    results?.duration && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-2xl mb-6", children: [
       "Game Duration: ",
       results.duration,
       " seconds"
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "text-xl mb-4", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-xl mb-4", children: [
       "Session Score: ",
       totalScore
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "text-xl mb-8", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-xl mb-8", children: [
       "Best Class Score: ",
       bestClassScore,
-      isBestScore && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-green-400 font-bold ml-2", children: "New High Score!" })
+      isBestScore && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-green-400 font-bold ml-2", children: "New High Score!" })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md scorecard font-body", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { className: "text-3xl font-bold mb-4 uppercase font-heading", children: "\u{1F4CA} Final Scores" }),
-      results && results.participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "text-left text-xl mb-3", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("img", { src: p.avatar || bee_default, alt: `${p.name} avatar`, className: "w-6 h-6 rounded-full" }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "font-bold", children: p.name })
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md scorecard font-body", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { className: "text-3xl font-bold mb-4 uppercase font-heading", children: "\u{1F4CA} Final Scores" }),
+      results && results.participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-left text-xl mb-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("img", { src: p.avatar || bee_default, alt: `${p.name} avatar`, className: "w-6 h-6 rounded-full" }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "font-bold", children: p.name })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "text-yellow-300", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-yellow-300", children: [
           p.wordsCorrect,
           "/",
           p.wordsAttempted,
@@ -27861,8 +27893,8 @@ var ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
         ] })
       ] }, index))
     ] }),
-    config.dailyChallenge && streakInfo && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "bg-white/10 p-4 rounded-lg w-full max-w-md mt-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "text-xl", children: [
+    config.dailyChallenge && streakInfo && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "bg-white/10 p-4 rounded-lg w-full max-w-md mt-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-xl", children: [
         "\u{1F525} Streak: ",
         streakInfo.currentStreak,
         " day",
@@ -27871,31 +27903,31 @@ var ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
         streakInfo.highestStreak,
         ")"
       ] }),
-      bonus > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "text-yellow-300", children: [
+      bonus > 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-yellow-300", children: [
         "Bonus Points: +",
         bonus
       ] })
     ] }),
-    results.missedWords && results.missedWords.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md mt-8 scorecard font-body", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { className: "text-3xl font-bold mb-4 uppercase font-heading", children: "\u274C Missed Words" }),
-      results.missedWords.map((w, index) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "text-left text-xl mb-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "font-bold", children: w.word }),
+    results.missedWords && results.missedWords.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md mt-8 scorecard font-body", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { className: "text-3xl font-bold mb-4 uppercase font-heading", children: "\u274C Missed Words" }),
+      results.missedWords.map((w, index) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-left text-xl mb-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "font-bold", children: w.word }),
         " - ",
         w.definition,
-        (w.prefix || w.suffix) && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(MorphologyCard_default, { word: w, database: config.wordDatabase })
+        (w.prefix || w.suffix) && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(MorphologyCard_default, { word: w, database: config.wordDatabase })
       ] }, index))
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex gap-6 mt-12 flex-wrap justify-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { onClick: handleExport, className: "bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold", children: "\u{1F4E4} Export Results" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { onClick: onViewLeaderboard, className: "bg-purple-500 hover:bg-purple-600 px-8 py-5 rounded-xl text-2xl font-bold", children: "\u{1F4C8} View Leaderboard" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { onClick: onRestart, className: "bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold", children: "\u{1F504} Play Again" })
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex gap-6 mt-12 flex-wrap justify-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { onClick: handleExport, className: "bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold", children: "\u{1F4E4} Export Results" }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { onClick: onViewLeaderboard, className: "bg-purple-500 hover:bg-purple-600 px-8 py-5 rounded-xl text-2xl font-bold", children: "\u{1F4C8} View Leaderboard" }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { onClick: onRestart, className: "bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold", children: "\u{1F504} Play Again" })
     ] })
   ] });
 };
 var ResultsScreen_default = ResultsScreen;
 
 // src/AchievementsScreen.tsx
-var import_react19 = __toESM(require_react());
+var import_react17 = __toESM(require_react());
 
 // constants/achievements.ts
 var achievements = {
@@ -27927,14 +27959,14 @@ var achievements = {
 };
 
 // src/AchievementsScreen.tsx
-var import_jsx_runtime16 = __toESM(require_jsx_runtime());
-var AchievementBadge = ({ unlocked, title, description, icon }) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: `achievement ${unlocked ? "unlocked" : "locked"} font-body`, children: [
-  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("img", { src: icon, alt: title }),
-  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { className: "uppercase font-heading", children: title }),
-  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: description })
+var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+var AchievementBadge = ({ unlocked, title, description, icon }) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: `achievement ${unlocked ? "unlocked" : "locked"} font-body`, children: [
+  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("img", { src: icon, alt: title }),
+  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h3", { className: "uppercase font-heading", children: title }),
+  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: description })
 ] });
 var AchievementsScreen = ({ onBack }) => {
-  const [unlocked, setUnlocked] = (0, import_react19.useState)(() => {
+  const [unlocked, setUnlocked] = (0, import_react17.useState)(() => {
     if (typeof window === "undefined") return [];
     try {
       return JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
@@ -27942,12 +27974,12 @@ var AchievementsScreen = ({ onBack }) => {
       return [];
     }
   });
-  import_react19.default.useEffect(() => {
+  import_react17.default.useEffect(() => {
     localStorage.setItem("unlockedAchievements", JSON.stringify(unlocked));
   }, [unlocked]);
-  return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-green-600 to-teal-800 p-8 text-white font-body", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h1", { className: "text-4xl text-center mb-8 uppercase font-heading", children: "Achievements" }),
-    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "achievements-grid max-w-xl mx-auto", children: Object.entries(achievements).map(([key, achievement]) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-green-600 to-teal-800 p-8 text-white font-body", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h1", { className: "text-4xl text-center mb-8 uppercase font-heading", children: "Achievements" }),
+    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "achievements-grid max-w-xl mx-auto", children: Object.entries(achievements).map(([key, achievement]) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
       AchievementBadge,
       {
         unlocked: unlocked.includes(key),
@@ -27957,7 +27989,7 @@ var AchievementsScreen = ({ onBack }) => {
       },
       key
     )) }),
-    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
       "button",
       {
         onClick: onBack,
@@ -27970,19 +28002,19 @@ var AchievementsScreen = ({ onBack }) => {
 var AchievementsScreen_default = AchievementsScreen;
 
 // ShopScreen.tsx
-var import_react20 = __toESM(require_react());
-var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+var import_react18 = __toESM(require_react());
+var import_jsx_runtime16 = __toESM(require_jsx_runtime());
 var shopItems = [
   { id: "wizard", name: "Wizard Avatar", icon: "/img/avatars/bee.svg", price: 50, type: "avatar" },
   { id: "top-hat", name: "Top Hat", icon: "/img/avatars/book.svg", price: 30, type: "accessory" }
 ];
 var ShopScreen = ({ onBack }) => {
-  const [coins, setCoins] = import_react20.default.useState(() => {
+  const [coins, setCoins] = import_react18.default.useState(() => {
     if (typeof window === "undefined") return 0;
     const stored = localStorage.getItem("coins");
     return stored ? parseInt(stored, 10) : 0;
   });
-  const [ownedAvatars, setOwnedAvatars] = import_react20.default.useState(() => {
+  const [ownedAvatars, setOwnedAvatars] = import_react18.default.useState(() => {
     if (typeof window === "undefined") return ["bee", "book", "trophy"];
     try {
       return JSON.parse(
@@ -27992,7 +28024,7 @@ var ShopScreen = ({ onBack }) => {
       return ["bee", "book", "trophy"];
     }
   });
-  const [ownedAccessories, setOwnedAccessories] = import_react20.default.useState(() => {
+  const [ownedAccessories, setOwnedAccessories] = import_react18.default.useState(() => {
     if (typeof window === "undefined") return [];
     try {
       return JSON.parse(localStorage.getItem("ownedAccessories") || "[]");
@@ -28000,11 +28032,11 @@ var ShopScreen = ({ onBack }) => {
       return [];
     }
   });
-  const [currentAvatar, setCurrentAvatar] = import_react20.default.useState(() => {
+  const [currentAvatar, setCurrentAvatar] = import_react18.default.useState(() => {
     if (typeof window === "undefined") return "";
     return localStorage.getItem("equippedAvatar") || "";
   });
-  import_react20.default.useEffect(() => {
+  import_react18.default.useEffect(() => {
     localStorage.setItem("equippedAvatar", currentAvatar);
   }, [currentAvatar]);
   const purchaseItem = (item) => {
@@ -28026,8 +28058,8 @@ var ShopScreen = ({ onBack }) => {
   const isOwned = (item) => {
     return item.type === "avatar" ? ownedAvatars.includes(item.id) : ownedAccessories.includes(item.id);
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-purple-600 to-pink-500 text-white p-8", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-purple-600 to-pink-500 text-white p-8", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
       "button",
       {
         onClick: onBack,
@@ -28035,13 +28067,13 @@ var ShopScreen = ({ onBack }) => {
         children: "Back"
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h1", { className: "text-3xl font-bold mb-4", children: "Shop" }),
-    /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "mb-4", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h1", { className: "text-3xl font-bold mb-4", children: "Shop" }),
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "mb-4", children: [
       "Coins: ",
       coins
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h2", { className: "text-2xl font-bold mb-2", children: "Your Avatar" }),
-    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { className: "text-2xl font-bold mb-2", children: "Your Avatar" }),
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
       AvatarSelector,
       {
         currentAvatar,
@@ -28049,23 +28081,23 @@ var ShopScreen = ({ onBack }) => {
         availableAvatars: ownedAvatars
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h2", { className: "text-2xl font-bold mt-8 mb-2", children: "Items" }),
-    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-4", children: shopItems.map((item) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { className: "text-2xl font-bold mt-8 mb-2", children: "Items" }),
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-4", children: shopItems.map((item) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
       "div",
       {
         className: "bg-white/10 p-4 rounded-lg flex items-center justify-between",
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "flex items-center gap-4", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("img", { src: item.icon, alt: item.name, className: "w-16 h-16" }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "font-bold", children: item.name }),
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-center gap-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("img", { src: item.icon, alt: item.name, className: "w-16 h-16" }),
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "font-bold", children: item.name }),
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
                 item.price,
                 " coins"
               ] })
             ] })
           ] }),
-          isOwned(item) ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "text-green-400 font-bold", children: "Owned" }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+          isOwned(item) ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "text-green-400 font-bold", children: "Owned" }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             "button",
             {
               onClick: () => purchaseItem(item),
@@ -28082,18 +28114,18 @@ var ShopScreen = ({ onBack }) => {
 var ShopScreen_default = ShopScreen;
 
 // src/utils/useMusic.ts
-var import_react21 = __toESM(require_react());
+var import_react19 = __toESM(require_react());
 var useMusic = (style, variant, volume, enabled, screen) => {
-  const menuRef = (0, import_react21.useRef)({
+  const menuRef = (0, import_react19.useRef)({
     instrumental: null,
     vocal: null
   });
-  const gameRef = (0, import_react21.useRef)({
+  const gameRef = (0, import_react19.useRef)({
     instrumental: null,
     vocal: null
   });
-  const promptRef = (0, import_react21.useRef)(false);
-  const stop = (0, import_react21.useCallback)(() => {
+  const promptRef = (0, import_react19.useRef)(false);
+  const stop = (0, import_react19.useCallback)(() => {
     ["instrumental", "vocal"].forEach((v) => {
       const menuAudio = menuRef.current[v];
       if (menuAudio) {
@@ -28107,12 +28139,13 @@ var useMusic = (style, variant, volume, enabled, screen) => {
       }
     });
   }, []);
-  const buildSrc = (0, import_react21.useCallback)((trackStyle, trackVariant) => {
+  const buildSrc = (0, import_react19.useCallback)((trackStyle, trackVariant) => {
     const basePath = "audio/It's a Spelling Bee!";
     const variantSuffix = trackVariant === "instrumental" ? " Instrumental" : "";
-    return `${basePath} (${trackStyle}${variantSuffix}).mp3`;
+    const style2 = trackStyle === "default" ? "Country" : trackStyle;
+    return `${basePath} (${style2}${variantSuffix}).mp3`;
   }, []);
-  const loadTracks = (0, import_react21.useCallback)(
+  const loadTracks = (0, import_react19.useCallback)(
     (trackStyle) => {
       ["instrumental", "vocal"].forEach((trackVariant) => {
         const menuSrc = buildSrc(trackStyle, trackVariant);
@@ -28139,17 +28172,17 @@ var useMusic = (style, variant, volume, enabled, screen) => {
     },
     [buildSrc, volume]
   );
-  (0, import_react21.useEffect)(() => {
+  (0, import_react19.useEffect)(() => {
     stop();
     loadTracks(style);
   }, [style, loadTracks, stop]);
-  (0, import_react21.useEffect)(() => {
+  (0, import_react19.useEffect)(() => {
     ["instrumental", "vocal"].forEach((v) => {
       if (menuRef.current[v]) menuRef.current[v].volume = volume;
       if (gameRef.current[v]) gameRef.current[v].volume = volume;
     });
   }, [volume]);
-  (0, import_react21.useEffect)(() => {
+  (0, import_react19.useEffect)(() => {
     if (!enabled) {
       stop();
       return;
@@ -28168,23 +28201,23 @@ var useMusic = (style, variant, volume, enabled, screen) => {
       alert("Click anywhere to enable audio");
     });
   }, [screen, variant, enabled, stop]);
-  (0, import_react21.useEffect)(() => () => stop(), [stop]);
+  (0, import_react19.useEffect)(() => () => stop(), [stop]);
 };
 var useMusic_default = useMusic;
 
 // src/spelling-bee-game.tsx
-var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+var import_jsx_runtime17 = __toESM(require_jsx_runtime());
 var SpellingBeeGame = () => {
-  const [gameState, setGameState] = (0, import_react22.useState)("setup");
-  const [gameConfig, setGameConfig] = (0, import_react22.useState)(null);
-  const [gameResults, setGameResults] = (0, import_react22.useState)(null);
-  const [customWords, setCustomWords] = (0, import_react22.useState)({ easy: [], medium: [], tricky: [] });
-  const [wordDatabase, setWordDatabase] = (0, import_react22.useState)({ easy: [], medium: [], tricky: [] });
-  const [musicStyle, setMusicStyle] = (0, import_react22.useState)("Funk");
-  const [musicVolume, setMusicVolume] = (0, import_react22.useState)(0.5);
-  const [soundEnabled, setSoundEnabled] = (0, import_react22.useState)(true);
-  const [isMusicPlaying, setIsMusicPlaying] = (0, import_react22.useState)(true);
-  (0, import_react22.useEffect)(() => {
+  const [gameState, setGameState] = (0, import_react20.useState)("setup");
+  const [gameConfig, setGameConfig] = (0, import_react20.useState)(null);
+  const [gameResults, setGameResults] = (0, import_react20.useState)(null);
+  const [customWords, setCustomWords] = (0, import_react20.useState)({ easy: [], medium: [], tricky: [] });
+  const [wordDatabase, setWordDatabase] = (0, import_react20.useState)({ easy: [], medium: [], tricky: [] });
+  const [musicStyle, setMusicStyle] = (0, import_react20.useState)("Funk");
+  const [musicVolume, setMusicVolume] = (0, import_react20.useState)(0.5);
+  const [soundEnabled, setSoundEnabled] = (0, import_react20.useState)(true);
+  const [isMusicPlaying, setIsMusicPlaying] = (0, import_react20.useState)(true);
+  (0, import_react20.useEffect)(() => {
     fetch("words.json").then((res) => res.json()).then((data) => setWordDatabase(data)).catch((err) => console.error("Failed to load word list", err));
   }, []);
   const handleAddCustomWords = (newWords) => {
@@ -28204,7 +28237,8 @@ var SpellingBeeGame = () => {
         tricky: [...wordDatabase.tricky, ...customWords.tricky]
       };
     }
-    setSoundEnabled(gameConfig.soundEnabled);
+    setGameConfig(config);
+    setSoundEnabled(config.soundEnabled);
     setMusicStyle(config.musicStyle);
     setMusicVolume(config.musicVolume);
     setIsMusicPlaying(true);
@@ -28234,7 +28268,7 @@ var SpellingBeeGame = () => {
   const handleQuitToSetup = () => {
     setGameState("setup");
   };
-  (0, import_react22.useEffect)(() => {
+  (0, import_react20.useEffect)(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
       document.body.classList.remove("theme-light", "theme-dark", "theme-honeycomb");
@@ -28245,10 +28279,18 @@ var SpellingBeeGame = () => {
   const trackVariant = screen === "game" ? "instrumental" : "vocal";
   useMusic_default(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
   if (gameState === "setup") {
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(SetupScreen_default, { onStartGame: handleStartGame, onAddCustomWords: handleAddCustomWords, onViewAchievements: handleViewAchievements, onViewShop: handleViewShop });
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+      SetupScreen_default,
+      {
+        onStartGame: handleStartGame,
+        onAddCustomWords: handleAddCustomWords,
+        onViewAchievements: handleViewAchievements,
+        onViewShop: () => handleViewShop()
+      }
+    );
   }
   if (gameState === "playing") {
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
       GameScreen_default,
       {
         config: gameConfig,
@@ -28266,16 +28308,16 @@ var SpellingBeeGame = () => {
     );
   }
   if (gameState === "results") {
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ResultsScreen_default, { results: gameResults, config: gameConfig, onRestart: handleRestart, onViewLeaderboard: handleViewLeaderboard });
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ResultsScreen_default, { results: gameResults, config: gameConfig, onRestart: handleRestart, onViewLeaderboard: handleViewLeaderboard });
   }
   if (gameState === "leaderboard") {
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LeaderboardScreen_default, { onBack: handleBackToSetup });
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(LeaderboardScreen_default, { onBack: handleBackToSetup });
   }
   if (gameState === "achievements") {
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(AchievementsScreen_default, { onBack: handleBackToSetup });
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(AchievementsScreen_default, { onBack: handleBackToSetup });
   }
   if (gameState === "shop") {
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ShopScreen_default, { onBack: handleBackToSetup });
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ShopScreen_default, { onBack: handleBackToSetup });
   }
   return null;
 };
@@ -28283,7 +28325,7 @@ var container = document.getElementById("root");
 if (container) {
   const root = import_client.default.createRoot(container);
   root.render(
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(import_react22.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(AudioProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(SpellingBeeGame, {}) }) })
+    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(import_react20.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(AudioProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(SpellingBeeGame, {}) }) })
   );
 }
 /*! Bundled license information:
@@ -28350,6 +28392,7 @@ lucide-react/dist/esm/defaultAttributes.js:
 lucide-react/dist/esm/Icon.js:
 lucide-react/dist/esm/createLucideIcon.js:
 lucide-react/dist/esm/icons/skip-forward.js:
+lucide-react/dist/esm/icons/users.js:
 lucide-react/dist/esm/lucide-react.js:
   (**
    * @license lucide-react v0.460.0 - ISC
