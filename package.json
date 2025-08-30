@@ -14,7 +14,8 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "dev:wordlist": "tsc scripts/ai-wordlist.ts --outDir scripts && node scripts/ai-wordlist.js",
-    "postbuild": "node postbuild.js"
+    "postbuild": "node postbuild.js",
+    "dev:curriculum": "tsc api/curriculumWordService.ts --outDir api && node api/curriculumWordService.js"
   },
   "repository": {
     "type": "git",
