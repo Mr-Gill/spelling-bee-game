@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { Flame } from 'lucide-react';
 import { GameConfig, Word } from './types';
 import { parseWordList } from './utils/parseWordList';
+import beeImg from './img/avatars/bee.svg';
 import bookImg from './img/avatars/book.svg';
+import trophyImg from './img/avatars/trophy.svg';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -11,9 +14,10 @@ interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
   onAddCustomWords: (words: Word[]) => void;
   onViewAchievements: () => void;
+  streak: number;
 }
 
-const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
+const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, streak }) => {
   const avatars = [beeImg, bookImg, trophyImg];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
@@ -373,6 +377,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <h1 className="text-4xl md:text-6xl font-bold text-yellow-300 uppercase font-heading">🏆 SPELLING BEE CHAMPIONSHIP</h1>
             </div>
             <p className="text-xl md:text-2xl">Get ready to spell your way to victory!</p>
+            <div className="flex items-center justify-center text-orange-400 mt-2">
+              <Flame className="w-5 h-5 mr-1" />
+              <span>{streak} day{streak === 1 ? '' : 's'} streak</span>
+            </div>
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">

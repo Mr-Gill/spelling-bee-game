@@ -22,6 +22,8 @@ import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
 import { audioManager } from "./utils/audio";
 
+const STREAK_MILESTONES = [3, 7, 14, 30];
+
 interface GameScreenProps {
   config: GameConfig;
   onEndGame: (results: GameResults) => void;
@@ -85,6 +87,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState("");
+
+  React.useEffect(() => {
+    const streak = Number(localStorage.getItem("streak") || "0");
+    const last = Number(localStorage.getItem("lastStreakMilestone") || "0");
+    if (STREAK_MILESTONES.includes(streak) && streak !== last) {
+      const bonus = streak * 10;
+      setParticipants((ps) => ps.map((p) => ({ ...p, points: p.points + bonus })));
+      setToast(`🔥 ${streak}-day streak bonus! +${bonus} points`);
+      localStorage.setItem("lastStreakMilestone", String(streak));
+    }
+  }, []);
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);

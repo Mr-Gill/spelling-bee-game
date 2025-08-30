@@ -18,6 +18,24 @@ const SpellingBeeGame = () => {
     const [musicVolume, setMusicVolume] = useState(0.5);
     const [soundEnabled, setSoundEnabled] = useState(true);
     const [isMusicPlaying, setIsMusicPlaying] = useState(true);
+    const [streak] = useState(() => {
+        const today = new Date().toISOString().split('T')[0];
+        const lastPlayed = localStorage.getItem('lastPlayed');
+        let current = Number(localStorage.getItem('streak') || '0');
+        if (!lastPlayed) {
+            current = 1;
+        } else {
+            const diff = (new Date(today).getTime() - new Date(lastPlayed).getTime()) / (1000 * 60 * 60 * 24);
+            if (diff === 1) {
+                current += 1;
+            } else if (diff > 1) {
+                current = 1;
+            }
+        }
+        localStorage.setItem('streak', String(current));
+        localStorage.setItem('lastPlayed', today);
+        return current;
+    });
 
     useEffect(() => {
         fetch('words.json')
@@ -92,7 +110,7 @@ const SpellingBeeGame = () => {
     useMusic(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
 
     if (gameState === "setup") {
-        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
+        return <SetupScreen streak={streak} onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
     }
     if (gameState === "playing") {
         return (
