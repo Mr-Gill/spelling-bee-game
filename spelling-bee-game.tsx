@@ -44,7 +44,7 @@ const SpellingBeeGame = () => {
                 tricky: [...wordDatabase.tricky, ...customWords.tricky],
             };
         }
-        setGameConfig({ ...config, wordDatabase: finalWordDatabase });
+        setSoundEnabled(gameConfig.soundEnabled);
         setMusicStyle(config.musicStyle);
         setMusicVolume(config.musicVolume);
         setSoundEnabled(config.soundEnabled);
@@ -86,7 +86,6 @@ const SpellingBeeGame = () => {
     // Handle background music on different screens
     const screen = gameState === 'playing' ? 'game' : 'menu';
     const trackVariant = screen === 'game' ? 'instrumental' : 'vocal';
-    const soundEnabled = gameConfig?.soundEnabled ?? (localStorage.getItem('soundEnabled') !== 'false');
     useMusic(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
 
     if (gameState === "setup") {

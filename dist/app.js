@@ -24595,6 +24595,9 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
   const [studentName, setStudentName] = (0, import_react2.useState)("");
   const [bulkStudentText, setBulkStudentText] = (0, import_react2.useState)("");
   const [bulkStudentError, setBulkStudentError] = (0, import_react2.useState)("");
+  const [randomTeamCount, setRandomTeamCount] = (0, import_react2.useState)(0);
+  const [randomTeamSize, setRandomTeamSize] = (0, import_react2.useState)(0);
+  const [randomizeError, setRandomizeError] = (0, import_react2.useState)("");
   const [skipPenaltyType, setSkipPenaltyType] = (0, import_react2.useState)("lives");
   const [skipPenaltyValue, setSkipPenaltyValue] = (0, import_react2.useState)(1);
   const [soundEnabled, setSoundEnabled] = (0, import_react2.useState)(() => localStorage.getItem("soundEnabled") !== "false");
@@ -24605,6 +24608,11 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
   const [progressionSpeed, setProgressionSpeed] = (0, import_react2.useState)(1);
   const [theme, setTheme] = (0, import_react2.useState)("light");
   const [teacherMode, setTeacherMode] = (0, import_react2.useState)(() => localStorage.getItem("teacherMode") === "true");
+  const [aiGrade, setAiGrade] = (0, import_react2.useState)(5);
+  const [aiTopic, setAiTopic] = (0, import_react2.useState)("");
+  const [aiCount, setAiCount] = (0, import_react2.useState)(10);
+  const [aiLoading, setAiLoading] = (0, import_react2.useState)(false);
+  const [aiError, setAiError] = (0, import_react2.useState)("");
   const applyTheme = (t) => {
     document.body.classList.remove("theme-light", "theme-dark", "theme-honeycomb");
     document.body.classList.add(`theme-${t}`);
@@ -24696,6 +24704,39 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
     setBulkStudentText("");
     setBulkStudentError("");
   };
+  const randomizeTeams = () => {
+    if (students.length < 2) {
+      setRandomizeError("Add at least two students to create teams.");
+      return;
+    }
+    let count = 0;
+    if (randomTeamCount > 0) {
+      count = randomTeamCount;
+    } else if (randomTeamSize > 0) {
+      count = Math.ceil(students.length / randomTeamSize);
+    }
+    if (count <= 0) {
+      setRandomizeError("Specify number of teams or team size.");
+      return;
+    }
+    const shuffled = [...students];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const groups = Array.from({ length: count }, () => []);
+    shuffled.forEach((student, idx) => {
+      groups[idx % count].push(student);
+    });
+    const newTeams = groups.filter((group) => group.length > 0).map((group, index) => {
+      const teamName = `Team ${index + 1}: ${group.map((s) => s.name).join(", ")}`;
+      const participant = createParticipant(teamName, initialDifficulty);
+      participant.avatar = teams[index]?.avatar || participant.avatar;
+      return participant;
+    });
+    updateTeams(newTeams);
+    setRandomizeError("");
+  };
   const parseWordList = (content) => {
     try {
       const parsed = JSON.parse(content);
@@ -24728,6 +24769,26 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
         setCustomWordListText(content);
       };
       reader.readAsText(file);
+    }
+  };
+  const generateAIWords = async () => {
+    setAiLoading(true);
+    setAiError("");
+    try {
+      const res = await fetch("http://localhost:3001/wordlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: aiCount })
+      });
+      if (!res.ok) throw new Error("Request failed");
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error("Invalid response");
+      setParsedCustomWords((prev) => [...prev, ...data]);
+    } catch (err) {
+      console.error("Failed to generate AI word list", err);
+      setAiError("Failed to generate words.");
+    } finally {
+      setAiLoading(false);
     }
   };
   (0, import_react2.useEffect)(() => {
@@ -24843,6 +24904,22 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
           /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { onClick: addBulkStudents, className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold", children: "Add Names" }),
           bulkStudentError && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "text-red-300 mt-2", children: bulkStudentError })
         ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "mb-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { className: "text-xl font-bold mb-2", children: "Randomize Teams" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex flex-wrap items-center gap-2 mb-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("input", { type: "number", min: 1, value: randomTeamCount || "", onChange: (e) => {
+              setRandomTeamCount(Number(e.target.value));
+              setRandomTeamSize(0);
+            }, placeholder: "Number of teams", className: "p-2 rounded-md bg-white/20 text-white flex-grow" }),
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { children: "or" }),
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("input", { type: "number", min: 1, value: randomTeamSize || "", onChange: (e) => {
+              setRandomTeamSize(Number(e.target.value));
+              setRandomTeamCount(0);
+            }, placeholder: "Team size", className: "p-2 rounded-md bg-white/20 text-white flex-grow" }),
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { onClick: randomizeTeams, className: "bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded", children: "Randomize" })
+          ] }),
+          randomizeError && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "text-red-300", children: randomizeError })
+        ] }),
         students.map((student, index) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
           /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("img", { src: student.avatar || avatars2[0], alt: "avatar", className: "w-8 h-8 rounded-full" }),
           /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("input", { type: "text", value: student.name, onChange: (e) => updateStudentName(index, e.target.value), placeholder: "Student name", className: "flex-grow p-2 rounded-md bg-white/20 text-white" }),
@@ -24947,10 +25024,20 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
           /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("textarea", { id: "paste-area", rows: 4, value: customWordListText, onChange: (e) => setCustomWordListText(e.target.value), className: "w-full p-2 rounded-md bg-white/20 text-white", placeholder: "Paste your tab-separated values here..." })
         ] })
       ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "mt-6", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex flex-col md:flex-row gap-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("input", { type: "number", min: 1, value: aiGrade, onChange: (e) => setAiGrade(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-full md:w-24", placeholder: "Grade" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("input", { type: "text", value: aiTopic, onChange: (e) => setAiTopic(e.target.value), className: "p-2 rounded-md bg-white/20 text-white flex-1", placeholder: "Topic (optional)" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("input", { type: "number", min: 1, value: aiCount, onChange: (e) => setAiCount(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-full md:w-24", placeholder: "# Words" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { onClick: generateAIWords, disabled: aiLoading, className: "bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto", children: aiLoading ? "Generating..." : "Generate with AI" })
+        ] }),
+        aiError && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "text-red-300 mt-2", children: aiError })
+      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "mt-4 text-sm text-gray-300", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { children: [
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("strong", { children: "Format:" }),
         " The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`."
-      ] }) })
+      ] }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "mt-2", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("a", { href: "wordlists/example.csv", download: true, className: "inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded", children: "Download Template" }) })
     ] }),
     missedWordCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "bg-white/10 p-4 rounded-lg mb-8", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("label", { className: "flex items-center space-x-3", children: [
       /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("input", { type: "checkbox", checked: includeMissedWords, onChange: (e) => setIncludeMissedWords(e.target.checked) }),
@@ -25044,10 +25131,47 @@ var createLucideIcon = (iconName, iconNode) => {
   return Component;
 };
 
+// node_modules/lucide-react/dist/esm/icons/pause.js
+var Pause = createLucideIcon("Pause", [
+  ["rect", { x: "14", y: "4", width: "4", height: "16", rx: "1", key: "zuxfzm" }],
+  ["rect", { x: "6", y: "4", width: "4", height: "16", rx: "1", key: "1okwgv" }]
+]);
+
+// node_modules/lucide-react/dist/esm/icons/play.js
+var Play = createLucideIcon("Play", [
+  ["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]
+]);
+
 // node_modules/lucide-react/dist/esm/icons/skip-forward.js
 var SkipForward = createLucideIcon("SkipForward", [
   ["polygon", { points: "5 4 15 12 5 20 5 4", key: "16p6eg" }],
   ["line", { x1: "19", x2: "19", y1: "5", y2: "19", key: "futhcm" }]
+]);
+
+// node_modules/lucide-react/dist/esm/icons/volume-2.js
+var Volume2 = createLucideIcon("Volume2", [
+  [
+    "path",
+    {
+      d: "M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z",
+      key: "uqj9uw"
+    }
+  ],
+  ["path", { d: "M16 9a5 5 0 0 1 0 6", key: "1q6k2b" }],
+  ["path", { d: "M19.364 18.364a9 9 0 0 0 0-12.728", key: "ijwkga" }]
+]);
+
+// node_modules/lucide-react/dist/esm/icons/volume-x.js
+var VolumeX = createLucideIcon("VolumeX", [
+  [
+    "path",
+    {
+      d: "M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z",
+      key: "uqj9uw"
+    }
+  ],
+  ["line", { x1: "22", x2: "16", y1: "9", y2: "15", key: "1ewh16" }],
+  ["line", { x1: "16", x2: "22", y1: "9", y2: "15", key: "5ykzw1" }]
 ]);
 
 // types.ts
@@ -25818,12 +25942,23 @@ var import_react5 = __toESM(require_react());
 var useSound = (src, enabled = true) => {
   const audioRef = (0, import_react5.useRef)(null);
   (0, import_react5.useEffect)(() => {
-    audioRef.current = new Audio(src);
+    const audio = new Audio(src);
+    audio.load();
+    audioRef.current = audio;
+    return () => {
+      audio.pause();
+      audioRef.current = null;
+    };
   }, [src]);
   const play = (0, import_react5.useCallback)(() => {
     if (!enabled || !audioRef.current) return;
     audioRef.current.currentTime = 0;
-    audioRef.current.play();
+    const playPromise = audioRef.current.play();
+    if (playPromise !== void 0) {
+      playPromise.catch((error) => {
+        console.error("Error playing audio:", error);
+      });
+    }
   }, [enabled]);
   return play;
 };
@@ -26225,36 +26360,21 @@ function AvatarSelector({ currentAvatar, onSelect }) {
   )) });
 }
 
-// utils/audio.js
-var AudioManager = class {
-  constructor() {
-    this.sounds = {};
-    this.masterVolume = 1;
-    this.muted = false;
-  }
-  loadSound(key, path) {
-    this.sounds[key] = new Audio(path);
-  }
-  play(key, { volume = 1, loop = false } = {}) {
-    if (!this.sounds[key]) return;
-    const sound = this.sounds[key].cloneNode();
-    sound.volume = this.muted ? 0 : this.masterVolume * volume;
-    sound.loop = loop;
-    sound.play();
-    return sound;
-  }
-  setMasterVolume(volume) {
-    this.masterVolume = Math.max(0, Math.min(1, volume));
-  }
-  toggleMute() {
-    this.muted = !this.muted;
-  }
-};
-var audioManager = new AudioManager();
-
 // GameScreen.tsx
 var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-var GameScreen = ({ config, onEndGame }) => {
+var musicStyles2 = ["Funk", "Country", "Deep Bass", "Rock", "Jazz", "Classical"];
+var GameScreen = ({
+  config,
+  onEndGame,
+  musicStyle,
+  musicVolume,
+  onMusicStyleChange,
+  onMusicVolumeChange,
+  soundEnabled,
+  onSoundEnabledChange,
+  isMusicPlaying,
+  onToggleMusicPlaying
+}) => {
   const [participants, setParticipants] = import_react9.default.useState(
     config.participants.map((p) => ({
       ...p,
@@ -26288,13 +26408,13 @@ var GameScreen = ({ config, onEndGame }) => {
   const [startTime] = import_react9.default.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = import_react9.default.useState("");
   const [darkMode, setDarkMode] = import_react9.default.useState(false);
-  const playCorrect = useSound_default(correct_default, config.soundEnabled);
-  const playWrong = useSound_default(wrong_default, config.soundEnabled);
-  const playTimeout = useSound_default(timeout_default, config.soundEnabled);
-  const playLetterCorrect = useSound_default(letter_correct_default, config.soundEnabled);
-  const playLetterWrong = useSound_default(letter_wrong_default, config.soundEnabled);
-  const playShop = useSound_default(shop_default, config.soundEnabled);
-  const playLoseLife = useSound_default(lose_life_default, config.soundEnabled);
+  const playCorrect = useSound_default(correct_default, soundEnabled);
+  const playWrong = useSound_default(wrong_default, soundEnabled);
+  const playTimeout = useSound_default(timeout_default, soundEnabled);
+  const playLetterCorrect = useSound_default(letter_correct_default, soundEnabled);
+  const playLetterWrong = useSound_default(letter_wrong_default, soundEnabled);
+  const playShop = useSound_default(shop_default, soundEnabled);
+  const playLoseLife = useSound_default(lose_life_default, soundEnabled);
   const {
     timeLeft,
     start: startTimer,
@@ -26555,6 +26675,9 @@ var GameScreen = ({ config, onEndGame }) => {
       onEndGameWithMissedWords();
     }
   }, [participants]);
+  const handleMuteToggle = () => {
+    audioManager.toggleMute();
+  };
   return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center", children: [
     /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
       "input",
@@ -26597,14 +26720,49 @@ var GameScreen = ({ config, onEndGame }) => {
         }
       )
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("audio-controls", { className: "audio-controls", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-      "button",
-      {
-        className: `audio-btn ${audioManager.muted ? "muted" : ""}`,
-        onClick: () => audioManager.toggleMute(),
-        children: audioManager.muted ? "\u{1F507}" : "\u{1F50A}"
-      }
-    ) }),
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "absolute bottom-8 left-8 bg-black/50 p-4 rounded-lg z-50 flex flex-col gap-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          "button",
+          {
+            onClick: onToggleMusicPlaying,
+            className: "bg-yellow-300 text-black p-2 rounded",
+            "aria-label": isMusicPlaying ? "Pause music" : "Play music",
+            children: isMusicPlaying ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Pause, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Play, { size: 16 })
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          "button",
+          {
+            onClick: () => onSoundEnabledChange(!soundEnabled),
+            className: "bg-yellow-300 text-black p-2 rounded",
+            "aria-label": soundEnabled ? "Mute audio" : "Unmute audio",
+            children: soundEnabled ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Volume2, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(VolumeX, { size: 16 })
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        "input",
+        {
+          type: "range",
+          min: 0,
+          max: 1,
+          step: 0.01,
+          value: musicVolume,
+          onChange: (e) => onMusicVolumeChange(parseFloat(e.target.value)),
+          className: "w-32"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        "select",
+        {
+          value: musicStyle,
+          onChange: (e) => onMusicStyleChange(e.target.value),
+          className: "text-black rounded p-1",
+          children: musicStyles2.map((style) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: style, children: style }, style))
+        }
+      )
+    ] }),
     /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
       AvatarSelector,
       {
@@ -26677,7 +26835,7 @@ var GameScreen = ({ config, onEndGame }) => {
           onLetter: handleVirtualLetter,
           onBackspace: handleVirtualBackspace,
           onSubmit: handleSpellingSubmit,
-          soundEnabled: config.soundEnabled
+          soundEnabled
         }
       )
     ] }),
@@ -26984,6 +27142,7 @@ var useMusic = (style, variant, volume, enabled, screen) => {
     instrumental: null,
     vocal: null
   });
+  const promptRef = (0, import_react13.useRef)(false);
   const stop = (0, import_react13.useCallback)(() => {
     ["instrumental", "vocal"].forEach((v) => {
       const menuAudio = menuRef.current[v];
@@ -27015,6 +27174,7 @@ var useMusic = (style, variant, volume, enabled, screen) => {
           console.warn(`Menu music file not found: ${menuSrc}`);
           menuRef.current[trackVariant] = null;
         };
+        menuAudio.load();
         const gameAudio = new Audio(gameSrc);
         gameAudio.loop = true;
         gameAudio.volume = volume;
@@ -27022,6 +27182,7 @@ var useMusic = (style, variant, volume, enabled, screen) => {
           console.warn(`Gameplay music file not found: ${gameSrc}`);
           gameRef.current[trackVariant] = null;
         };
+        gameAudio.load();
         menuRef.current[trackVariant] = menuAudio;
         gameRef.current[trackVariant] = gameAudio;
       });
@@ -27047,6 +27208,14 @@ var useMusic = (style, variant, volume, enabled, screen) => {
     const track = refs[variant];
     stop();
     track?.play().catch(() => {
+      if (promptRef.current) return;
+      promptRef.current = true;
+      const enable = () => {
+        track.play().catch(() => {
+        });
+      };
+      document.addEventListener("click", enable, { once: true });
+      alert("Click anywhere to enable audio");
     });
   }, [screen, variant, enabled, stop]);
   (0, import_react13.useEffect)(() => () => stop(), [stop]);
@@ -27061,6 +27230,10 @@ var SpellingBeeGame = () => {
   const [gameResults, setGameResults] = (0, import_react14.useState)(null);
   const [customWords, setCustomWords] = (0, import_react14.useState)({ easy: [], medium: [], tricky: [] });
   const [wordDatabase, setWordDatabase] = (0, import_react14.useState)({ easy: [], medium: [], tricky: [] });
+  const [musicStyle, setMusicStyle] = (0, import_react14.useState)("Funk");
+  const [musicVolume, setMusicVolume] = (0, import_react14.useState)(0.5);
+  const [soundEnabled, setSoundEnabled] = (0, import_react14.useState)(true);
+  const [isMusicPlaying, setIsMusicPlaying] = (0, import_react14.useState)(true);
   (0, import_react14.useEffect)(() => {
     fetch("words.json").then((res) => res.json()).then((data) => setWordDatabase(data)).catch((err) => console.error("Failed to load word list", err));
   }, []);
@@ -27081,7 +27254,11 @@ var SpellingBeeGame = () => {
         tricky: [...wordDatabase.tricky, ...customWords.tricky]
       };
     }
-    setGameConfig({ ...config, wordDatabase: finalWordDatabase });
+    setSoundEnabled(gameConfig.soundEnabled);
+    setMusicStyle(config.musicStyle);
+    setMusicVolume(config.musicVolume);
+    setSoundEnabled(config.soundEnabled);
+    setIsMusicPlaying(true);
     setGameState("playing");
   };
   const handleEndGame = (results) => {
@@ -27109,16 +27286,28 @@ var SpellingBeeGame = () => {
       document.body.classList.add(`theme-${savedTheme}`);
     }
   }, []);
-  const musicStyle = gameConfig?.musicStyle || "Funk";
-  const musicVolume = gameConfig?.musicVolume ?? 0.5;
   const screen = gameState === "playing" ? "game" : "menu";
   const trackVariant = screen === "game" ? "instrumental" : "vocal";
-  useMusic_default(musicStyle, trackVariant, musicVolume, gameConfig?.soundEnabled ?? true, screen);
+  useMusic_default(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
   if (gameState === "setup") {
     return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SetupScreen_default, { onStartGame: handleStartGame, onAddCustomWords: handleAddCustomWords, onViewAchievements: handleViewAchievements });
   }
   if (gameState === "playing") {
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(GameScreen_default, { config: gameConfig, onEndGame: handleEndGame });
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+      GameScreen_default,
+      {
+        config: gameConfig,
+        onEndGame: handleEndGame,
+        musicStyle,
+        musicVolume,
+        onMusicStyleChange: setMusicStyle,
+        onMusicVolumeChange: setMusicVolume,
+        soundEnabled,
+        onSoundEnabledChange: setSoundEnabled,
+        isMusicPlaying,
+        onToggleMusicPlaying: () => setIsMusicPlaying((prev) => !prev)
+      }
+    );
   }
   if (gameState === "results") {
     return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(ResultsScreen_default, { results: gameResults, config: gameConfig, onRestart: handleRestart, onViewLeaderboard: handleViewLeaderboard });
@@ -27201,7 +27390,11 @@ lucide-react/dist/esm/shared/src/utils.js:
 lucide-react/dist/esm/defaultAttributes.js:
 lucide-react/dist/esm/Icon.js:
 lucide-react/dist/esm/createLucideIcon.js:
+lucide-react/dist/esm/icons/pause.js:
+lucide-react/dist/esm/icons/play.js:
 lucide-react/dist/esm/icons/skip-forward.js:
+lucide-react/dist/esm/icons/volume-2.js:
+lucide-react/dist/esm/icons/volume-x.js:
 lucide-react/dist/esm/lucide-react.js:
   (**
    * @license lucide-react v0.460.0 - ISC
