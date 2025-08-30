@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { GameConfig, Word, Participant, OptionsState } from './types';
-import { parseWordList } from './utils/parseWordList';
+import { GameConfig, Participant, OptionsState } from './types';
+import { parseWordList as parseWordListUtil } from './utils/parseWordList';
 import useRoster from '../hooks/useRoster';
 import beeImg from '../img/avatars/bee.svg';
 import bookImg from '../img/avatars/book.svg';
@@ -13,6 +13,12 @@ import GameOptions from './components/GameOptions';
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
+
+type WordDatabase = {
+  easy: Word[];
+  medium: Word[];
+  tricky: Word[];
+};
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
@@ -304,7 +310,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         const randomList = bundledWordLists[Math.floor(Math.random() * bundledWordLists.length)];
         const response = await fetch(`wordlists/${randomList.file}`);
         const text = await response.text();
-        challengeWords = parseWordList(text);
+        challengeWords = parseWordListUtil(text);
       } catch (err) {
         console.error('Failed to load session challenge words', err);
         setError('Failed to load session challenge words.');
@@ -354,6 +360,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       progressionSpeed: options.progressionSpeed,
       musicStyle: options.musicStyle,
       musicVolume: options.musicVolume,
+      wordDatabase: {
+        easy: finalWords.filter(w => w.difficulty === 'easy'),
+        medium: finalWords.filter(w => w.difficulty === 'medium'),
+        tricky: finalWords.filter(w => w.difficulty === 'tricky')
+      }
     };
     onStartGame(config);
   };
@@ -414,15 +425,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <div key={index} className="flex items-center gap-2 mb-2">
                   <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
                   <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
-                  {students.length > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
+                  {index > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
                 </div>
               ))}
               <StudentRoster
                 students={students}
                 avatars={avatars}
                 addParticipant={addStudentParticipant}
-                removeStudent={removeStudent}
-                updateStudentName={updateStudentName}
+                removeParticipant={removeStudent}
+                updateName={updateStudentName}
                 createParticipant={createParticipant}
                 initialDifficulty={options.initialDifficulty}
               />
@@ -538,11 +549,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <div className="mt-2">
                     <a href="wordlists/example.csv" download className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Download Template</a>
                 </div>
-            </div>
-            <div className="mt-2">
-              <a href="wordlists/example.csv" download className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
-                Download Template
-              </a>
             </div>
         </div>
         

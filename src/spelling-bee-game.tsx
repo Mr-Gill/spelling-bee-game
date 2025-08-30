@@ -9,13 +9,39 @@ import ShopScreen from '../ShopScreen';
 import useMusic from './utils/useMusic';
 import { AudioProvider } from "./AudioContext";
 
+// --- Type Definitions ---
+type Participant = {
+  // Add participant properties here
+};
+
+type WordDatabase = {
+  easy: string[];
+  medium: string[];
+  tricky: string[];
+};
+
+type GameConfig = {
+  participants: Participant[];
+  gameMode: 'team' | 'individual';
+  timerDuration: number;
+  skipPenaltyType: 'lives' | 'points';
+  skipPenaltyValue: number;
+  soundEnabled: boolean;
+  effectsEnabled: boolean;
+  difficultyLevel: number;
+  progressionSpeed: number;
+  musicStyle: string;
+  musicVolume: number;
+  wordDatabase: WordDatabase;
+};
+
 // --- Main App Component ---
 const SpellingBeeGame = () => {
     const [gameState, setGameState] = useState("setup");
-    const [gameConfig, setGameConfig] = useState(null);
+    const [gameConfig, setGameConfig] = useState<GameConfig | null>(null);
     const [gameResults, setGameResults] = useState(null);
     const [customWords, setCustomWords] = useState({ easy: [], medium: [], tricky: [] });
-    const [wordDatabase, setWordDatabase] = useState({ easy: [], medium: [], tricky: [] });
+    const [wordDatabase, setWordDatabase] = useState<WordDatabase>({ easy: [], medium: [], tricky: [] });
     const [musicStyle, setMusicStyle] = useState('Funk');
     const [musicVolume, setMusicVolume] = useState(0.5);
     const [soundEnabled, setSoundEnabled] = useState(true);
@@ -35,7 +61,7 @@ const SpellingBeeGame = () => {
         setCustomWords({ easy, medium, tricky });
     };
 
-    const handleStartGame = (config) => {
+    const handleStartGame = (config: GameConfig) => {
         let finalWordDatabase;
         if (config.dailyChallenge) {
             finalWordDatabase = customWords;
@@ -46,7 +72,8 @@ const SpellingBeeGame = () => {
                 tricky: [...wordDatabase.tricky, ...customWords.tricky],
             };
         }
-        setSoundEnabled(gameConfig.soundEnabled);
+        setGameConfig(config);
+        setSoundEnabled(config.soundEnabled);
         setMusicStyle(config.musicStyle);
         setMusicVolume(config.musicVolume);
         setIsMusicPlaying(true);
@@ -98,7 +125,14 @@ const SpellingBeeGame = () => {
     useMusic(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
 
     if (gameState === "setup") {
-        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} onViewShop={handleViewShop} />;
+        return (
+          <SetupScreen
+            onStartGame={handleStartGame}
+            onAddCustomWords={handleAddCustomWords}
+            onViewAchievements={handleViewAchievements}
+            onViewShop={() => handleViewShop()}
+          />
+        );
     }
     if (gameState === "playing") {
         return (
