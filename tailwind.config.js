@@ -7,6 +7,10 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        heading: ['Readex Pro', 'sans-serif'],
+        body: ['Inclusive Sans', 'sans-serif'],
+      },
       animation: {
         'bounce-slow': 'bounce 3s infinite',
         'float': 'float 6s ease-in-out infinite',
