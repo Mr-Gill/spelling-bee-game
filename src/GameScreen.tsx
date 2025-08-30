@@ -161,53 +161,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
     setState(prev => ({ ...prev, gameProgress }));
   }, [state.currentWordIndex, state.totalWords]);
 
-  // Handle next word logic
-  const handleNextWord = useCallback(() => {
-    setState(prev => {
-      const nextWordIndex = prev.currentWordIndex + 1;
-      const nextParticipantIndex = (prev.currentParticipantIndex + 1) % prev.participants.length;
-      
-      if (nextWordIndex >= (config.words?.length || 0)) {
-        onEndGame({
-          participants: prev.participants as Participant[],
-          wordsAttempted: nextWordIndex,
-          wordsCorrect: prev.participants.reduce((sum, p) => sum + (p as any).correct, 0),
-          timeElapsed: 0,
-          date: new Date().toISOString(),
-        });
-        return prev;
-      }
-
-      return {
-        ...prev,
-        currentWordIndex: nextWordIndex,
-        currentParticipantIndex: nextParticipantIndex,
-        revealedIndices: new Set<number>(),
-        showDefinition: false,
-        currentHelp: null,
-        usedHint: false,
-        letters: [],
-        usedLetters: new Set<string>(),
-        attemptedParticipants: new Set<number>()
-      };
-    });
-  }, [config.words, onEndGame]);
-
-  // Help system handlers
-  const handleRevealLetter = useCallback((word: string, indices: Set<number>) => {
-    const result = revealLetterHelp(word, indices);
-    if (result) {
-      setState(prev => ({
-        ...prev,
-        revealedIndices: new Set([...prev.revealedIndices, result.index]),
-        currentHelp: `Revealed letter: ${result.letter}`,
-        feedback: { message: `Revealed letter: ${result.letter}`, type: 'info' }
-      }));
-      setHelpUsed('hint-letter');
-    }
-    return result;
-  }, [revealLetterHelp, setHelpUsed]);
-
   const handleShowDefinition = useCallback(async (word: string) => {
     setState(prev => ({ ...prev, showDefinition: true }));
     try {
