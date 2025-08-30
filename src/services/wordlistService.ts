@@ -1,48 +1,72 @@
 export interface Word {
   word: string;
   syllables: string[];
-  phonemes: string[];
   definition: string;
   origin: string;
   example: string;
   prefix: string;
   suffix: string;
   pronunciation: string;
+  difficulty?: 'easy' | 'medium' | 'hard';
+  id?: string;
+  listId?: string;
 }
 
-// Path to the word list in the public directory
-const WORDLIST_PATH = '/wordlist.json';
+// Paths to word lists
+const DEFAULT_WORDLIST_PATH = '/wordlist.json';
+const CUSTOM_WORDLISTS_KEY = 'wordLists';
 
 let cachedWordList: Word[] | null = null;
+let activeListId: string | null = null;
 
 // Fallback word list in case the file fails to load
 const FALLBACK_WORDS: Word[] = [
   {
     word: 'education',
     syllables: ['ed', 'u', 'ca', 'tion'],
-    phonemes: ['EH', 'J', 'OO', 'K', 'AY', 'SH', 'U', 'N'],
     definition: 'The process of receiving or giving systematic instruction, especially at a school or university.',
     origin: 'Latin "educatio", from "educare" meaning "to bring up, rear, educate".',
     example: 'The school is committed to providing quality education to all its students.',
     prefix: '',
     suffix: '-tion',
-    pronunciation: 'ej-oo-KAY-shun'
+    pronunciation: 'ej-oo-KAY-shun',
+    difficulty: 'medium'
   },
   {
     word: 'spelling',
     syllables: ['spell', 'ing'],
-    phonemes: ['S', 'P', 'EH', 'L', 'IH', 'NG'],
     definition: 'The process of writing or naming the letters of a word.',
     origin: 'Old English "spellian" meaning "to tell, speak, utter".',
     example: 'She won first place in the school spelling competition.',
     prefix: '',
     suffix: '-ing',
-    pronunciation: 'SPEL-ing'
+    pronunciation: 'SPEL-ing',
+    difficulty: 'easy'
   }
 ];
 
 /**
- * Fetches the word list from the public directory or returns a cached version if available
+ * Gets the active word list ID
+ */
+export function getActiveListId(): string | null {
+  return activeListId || localStorage.getItem('activeWordListId');
+}
+
+/**
+ * Sets the active word list ID
+ */
+export function setActiveListId(listId: string | null): void {
+  if (listId) {
+    activeListId = listId;
+    localStorage.setItem('activeWordListId', listId);
+  } else {
+    activeListId = null;
+    localStorage.removeItem('activeWordListId');
+  }
+}
+
+/**
+ * Gets the active word list from localStorage or the default list
  */
 export async function getWordList(): Promise<Word[]> {
   // Return cached word list if available
@@ -50,26 +74,42 @@ export async function getWordList(): Promise<Word[]> {
     return cachedWordList;
   }
 
+  // Try to load from active custom list first
+  const activeListId = getActiveListId();
+  if (activeListId) {
+    const customList = getCustomWordList(activeListId);
+    if (customList) {
+      cachedWordList = customList;
+      return cachedWordList;
+    }
+  }
+
+  // Fall back to default word list
   try {
     // Try to fetch from the public directory first
-    const response = await fetch(WORDLIST_PATH);
-    
+    const response = await fetch(DEFAULT_WORDLIST_PATH);
     if (!response.ok) {
       throw new Error(`Failed to fetch word list: ${response.statusText}`);
     }
     
-    const wordList = await response.json();
+    const data = await response.json();
+    cachedWordList = (Array.isArray(data) ? data : []).map(word => ({
+      ...word,
+      id: `default-${word.word}`,
+      listId: 'default',
+    }));
     
     // Validate the word list structure
-    if (!Array.isArray(wordList) || wordList.length === 0) {
+    if (!Array.isArray(cachedWordList) || cachedWordList.length === 0) {
       console.warn('Word list is empty or invalid, using fallback words');
-      return FALLBACK_WORDS;
+      return FALLBACK_WORDS.map(word => ({
+        ...word,
+        id: `fallback-${word.word}`,
+        listId: 'fallback',
+      }));
     }
     
-    // Cache the word list for future use
-    cachedWordList = wordList;
-    
-    return wordList;
+    return cachedWordList;
   } catch (error) {
     console.error('Error loading word list, using fallback words:', error);
     
@@ -149,3 +189,72 @@ export async function getWordsByTopic(topic: string, count: number = 10): Promis
 
 // For backward compatibility
 export const generateWordList = getWordsByTopic;
+
+/**
+ * Gets a custom word list by ID
+ */
+export function getCustomWordList(listId: string): Word[] | null {
+  try {
+    const lists = JSON.parse(localStorage.getItem(CUSTOM_WORDLISTS_KEY) || '[]');
+    const list = lists.find((l: any) => l.id === listId);
+    if (!list) return null;
+    
+    return list.words.map((word: any, index: number) => ({
+      ...word,
+      id: `${listId}-${index}`,
+      listId,
+      syllables: word.syllables || splitIntoSyllables(word.word),
+      origin: word.origin || '',
+      example: word.example || '',
+      prefix: word.prefix || '',
+      suffix: word.suffix || '',
+      pronunciation: word.pronunciation || '',
+    }));
+  } catch (error) {
+    console.error('Error loading custom word list:', error);
+    return null;
+  }
+}
+
+/**
+ * Simple syllable splitting function
+ */
+function splitIntoSyllables(word: string): string[] {
+  // This is a very basic implementation
+  return word.split(/(?=[A-Z])|[-_]/).map(part => part.toLowerCase());
+}
+
+/**
+ * Gets all available word lists (default + custom)
+ */
+export function getAllWordLists(): Array<{
+  id: string;
+  name: string;
+  description?: string;
+  wordCount: number;
+  isDefault: boolean;
+}> {
+  const defaultList = {
+    id: 'default',
+    name: 'Default Word List',
+    description: 'Built-in word list',
+    wordCount: cachedWordList?.length || 0,
+    isDefault: true,
+  };
+
+  try {
+    const customLists = JSON.parse(localStorage.getItem(CUSTOM_WORDLISTS_KEY) || '[]')
+      .map((list: any) => ({
+        id: list.id,
+        name: list.name,
+        description: list.description,
+        wordCount: list.words?.length || 0,
+        isDefault: false,
+      }));
+    
+    return [defaultList, ...customLists];
+  } catch (error) {
+    console.error('Error loading word lists:', error);
+    return [defaultList];
+  }
+}
