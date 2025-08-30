@@ -26,6 +26,7 @@ import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
 import { AudioSettings } from "./components/AudioSettings";
 import { useAudio } from "./AudioContext";
+import CircularTimer from "./components/CircularTimer";
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -572,10 +573,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       )}
 
       <div className="absolute top-8 right-8 text-center z-50 bg-white/10 p-4 rounded-lg">
-        <div className={`text-6xl font-bold ${timeLeft <= 10 ? "text-red-500" : "text-yellow-300"}`}>
-          {timeLeft}
-        </div>
-        <div className="text-lg">seconds left</div>
+        <CircularTimer timeLeft={timeLeft} total={config.timerDuration} />
+        <div className="text-lg mt-2">seconds left</div>
         <button
           onClick={isPaused ? resumeTimer : pauseTimer}
           className="mt-2 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
