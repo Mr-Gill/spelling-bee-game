@@ -4,6 +4,7 @@ import applauseSoundFile from './audio/applause.mp3';
 import { launchConfetti } from './utils/confetti';
 import { recordDailyCompletion, StreakInfo } from './DailyChallenge';
 import beeImg from './img/avatars/bee.svg';
+import MorphologyCard from './components/MorphologyCard';
 
 interface ResultsScreenProps {
   results: GameResults;
@@ -144,6 +145,9 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
           {results.missedWords.map((w, index) => (
             <div key={index} className="text-left text-xl mb-2">
               <span className="font-bold">{w.word}</span> - {w.definition}
+              {(w.prefix || w.suffix) && (
+                <MorphologyCard word={w} database={config.wordDatabase} />
+              )}
             </div>
           ))}
         </div>
