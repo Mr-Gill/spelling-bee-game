@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { test } = require('node:test');
-const { parseWordList } = require('../utils/parseWordList');
+const { parseWordList } = require('../src/utils/parseWordList.js');
 
 test('throws for JSON missing required fields', () => {
   const badJson = JSON.stringify([{ word: 'apple' }]);

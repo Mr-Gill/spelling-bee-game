@@ -1,0 +1,723 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Participant } from './types/participant';
+import { Team } from './types/team';
+import { v4 as uuidv4 } from 'uuid';
+import { GameConfig } from './types/game';
+import { OptionsState } from './types/game';
+import { WordType } from './types/word';
+import beeImg from './img/avatars/bee.svg';
+import bookImg from './img/avatars/book.svg';
+import trophyImg from './img/avatars/trophy.svg';
+import TeamForm from './components/TeamForm';
+import StudentRoster from './components/StudentRoster';
+import GameOptions from './components/GameOptions';
+import { parseWordList } from './utils/parseWordList';
+import WordListPrompt from './components/WordListPrompt';
+
+// Gather available music styles.
+// This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
+const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
+
+type WordDatabase = {
+  easy: any[];
+  medium: any[];
+  tricky: any[];
+};
+
+interface SetupScreenProps {
+  onStartGame: (config: GameConfig) => void;
+  onAddCustomWords: (words: any[]) => void;
+  onViewAchievements: () => void;
+}
+
+const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
+  const availableAvatars = [beeImg, bookImg, trophyImg];
+  const getRandomAvatar = () => availableAvatars[Math.floor(Math.random() * availableAvatars.length)];
+
+  const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
+  const [startingLives, setStartingLives] = useState(10);
+
+  const [options, setOptions] = useState<OptionsState>({
+    gameMode: 'individual',
+    audioEnabled: true,
+    soundEffectsEnabled: true,
+    wordSource: 'curriculum',
+    timerDuration: 60,
+    skipPenaltyType: 'points',
+    skipPenaltyValue: 5,
+    progressionSpeed: 1,
+    musicStyle: 'default',
+    musicVolume: 0.8,
+    initialDifficulty: 1,
+    soundEnabled: true,
+    effectsEnabled: true,
+    teacherMode: false,
+    theme: 'light',
+    musicEnabled: true,
+  });
+
+  const createParticipant = (name: string, difficulty: number): Participant => ({
+    id: uuidv4(),
+    name,
+    avatar: availableAvatars[Math.floor(Math.random() * availableAvatars.length)],
+    score: 0,
+    lives: options.initialDifficulty,
+    teamId: null,
+    points: 0,
+    difficultyLevel: difficulty,
+    streak: 0,
+    attempted: 0,
+    correct: 0,
+    incorrect: 0,
+    wordsAttempted: 0,
+    wordsCorrect: 0
+  });
+
+  const createTeam = (): Team => ({
+    id: uuidv4(),
+    name: `Team ${teams.length + 1}`,
+    students: []
+  });
+
+  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+
+  const handleAddParticipant = (name: string) => {
+    const newParticipant = createParticipant(name, options.initialDifficulty);
+    setParticipants([...participants, newParticipant]);
+  };
+
+  const addTeam = (team: Team) => {
+    setTeams([...teams, team]);
+  };
+
+  const removeTeam = (id: string) => {
+    setTeams(teams.filter(t => t.id !== id));
+  };
+
+  const updateTeam = (id: string, updates: Partial<Team>) => {
+    setTeams(teams.map(t => t.id === id ? {...t, ...updates} : t));
+  };
+
+  const [timerDuration, setTimerDuration] = useState(30);
+  const [customWordListText, setCustomWordListText] = useState('');
+  const [parsedCustomWords, setParsedCustomWords] = useState<any[]>([]);
+  const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, any[]>>({});
+  const [includeMissedWords, setIncludeMissedWords] = useState(false);
+  const [error, setError] = useState('');
+  const bundledWordLists = [
+    { label: 'Example JSON', file: 'example.json' },
+    { label: 'Example CSV', file: 'example.csv' },
+    { label: 'Example TSV', file: 'example.tsv' }
+  ];
+  const [selectedBundledList, setSelectedBundledList] = useState('');
+  const [studentName, setStudentName] = useState('');
+  const [bulkStudentText, setBulkStudentText] = useState('');
+  const [bulkStudentError, setBulkStudentError] = useState('');
+  const [randomTeamCount, setRandomTeamCount] = useState(0);
+  const [randomTeamSize, setRandomTeamSize] = useState(0);
+  const [randomizeError, setRandomizeError] = useState('');
+  const [skipPenaltyType, setSkipPenaltyType] = useState<'lives' | 'points'>('lives');
+  const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => localStorage.getItem('soundEnabled') !== 'false');
+  const [effectsEnabled, setEffectsEnabled] = useState(true);
+  const [musicStyle, setMusicStyle] = useState<string>(() => localStorage.getItem('musicStyle') ?? 'Funk');
+  const [musicVolume, setMusicVolume] = useState<number>(() => parseFloat(localStorage.getItem('musicVolume') ?? '1'));
+  const [initialDifficulty, setInitialDifficulty] = useState(0);
+  const [progressionSpeed, setProgressionSpeed] = useState(1);
+  const [theme, setTheme] = useState('light');
+  const [teacherMode, setTeacherMode] = useState<boolean>(() => localStorage.getItem('teacherMode') === 'true');
+  const [aiGrade, setAiGrade] = useState(5);
+  const [aiTopic, setAiTopic] = useState('');
+  const [aiCount, setAiCount] = useState(10);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState<string>(() => localStorage.getItem('selectedVoice') ?? '');
+
+  const applyTheme = (t: string) => {
+    document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
+    document.body.classList.add(`theme-${t}`);
+  };
+
+  useEffect(() => {
+    if (teacherMode) {
+      document.body.classList.add('teacher-mode');
+    } else {
+      document.body.classList.remove('teacher-mode');
+    }
+    try {
+      localStorage.setItem('teacherMode', String(teacherMode));
+    } catch (error) {
+      console.error('Failed to save teacherMode to localStorage', error);
+    }
+  }, [teacherMode]);
+
+  useEffect(() => {
+    setStartingLives(gameMode === 'team' ? 10 : 5);
+  }, [gameMode]);
+  
+  useEffect(() => {
+    const savedTeams = localStorage.getItem('teams');
+    if (savedTeams) try { setTeams(JSON.parse(savedTeams).map((t: Participant) => ({ ...t, avatar: t.avatar || getRandomAvatar() }))); } catch {}
+    const savedStudents = localStorage.getItem('students');
+    if (savedStudents) try { setParticipants(JSON.parse(savedStudents).map((s: Participant) => ({ ...s, avatar: s.avatar || getRandomAvatar() }))); } catch {}
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setTheme(savedTheme);
+      applyTheme(savedTheme);
+    } else {
+      applyTheme(theme);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('soundEnabled', String(soundEnabled));
+    } catch (error) {
+      console.error('Failed to save soundEnabled to localStorage', error);
+    }
+  }, [soundEnabled]);
+  useEffect(() => {
+    try {
+      localStorage.setItem('musicStyle', musicStyle);
+    } catch (error) {
+      console.error('Failed to save musicStyle to localStorage', error);
+    }
+  }, [musicStyle]);
+  useEffect(() => {
+    try {
+      localStorage.setItem('musicVolume', String(musicVolume));
+    } catch (error) {
+      console.error('Failed to save musicVolume to localStorage', error);
+    }
+  }, [musicVolume]);
+  useEffect(() => {
+    if (selectedVoice) {
+      try {
+        localStorage.setItem('selectedVoice', selectedVoice);
+      } catch (error) {
+        console.error('Failed to save selectedVoice to localStorage', error);
+      }
+    } else {
+      try {
+        localStorage.removeItem('selectedVoice');
+      } catch (error) {
+        console.error('Failed to remove selectedVoice from localStorage', error);
+      }
+    }
+  }, [selectedVoice]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    const loadVoices = () => setVoices(window.speechSynthesis.getVoices());
+    loadVoices();
+    window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+    return () => window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+  }, []);
+
+  const updateTeams = () => {
+    const updatedTeams = (teams || []).map(team => ({
+      ...team,
+      students: (team.students || []).map(studentId => 
+        participants.find(p => p.id === studentId) || createParticipant('Unknown', 1)
+      )
+    }));
+    setTeams(updatedTeams);
+  };
+
+  const updateStudents = (newStudents: Participant[]) => {
+    setParticipants(newStudents);
+    try {
+      localStorage.setItem('students', JSON.stringify(newStudents, getCircularReplacer()));
+    } catch (error) {
+      console.error('Failed to save students to localStorage', error);
+    }
+  };
+
+  useEffect(() => {
+    if (gameMode === 'team') {
+      updateTeams();
+    } else {
+      updateStudents(participants.map(s => ({ ...s, lives: startingLives })));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startingLives, gameMode]);
+
+  const clearRoster = () => {
+    try {
+      localStorage.removeItem('teams');
+    } catch (error) {
+      console.error('Failed to remove teams from localStorage', error);
+    }
+    try {
+      localStorage.removeItem('students');
+    } catch (error) {
+      console.error('Failed to remove students from localStorage', error);
+    }
+    setTeams([]);
+    setParticipants([]);
+  };
+
+  const addStudent = () => {
+    if (studentName.trim()) {
+      const newStudent = createParticipant(studentName, options.initialDifficulty);
+      setParticipants([...participants, newStudent]);
+      setStudentName('');
+    }
+  };
+
+  const updateStudentName = (index: number, name: string) => {
+    const updatedStudents = [...participants];
+    updatedStudents[index].name = name;
+    setParticipants(updatedStudents);
+  };
+
+  const removeStudent = (index: number) => {
+    const updatedStudents = [...participants];
+    updatedStudents.splice(index, 1);
+    setParticipants(updatedStudents);
+  };
+
+  const setTeamsParticipants = (teams: Team[]) => setTeams(teams);
+  const setStudentsParticipants = (students: Participant[]) => setParticipants(students);
+
+  const randomizeTeams = () => {
+    if (participants.length < 2) {
+      setRandomizeError('Add at least two students to create teams.');
+      return;
+    }
+    let count = 0;
+    if (randomTeamCount > 0) {
+      count = randomTeamCount;
+    } else if (randomTeamSize > 0) {
+      count = Math.ceil(participants.length / randomTeamSize);
+    }
+    if (count <= 0) {
+      setRandomizeError('Specify number of teams or team size.');
+      return;
+    }
+    const shuffled = [...participants];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const groups: Participant[][] = Array.from({ length: count }, () => []);
+    shuffled.forEach((student, idx) => {
+      groups[idx % count].push(student);
+    });
+    const newTeams = groups
+      .filter(group => group.length > 0)
+      .map((group, index) => {
+        const teamName = `Team ${index + 1}: ${group.map(s => s.name).join(', ')}`;
+        const participant = createParticipant(teamName, options.initialDifficulty);
+        participant.avatar = teams[index]?.avatar || participant.avatar;
+        return participant;
+      });
+    updateTeams(newTeams);
+    setRandomizeError('');
+  };
+  
+  const parseCustomWordList = (content: string) => {
+    try {
+      const words = parseWordList(content);
+      setParsedCustomWords(words);
+      setError('');
+    } catch (e: any) {
+      setError(e.message || 'Invalid word list format.');
+    }
+  };
+  
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const content = e.target?.result as string;
+        setCustomWordListText(content);
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const generateAIWords = async () => {
+    setAiLoading(true);
+    setAiError('');
+    try {
+      const res = await fetch('http://localhost:3001/wordlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: aiCount }),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error('Invalid response');
+      setParsedCustomWords(prev => [...prev, ...data]);
+    } catch (err) {
+      console.error('Failed to generate AI word list', err);
+      setAiError('Failed to generate words.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    if (selectedBundledList) {
+      fetch(`wordlists/${selectedBundledList}`)
+        .then(res => {
+          if (!res.ok) throw new Error('Network response was not ok');
+          return res.text();
+        })
+        .then(text => {
+          setCustomWordListText(text);
+          setError('');
+        })
+        .catch(err => {
+          console.error('Failed to load bundled word list', err);
+          setError('Failed to load bundled word list.');
+        });
+    }
+  }, [selectedBundledList]);
+
+  useEffect(() => {
+    if (customWordListText) {
+      parseCustomWordList(customWordListText);
+    }
+  }, [customWordListText]);
+
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem('missedWordsCollection') || '{}');
+    setMissedWordsCollection(stored);
+  }, []);
+
+  const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
+
+  const handleStart = async (isSessionChallenge = false) => {
+    if (!options) return;
+
+    let challengeWords: any[] = [];
+    if (isSessionChallenge) {
+      try {
+        const randomList = bundledWordLists[Math.floor(Math.random() * bundledWordLists.length)];
+        const response = await fetch(`wordlists/${randomList.file}`);
+        const text = await response.text();
+        challengeWords = parseWordList(text);
+      } catch (err) {
+        console.error('Failed to load session challenge words', err);
+        setError('Failed to load session challenge words.');
+        return;
+      }
+    }
+
+    let finalParticipants: Participant[];
+    if (gameMode === 'team') {
+        const trimmedTeams = teams.filter(team => team.name && team.name.trim() !== "");
+        if (trimmedTeams.length < 2) {
+            setError('Please add at least two teams with names.');
+            return;
+        }
+        finalParticipants = trimmedTeams.map(t => ({...t, difficultyLevel: options.initialDifficulty}));
+    } else {
+        const trimmedStudents = participants.filter(student => student.name && student.name.trim() !== "");
+        if (trimmedStudents.length < 1 && isSessionChallenge) {
+             finalParticipants = [createParticipant('Player 1', options.initialDifficulty)];
+        } else if (trimmedStudents.length < 2 && !isSessionChallenge) {
+            setError('Please add at least two students for a custom game.');
+            return;
+        } else {
+             finalParticipants = trimmedStudents.map(s => ({...s, difficultyLevel: options.initialDifficulty}));
+        }
+    }
+
+    setError('');
+    
+    let finalWords: any[] = isSessionChallenge ? challengeWords : parsedCustomWords;
+    if (includeMissedWords && !isSessionChallenge) {
+      const extraWords = Object.values(missedWordsCollection).flat();
+      finalWords = [...finalWords, ...extraWords];
+    }
+    
+    onAddCustomWords(finalWords);
+    
+    const config: GameConfig = {
+      participants: finalParticipants,
+      gameMode,
+      timerDuration,
+      skipPenaltyType: options.skipPenaltyType,
+      skipPenaltyValue: options.skipPenaltyValue,
+      soundEnabled: options.soundEnabled,
+      effectsEnabled: options.effectsEnabled,
+      difficultyLevel: options.initialDifficulty,
+      progressionSpeed: options.progressionSpeed,
+      musicStyle: options.musicStyle,
+      musicVolume: options.musicVolume,
+      wordDatabase: {
+        easy: finalWords.filter(w => w.difficulty === 'easy'),
+        medium: finalWords.filter(w => w.difficulty === 'medium'),
+        tricky: finalWords.filter(w => w.difficulty === 'tricky')
+      }
+    };
+    onStartGame(config);
+  };
+  
+  const getCircularReplacer = () => {
+    const seen = new WeakSet();
+    return (key: string, value: any) => {
+      if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+          return;
+        }
+        seen.add(value);
+      }
+      return value;
+    };
+  };
+
+  const handleOptionChange = (option: keyof OptionsState, value: any) => {
+    setOptions(prev => ({
+      ...prev,
+      [option]: value,
+    }));
+  };
+
+  const addBulkStudents = (students: Participant[]) => {
+    setParticipants([...participants, ...students]);
+  };
+
+  const handleTeamSelect = (team: Team) => {
+    // Add implementation here
+  };
+
+  const handleTeamRemove = (id: string) => {
+    setTeams(teams.filter(t => t.id !== id));
+  };
+
+  const handleTeamRename = (id: string, name: string) => {
+    setTeams(teams.map(t => t.id === id ? {...t, name} : t));
+  };
+
+  const handleParticipantRemove = (index: number) => {
+    // Add implementation here
+  };
+
+  const handleParticipantEdit = (index: number, name: string) => {
+    // Add implementation here
+  };
+
+  type ParticipantOrTeam = Participant | Team;
+  const [allParticipants, setAllParticipants] = useState<ParticipantOrTeam[]>([
+    ...participants,
+    ...teams
+  ]);
+
+  return (
+    <div className="min-h-screen p-8 text-white font-body">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-3 mb-4">
+                <img src="icons/icon.svg" alt="Bee mascot" className="w-12 h-12 md:w-16 md:h-16" />
+                <h1 className="text-4xl md:text-6xl font-bold text-yellow-300 uppercase font-heading">🏆 SPELLING BEE CHAMPIONSHIP</h1>
+            </div>
+            <p className="text-xl md:text-2xl">Get ready to spell your way to victory!</p>
+        </div>
+
+        <div className="bg-white/10 p-6 rounded-lg mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-center uppercase font-heading">Select Game Mode 🎮</h2>
+          <div className="flex justify-center gap-4">
+            <button onClick={() => setGameMode('team')} className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'team' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}>Team</button>
+            <button onClick={() => setGameMode('individual')} className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'individual' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}>Individual</button>
+          </div>
+        </div>
+        
+        <div className="bg-white/10 p-6 rounded-lg mb-8">
+          <h2 className="text-2xl font-bold mb-4 uppercase font-heading">{gameMode === 'team' ? 'Teams 👥' : 'Students 🧑‍🎓'}</h2>
+          {gameMode === 'team' ? (
+    <>
+      <TeamForm
+        teams={teams}
+        avatars={availableAvatars}
+        addTeam={(team: Team) => addTeam(team)}
+        removeTeam={(id: string) => removeTeam(id)}
+        updateTeamName={(id: string, name: string) => updateTeam(id, { name })}
+      />
+    </>
+  ) : (
+    <>
+              <div className="flex gap-4 mb-4">
+                <input type="text" value={studentName} onChange={e => setStudentName(e.target.value)} className="flex-grow p-2 rounded-md bg-white/20 text-white" placeholder="Student name" />
+                <button onClick={addStudent} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add</button>
+              </div>
+              <div className="mb-4">
+                <textarea value={bulkStudentText} onChange={e => setBulkStudentText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white mb-2" placeholder="Paste names, one per line or separated by commas" rows={4}></textarea>
+                <button onClick={() => addBulkStudents(bulkStudentText.split('\n').map(name => createParticipant(name, options.initialDifficulty)))} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add Names</button>
+                {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
+              </div>
+              <div className="mb-4">
+                <h3 className="text-xl font-bold mb-2">Randomize Teams</h3>
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <input type="number" min={1} value={randomTeamCount || ''} onChange={e => { setRandomTeamCount(Number(e.target.value)); setRandomTeamSize(0); }} placeholder="Number of teams" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
+                  <span>or</span>
+                  <input type="number" min={1} value={randomTeamSize || ''} onChange={e => { setRandomTeamSize(Number(e.target.value)); setRandomTeamCount(0); }} placeholder="Team size" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
+                  <button onClick={randomizeTeams} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Randomize</button>
+                </div>
+                {randomizeError && <p className="text-red-300">{randomizeError}</p>}
+              </div>
+              {participants.map((student, index) => (
+                <div key={index} className="flex items-center gap-2 mb-2">
+                  <img src={student.avatar || availableAvatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                  <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
+                  {index > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
+                </div>
+              ))}
+              <StudentRoster
+                participants={participants || []}  // Ensure we always pass an array
+                avatars={availableAvatars}
+                onAdd={createParticipant}
+                onRemove={handleParticipantRemove}
+                onEdit={handleParticipantEdit}
+                onAddBulk={addBulkStudents}
+                initialDifficulty={options.initialDifficulty}
+              />
+            </>
+          )}
+          <button onClick={clearRoster} className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Clear Saved Roster</button>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Skip Penalty ⏭️</h2>
+                <div className="flex gap-4">
+                    <select value={options.skipPenaltyType} onChange={e => handleOptionChange('skipPenaltyType', e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
+                        <option value="lives">Lives</option>
+                        <option value="points">Points</option>
+                    </select>
+                    <input type="number" min={0} value={options.skipPenaltyValue} onChange={e => handleOptionChange('skipPenaltyValue', Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
+                </div>
+            </div>
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Difficulty Settings 🎚️</h2>
+                <div className="flex gap-4">
+                    <div>
+                        <label className="block mb-2">Initial Difficulty</label>
+                        <select value={options.initialDifficulty} onChange={e => handleOptionChange('initialDifficulty', Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white">
+                            <option value={0}>Easy</option>
+                            <option value={1}>Medium</option>
+                            <option value={2}>Tricky</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block mb-2">Progression Speed</label>
+                        <input type="number" min={1} value={options.progressionSpeed} onChange={e => handleOptionChange('progressionSpeed', Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
+                    </div>
+                </div>
+            </div>
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Audio & Effects 🔊✨</h2>
+                <label className="flex items-center space-x-3 mb-2"><input type="checkbox" checked={options.soundEnabled} onChange={e => handleOptionChange('soundEnabled', e.target.checked)} /><span>Enable Sound</span></label>
+                <label className="flex items-center space-x-3"><input type="checkbox" checked={options.effectsEnabled} onChange={e => handleOptionChange('effectsEnabled', e.target.checked)} /><span>Enable Visual Effects</span></label>
+                {voices.length > 0 && (
+                    <div className="mt-4">
+                        <label className="block mb-2">Voice</label>
+                        <select value={selectedVoice} onChange={e => setSelectedVoice(e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
+                            <option value="">Default</option>
+                            {voices.map(v => (
+                                <option key={v.voiceURI} value={v.voiceURI}>{`${v.name} (${v.lang})`}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
+            </div>
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Theme 🎨</h2>
+                <select value={theme} onChange={e => { const t = e.target.value; setTheme(t); try { localStorage.setItem('theme', t); } catch (error) { console.error('Failed to save theme to localStorage', error); } applyTheme(t); }} className="p-2 rounded-md bg-white/20 text-white">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="honeycomb">Honeycomb</option>
+                </select>
+            </div>
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Teacher Mode 👩‍🏫</h2>
+                <label className="flex items-center gap-2 text-white"><input type="checkbox" checked={teacherMode} onChange={e => setTeacherMode(e.target.checked)} /><span>Enable larger fonts and spacing</span></label>
+            </div>
+             <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Music 🎵</h2>
+                <div className="mb-4">
+                    <label className="block mb-2">Style</label>
+                    <select value={options.musicStyle} onChange={e => handleOptionChange('musicStyle', e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
+                        {musicStyles.map(style => (<option key={style} value={style}>{style}</option>))}
+                    </select>
+                </div>
+                <div>
+                    <label className="block mb-2">Volume: {Math.round(options.musicVolume * 100)}%</label>
+                    <input type="range" min={0} max={1} step={0.01} value={options.musicVolume} onChange={e => handleOptionChange('musicVolume', parseFloat(e.target.value))} className="w-full" />
+                </div>
+            </div>
+        </div>
+        <GameOptions 
+          options={options} 
+          setOptions={setOptions}
+        />
+        
+        <div className="bg-white/10 p-6 rounded-lg mb-8 mt-8">
+            <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Add Custom Word List 📝</h2>
+            <div className="mb-6">
+                <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">Choose Bundled Word List</label>
+                <select id="bundled-list" value={selectedBundledList} onChange={e => setSelectedBundledList(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white">
+                    <option value="">-- Select a list --</option>
+                    {bundledWordLists.map(list => (<option key={list.file} value={list.file}>{list.label}</option>))}
+                </select>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label htmlFor="file-upload" className="block text-lg font-medium mb-2">Upload File</label>
+                    <p className="text-sm text-gray-300 mb-2">Upload a JSON or TSV file.</p>
+                    <input id="file-upload" type="file" accept=".json,.tsv,.txt,.csv" onChange={handleFileChange} className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-300 file:text-black hover:file:bg-yellow-400" />
+                </div>
+                <div>
+                    <label htmlFor="paste-area" className="block text-lg font-medium mb-2">Or Paste Spreadsheet Data</label>
+                    <p className="text-sm text-gray-300 mb-2">Paste data from Excel or Google Sheets (tab-separated).</p>
+                    <textarea id="paste-area" rows={4} value={customWordListText} onChange={e => setCustomWordListText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white" placeholder="Paste your tab-separated values here..."></textarea>
+                </div>
+            </div>
+            <div className="mt-6">
+                <div className="flex flex-col md:flex-row gap-2 mb-2">
+                    <input type="number" min={1} value={aiGrade} onChange={e => setAiGrade(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="Grade" />
+                    <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="# Words" />
+                    <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
+                </div>
+                <WordListPrompt value={aiTopic} onChange={setAiTopic} />
+                {aiError && <p className="text-red-300 mt-2">{aiError}</p>}
+            </div>
+            <div className="mt-4 text-sm text-gray-300">
+                <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`.</p>
+                <div className="mt-2">
+                    <a href="wordlists/example.csv" download className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Download Template</a>
+                </div>
+            </div>
+        </div>
+        
+        {missedWordCount > 0 && (
+            <div className="bg-white/10 p-4 rounded-lg mb-8">
+                <label className="flex items-center space-x-3">
+                    <input type="checkbox" checked={includeMissedWords} onChange={e => setIncludeMissedWords(e.target.checked)} />
+                    <span>Include {missedWordCount} missed words from previous sessions</span>
+                </label>
+            </div>
+        )}
+
+        {error && <p className="text-red-300 text-center mb-4">{error}</p>}
+        
+        <div className="flex flex-col md:flex-row gap-4 mt-8">
+            <button onClick={() => handleStart(false)} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Custom Game</button>
+            <button onClick={() => handleStart(true)} className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Session Challenge</button>
+        </div>
+        <div className="mt-4 text-center">
+            <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold">View Achievements</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SetupScreen;

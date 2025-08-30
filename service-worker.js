@@ -5,7 +5,7 @@ const ASSETS = [
   './style.css',
   './manifest.webmanifest',
   './icons/icon.svg',
-  './app.js',
+  './app.js', // Cache bundled application script
   './words.json',
   './wordlists/example.json',
   './wordlists/example.csv',
@@ -30,9 +30,9 @@ self.addEventListener('activate', event => {
   );
 });
 
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
-      .then(response => response || fetch(event.request))
+      .then(response => response || fetch(event.request).catch(() => caches.match('offline.html')))
   );
 });
