@@ -1,9 +1,11 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { GameResults, GameConfig, LeaderboardEntry } from './types';
 import applauseSoundFile from './audio/applause.mp3';
 import { launchConfetti } from './utils/confetti';
 import { recordDailyCompletion, StreakInfo } from './DailyChallenge';
 import beeImg from './img/avatars/bee.svg';
+import html2canvas from 'html2canvas';
 
 interface ResultsScreenProps {
   results: GameResults;
@@ -19,6 +21,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
   const [isBestScore, setIsBestScore] = useState(false);
   const [streakInfo, setStreakInfo] = useState<StreakInfo | null>(null);
   const [bonus, setBonus] = useState(0);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (config.dailyChallenge) {
@@ -87,6 +90,29 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
     anchor.click();
   };
 
+  const handleShare = async () => {
+    const element = document.querySelector('.scorecard') as HTMLElement | null;
+    if (!element) return;
+    const canvas = await html2canvas(element);
+    const url = canvas.toDataURL('image/png');
+    setShareUrl(url);
+  };
+
+  const handleCopyLink = async () => {
+    if (shareUrl) {
+      await navigator.clipboard.writeText(shareUrl);
+    }
+  };
+
+  const handleDownloadImage = () => {
+    if (shareUrl) {
+      const link = document.createElement('a');
+      link.href = shareUrl;
+      link.download = 'scoreboard.png';
+      link.click();
+    }
+  };
+
   const getWinnerMessage = () => {
     const { winner, participants } = results;
     if (winner) {
@@ -150,6 +176,9 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
       )}
 
       <div className="flex gap-6 mt-12 flex-wrap justify-center">
+        <button onClick={handleShare} className="bg-pink-500 hover:bg-pink-600 px-8 py-5 rounded-xl text-2xl font-bold">
+            📣 Share Score
+        </button>
         <button onClick={handleExport} className="bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold">
             📤 Export Results
         </button>
@@ -160,6 +189,17 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
             🔄 Play Again
         </button>
       </div>
+
+      {shareUrl && (
+        <div className="flex gap-6 mt-6 flex-wrap justify-center">
+          <button onClick={handleCopyLink} className="bg-yellow-500 hover:bg-yellow-600 px-6 py-4 rounded-xl text-xl font-bold">
+            📋 Copy Link
+          </button>
+          <button onClick={handleDownloadImage} className="bg-teal-500 hover:bg-teal-600 px-6 py-4 rounded-xl text-xl font-bold">
+            💾 Download Image
+          </button>
+        </div>
+      )}
     </div>
   );
 };
