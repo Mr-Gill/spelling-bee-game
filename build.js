@@ -10,6 +10,10 @@ if (!fs.existsSync('dist')) {
 console.log('Building application...');
 execSync(`npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file`, { stdio: 'inherit' });
 
+// Build Tailwind CSS
+console.log('Building Tailwind CSS...');
+execSync(`npx @tailwindcss/cli -i ./src/tailwind.css -o dist/tailwind.css --minify`, { stdio: 'inherit' });
+
 // Function to copy files/directories
 const copyAssets = (src, dest) => {
   try {
