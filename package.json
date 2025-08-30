@@ -8,15 +8,9 @@
     "start": "npx serve dist",
     "serve": "npx serve dist",
     "build:css": "npx @tailwindcss/cli -i ./src/tailwind.css -o ./tailwind.css --minify",
-<<<<<<< HEAD
-    "build": "npm run build:css && npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file && node scripts/copy-assets.js",
-    "watch": "npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --watch",
-    "test": "node --test",
-=======
     "build": "npm run build:css && npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file && node scripts/copy-assets.js",
     "watch": "npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --watch",
-    "test": "echo 'No tests configured yet'",
->>>>>>> origin/codex/reorganize-project-structure-into-src-directory
+    "test": "node --test",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "dev:wordlist": "tsc scripts/ai-wordlist.ts --outDir scripts && node scripts/ai-wordlist.js",
