@@ -7,8 +7,7 @@ import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
 
 // Import types
-import type { GameConfig } from './types/game';
-import type { WordType } from './types/word';
+import type { GameConfig } from './types';
 
 // Import global styles
 import './tailwind.css';
@@ -37,23 +36,31 @@ const SpellingBeeGame = () => {
   }, []);
   const [gameState, setGameState] = useState('setup');
   const [gameConfig, setGameConfig] = useState<GameConfig | null>(null);
+  const [musicStyle, setMusicStyle] = useState('');
+  const [musicVolume, setMusicVolume] = useState(1);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   
   // Initialize game with configuration
-  const handleStartGame = (config: Omit<GameConfig, 'wordList'>) => {
-    // Create a default word list for now
-    const defaultWordList: WordType[] = [];
-    
-    const fullConfig: GameConfig = {
-      ...config,
-      wordList: defaultWordList,
+  const handleStartGame = (config: GameConfig & { customWords?: any }) => {
+    const wordDatabase = config.wordDatabase || { easy: [], medium: [], tricky: [] };
+    const customWords = config.customWords || { easy: [], medium: [], tricky: [] };
+
+    const finalWordDatabase = config.dailyChallenge ? customWords : {
+        easy: [...wordDatabase.easy, ...customWords.easy],
+        medium: [...wordDatabase.medium, ...customWords.medium],
+        tricky: [...wordDatabase.tricky, ...customWords.tricky],
     };
-    
-    setGameConfig(fullConfig);
-    setGameState('playing');
+    setGameConfig({ ...config, wordDatabase: finalWordDatabase });
+    setMusicStyle(config.musicStyle);
+    setMusicVolume(config.musicVolume);
+    setSoundEnabled(config.soundEnabled);
+    setIsMusicPlaying(true);
+    setGameState("playing");
   };
   
   // Handle adding custom words
-  const handleAddCustomWords = (words: WordType[]) => {
+  const handleAddCustomWords = (words: any[]) => {
     console.log('Adding custom words:', words);
     // Implement custom words logic here
   };

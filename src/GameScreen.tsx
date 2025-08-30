@@ -7,7 +7,7 @@ import {
   Team,
   GameResults,
   defaultAchievements,
-} from "./types";
+} from "./types.ts";
 import correctSoundFile from "../audio/correct.mp3";
 import wrongSoundFile from "../audio/wrong.mp3";
 import timeoutSoundFile from "../audio/timeout.mp3";
