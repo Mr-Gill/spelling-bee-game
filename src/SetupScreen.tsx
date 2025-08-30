@@ -1,8 +1,7 @@
 import React, { useState, useEffect, FC } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { GameConfig, OptionsState } from './types/game';
-import type { Participant } from './types/participant';
-import type { Team } from '../../types/team';
+import type { Participant, Team } from './types/participant';
 import { parseWordList } from './utils/parseWordList';
 import TeamForm from './components/TeamForm';
 import WordListPrompt from './components/WordListPrompt';
@@ -67,7 +66,7 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
     lives: options.initialDifficulty,
     teamId: null,
     points: 0,
-    difficultyLevel: difficulty,
+    difficultyLevel: difficulty === 1 ? 'easy' : difficulty === 2 ? 'medium' : 'hard',
     streak: 0,
     attempted: 0,
     correct: 0,
@@ -83,12 +82,16 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
       participants: [],
       teamId: uuidv4(),
       avatar,
-      difficulty: 1,
       score: 0,
       lives: startingLives,
-      attempted: 0,
-      correct: 0,
-      difficultyLevel: 'easy'
+      difficulty: 'easy',
+      wordsAttempted: 0,
+      wordsCorrect: 0,
+      streak: 0,
+      skipsRemaining: 3,
+      askFriendRemaining: 2,
+      achievements: [],
+      points: 0
     };
   };
 
@@ -281,7 +284,7 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
   const updateTeams = () => {
     const updatedTeams = teams.map(team => ({
       ...team,
-      participants: team.participants.map((p: Participant) => p.id)
+      participants: team.participants.map((p: string | Participant) => typeof p === 'string' ? p : p.id)
     }));
     setTeams(updatedTeams);
   };

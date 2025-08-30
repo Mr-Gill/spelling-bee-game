@@ -25,4 +25,5 @@ export interface OptionsState {
   teacherMode: boolean;
   theme: string;
   musicEnabled: boolean;
+  startingLives: number;
 }

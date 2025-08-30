@@ -225,6 +225,10 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
 
     const submittedWord = state.letters.join('');
     const isCorrect = submittedWord.toLowerCase() === currentWord.word.toLowerCase();
+    
+    // Calculate time bonus (max 5 points for quick answers)
+    const timeLeftPercentage = state.timeLeft / 60;
+    const timeBonus = Math.floor(timeLeftPercentage * 5);
 
     // Play sound based on correctness
     playSound(isCorrect ? correctSoundFile : wrongSoundFile);
@@ -239,14 +243,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
       if (isCorrect) {
         currentParticipant.correct += 1;
         currentParticipant.wordsCorrect += 1;
-        currentParticipant.score += 10;
-        currentParticipant.points += 5;
+        currentParticipant.score += 10 + timeBonus;
+        currentParticipant.points += 5 + timeBonus;
         
         return {
           ...prev,
           participants: updatedParticipants,
-          coins: prev.coins + 5,
-          feedback: { message: 'Correct!', type: 'success' },
+          coins: prev.coins + 5 + timeBonus,
+          feedback: { message: `Correct! +${timeBonus} time bonus`, type: 'success' },
           attemptedParticipants: new Set<number>()
         };
       } else {
@@ -262,7 +266,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
     if (isCorrect) {
       setTimeout(handleNextWord, 1500);
     }
-  }, [currentWord, state.letters, handleNextWord, playSound]);
+  }, [currentWord, state.letters, state.timeLeft, handleNextWord, playSound]);
 
   const typeLetter = useCallback((letter: string) => {
     if (!currentWord) return;
