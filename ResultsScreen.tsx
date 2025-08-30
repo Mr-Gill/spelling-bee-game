@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { GameResults, GameConfig, LeaderboardEntry } from './types';
+import { GameResults, GameConfig, LeaderboardEntry, Word } from './types';
 import applauseSoundFile from './audio/applause.mp3';
 import { launchConfetti } from './utils/confetti';
 import { recordDailyCompletion, StreakInfo } from './DailyChallenge';
@@ -10,9 +10,10 @@ interface ResultsScreenProps {
   config: GameConfig;
   onRestart: () => void;
   onViewLeaderboard: () => void;
+  onPractice: (words: Word[]) => void;
 }
 
-const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestart, onViewLeaderboard }) => {
+const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestart, onViewLeaderboard, onPractice }) => {
   const applauseAudio = useRef<HTMLAudioElement>(new Audio(applauseSoundFile));
   const totalScore = results.participants.reduce((sum, p) => sum + p.points, 0);
   const [bestClassScore, setBestClassScore] = useState(0);
@@ -156,6 +157,14 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
         <button onClick={onViewLeaderboard} className="bg-purple-500 hover:bg-purple-600 px-8 py-5 rounded-xl text-2xl font-bold">
             📈 View Leaderboard
         </button>
+        {results.missedWords && results.missedWords.length > 0 && (
+          <button
+            onClick={() => onPractice(results.missedWords)}
+            className="bg-yellow-500 hover:bg-yellow-600 px-8 py-5 rounded-xl text-2xl font-bold"
+          >
+            📝 Practice Missed Words
+          </button>
+        )}
         <button onClick={onRestart} className="bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold">
             🔄 Play Again
         </button>
