@@ -1,14 +1,22 @@
-import { FC, useState, useEffect, useCallback } from 'react';
+import { FC, useState, useEffect, useRef, useMemo } from 'react';
 import { config } from './config';
-import { Play, Pause, Volume2, VolumeX, SkipForward, Users } from 'lucide-react';
-import {
+// Icons
+import { Volume2, VolumeX, SkipForward, Users } from 'lucide-react';
+import type {
   GameConfig,
   Word,
   Participant,
   Team,
   GameResults,
-  defaultAchievements,
-} from "./types.ts";
+} from "./types";
+
+// Define AvatarType if not in types
+interface Feedback {
+  message: string;
+  type: string;
+}
+
+type AvatarType = 'bee' | 'book' | 'trophy';
 import correctSoundFile from "../audio/correct.mp3";
 import wrongSoundFile from "../audio/wrong.mp3";
 import timeoutSoundFile from "../audio/timeout.mp3";
@@ -19,17 +27,12 @@ import loseLifeSoundFile from "../audio/lose-life.mp3";
 import { AvatarType } from './types/avatar';
 
 // Default avatar paths
-const defaultAvatars = {
-  bee: `${config.publicUrl}/img/avatars/bee.svg`,
-  book: `${config.publicUrl}/img/avatars/book.svg`,
-  trophy: `${config.publicUrl}/img/avatars/trophy.svg`
-} as const;
-
+const defaultAvatars: AvatarType[] = ['bee', 'book', 'trophy'];
 import { launchConfetti } from "./utils/confetti";
 import { speak } from "./utils/tts";
 import useSound from "./utils/useSound";
 import useTimer from "./utils/useTimer";
-import useWordSelection, { difficultyOrder } from "./utils/useWordSelection";
+import useWordSelection from "./utils/useWordSelection";
 import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
@@ -37,9 +40,11 @@ import { AudioSettings } from './components/AudioSettings';
 import { useAudio } from "./AudioContext";
 import CircularTimer from "./components/CircularTimer";
 import PhonicsBreakdown from "./components/PhonicsBreakdown";
+import { HelpSystemProvider, useHelpSystem } from "./contexts/HelpSystemContext";
+import { HelpButton } from "./components/HelpButton";
+import ShopScreen from "../ShopScreen";
 
-const difficultyOrder = ['easy', 'medium', 'hard'] as const;
-type Difficulty = typeof difficultyOrder[number];
+// Difficulty is managed by useWordSelection
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -59,11 +64,20 @@ interface Feedback {
 const MAX_SKIP_TURNS = 1;
 const MAX_ASK_FRIEND = 1;
 
-const GameScreen: GameScreenComponent = ({ config, onEndGame }) => {
+const GameScreen: FC<GameScreenProps> = ({ config, onEndGame }) => {
+  // Type assertions for config
+  const publicUrl = (config as any).publicUrl || '';
+  // Wrap the game screen with HelpSystemProvider
+  return (
+    <HelpSystemProvider>
+      <GameScreenContent config={config} onEndGame={onEndGame} />
+    </HelpSystemProvider>
+  );
+};
+
+const GameScreenContent: FC<GameScreenProps> = ({ config, onEndGame }) => {
   const isTeamMode = config.gameMode === "team";
-  const [participants, setParticipants] = React.useState<
-    (Participant | Team)[]
-  >(
+  const [participants, setParticipants] = useState<(Participant | Team)[]>(
     (config.participants as (Participant | Team)[]).map((p) => ({
       ...p,
       attempted: 0,
@@ -84,32 +98,22 @@ const GameScreen: GameScreenComponent = ({ config, onEndGame }) => {
     return copy;
   };
 
-  const [teamQueues, setTeamQueues] = React.useState<Participant[][]>(() => {
+  const [teamQueues, setTeamQueues] = useState<Participant[][]>(() => {
     if (!isTeamMode) return [];
     return (config.participants as Team[]).map((t) => shuffle([...t.students]));
   });
 
-  const [currentParticipantIndex, setCurrentParticipantIndex] =
-    React.useState(0);
+  const [currentParticipantIndex, setCurrentParticipantIndex] = useState(0);
 
-  const currentStudent = React.useMemo(() => {
-    if (!isTeamMode) return null;
-    const queue = teamQueues[currentParticipantIndex] || [];
-    return queue[0] || null;
-  }, [teamQueues, currentParticipantIndex, isTeamMode]);
-  const [showWord, setShowWord] = React.useState(true);
-  const [usedHint, setUsedHint] = React.useState(false);
-  const [letters, setLetters] = React.useState<string[]>([]);
-  const usedLetters = React.useMemo(
-    () => new Set(letters.filter((l) => l !== "").map((l) => l.toLowerCase())),
-    [letters],
-  );
-  const [feedback, setFeedback] = React.useState<Feedback>({
+  const [usedHint, setUsedHint] = useState(false);
+  const [letters, setLetters] = useState<string[]>([]);
+  const [showWord, setShowWord] = useState(true);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [feedback, setFeedback] = useState<Feedback>({
     message: "",
     type: "",
   });
-  const [extraAttempt, setExtraAttempt] = React.useState(false);
-  const [isHelpOpen, setIsHelpOpen] = React.useState(false);
+  const [extraAttempt, setExtraAttempt] = useState(false);
   const {
     wordQueues,
     setWordQueues,
@@ -117,13 +121,11 @@ const GameScreen: GameScreenComponent = ({ config, onEndGame }) => {
     currentDifficulty,
     selectNextWord,
   } = useWordSelection(config.wordDatabase);
-  const [attemptedParticipants, setAttemptedParticipants] = React.useState<
+  const [attemptedParticipants, setAttemptedParticipants] = useState<
     Set<number>
   >(new Set());
-  const [missedWords, setMissedWords] = React.useState<Word[]>([]);
-  const [unlockedAchievements, setUnlockedAchievements] = React.useState<
-    string[]
-  >(() => {
+  const [missedWords, setMissedWords] = useState<Word[]>([]);
+  const [unlockedAchievements, setUnlockedAchievements] = useState<string[]>(() => {
     if (typeof window === "undefined") return [];
     try {
       return JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
@@ -131,15 +133,15 @@ const GameScreen: GameScreenComponent = ({ config, onEndGame }) => {
       return [];
     }
   });
-  const [toast, setToast] = React.useState("");
-  const hiddenInputRef = React.useRef<HTMLInputElement>(null);
-  const [startTime] = React.useState(Date.now());
-  const [coins, setCoins] = React.useState<number>(() => {
+  const [toast, setToast] = useState("");
+  const hiddenInputRef = useRef<HTMLInputElement>(null);
+  const [startTime] = useState(Date.now());
+  const [coins, setCoins] = useState<number>(() => {
     if (typeof window === "undefined") return 0;
     const stored = localStorage.getItem("coins");
     return stored ? parseInt(stored, 10) : 0;
   });
-  const [ownedAvatars] = React.useState<string[]>(() => {
+  const [ownedAvatars] = useState<string[]>(() => {
     if (typeof window === "undefined") return ["bee", "book", "trophy"];
     try {
       return JSON.parse(
@@ -149,13 +151,13 @@ const GameScreen: GameScreenComponent = ({ config, onEndGame }) => {
       return ["bee", "book", "trophy"];
     }
   });
-  const [currentAvatar, setCurrentAvatar] = React.useState(() => {
-    if (typeof window === "undefined") return "";
-    return localStorage.getItem("equippedAvatar") || "";
+  const [currentAvatar, setCurrentAvatar] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    return localStorage.getItem('equippedAvatar') || '';
   });
-  const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>('medium');
-  React.useEffect(() => {
-    localStorage.setItem("equippedAvatar", currentAvatar);
+  // Current difficulty is managed by useWordSelection hook
+  useEffect(() => {
+    localStorage.setItem('equippedAvatar', currentAvatar);
   }, [currentAvatar]);
 
   const { muted, toggleMute } = useAudio();
@@ -183,12 +185,12 @@ const GameScreen: GameScreenComponent = ({ config, onEndGame }) => {
     playTimeout();
     handleIncorrectAttempt();
   });
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isPaused) {
       setShowAudioSettings(false);
     }
   }, [isPaused]);
-  React.useEffect(() => {
+  useEffect(() => {
     if (localStorage.getItem('teacherMode') === 'true') {
       document.body.classList.add('teacher-mode');
     } else {
@@ -196,13 +198,13 @@ const GameScreen: GameScreenComponent = ({ config, onEndGame }) => {
     }
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (currentWord) {
       setLetters(Array.from({ length: currentWord.word.length }, () => ""));
     }
   }, [currentWord]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!currentWord || isPaused) return;
       if (/^[a-zA-Z]$/.test(e.key)) {
@@ -529,13 +531,13 @@ const GameScreen: GameScreenComponent = ({ config, onEndGame }) => {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (config.participants.length > 0) {
       selectNextWordForLevel(config.participants[0].difficultyLevel);
     }
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!participants || participants.length === 0) return;
     const activeParticipants = participants.filter((p) => p.lives > 0);
     if (activeParticipants.length <= 1) {
@@ -543,16 +545,16 @@ const GameScreen: GameScreenComponent = ({ config, onEndGame }) => {
     }
   }, [participants]);
 
-  const [showAudioSettings, setShowAudioSettings] = React.useState(false);
+  const [showAudioSettings, setShowAudioSettings] = useState(false);
 
-  return (
-    <div className="relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center font-body">
-      <input
-        ref={hiddenInputRef}
-        type="text"
-        className="absolute opacity-0 pointer-events-none"
-        aria-hidden="true"
-        tabIndex={-1}
+  const { 
+    revealLetter, 
+    getDefinition, 
+    addTime, 
+    skipWord, 
+    isHelpUsed, 
+    setHelpUsed 
+  } = useHelpSystem();
       />
       {toast && (
         <div className="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50">
@@ -560,7 +562,7 @@ const GameScreen: GameScreenComponent = ({ config, onEndGame }) => {
         </div>
       )}
       <div className="absolute top-8 left-8 flex gap-8 items-center">
-        <img src={`${config.publicUrl}/img/bee.svg`} alt="Bee icon" className="w-12 h-12" />
+        <img src={`${publicUrl}/img/bee.svg`} alt="Bee icon" className="w-12 h-12" />
         {participants.map((p, index) => (
           <div key={index} className="text-center bg-white/10 p-4 rounded-lg">
             <div className="text-2xl font-bold">{p.name}</div>

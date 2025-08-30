@@ -85,7 +85,6 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
 
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
-  const [allParticipants, setAllParticipants] = useState<(Participant | Team)[]>([]);
 
   const handleAddParticipant = (name: string) => {
     if (name.trim() === '') return null;
@@ -109,6 +108,32 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
     
     setParticipants(prev => [...prev, newParticipant]);
     return newParticipant;
+  };
+
+  const removeTeamByIndex = (index: number) => {
+    setTeams(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const updateTeamNameByIndex = (index: number, name: string) => {
+    setTeams(prev => {
+      const newTeams = [...prev];
+      newTeams[index] = { ...newTeams[index], name };
+      return newTeams;
+    });
+  };
+
+  const addBulkStudents = (students: Participant[]) => {
+    setParticipants(prev => [...prev, ...students]);
+  };
+
+  const updateStudentName = (id: string, name: string) => {
+    setParticipants(prev => 
+      prev.map(p => p.id === id ? { ...p, name } : p)
+    );
+  };
+
+  const addParticipantToRoster = (participant: Participant) => {
+    setParticipants(prev => [...prev, participant]);
   };
 
   const addTeam = (team: Team) => {
@@ -187,9 +212,9 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
   
   useEffect(() => {
     const savedTeams = localStorage.getItem('teams');
-    if (savedTeams) try { setTeams(JSON.parse(savedTeams).map((t: Participant) => ({ ...t, avatar: t.avatar || getRandomAvatar() }))); } catch {}
+    if (savedTeams) try { setTeams(JSON.parse(savedTeams).map((t: Participant) => ({ ...t, avatar: t.avatar || availableAvatars[Math.floor(Math.random() * availableAvatars.length)] }))); } catch {}
     const savedStudents = localStorage.getItem('students');
-    if (savedStudents) try { setParticipants(JSON.parse(savedStudents).map((s: Participant) => ({ ...s, avatar: s.avatar || getRandomAvatar() }))); } catch {}
+    if (savedStudents) try { setParticipants(JSON.parse(savedStudents).map((s: Participant) => ({ ...s, avatar: s.avatar || availableAvatars[Math.floor(Math.random() * availableAvatars.length)] }))); } catch {}
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       setTheme(savedTheme);
@@ -290,12 +315,14 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
   const addStudent = () => {
     if (studentName.trim()) {
       const newStudent = createParticipant(studentName, options.initialDifficulty);
-      addParticipantToRoster(newStudent);
+      setParticipants(prev => [...prev, newStudent]);
       setStudentName('');
     }
   };
 
-  const removeStudent = (index: number) => removeParticipantFromRoster(index);
+  const removeStudent = (index: number) => {
+    setParticipants(prev => prev.filter((_, i) => i !== index));
+  };
 
   const randomizeTeams = () => {
     if (participants.length < 2) {
@@ -353,6 +380,20 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
       };
       reader.readAsText(file);
     }
+  };
+
+  // Helper function to safely stringify with circular references
+  const getCircularReplacer = () => {
+    const seen = new WeakSet();
+    return (_key: string, value: any) => {
+      if (typeof value === 'object' && value !== null) {
+        if (seen.has(value)) {
+          return;
+        }
+        seen.add(value);
+      }
+      return value;
+    };
   };
 
   const generateAIWords = async () => {
@@ -466,50 +507,12 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
     onStartGame(config);
   };
 
-  onStartGame(config);
-};
-
-const getCircularReplacer = () => {
-  const seen = new WeakSet();
-  return (key: string, value: any) => {
-    if (typeof value === "object" && value !== null) {
-      if (seen.has(value)) {
-        return;
-      }
-      seen.add(value);
-    }
-    return value;
+  const handleOptionChange = (option: keyof OptionsState, value: any) => {
+    setOptions(prev => ({
+      ...prev,
+      [option]: value,
+    }));
   };
-};
-
-const handleOptionChange = (option: keyof OptionsState, value: any) => {
-  setOptions(prev => ({
-    ...prev,
-    [option]: value,
-  }));
-};
-
-const addBulkStudents = (students: Participant[]) => {
-  setParticipants([...participants, ...students]);
-};
-
-const handleTeamSelect = (team: Team) => {
-  setAllParticipants(prev => [...prev, team]);
-};
-
-const handleTeamRemove = (id: string) => {
-  setTeams(teams.filter(t => t.id !== id));
-};
-
-const handleTeamRename = (id: string, name: string) => {
-  setTeams(teams.map(t => t.id === id ? {...t, name} : t));
-};
-
-const handleParticipantRemove = (index: number) => {
-  setParticipants(prev => prev.filter((_, i) => i !== index));
-};
-    ...teams
-  ]);
 
   const [activeTab, setActiveTab] = useState<'setup' | 'settings' | 'words'>('setup');
 
@@ -611,22 +614,26 @@ const handleParticipantRemove = (index: number) => {
                       </div>
                       {randomizeError && <p className="text-red-300">{randomizeError}</p>}
                     </div>
-                    {participants.map((student, index) => (
-                      <div key={index} className="flex items-center gap-2 mb-2">
+                    {participants.map((student) => (
+                      <div key={student.id} className="flex items-center gap-2 mb-2">
                         <img src={student.avatar || availableAvatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
-                        <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
-                        {index > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
+                        <input 
+                          type="text" 
+                          value={student.name} 
+                          onChange={e => updateStudentName(student.id, e.target.value)} 
+                          placeholder="Student name" 
+                          className="flex-grow p-2 rounded-md bg-white/20 text-white" 
+                        />
+                        {participants.length > 1 && (
+                          <button 
+                            onClick={() => removeStudent(participants.findIndex(s => s.id === student.id))} 
+                            className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded"
+                          >
+                            Remove
+                          </button>
+                        )}
                       </div>
                     ))}
-                    <StudentRoster
-                      students={participants}
-                      avatars={availableAvatars}
-                      addParticipant={addParticipantToRoster}
-                      removeStudent={removeStudent}
-                      updateStudentName={updateStudentName}
-                      createParticipant={createParticipant}
-                      initialDifficulty={options.initialDifficulty}
-                    />
                   </>
                 )}
                 <button onClick={clearRoster} className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Clear Saved Roster</button>
