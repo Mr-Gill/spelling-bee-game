@@ -23,6 +23,7 @@ const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'
 interface GameScreenProps {
   config: GameConfig;
   onEndGame: (results: GameResults) => void;
+  onQuit: () => void;
   musicStyle: string;
   musicVolume: number;
   onMusicStyleChange: (style: string) => void;
@@ -44,6 +45,7 @@ interface Feedback {
 const GameScreen: React.FC<GameScreenProps> = ({
   config,
   onEndGame,
+  onQuit,
   musicStyle,
   musicVolume,
   onMusicStyleChange,
@@ -87,6 +89,8 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState('');
   const [darkMode, setDarkMode] = React.useState(false);
+  const [showAudioSettings, setShowAudioSettings] = React.useState(false);
+  const modalRef = React.useRef<HTMLDivElement>(null);
 
   const { notifications, addNotification, removeNotification } = useNotifications();
 
@@ -97,6 +101,45 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const playLetterWrong = useSound(letterWrongSoundFile, soundEnabled);
   const playShop = useSound(shopSoundFile, soundEnabled);
   const playLoseLife = useSound(loseLifeSoundFile, soundEnabled);
+
+  const renderAudioSettings = (className = '') => (
+    <div className={`p-4 rounded-lg flex flex-col gap-2 ${className}`}>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={onToggleMusicPlaying}
+          className="bg-yellow-300 text-black p-2 rounded"
+          aria-label={isMusicPlaying ? 'Pause music' : 'Play music'}
+        >
+          {isMusicPlaying ? <Pause size={16} /> : <Play size={16} />}
+        </button>
+        <button
+          onClick={() => onSoundEnabledChange(!soundEnabled)}
+          className="bg-yellow-300 text-black p-2 rounded"
+          aria-label={soundEnabled ? 'Mute audio' : 'Unmute audio'}
+        >
+          {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+        </button>
+      </div>
+      <input
+        type="range"
+        min={0}
+        max={1}
+        step={0.01}
+        value={musicVolume}
+        onChange={e => onMusicVolumeChange(parseFloat(e.target.value))}
+        className="w-32"
+      />
+      <select
+        value={musicStyle}
+        onChange={e => onMusicStyleChange(e.target.value)}
+        className="text-black rounded p-1"
+      >
+        {musicStyles.map(style => (
+          <option key={style} value={style}>{style}</option>
+        ))}
+      </select>
+    </div>
+  );
 
   const {
     timeLeft,
@@ -142,6 +185,36 @@ const GameScreen: React.FC<GameScreenProps> = ({
   React.useEffect(() => {
     document.body.className = darkMode ? 'dark-mode' : '';
   }, [darkMode]);
+
+  React.useEffect(() => {
+    if (!isPaused) return;
+    const modal = modalRef.current;
+    if (!modal) return;
+    const focusable = modal.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    first?.focus();
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Tab') {
+        if (focusable.length === 0) return;
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            (last as HTMLElement)?.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            (first as HTMLElement)?.focus();
+          }
+        }
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isPaused, showAudioSettings]);
 
   const selectNextWordForLevel = (level: number) => {
     const nextWord = selectNextWord(level);
@@ -448,49 +521,16 @@ const GameScreen: React.FC<GameScreenProps> = ({
       <div className="absolute top-8 right-8 text-center z-50">
         <div className={`text-6xl font-bold ${timeLeft <= 10 ? 'text-red-500' : 'text-yellow-300'}`}>{timeLeft}</div>
         <div className="text-lg">seconds left</div>
-        <button
-          onClick={isPaused ? resumeTimer : pauseTimer}
-          className="mt-2 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
-        >
-          {isPaused ? 'Resume' : 'Pause'}
-        </button>
-      </div>
-      <div className="absolute bottom-8 left-8 bg-black/50 p-4 rounded-lg z-50 flex flex-col gap-2">
-        <div className="flex items-center gap-2">
+        {!isPaused && (
           <button
-            onClick={onToggleMusicPlaying}
-            className="bg-yellow-300 text-black p-2 rounded"
-            aria-label={isMusicPlaying ? 'Pause music' : 'Play music'}
+            onClick={pauseTimer}
+            className="mt-2 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
           >
-            {isMusicPlaying ? <Pause size={16} /> : <Play size={16} />}
+            Pause
           </button>
-          <button
-            onClick={() => onSoundEnabledChange(!soundEnabled)}
-            className="bg-yellow-300 text-black p-2 rounded"
-            aria-label={soundEnabled ? 'Mute audio' : 'Unmute audio'}
-          >
-            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-          </button>
-        </div>
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step={0.01}
-          value={musicVolume}
-          onChange={e => onMusicVolumeChange(parseFloat(e.target.value))}
-          className="w-32"
-        />
-        <select
-          value={musicStyle}
-          onChange={e => onMusicStyleChange(e.target.value)}
-          className="text-black rounded p-1"
-        >
-          {musicStyles.map(style => (
-            <option key={style} value={style}>{style}</option>
-          ))}
-        </select>
+        )}
       </div>
+      {!isPaused && renderAudioSettings('absolute bottom-8 left-8 z-50 bg-black/50')}
 
       <AvatarSelector
         currentAvatar={currentAvatar}
@@ -575,8 +615,39 @@ const GameScreen: React.FC<GameScreenProps> = ({
       </button>
 
       {isPaused && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40">
-          Paused
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div
+            ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            className="bg-white text-black p-8 rounded-lg flex flex-col gap-4 w-80"
+          >
+            <button
+              onClick={() => {
+                setShowAudioSettings(false);
+                resumeTimer();
+              }}
+              className="bg-yellow-300 px-4 py-2 rounded-lg font-bold"
+            >
+              Resume
+            </button>
+            <button
+              onClick={() => setShowAudioSettings(s => !s)}
+              className="bg-yellow-300 px-4 py-2 rounded-lg font-bold"
+            >
+              {showAudioSettings ? 'Hide Audio Settings' : 'Audio Settings'}
+            </button>
+            {showAudioSettings && renderAudioSettings('bg-gray-100')}
+            <button
+              onClick={() => {
+                stopTimer();
+                onQuit();
+              }}
+              className="bg-yellow-300 px-4 py-2 rounded-lg font-bold"
+            >
+              Back to Menu
+            </button>
+          </div>
         </div>
       )}
     </div>

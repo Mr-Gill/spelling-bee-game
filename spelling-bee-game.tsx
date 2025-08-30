@@ -62,6 +62,12 @@ const SpellingBeeGame = () => {
         setGameResults(null);
     };
 
+    const handleQuit = () => {
+        setGameState("setup");
+        setGameConfig(null);
+        setGameResults(null);
+    };
+
     const handleViewLeaderboard = () => {
         setGameState("leaderboard");
     };
@@ -99,6 +105,7 @@ const SpellingBeeGame = () => {
             <GameScreen
                 config={gameConfig}
                 onEndGame={handleEndGame}
+                onQuit={handleQuit}
                 musicStyle={musicStyle}
                 musicVolume={musicVolume}
                 onMusicStyleChange={setMusicStyle}
