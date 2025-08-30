@@ -53,8 +53,10 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
   }, [results, config.dailyChallenge, bonus]);
 
   useEffect(() => {
-    const history: { date: string; score: number }[] = JSON.parse(localStorage.getItem('sessionHistory') || '[]');
-    history.push({ date: new Date().toISOString(), score: totalScore });
+    const history: { date: string; score: number; duration: number }[] = JSON.parse(
+      localStorage.getItem('sessionHistory') || '[]'
+    );
+    history.push({ date: new Date().toISOString(), score: totalScore, duration: results.duration || 0 });
     localStorage.setItem('sessionHistory', JSON.stringify(history));
 
     const storedBest = Number(localStorage.getItem('bestClassScore') || '0');
@@ -65,7 +67,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
     } else {
       setBestClassScore(storedBest);
     }
-  }, [totalScore]);
+  }, [totalScore, results.duration]);
 
   useEffect(() => {
     // Play sound and show confetti if there's a winner and effects are enabled

@@ -5,6 +5,7 @@ import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
+import HistoryScreen from './HistoryScreen';
 import ShopScreen from '../ShopScreen';
 import useMusic from './utils/useMusic';
 import { AudioProvider } from './AudioContext';
@@ -102,6 +103,10 @@ const SpellingBeeGame = () => {
     setGameState('achievements');
   };
 
+  const handleViewHistory = () => {
+    setGameState('history');
+  };
+
   const handleViewShop = () => {
     setGameState('shop');
   };
@@ -133,6 +138,7 @@ const SpellingBeeGame = () => {
         onStartGame={handleStartGame}
         onAddCustomWords={handleAddCustomWords}
         onViewAchievements={handleViewAchievements}
+        onViewHistory={handleViewHistory}
         onViewShop={() => handleViewShop()}
       />
     );
@@ -169,6 +175,9 @@ const SpellingBeeGame = () => {
   }
   if (gameState === 'achievements') {
     return <AchievementsScreen onBack={handleBackToSetup} />;
+  }
+  if (gameState === 'history') {
+    return <HistoryScreen onBack={handleBackToSetup} />;
   }
   if (gameState === 'shop') {
     return <ShopScreen onBack={handleBackToSetup} />;
