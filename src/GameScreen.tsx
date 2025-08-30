@@ -320,10 +320,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
     return () => timers.forEach(clearTimeout);
   }, [state.currentHelp, state.feedback]);
 
-  const handleTimerComplete = useCallback(() => {
-    handleNextWord();
-  }, [handleNextWord]);
-
   return (
     <div className="game-screen">
       <div className="game-area">

@@ -20,7 +20,10 @@ export interface Participant extends BaseParticipant {
 }
 
 export interface Team extends BaseParticipant {
-  participants: string[]; // Array of participant IDs
+  participants: string[];
   teamId: string;
-  students?: Participant[]; // For backward compatibility
+  students?: Participant[];
+  difficultyLevel: number;
+  attempted: number;
+  correct: number;
 }

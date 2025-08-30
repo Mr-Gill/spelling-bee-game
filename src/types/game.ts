@@ -1,5 +1,4 @@
-import { Participant } from './participant';
-import { Team } from './participant';
+import { Participant, Team } from './participant';
 import { WordType } from './word';
 
 export type GameConfig = {
