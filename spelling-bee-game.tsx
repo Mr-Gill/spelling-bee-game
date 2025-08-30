@@ -5,6 +5,7 @@ import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
+import ThemeToggle from './components/ThemeToggle';
 import useMusic from './utils/useMusic';
 
 // --- Main App Component ---
@@ -91,11 +92,17 @@ const SpellingBeeGame = () => {
     const trackVariant = screen === 'game' ? 'instrumental' : 'vocal';
     useMusic(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
 
+    let content;
     if (gameState === "setup") {
-        return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
-    }
-    if (gameState === "playing") {
-        return (
+        content = (
+            <SetupScreen
+                onStartGame={handleStartGame}
+                onAddCustomWords={handleAddCustomWords}
+                onViewAchievements={handleViewAchievements}
+            />
+        );
+    } else if (gameState === "playing") {
+        content = (
             <GameScreen
                 config={gameConfig}
                 onEndGame={handleEndGame}
@@ -110,17 +117,29 @@ const SpellingBeeGame = () => {
                 onQuit={handleQuitToSetup}
             />
         );
+    } else if (gameState === "results") {
+        content = (
+            <ResultsScreen
+                results={gameResults}
+                config={gameConfig}
+                onRestart={handleRestart}
+                onViewLeaderboard={handleViewLeaderboard}
+            />
+        );
+    } else if (gameState === "leaderboard") {
+        content = <LeaderboardScreen onBack={handleBackToSetup} />;
+    } else if (gameState === "achievements") {
+        content = <AchievementsScreen onBack={handleBackToSetup} />;
+    } else {
+        content = null;
     }
-    if (gameState === "results") {
-        return <ResultsScreen results={gameResults} config={gameConfig} onRestart={handleRestart} onViewLeaderboard={handleViewLeaderboard} />;
-    }
-    if (gameState === "leaderboard") {
-        return <LeaderboardScreen onBack={handleBackToSetup} />;
-    }
-    if (gameState === "achievements") {
-        return <AchievementsScreen onBack={handleBackToSetup} />;
-    }
-    return null;
+
+    return (
+        <>
+            {content}
+            <ThemeToggle />
+        </>
+    );
 };
 
 // --- App Rendering ---
