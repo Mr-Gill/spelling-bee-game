@@ -171,6 +171,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     teacherMode: localStorage.getItem('teacherMode') === 'true',
     musicStyle: localStorage.getItem('musicStyle') ?? 'Funk',
     musicVolume: parseFloat(localStorage.getItem('musicVolume') ?? '1'),
+    customPhrases: JSON.parse(localStorage.getItem('encouragementPhrases') || '[]').join('\n'),
   });
 
   const createParticipant = (name: string, difficulty: number): Participant => ({
