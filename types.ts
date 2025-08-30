@@ -29,6 +29,18 @@ export interface WordDatabase {
   tricky: Word[];
 }
 
+export interface ScoringConfig {
+  basePoints: number;
+  difficultyMultipliers: { [key: string]: number };
+  streakBonus: number;
+}
+
+export const defaultScoringConfig: ScoringConfig = {
+  basePoints: 5,
+  difficultyMultipliers: { easy: 1, medium: 2, tricky: 3 },
+  streakBonus: 2,
+};
+
 export interface GameConfig {
   participants: Participant[];
   gameMode: 'team' | 'individual';
@@ -43,6 +55,7 @@ export interface GameConfig {
   musicVolume: number;
   difficultyLevel: number;
   progressionSpeed: number;
+  scoringConfig: ScoringConfig;
   /** When true, the game uses the daily challenge word list */
   dailyChallenge?: boolean;
 }
