@@ -31,9 +31,13 @@ messages:
       Quote every field.
 
 
-      "syllables" is a JSON string of a string array (e.g.,
-      "["har","mo","ny"]"). Do not use doubled CSV quotes inside; use
-      backslash-escaped inner quotes.
+      The syllables field is a JSON string of a string array.
+
+
+      CORRECT: "["har","mo","ny"]"
+
+
+      INCORRECT: [""har"",""mo"",""ny""]
 
 
       CONTENT
@@ -50,34 +54,36 @@ messages:
       ≥3 with suffixes.
 
 
-      Definition: 10–18 words; witty, accurate, student-friendly. Define by
-      job/ingredients/effect or unexpected sensation (not flowery).
+      Definition: 10–18 words; witty, accurate, student-friendly. Define by job,
+      ingredients, effect, or an unexpected sensation (not flowery/abstract).
 
 
-      Origin: real and specific (e.g., Latin; Greek; Old French via Latin). No
-      speculative chains.
+      Origin: Real and specific (e.g., Latin; Greek; Old French via Latin). No
+      jokes or speculation.
 
 
       Example: 12–25 words; exactly one sentence; vividly funny or gently
-      surreal. Bee humour allowed in ≤ floor(N/2) rows.
+      surreal. Bee humour only in examples and in ≤ floor(N/2) rows.
 
 
-      Prefix/Suffix: include only productive, meaningful derivational affixes
+      Bee headwords: Bee words appear only in examples unless TOPIC is bees.
+
+
+      Prefix/Suffix: Include only productive, meaningful derivational affixes
       (e.g., "re-" in "remake", "-tion" in "creation").
 
 
-      Do NOT treat compounds as suffixes (e.g., laneway, skyline, rucksack →
-      suffix = "").
+      Do not treat compounds as suffixes (e.g., laneway, skyline → suffix="").
 
 
-      Do NOT invent prefixes from stems (e.g., federation ≠ "fed-").
+      Do not invent prefixes from stems (e.g., federation ≠ "fed-").
 
 
       Only include a prefix if it carries its usual meaning in the headword
       (e.g., "im-" in "impossible").
 
 
-      Pronunciation: hyphenated with PRIMARY stress in CAPS (e.g., par-muh-ZAN,
+      Pronunciation: Hyphenated with PRIMARY stress in CAPS (e.g., par-muh-ZAN,
       mot-suh-REL-uh).
 
 
@@ -88,14 +94,11 @@ messages:
       TOPIC explicitly requires them—then ≤1 such row).
 
 
-      Bee flavour: bee words appear only in examples unless TOPIC is bees.
-
-
       VALIDATION (silent)
 
       Before printing, fix any violations and output only the valid CSV. Per-row
       checks: non-empty fields; definition 10–18 words; example 12–25 words;
-      "syllables" is a JSON string with backslash-escaped inner quotes; real
+      syllables is a JSON string with backslash-escaped inner quotes; real
       origin; derivational prefix/suffix only; pronunciation format obeyed.
       After N rows: counts satisfied (one-syllable, 4+ syllables, prefixes,
       suffixes), ≥70% on-topic, bee examples ≤ floor(N/2), ASCII-only, no blank
@@ -104,8 +107,6 @@ messages:
     content: |-
       TOPIC: {{topic}}
       N: {{number}}
-
-      Generate the CSV now.
 model: openai/gpt-4.1
 modelParameters:
   max_completion_tokens: 13653
