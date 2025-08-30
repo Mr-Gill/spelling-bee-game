@@ -80,6 +80,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<string>(() => localStorage.getItem('selectedVoice') ?? '');
 
+  const [presets, setPresets] = useState<Record<string, any>>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('presets') || '{}');
+    } catch {
+      return {};
+    }
+  });
+  const [selectedPreset, setSelectedPreset] = useState('');
+
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
     document.body.classList.add(`theme-${t}`);
@@ -303,6 +312,49 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
 
+  const handleSavePreset = () => {
+    const name = prompt('Preset name?');
+    if (!name) return;
+    const preset = {
+      gameMode,
+      teams,
+      students,
+      startingLives,
+      timerDuration,
+      options,
+    };
+    const updated = { ...presets, [name]: preset };
+    setPresets(updated);
+    localStorage.setItem('presets', JSON.stringify(updated));
+    setSelectedPreset(name);
+  };
+
+  const handleLoadPreset = (name: string) => {
+    const preset = presets[name];
+    if (!preset) return;
+    setGameMode(preset.gameMode);
+    setStartingLives(preset.startingLives);
+    setTimerDuration(preset.timerDuration);
+    setOptions(preset.options);
+    updateTeams(preset.teams || []);
+    updateStudents(preset.students || []);
+  };
+
+  const handleDeletePreset = (name: string) => {
+    const updated = { ...presets };
+    delete updated[name];
+    setPresets(updated);
+    localStorage.setItem('presets', JSON.stringify(updated));
+    if (selectedPreset === name) setSelectedPreset('');
+  };
+
+  const handlePresetChange = (name: string) => {
+    setSelectedPreset(name);
+    if (name) {
+      handleLoadPreset(name);
+    }
+  };
+
   const handleStart = async (isSessionChallenge = false) => {
     let challengeWords: Word[] = [];
     if (isSessionChallenge) {
@@ -373,6 +425,25 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <h1 className="text-4xl md:text-6xl font-bold text-yellow-300 uppercase font-heading">🏆 SPELLING BEE CHAMPIONSHIP</h1>
             </div>
             <p className="text-xl md:text-2xl">Get ready to spell your way to victory!</p>
+        </div>
+
+        <div className="bg-white/10 p-6 rounded-lg mb-8">
+          <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Presets 💾</h2>
+          <div className="flex flex-col md:flex-row gap-2 items-center">
+            <select
+              value={selectedPreset}
+              onChange={e => handlePresetChange(e.target.value)}
+              className="flex-grow p-2 rounded-md bg-white/20 text-white"
+            >
+              <option value="">-- Select preset --</option>
+              {Object.keys(presets).map(name => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
+            <button onClick={handleSavePreset} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded w-full md:w-auto">Save Preset</button>
+            <button onClick={() => handleLoadPreset(selectedPreset)} disabled={!selectedPreset} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded w-full md:w-auto disabled:opacity-50">Load Preset</button>
+            <button onClick={() => handleDeletePreset(selectedPreset)} disabled={!selectedPreset} className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded w-full md:w-auto disabled:opacity-50">Delete</button>
+          </div>
         </div>
 
         <div className="bg-white/10 p-6 rounded-lg mb-8">
