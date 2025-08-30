@@ -74,6 +74,10 @@ const SpellingBeeGame = () => {
         setGameState("setup");
     };
 
+    const handleQuitToSetup = () => {
+        setGameState("setup");
+    };
+
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) {
@@ -103,6 +107,7 @@ const SpellingBeeGame = () => {
                 onSoundEnabledChange={setSoundEnabled}
                 isMusicPlaying={isMusicPlaying}
                 onToggleMusicPlaying={() => setIsMusicPlaying(prev => !prev)}
+                onQuit={handleQuitToSetup}
             />
         );
     }

@@ -30,6 +30,7 @@ interface GameScreenProps {
   onSoundEnabledChange: (enabled: boolean) => void;
   isMusicPlaying: boolean;
   onToggleMusicPlaying: () => void;
+  onQuit: () => void;
 }
 
 interface Feedback {
@@ -50,6 +51,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   onSoundEnabledChange,
   isMusicPlaying,
   onToggleMusicPlaying,
+  onQuit,
 }) => {
   const [participants, setParticipants] = React.useState<Participant[]>(
     config.participants.map(p => ({
@@ -397,6 +399,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
     audioManager.toggleMute();
   };
 
+  const handleQuit = () => {
+    stopTimer();
+    if (isMusicPlaying) {
+      onToggleMusicPlaying();
+    }
+    onQuit();
+  };
+
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center">
       <input
@@ -412,6 +422,12 @@ const GameScreen: React.FC<GameScreenProps> = ({
         </div>
       )}
       <div className="absolute top-8 left-8 flex gap-8 items-center">
+        <button
+          onClick={handleQuit}
+          className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+        >
+          Back to Menu
+        </button>
         <img src="img/bee.svg" alt="Bee icon" className="w-12 h-12" />
         {participants.map((p, index) => (
           <div key={index} className="text-center scorecard">
