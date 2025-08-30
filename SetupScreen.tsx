@@ -160,7 +160,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const createParticipant = (name: string, difficulty: number): Participant => ({
     name: name.trim(), lives: startingLives, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
 
-  const [options, setOptions] = useState<OptionsState>({
+});
     skipPenaltyType: 'lives',
     skipPenaltyValue: 1,
     initialDifficulty: 0,
