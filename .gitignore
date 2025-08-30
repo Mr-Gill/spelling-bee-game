@@ -1,6 +1,5 @@
 node_modules
 build
 dist/
-.DS_Store
-
 app.js
+.DS_Store
