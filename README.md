@@ -98,6 +98,26 @@ Students earn points for correct answers and can strategically spend them on ass
 
 ## 🚀 **Quick Start for Teachers**
 
+### 🔑 **GitHub Token Setup (Required for AI Features)**
+
+To enable AI-powered word list generation, you'll need to set up a GitHub token with the `models: read` permission:
+
+1. **Generate a GitHub Token**:
+   - Go to [GitHub Settings > Developer settings > Personal access tokens > Fine-grained tokens](https://github.com/settings/tokens)
+   - Click "Generate new token"
+   - Name it "Spelling Bee AI"
+   - Set expiration (or select "No expiration" for permanent tokens)
+   - Select your repository
+   - Under "Repository permissions", find "Models" and select "Read-only"
+   - Click "Generate token" and copy the token
+
+2. **Add Token to GitHub Repository Secrets**:
+   - Go to your repository Settings > Secrets and variables > Actions
+   - Click "New repository secret"
+   - Name: `GITHUB_MODELS_TOKEN`
+   - Value: Paste your token
+   - Click "Add secret"
+
 ### 🌐 **Option 1: Use Online (Recommended)**
 1. **Visit**: [https://squidgyg.github.io/spelling-bee-game/](https://squidgyg.github.io/spelling-bee-game/)
 2. **Project** on your classroom screen or smart board
