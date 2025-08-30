@@ -1,6 +1,7 @@
 export interface Word {
   word: string;
   syllables: string[];
+  phonemes: string[];
   definition: string;
   origin: string;
   example: string;

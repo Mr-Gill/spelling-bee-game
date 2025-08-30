@@ -20,6 +20,7 @@ import useWordSelection, { difficultyOrder } from "./utils/useWordSelection";
 import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
+import PhonicsBreakdown from "./components/PhonicsBreakdown";
 import { audioManager } from "./utils/audio";
 
 interface GameScreenProps {
@@ -85,6 +86,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState("");
+  const [showPhonics, setShowPhonics] = React.useState(false);
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);
@@ -149,7 +151,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       if (hiddenInputRef.current) {
         hiddenInputRef.current.focus();
       }
+      setShowPhonics(false);
       speak(nextWord.word);
+      setShowPhonics(true);
       startTimer();
     } else {
       onEndGameWithMissedWords();
@@ -536,7 +540,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
               </div>
             )}
             <button
-              onClick={() => speak(currentWord.word)}
+              onClick={() => {
+                speak(currentWord.word);
+                setShowPhonics(true);
+              }}
               className="absolute top-0 left-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
             >
               Replay Word
@@ -546,6 +553,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
               className="absolute top-0 right-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
             >
               {showWord ? "Hide Word" : "Show Word"}
+            </button>
+            <button
+              onClick={() => setShowPhonics(true)}
+              className="absolute top-0 left-1/2 -translate-x-1/2 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+            >
+              Hint
             </button>
           </div>
           <HintPanel
@@ -558,6 +571,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             onHintUsed={() => setUsedHint(true)}
             onExtraAttempt={() => setExtraAttempt(true)}
           />
+          {showPhonics && <PhonicsBreakdown word={currentWord} />}
           <div className="flex gap-2 justify-center mb-4">
             {letters.map((letter, idx) => (
               <div
