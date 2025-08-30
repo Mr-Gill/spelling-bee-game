@@ -220,7 +220,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const updateTeams = () => {
     const updatedTeams = (teams || []).map(team => ({
       ...team,
-      students: team.students.map(studentId => 
+      students: (team.students || []).map(studentId => 
         participants.find(p => p.id === studentId) || createParticipant('Unknown', 1)
       )
     }));
