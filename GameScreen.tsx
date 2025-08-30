@@ -21,6 +21,7 @@ import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
 import { audioManager } from "./utils/audio";
+import AccessibilitySettings from "./components/AccessibilitySettings";
 
 interface GameScreenProps {
   config: GameConfig;
@@ -60,6 +61,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   });
   const [extraAttempt, setExtraAttempt] = React.useState(false);
   const [isHelpOpen, setIsHelpOpen] = React.useState(false);
+  const [showAccessibility, setShowAccessibility] = React.useState(false);
   const {
     wordQueues,
     setWordQueues,
@@ -592,9 +594,20 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         <SkipForward size={24} />
       </button>
 
-      {isPaused && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40">
-          Paused
+      {isPaused && !showAccessibility && (
+        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-6xl font-bold z-40">
+          <div>Paused</div>
+          <button
+            onClick={() => setShowAccessibility(true)}
+            className="mt-8 bg-yellow-300 text-black px-6 py-3 rounded text-2xl"
+          >
+            Accessibility
+          </button>
+        </div>
+      )}
+      {showAccessibility && (
+        <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-50">
+          <AccessibilitySettings onClose={() => setShowAccessibility(false)} />
         </div>
       )}
     </div>

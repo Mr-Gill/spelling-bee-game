@@ -6,6 +6,7 @@ import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
 import useMusic from './utils/useMusic';
+import { applyAccessibilitySettings } from './components/AccessibilitySettings';
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
@@ -24,6 +25,10 @@ const SpellingBeeGame = () => {
             .then(res => res.json())
             .then(data => setWordDatabase(data))
             .catch(err => console.error('Failed to load word list', err));
+    }, []);
+
+    useEffect(() => {
+        applyAccessibilitySettings();
     }, []);
 
     const handleAddCustomWords = (newWords) => {

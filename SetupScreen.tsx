@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GameConfig, Word } from './types';
 import { parseWordList } from './utils/parseWordList';
 import bookImg from './img/avatars/book.svg';
+import AccessibilitySettings from './components/AccessibilitySettings';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -19,6 +20,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [startingLives, setStartingLives] = useState(10);
+  const [showAccessibility, setShowAccessibility] = useState(false);
 
   const getDefaultTeams = (): Participant[] => [
     { name: 'Team Alpha', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
@@ -365,7 +367,18 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
   
   return (
-    <div className="min-h-screen p-8 text-white font-body">
+    <div className="min-h-screen p-8 text-white font-body relative">
+      <button
+        onClick={() => setShowAccessibility(true)}
+        className="absolute top-4 right-4 bg-yellow-300 text-black px-4 py-2 rounded font-bold"
+      >
+        Accessibility
+      </button>
+      {showAccessibility && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <AccessibilitySettings onClose={() => setShowAccessibility(false)} />
+        </div>
+      )}
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
