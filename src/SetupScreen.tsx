@@ -3,6 +3,18 @@ import { v4 as uuidv4 } from 'uuid';
 import { GameConfig, OptionsState } from './types/game';
 import { Participant, Team } from './types/participant';
 import { parseWordList } from './utils/parseWordList';
+import WordListPrompt from './components/WordListPrompt';
+import useRoster from '../hooks/useRoster';
+
+// Gather available music styles.
+// This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
+const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
+
+type WordDatabase = {
+  easy: any[];
+  medium: any[];
+  tricky: any[];
+};
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
@@ -177,6 +189,10 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
   useEffect(() => {
     setStartingLives(gameMode === 'team' ? 10 : 5);
   }, [gameMode]);
+
+  useEffect(() => {
+    setOptions(o => ({ ...o, gameMode }));
+  }, [gameMode]);
   
   useEffect(() => {
     const savedTeams = localStorage.getItem('teams');
@@ -283,25 +299,12 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
   const addStudent = () => {
     if (studentName.trim()) {
       const newStudent = createParticipant(studentName, options.initialDifficulty);
-      setParticipants([...participants, newStudent]);
+      addParticipantToRoster(newStudent);
       setStudentName('');
     }
   };
 
-  const updateStudentName = (index: number, name: string) => {
-    const updatedStudents = [...participants];
-    updatedStudents[index].name = name;
-    setParticipants(updatedStudents);
-  };
-
-  const removeStudent = (index: number) => {
-    const updatedStudents = [...participants];
-    updatedStudents.splice(index, 1);
-    setParticipants(updatedStudents);
-  };
-
-  const setTeamsParticipants = (teams: Team[]) => setTeams(teams);
-  const setStudentsParticipants = (students: Participant[]) => setParticipants(students);
+  const removeStudent = (index: number) => removeParticipantFromRoster(index);
 
   const randomizeTeams = () => {
     if (participants.length < 2) {
@@ -592,9 +595,9 @@ const handleParticipantRemove = (index: number) => {
                   <TeamForm
                     teams={teams}
                     avatars={availableAvatars}
-                    addTeam={(team: Team) => addTeam(team)}
-                    removeTeam={(id: string) => removeTeam(id)}
-                    updateTeamName={(id: string, name: string) => updateTeam(id, { name })}
+                    addTeam={() => addTeam(createTeam())}
+                    removeTeam={removeTeamByIndex}
+                    updateTeamName={updateTeamNameByIndex}
                   />
                 ) : (
                   <>
@@ -625,12 +628,12 @@ const handleParticipantRemove = (index: number) => {
                       </div>
                     ))}
                     <StudentRoster
-                      participants={participants || []}  // Ensure we always pass an array
+                      students={participants}
                       avatars={availableAvatars}
-                      onAdd={createParticipant}
-                      onRemove={handleParticipantRemove}
-                      onEdit={handleParticipantEdit}
-                      onAddBulk={addBulkStudents}
+                      addParticipant={addParticipantToRoster}
+                      removeStudent={removeStudent}
+                      updateStudentName={updateStudentName}
+                      createParticipant={createParticipant}
                       initialDifficulty={options.initialDifficulty}
                     />
                   </>
@@ -745,10 +748,17 @@ const handleParticipantRemove = (index: number) => {
                 {aiError && <p className="text-red-300 mt-2">{aiError}</p>}
               </div>
               <div className="mt-4 text-sm text-gray-300">
-                <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`.</p>
-                <div className="mt-2">
-                  <a href="wordlists/example.csv" download className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Download Template</a>
-                </div>
+                <p>
+                  <strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`,
+                  `prefix`, `suffix`, `pronunciation`.
+                </p>
+                <a
+                  href="wordlists/example.csv"
+                  download
+                  className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mt-2"
+                >
+                  Download Template
+                </a>
               </div>
             </div>
           )}

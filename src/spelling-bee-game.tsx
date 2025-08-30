@@ -1,125 +1,193 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-// Import components
-import { AudioProvider } from './contexts/AudioContext';
-import { AudioControls } from './components/AudioControls';
+import LeaderboardScreen from './LeaderboardScreen';
 import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
+import ResultsScreen from './ResultsScreen';
+import AchievementsScreen from './AchievementsScreen';
+import ShopScreen from '../ShopScreen';
+import useMusic from './utils/useMusic';
+import { AudioProvider } from './AudioContext';
 
 // Import types
-import type { GameConfig } from './types/game';
-import type { WordType } from './types/word';
+import type { GameConfig } from './types';
+// --- Type Definitions ---
+type Participant = {
+  // Add participant properties here
+};
 
-// Import global styles
-import './tailwind.css';
+type WordDatabase = {
+  easy: string[];
+  medium: string[];
+  tricky: string[];
+};
+
+type GameConfig = {
+  participants: Participant[];
+  gameMode: 'team' | 'individual';
+  timerDuration: number;
+  skipPenaltyType: 'lives' | 'points';
+  skipPenaltyValue: number;
+  soundEnabled: boolean;
+  effectsEnabled: boolean;
+  difficultyLevel: number;
+  progressionSpeed: number;
+  musicStyle: string;
+  musicVolume: number;
+  wordDatabase: WordDatabase;
+  dailyChallenge?: boolean;
+};
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
-  // Initialize audio when component mounts
-  useEffect(() => {
-    const initAudio = async () => {
-      try {
-        const { preloadAudio } = await import('./audio/initAudio');
-        await preloadAudio();
-        console.log('Audio system initialized');
-      } catch (error) {
-        console.error('Failed to initialize audio:', error);
-      }
-    };
-    
-    initAudio();
-    
-    // Cleanup audio on unmount
-    return () => {
-      const { audioManager } = require('./utils/audio');
-      audioManager.stopAll();
-    };
-  }, []);
   const [gameState, setGameState] = useState('setup');
   const [gameConfig, setGameConfig] = useState<GameConfig | null>(null);
-  
-  // Initialize game with configuration
-  const handleStartGame = (config: Omit<GameConfig, 'wordList'>) => {
-    // Create a default word list for now
-    const defaultWordList: WordType[] = [];
-    
-    const fullConfig: GameConfig = {
-      ...config,
-      wordList: defaultWordList,
-    };
-    
-    setGameConfig(fullConfig);
+  const [gameResults, setGameResults] = useState<any>(null);
+  const [customWords, setCustomWords] = useState<WordDatabase>({ easy: [], medium: [], tricky: [] });
+  const [wordDatabase, setWordDatabase] = useState<WordDatabase>({ easy: [], medium: [], tricky: [] });
+  const [musicStyle, setMusicStyle] = useState('Funk');
+  const [musicVolume, setMusicVolume] = useState(0.5);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(true);
+
+  useEffect(() => {
+    fetch('words.json')
+      .then(res => res.json())
+      .then(data => setWordDatabase(data))
+      .catch(err => console.error('Failed to load word list', err));
+  }, []);
+
+  const handleAddCustomWords = (newWords: any[]) => {
+    const easy = newWords.filter(w => w.word.length <= 5);
+    const medium = newWords.filter(w => w.word.length > 5 && w.word.length <= 8);
+    const tricky = newWords.filter(w => w.word.length > 8);
+    setCustomWords({ easy, medium, tricky });
+  };
+
+  const handleStartGame = (config: GameConfig) => {
+    let finalWordDatabase;
+    if (config.dailyChallenge) {
+      finalWordDatabase = customWords;
+    } else {
+      finalWordDatabase = {
+        easy: [...wordDatabase.easy, ...customWords.easy],
+        medium: [...wordDatabase.medium, ...customWords.medium],
+        tricky: [...wordDatabase.tricky, ...customWords.tricky],
+      };
+    }
+    setGameConfig({ ...config, wordDatabase: finalWordDatabase });
+    setSoundEnabled(config.soundEnabled);
+    setMusicStyle(config.musicStyle);
+    setMusicVolume(config.musicVolume);
+    setIsMusicPlaying(true);
     setGameState('playing');
   };
-  
-  // Handle adding custom words
-  const handleAddCustomWords = (words: WordType[]) => {
-    console.log('Adding custom words:', words);
-    // Implement custom words logic here
-  };
-  
-  // Handle viewing achievements
-  const handleViewAchievements = () => {
-    console.log('Viewing achievements');
-    // Navigate to achievements screen
-  };
-  
-  // Handle game end
+
   const handleEndGame = (results: any) => {
+    setGameResults(results);
     setGameState('results');
   };
-  
-  // Render the appropriate screen based on game state
-  const renderScreen = () => {
-    switch (gameState) {
-      case 'setup':
-        return (
-          <SetupScreen 
-            onStartGame={handleStartGame} 
-            onAddCustomWords={handleAddCustomWords}
-            onViewAchievements={handleViewAchievements}
-          />
-        );
-      case 'playing':
-        return gameConfig ? (
-          <GameScreen
-            config={gameConfig}
-            onEndGame={handleEndGame}
-          />
-        ) : null;
-      case 'results':
-        return <div>Game Over</div>;
-      default:
-        return <div>Loading...</div>;
-    }
+
+  const handleRestart = () => {
+    setGameState('setup');
+    setGameConfig(null);
+    setGameResults(null);
   };
 
-  return (
-    <AudioProvider>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-        {/* Uncomment to test audio controls */}
-        {/* <AudioTest /> */}
-        
-        <main className="container mx-auto px-4 py-8">
-          {renderScreen()}
-        </main>
+  const handleViewLeaderboard = () => {
+    setGameState('leaderboard');
+  };
 
-        {/* Global Audio Controls */}
-        <AudioControls />
-      </div>
-    </AudioProvider>
-  );
+  const handleViewAchievements = () => {
+    setGameState('achievements');
+  };
+
+  const handleViewShop = () => {
+    setGameState('shop');
+  };
+
+  const handleBackToSetup = () => {
+    setGameState('setup');
+  };
+
+  const handleQuitToSetup = () => {
+    setGameState('setup');
+  };
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
+      document.body.classList.add(`theme-${savedTheme}`);
+    }
+  }, []);
+
+  // Handle background music on different screens
+  const screen = gameState === 'playing' ? 'game' : 'menu';
+  const trackVariant = screen === 'game' ? 'instrumental' : 'vocal';
+  useMusic(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
+
+  if (gameState === 'setup') {
+    return (
+      <SetupScreen
+        onStartGame={handleStartGame}
+        onAddCustomWords={handleAddCustomWords}
+        onViewAchievements={handleViewAchievements}
+        onViewShop={() => handleViewShop()}
+      />
+    );
+  }
+  if (gameState === 'playing') {
+    return (
+      <GameScreen
+        config={gameConfig}
+        onEndGame={handleEndGame}
+        musicStyle={musicStyle}
+        musicVolume={musicVolume}
+        onMusicStyleChange={setMusicStyle}
+        onMusicVolumeChange={setMusicVolume}
+        soundEnabled={soundEnabled}
+        onSoundEnabledChange={setSoundEnabled}
+        isMusicPlaying={isMusicPlaying}
+        onToggleMusicPlaying={() => setIsMusicPlaying(prev => !prev)}
+        onQuit={handleQuitToSetup}
+      />
+    );
+  }
+  if (gameState === 'results') {
+    return (
+      <ResultsScreen
+        results={gameResults}
+        config={gameConfig}
+        onRestart={handleRestart}
+        onViewLeaderboard={handleViewLeaderboard}
+      />
+    );
+  }
+  if (gameState === 'leaderboard') {
+    return <LeaderboardScreen onBack={handleBackToSetup} />;
+  }
+  if (gameState === 'achievements') {
+    return <AchievementsScreen onBack={handleBackToSetup} />;
+  }
+  if (gameState === 'shop') {
+    return <ShopScreen onBack={handleBackToSetup} />;
+  }
+  return null;
 };
 
-// Render the app
-const rootElement = document.getElementById('root');
-if (rootElement) {
-  const root = ReactDOM.createRoot(rootElement);
+// --- App Rendering ---
+const container = document.getElementById('root');
+if (container) {
+  const root = ReactDOM.createRoot(container);
   root.render(
     <React.StrictMode>
-      <SpellingBeeGame />
+      <AudioProvider>
+        <SpellingBeeGame />
+      </AudioProvider>
     </React.StrictMode>
   );
 }
 
 export default SpellingBeeGame;
+
