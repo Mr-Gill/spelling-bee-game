@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD:SetupScreen.tsx
 import { GameConfig, Word, Participant, OptionsState } from './types';
 import { parseWordList } from './utils/parseWordList';
 import beeImg from './img/avatars/bee.svg';
@@ -8,12 +7,6 @@ import trophyImg from './img/avatars/trophy.svg';
 import TeamForm from './components/TeamForm';
 import StudentRoster from './components/StudentRoster';
 import GameOptions from './components/GameOptions';
-=======
-import { Word, Participant, GameConfig } from './types';
-import beeImg from '../img/avatars/bee.svg';
-import bookImg from '../img/avatars/book.svg';
-import trophyImg from '../img/avatars/trophy.svg';
->>>>>>> origin/codex/reorganize-project-structure-into-src-directory:src/SetupScreen.tsx
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
