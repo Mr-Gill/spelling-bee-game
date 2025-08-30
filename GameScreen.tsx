@@ -21,6 +21,7 @@ import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
 import { audioManager } from "./utils/audio";
+import { powerUps, PowerUp } from "./constants/powerups";
 
 interface GameScreenProps {
   config: GameConfig;
@@ -42,6 +43,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       correct: 0,
       wordsAttempted: 0,
       wordsCorrect: 0,
+      powerUps: p.powerUps || {},
     })),
   );
   const [currentParticipantIndex, setCurrentParticipantIndex] =
@@ -85,6 +87,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState("");
+  const [hintPowerUpTrigger, setHintPowerUpTrigger] = React.useState(0);
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);
@@ -231,6 +234,36 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       }),
     );
     playShop();
+  };
+
+  const applyPowerUpEffect = (id: string) => {
+    if (id === "freeze-timer") {
+      pauseTimer();
+      setTimeout(() => resumeTimer(), 5000);
+    } else if (id === "extra-hint") {
+      setHintPowerUpTrigger((t) => t + 1);
+    }
+  };
+
+  const handlePowerUp = (pu: PowerUp) => {
+    const participant = participants[currentParticipantIndex];
+    const count = participant.powerUps?.[pu.id] || 0;
+    if (count > 0) {
+      setParticipants((prev) =>
+        prev.map((p, idx) =>
+          idx === currentParticipantIndex
+            ? {
+                ...p,
+                powerUps: { ...p.powerUps, [pu.id]: count - 1 },
+              }
+            : p,
+        ),
+      );
+      applyPowerUpEffect(pu.id);
+    } else if (participant.points >= pu.cost) {
+      spendPoints(currentParticipantIndex, pu.cost);
+      applyPowerUpEffect(pu.id);
+    }
   };
 
   const typeLetter = (letter: string) => {
@@ -557,7 +590,28 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             showWord={showWord}
             onHintUsed={() => setUsedHint(true)}
             onExtraAttempt={() => setExtraAttempt(true)}
+            powerUpHintTrigger={hintPowerUpTrigger}
           />
+          <div className="flex gap-4 justify-center mb-4">
+            {powerUps.map((pu) => {
+              const count =
+                participants[currentParticipantIndex].powerUps?.[pu.id] || 0;
+              const canAfford =
+                count > 0 ||
+                participants[currentParticipantIndex].points >= pu.cost;
+              return (
+                <button
+                  key={pu.id}
+                  onClick={() => handlePowerUp(pu)}
+                  disabled={!canAfford}
+                  className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+                >
+                  {pu.name}
+                  {count > 0 ? ` x${count}` : ` (-${pu.cost})`}
+                </button>
+              );
+            })}
+          </div>
           <div className="flex gap-2 justify-center mb-4">
             {letters.map((letter, idx) => (
               <div
