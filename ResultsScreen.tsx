@@ -19,6 +19,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
   const [isBestScore, setIsBestScore] = useState(false);
   const [streakInfo, setStreakInfo] = useState<StreakInfo | null>(null);
   const [bonus, setBonus] = useState(0);
+  const [showMoodModal, setShowMoodModal] = useState(true);
 
   useEffect(() => {
     if (config.dailyChallenge) {
@@ -52,10 +53,6 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
   }, [results, config.dailyChallenge, bonus]);
 
   useEffect(() => {
-    const history: { date: string; score: number }[] = JSON.parse(localStorage.getItem('sessionHistory') || '[]');
-    history.push({ date: new Date().toISOString(), score: totalScore });
-    localStorage.setItem('sessionHistory', JSON.stringify(history));
-
     const storedBest = Number(localStorage.getItem('bestClassScore') || '0');
     if (totalScore > storedBest) {
       localStorage.setItem('bestClassScore', String(totalScore));
@@ -78,6 +75,13 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
       }
     }
   }, [results.winner, config.soundEnabled, config.effectsEnabled]);
+
+  const handleMoodSelect = (mood: string) => {
+    const history: { date: string; score: number; mood: string }[] = JSON.parse(localStorage.getItem('sessionHistory') || '[]');
+    history.push({ date: new Date().toISOString(), score: totalScore, mood });
+    localStorage.setItem('sessionHistory', JSON.stringify(history));
+    setShowMoodModal(false);
+  };
 
   const handleExport = () => {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(results, null, 2));
@@ -160,6 +164,18 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
             🔄 Play Again
         </button>
       </div>
+      {showMoodModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/70">
+          <div className="bg-white p-6 rounded-lg text-black max-w-sm w-full text-center">
+            <h3 className="text-2xl mb-4">How do you feel about today's session?</h3>
+            <div className="flex justify-center gap-6 text-4xl">
+              <button onClick={() => handleMoodSelect('😊')} aria-label="Happy" className="hover:scale-110">😊</button>
+              <button onClick={() => handleMoodSelect('😐')} aria-label="Neutral" className="hover:scale-110">😐</button>
+              <button onClick={() => handleMoodSelect('😢')} aria-label="Sad" className="hover:scale-110">😢</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
