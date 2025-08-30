@@ -5,9 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { GameConfig } from './types/game';
 import { OptionsState } from './types/game';
 import { WordType } from './types/word';
-import beeImg from '../img/bee.svg';
-import bookImg from '../img/book.svg';
-import trophyImg from '../img/trophy.svg';
+import beeImg from './img/avatars/bee.svg';
+import bookImg from './img/avatars/book.svg';
+import trophyImg from './img/avatars/trophy.svg';
 import TeamForm from './components/TeamForm';
 import StudentRoster from './components/StudentRoster';
 
@@ -138,7 +138,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     } else {
       document.body.classList.remove('teacher-mode');
     }
-    localStorage.setItem('teacherMode', String(teacherMode));
+    try {
+      localStorage.setItem('teacherMode', String(teacherMode));
+    } catch (error) {
+      console.error('Failed to save teacherMode to localStorage', error);
+    }
   }, [teacherMode]);
 
   useEffect(() => {
@@ -159,14 +163,40 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
   }, []);
 
-  useEffect(() => localStorage.setItem('soundEnabled', String(soundEnabled)), [soundEnabled]);
-  useEffect(() => localStorage.setItem('musicStyle', musicStyle), [musicStyle]);
-  useEffect(() => localStorage.setItem('musicVolume', String(musicVolume)), [musicVolume]);
+  useEffect(() => {
+    try {
+      localStorage.setItem('soundEnabled', String(soundEnabled));
+    } catch (error) {
+      console.error('Failed to save soundEnabled to localStorage', error);
+    }
+  }, [soundEnabled]);
+  useEffect(() => {
+    try {
+      localStorage.setItem('musicStyle', musicStyle);
+    } catch (error) {
+      console.error('Failed to save musicStyle to localStorage', error);
+    }
+  }, [musicStyle]);
+  useEffect(() => {
+    try {
+      localStorage.setItem('musicVolume', String(musicVolume));
+    } catch (error) {
+      console.error('Failed to save musicVolume to localStorage', error);
+    }
+  }, [musicVolume]);
   useEffect(() => {
     if (selectedVoice) {
-      localStorage.setItem('selectedVoice', selectedVoice);
+      try {
+        localStorage.setItem('selectedVoice', selectedVoice);
+      } catch (error) {
+        console.error('Failed to save selectedVoice to localStorage', error);
+      }
     } else {
-      localStorage.removeItem('selectedVoice');
+      try {
+        localStorage.removeItem('selectedVoice');
+      } catch (error) {
+        console.error('Failed to remove selectedVoice from localStorage', error);
+      }
     }
   }, [selectedVoice]);
 
@@ -179,13 +209,37 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   }, []);
 
   const updateTeams = (newTeams: Participant[]) => {
+    const teamsToSave = newTeams.map(team => ({
+      ...team,
+      students: team.students.map(student => ({
+        id: student.id,
+        name: student.name,
+        avatar: student.avatar,
+        score: student.score,
+        lives: student.lives,
+        points: student.points,
+        difficultyLevel: student.difficultyLevel,
+        streak: student.streak,
+        attempted: student.attempted,
+        correct: student.correct,
+        incorrect: student.incorrect
+      }))
+    }));
+    try {
+      localStorage.setItem('teams', JSON.stringify(teamsToSave));
+    } catch (error) {
+      console.error('Failed to save teams to localStorage', error);
+    }
     setTeamsParticipants(newTeams);
-    localStorage.setItem('teams', JSON.stringify(newTeams));
   };
 
   const updateStudents = (newStudents: Participant[]) => {
     setStudentsParticipants(newStudents);
-    localStorage.setItem('students', JSON.stringify(newStudents));
+    try {
+      localStorage.setItem('students', JSON.stringify(newStudents, getCircularReplacer()));
+    } catch (error) {
+      console.error('Failed to save students to localStorage', error);
+    }
   };
 
   useEffect(() => {
@@ -198,8 +252,16 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   }, [startingLives, gameMode]);
 
   const clearRoster = () => {
-    localStorage.removeItem('teams');
-    localStorage.removeItem('students');
+    try {
+      localStorage.removeItem('teams');
+    } catch (error) {
+      console.error('Failed to remove teams from localStorage', error);
+    }
+    try {
+      localStorage.removeItem('students');
+    } catch (error) {
+      console.error('Failed to remove students from localStorage', error);
+    }
     setTeamsParticipants(getDefaultTeams());
     setStudentsParticipants([]);
   };
@@ -436,6 +498,19 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     onStartGame(config);
   };
   
+  const getCircularReplacer = () => {
+    const seen = new WeakSet();
+    return (key: string, value: any) => {
+      if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+          return;
+        }
+        seen.add(value);
+      }
+      return value;
+    };
+  };
+
   return (
     <div className="min-h-screen p-8 text-white font-body">
       <div className="max-w-7xl mx-auto">
@@ -555,7 +630,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Theme 🎨</h2>
-                <select value={theme} onChange={e => { const t = e.target.value; setTheme(t); localStorage.setItem('theme', t); applyTheme(t); }} className="p-2 rounded-md bg-white/20 text-white">
+                <select value={theme} onChange={e => { const t = e.target.value; setTheme(t); try { localStorage.setItem('theme', t); } catch (error) { console.error('Failed to save theme to localStorage', error); } applyTheme(t); }} className="p-2 rounded-md bg-white/20 text-white">
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                     <option value="honeycomb">Honeycomb</option>
