@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { BookOpen, Wand2, AlertCircle, CheckCircle, Loader } from 'lucide-react';
 import GitHubWordListGenerator, { GeneratedWord } from '../services/githubWordListGenerator';
 
@@ -10,11 +10,13 @@ interface WordListGeneratorProps {
 export default function WordListGenerator({ onWordsGenerated, className = '' }: WordListGeneratorProps) {
   const [topic, setTopic] = useState('');
   const [count, setCount] = useState(10);
-  const [githubToken, setGithubToken] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [generatedWords, setGeneratedWords] = useState<GeneratedWord[]>([]);
+  
+  // Get token from environment
+  const githubToken = process.env.GITHUB_MODELS_TOKEN || '';
 
   const handleGenerate = useCallback(async () => {
     if (!topic.trim()) {
@@ -22,8 +24,8 @@ export default function WordListGenerator({ onWordsGenerated, className = '' }: 
       return;
     }
 
-    if (!githubToken.trim()) {
-      setError('Please enter your GitHub token');
+    if (!githubToken) {
+      setError('GitHub token not configured. Please contact support.');
       return;
     }
 
@@ -37,7 +39,7 @@ export default function WordListGenerator({ onWordsGenerated, className = '' }: 
     setSuccess('');
 
     try {
-      const generator = new GitHubWordListGenerator(githubToken);
+      const generator = new GitHubWordListGenerator();
 
       // Test connection first
       const isConnected = await generator.testConnection();
@@ -57,9 +59,9 @@ export default function WordListGenerator({ onWordsGenerated, className = '' }: 
     } finally {
       setIsGenerating(false);
     }
-  }, [topic, count, githubToken, onWordsGenerated]);
+  }, [topic, count, onWordsGenerated, githubToken]);
 
-  const handleSaveToLocalStorage = useCallback(() => {
+  const handleSaveToLocalStorage = useCallback(async () => {
     if (generatedWords.length === 0) return;
 
     const wordList = {
@@ -84,32 +86,6 @@ export default function WordListGenerator({ onWordsGenerated, className = '' }: 
       </div>
 
       <div className="space-y-4 mb-6">
-        {/* GitHub Token Input */}
-        <div>
-          <label htmlFor="github-token" className="block text-sm font-medium text-gray-700 mb-1">
-            GitHub Token
-          </label>
-          <input
-            id="github-token"
-            type="password"
-            value={githubToken}
-            onChange={(e) => setGithubToken(e.target.value)}
-            placeholder="ghp_xxxxxxxxxxxx"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Needs "models: read" permission. Get from{' '}
-            <a
-              href="https://github.com/settings/tokens"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
-            >
-              GitHub Settings
-            </a>
-          </p>
-        </div>
-
         {/* Topic Input */}
         <div>
           <label htmlFor="topic" className="block text-sm font-medium text-gray-700 mb-1">

@@ -22,8 +22,16 @@ export interface GeneratedWord {
 export class GitHubWordListGenerator {
   private baseUrl = 'https://models.github.ai';
   private apiVersion = '2022-11-28';
+  private githubToken: string;
 
-  constructor(private githubToken: string) {}
+  constructor() {
+    // Token will be provided at runtime from environment
+    this.githubToken = process.env.GITHUB_MODELS_TOKEN || '';
+    
+    if (!this.githubToken) {
+      console.warn('GITHUB_MODELS_TOKEN environment variable is not set');
+    }
+  }
 
   /**
    * Generate word list using GitHub Models API

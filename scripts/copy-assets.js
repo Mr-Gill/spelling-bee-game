@@ -23,6 +23,21 @@ const copyAssets = () => {
     // Copy audio assets
     fs.copySync('audio', 'dist/audio');
     
+    // Copy manifest file
+    if (fs.existsSync('manifest.webmanifest')) {
+      fs.copySync('manifest.webmanifest', 'dist/manifest.webmanifest');
+    }
+    
+    // Copy CSS files
+    if (fs.existsSync('tailwind.css')) {
+      fs.copySync('tailwind.css', 'dist/tailwind.css');
+    }
+    
+    // Copy style.css
+    if (fs.existsSync('style.css')) {
+      fs.copySync('style.css', 'dist/style.css');
+    }
+    
     console.log('All assets copied successfully');
   } catch (err) {
     console.error('Error copying assets:', err);

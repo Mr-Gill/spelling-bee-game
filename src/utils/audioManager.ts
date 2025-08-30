@@ -209,28 +209,62 @@ class AudioManager {
   }
 
   // Play a sound effect
-  public playSound(key: string, options: { volume?: number; loop?: boolean } = {}): void {
-    if (this.settings.areSoundsMuted) return;
-
-    const soundData = this.sounds.get(key);
-    if (!soundData) {
-      console.warn(`Sound ${key} not found`);
-      return;
-    }
-
-    const { sound } = soundData;
-    
-    // Stop any existing instance of this sound
-    sound.stop();
-    
-    // Update volume if provided
-    if (options.volume !== undefined) {
-      sound.volume(options.volume);
+  public playSound(
+    keyOrPath: string, 
+    options: Omit<SoundOptions, 'preload'> = {}
+  ): number | null {
+    if (this.settings.areSoundsMuted) {
+      return null;
     }
     
-    // Update loop setting if provided
-    if (options.loop !== undefined) {
-      sound.loop(options.loop);
+    const {
+      loop = false,
+      volume = this.settings.sfxVolume,
+      onend,
+      onerror
+    } = options;
+    
+    // Try to find by key first
+    let sound = this.sounds.get(keyOrPath);
+    
+    // If not found by key, try to find by path
+    if (!sound) {
+      for (const [_, snd] of this.sounds) {
+        if (snd.path === keyOrPath) {
+          sound = snd;
+          break;
+        }
+      }
+      
+      // If still not found, try to load it
+      if (!sound) {
+        this.loadSound(keyOrPath, keyOrPath, { ...options, preload: true });
+        console.warn(`Sound not preloaded: ${keyOrPath}, attempting to load...`);
+        return null;
+      }
+    }
+    
+    try {
+      // Update sound settings
+      sound.sound.loop(loop);
+      sound.sound.volume(volume);
+      
+      // Set up event handlers
+      if (onend) {
+        sound.sound.off('end');
+        sound.sound.once('end', onend);
+      }
+      
+      if (onerror) {
+        sound.sound.off('loaderror');
+        sound.sound.once('loaderror', (_, error) => onerror(error));
+      }
+      
+      // Play the sound
+      return sound.sound.play();
+    } catch (error) {
+      console.error(`Error playing sound ${keyOrPath}:`, error);
+      return null;
     }
   }
 

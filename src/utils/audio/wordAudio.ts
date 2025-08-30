@@ -19,7 +19,7 @@ export function playWordPronunciation(word: string, onEnd?: () => void): void {
       // Fallback to TTS if available
       if (window.speechSynthesis) {
         const utterance = new SpeechSynthesisUtterance(word);
-        utterance.onend = onEnd;
+        utterance.onend = onEnd ? () => onEnd() : null;
         window.speechSynthesis.speak(utterance);
       } else if (onEnd) {
         onEnd();
@@ -30,7 +30,9 @@ export function playWordPronunciation(word: string, onEnd?: () => void): void {
   // If sound couldn't be played, try the fallback
   if (!sound && window.speechSynthesis) {
     const utterance = new SpeechSynthesisUtterance(word);
-    utterance.onend = onEnd;
+    if (onEnd) {
+      utterance.onend = () => onEnd();
+    }
     window.speechSynthesis.speak(utterance);
   }
 }
