@@ -21,6 +21,7 @@ import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
 import { audioManager } from "./utils/audio";
+import ScoreboardScreen from "./ScoreboardScreen";
 
 interface GameScreenProps {
   config: GameConfig;
@@ -448,20 +449,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
           {toast}
         </div>
       )}
-      <div className="absolute top-8 left-8 flex gap-8 items-center">
-        <img src="img/bee.svg" alt="Bee icon" className="w-12 h-12" />
-        {participants.map((p, index) => (
-          <div key={index} className="text-center scorecard">
-            <div className="text-2xl font-bold">{p.name}</div>
-            <div className="text-4xl font-bold text-yellow-300">
-              {"❤️".repeat(p.lives)}
-            </div>
-            <div className="text-xl font-bold text-green-400">
-              {p.points} pts
-            </div>
-          </div>
-        ))}
-      </div>
+      <ScoreboardScreen participants={participants} hideNames={config.hideNames} />
 
       {feedback.message && (
         <div
