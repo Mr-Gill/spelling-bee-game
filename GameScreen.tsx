@@ -16,9 +16,14 @@ import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
 import AvatarSelector from './components/AvatarSelector';
+<<<<<<< HEAD
 import { useNotifications, NotificationContainer } from './components/Notification.jsx';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
+=======
+import FlyingBee from './components/FlyingBee';
+import { audioManager } from './utils/audio';
+>>>>>>> origin/codex/create-flyingbee-component-with-animation
 
 interface GameScreenProps {
   config: GameConfig;
@@ -86,7 +91,11 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState('');
+<<<<<<< HEAD
   const [darkMode, setDarkMode] = React.useState(false);
+=======
+  const [showBee, setShowBee] = React.useState(false);
+>>>>>>> origin/codex/create-flyingbee-component-with-animation
 
   const { notifications, addNotification, removeNotification } = useNotifications();
 
@@ -123,6 +132,19 @@ const GameScreen: React.FC<GameScreenProps> = ({
       setLetters(Array.from({ length: currentWord.word.length }, () => ''));
     }
   }, [currentWord]);
+
+  React.useEffect(() => {
+    if (!config.effectsEnabled) return;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+    const interval = setInterval(() => {
+      if (Math.random() < 0.3) {
+        setShowBee(true);
+        setTimeout(() => setShowBee(false), 8000);
+      }
+    }, 120000);
+    return () => clearInterval(interval);
+  }, [config.effectsEnabled]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -566,6 +588,8 @@ const GameScreen: React.FC<GameScreenProps> = ({
           />
         </div>
       )}
+
+      {showBee && <FlyingBee />}
 
       <button
         onClick={skipWord}
