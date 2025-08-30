@@ -1,3 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Tell Tailwind v4 where to scan for class usage */
+@source "./**/*.{html,js,jsx,ts,tsx}";

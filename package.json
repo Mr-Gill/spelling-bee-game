@@ -7,7 +7,8 @@
   "scripts": {
     "start": "npx serve dist",
     "serve": "npx serve dist",
-    "build": "npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file && node scripts/copy-assets.js",
+    "build:css": "npx @tailwindcss/cli -i ./src/tailwind.css -o ./tailwind.css --minify",
+    "build": "npm run build:css && npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file && node scripts/copy-assets.js",
     "watch": "npx esbuild spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --watch",
     "test": "echo 'No tests configured yet'",
     "predeploy": "npm run build",
@@ -47,6 +48,7 @@
     "postcss": "^8.5.6",
     "prettier": "^3.0.3",
     "serve": "^14.2.1",
+    "@tailwindcss/cli": "^4.1.12",
     "tailwindcss": "^4.1.12",
     "typescript": "^5.2.2"
   },
