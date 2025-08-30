@@ -14,6 +14,7 @@ import StudentRoster from './components/StudentRoster';
 import GameOptions from './components/GameOptions';
 import { parseWordList } from './utils/parseWordList';
 import WordListPrompt from './components/WordListPrompt';
+import useRoster from '../hooks/useRoster';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -74,30 +75,32 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     wordsCorrect: 0
   });
 
+  const [participants, setParticipants] = useState<Participant[]>([]);
+
+  const getDefaultTeams = (): Team[] => [];
+
+  const {
+    participants: teams,
+    addParticipant,
+    removeParticipant,
+    updateName,
+    clear: clearTeams,
+    setParticipants: setTeams,
+  } = useRoster<Team>('teams', getDefaultTeams());
+
   const createTeam = (): Team => ({
     id: uuidv4(),
     name: `Team ${teams.length + 1}`,
     students: []
   });
 
-  const [participants, setParticipants] = useState<Participant[]>([]);
-  const [teams, setTeams] = useState<Team[]>([]);
+  const addTeam = () => addParticipant(createTeam());
+  const removeTeam = removeParticipant;
+  const updateTeamName = updateName;
 
   const handleAddParticipant = (name: string) => {
     const newParticipant = createParticipant(name, options.initialDifficulty);
     setParticipants([...participants, newParticipant]);
-  };
-
-  const addTeam = (team: Team) => {
-    setTeams([...teams, team]);
-  };
-
-  const removeTeam = (id: string) => {
-    setTeams(teams.filter(t => t.id !== id));
-  };
-
-  const updateTeam = (id: string, updates: Partial<Team>) => {
-    setTeams(teams.map(t => t.id === id ? {...t, ...updates} : t));
   };
 
   const [timerDuration, setTimerDuration] = useState(30);
@@ -159,8 +162,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   }, [gameMode]);
   
   useEffect(() => {
-    const savedTeams = localStorage.getItem('teams');
-    if (savedTeams) try { setTeams(JSON.parse(savedTeams).map((t: Participant) => ({ ...t, avatar: t.avatar || getRandomAvatar() }))); } catch {}
     const savedStudents = localStorage.getItem('students');
     if (savedStudents) try { setParticipants(JSON.parse(savedStudents).map((s: Participant) => ({ ...s, avatar: s.avatar || getRandomAvatar() }))); } catch {}
     const savedTheme = localStorage.getItem('theme');
@@ -247,7 +248,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   const clearRoster = () => {
     try {
-      localStorage.removeItem('teams');
+      clearTeams();
     } catch (error) {
       console.error('Failed to remove teams from localStorage', error);
     }
@@ -256,7 +257,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     } catch (error) {
       console.error('Failed to remove students from localStorage', error);
     }
-    setTeams([]);
     setParticipants([]);
   };
 
@@ -280,7 +280,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setParticipants(updatedStudents);
   };
 
-  const setTeamsParticipants = (teams: Team[]) => setTeams(teams);
   const setStudentsParticipants = (students: Participant[]) => setParticipants(students);
 
   const randomizeTeams = () => {
@@ -485,18 +484,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setParticipants([...participants, ...students]);
   };
 
-  const handleTeamSelect = (team: Team) => {
-    setAllParticipants(prev => [...prev, team]);
-  };
-
-  const handleTeamRemove = (id: string) => {
-    setTeams(teams.filter(t => t.id !== id));
-  };
-
-  const handleTeamRename = (id: string, name: string) => {
-    setTeams(teams.map(t => t.id === id ? {...t, name} : t));
-  };
-
   const handleParticipantRemove = (index: number) => {
     setParticipants(prev => prev.filter((_, i) => i !== index));
   };
@@ -504,12 +491,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const handleParticipantEdit = (index: number, name: string) => {
     setParticipants(prev => prev.map((p, i) => i === index ? {...p, name} : p));
   };
-
-  type ParticipantOrTeam = Participant | Team;
-  const [allParticipants, setAllParticipants] = useState<ParticipantOrTeam[]>([
-    ...participants,
-    ...teams
-  ]);
 
   const [activeTab, setActiveTab] = useState<'setup' | 'settings' | 'words'>('setup');
 
@@ -586,9 +567,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                   <TeamForm
                     teams={teams}
                     avatars={availableAvatars}
-                    addTeam={(team: Team) => addTeam(team)}
-                    removeTeam={(id: string) => removeTeam(id)}
-                    updateTeamName={(id: string, name: string) => updateTeam(id, { name })}
+                    addTeam={addTeam}
+                    removeTeam={removeTeam}
+                    updateTeamName={updateTeamName}
                   />
                 ) : (
                   <>
