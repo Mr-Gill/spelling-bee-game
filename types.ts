@@ -29,6 +29,11 @@ export interface WordDatabase {
   tricky: Word[];
 }
 
+export interface QuizResult {
+  word: string;
+  correct: boolean;
+}
+
 export interface GameConfig {
   participants: Participant[];
   gameMode: 'team' | 'individual';
@@ -53,6 +58,7 @@ export interface GameResults {
   gameMode: 'team' | 'individual';
   duration: number;
   missedWords: Word[];
+  quizResults: QuizResult[];
 }
 
 export interface LeaderboardEntry {

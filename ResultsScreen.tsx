@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { GameResults, GameConfig, LeaderboardEntry } from './types';
+import { GameResults, GameConfig, LeaderboardEntry, QuizResult } from './types';
 import applauseSoundFile from './audio/applause.mp3';
 import { launchConfetti } from './utils/confetti';
 import { recordDailyCompletion, StreakInfo } from './DailyChallenge';
@@ -52,8 +52,8 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
   }, [results, config.dailyChallenge, bonus]);
 
   useEffect(() => {
-    const history: { date: string; score: number }[] = JSON.parse(localStorage.getItem('sessionHistory') || '[]');
-    history.push({ date: new Date().toISOString(), score: totalScore });
+    const history: { date: string; score: number; quizResults: QuizResult[] }[] = JSON.parse(localStorage.getItem('sessionHistory') || '[]');
+    history.push({ date: new Date().toISOString(), score: totalScore, quizResults: results.quizResults });
     localStorage.setItem('sessionHistory', JSON.stringify(history));
 
     const storedBest = Number(localStorage.getItem('bestClassScore') || '0');

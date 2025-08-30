@@ -23,6 +23,7 @@ import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
 import { audioManager } from "./utils/audio";
+import DefinitionQuiz from "./components/DefinitionQuiz";
 
 interface GameScreenProps {
   config: GameConfig;
@@ -87,6 +88,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState("");
+  const [quizWord, setQuizWord] = React.useState<Word | null>(null);
+  const [quizDistractors, setQuizDistractors] = React.useState<string[]>([]);
+  const [showQuiz, setShowQuiz] = React.useState(false);
+  const [quizResults, setQuizResults] = React.useState<
+    { word: string; correct: boolean }[]
+  >([]);
+  const nextActionRef = React.useRef<() => void>(() => {});
+  const QUIZ_BONUS = 3;
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);
@@ -200,8 +209,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
     const newAttempted = new Set(attemptedParticipants);
     newAttempted.add(currentParticipantIndex);
-
-    setTimeout(() => {
+    nextActionRef.current = () => {
       setFeedback({ message: "", type: "" });
       if (newAttempted.size >= participants.length) {
         if (currentWord) {
@@ -212,7 +220,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         }
         setAttemptedParticipants(new Set());
         const nextIndex = (currentParticipantIndex + 1) % participants.length;
-        selectNextWordForLevel(updatedParticipants[nextIndex].difficultyLevel);
+        selectNextWordForLevel(
+          updatedParticipants[nextIndex].difficultyLevel,
+        );
         nextTurn();
       } else {
         setAttemptedParticipants(newAttempted);
@@ -220,7 +230,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         nextTurn();
         startTimer();
       }
-    }, 2000);
+    };
+    setTimeout(() => {
+      if (currentWord) openQuiz(currentWord);
+    }, 1000);
   }
 
   const spendPoints = (participantIndex: number, cost: number) => {
@@ -233,6 +246,44 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       }),
     );
     playShop();
+  };
+
+  const openQuiz = (word: Word) => {
+    const allWords = [
+      ...config.wordDatabase.easy,
+      ...config.wordDatabase.medium,
+      ...config.wordDatabase.tricky,
+    ];
+    const defs = allWords
+      .filter((w) => w.word !== word.word)
+      .map((w) => w.definition);
+    const shuffled = defs.sort(() => Math.random() - 0.5).slice(0, 3);
+    setQuizWord(word);
+    setQuizDistractors(shuffled);
+    setShowQuiz(true);
+  };
+
+  const handleQuizAnswer = (correct: boolean) => {
+    setShowQuiz(false);
+    if (quizWord) {
+      setQuizResults((prev) => [
+        ...prev,
+        { word: quizWord.word, correct },
+      ]);
+      if (correct) {
+        setParticipants((prev) =>
+          prev.map((p, index) =>
+            index === currentParticipantIndex
+              ? { ...p, points: p.points + QUIZ_BONUS }
+              : p,
+          ),
+        );
+      }
+    }
+    setQuizWord(null);
+    const action = nextActionRef.current;
+    nextActionRef.current = () => {};
+    action();
   };
 
   const typeLetter = (letter: string) => {
@@ -336,15 +387,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       }
 
       setFeedback({ message: "Correct! 🎉", type: "success" });
-
-      setTimeout(() => {
-        const nextIndex =
-          (currentParticipantIndex + 1) % updatedParticipants.length;
-        const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
+      const nextIndex =
+        (currentParticipantIndex + 1) % updatedParticipants.length;
+      const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
+      nextActionRef.current = () => {
         setFeedback({ message: "", type: "" });
         selectNextWordForLevel(nextDifficulty);
         nextTurn();
-      }, 2000);
+      };
+      setTimeout(() => {
+        if (currentWord) openQuiz(currentWord);
+      }, 1000);
 
       return; // Stop execution for the correct case
     }
@@ -387,16 +440,18 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       }));
     }
     setAttemptedParticipants(new Set());
-
-    setTimeout(() => {
-      const nextIndex =
-        (currentParticipantIndex + 1) % updatedParticipants.length;
-      const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
+    const nextIndex =
+      (currentParticipantIndex + 1) % updatedParticipants.length;
+    const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
+    nextActionRef.current = () => {
       setFeedback({ message: "", type: "" });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(""));
       selectNextWordForLevel(nextDifficulty);
       nextTurn();
-    }, 1500);
+    };
+    setTimeout(() => {
+      if (currentWord) openQuiz(currentWord);
+    }, 1000);
   };
 
   const onEndGameWithMissedWords = () => {
@@ -419,6 +474,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       gameMode: config.gameMode,
       duration: Math.round((Date.now() - startTime) / 1000),
       missedWords,
+      quizResults,
     });
   };
 
@@ -592,6 +648,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40">
           Paused
         </div>
+      )}
+      {showQuiz && quizWord && (
+        <DefinitionQuiz
+          word={quizWord}
+          distractors={quizDistractors}
+          onAnswer={handleQuizAnswer}
+        />
       )}
     </div>
   );
