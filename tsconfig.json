@@ -10,12 +10,16 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@constants/*": ["constants/*"],
+      "@wordlists/*": ["wordlists/*"]
     },
+    "resolveJsonModule": true,
     "typeRoots": [
       "./node_modules/@types",
       "./types"
-    ]
+    ],
+    "lib": ["es2017", "dom"]
   },
   "include": [
     "**/*.ts",

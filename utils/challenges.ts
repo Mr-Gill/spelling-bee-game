@@ -1,4 +1,4 @@
-import { words } from '../wordlists/words.json';
+import { words } from '@wordlists/words.json';
 
 type Challenge = {
   date: string;

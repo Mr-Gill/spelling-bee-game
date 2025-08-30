@@ -1,12 +1,12 @@
 import { FC } from 'react';
-import { avatars } from '../constants/avatars';
+import { avatars } from '@constants/avatars';
 
 type AvatarSelectorProps = {
   currentAvatar: string;
   onSelect: (avatar: string) => void;
 };
 
-export const AvatarSelector: FC<AvatarSelectorProps> = ({ currentAvatar, onSelect }) => {
+export default function AvatarSelector({ currentAvatar, onSelect }: { currentAvatar: string; onSelect: (avatar: string) => void }) {
   return (
     <div className="avatar-selector">
       {Object.entries(avatars).map(([key, avatar]) => (
