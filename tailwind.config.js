@@ -7,18 +7,64 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      animation: {
+        'bounce-slow': 'bounce 3s infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'fade-in': 'fadeIn 0.3s ease-in-out',
+        'slide-up': 'slideUp 0.3s ease-out',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
       colors: {
+        // Bee theme colors
+        'bee-yellow': {
+          50: '#fff9e6',
+          100: '#fff2cc',
+          200: '#ffe699',
+          300: '#ffd966',
+          400: '#ffcc33',
+          500: '#ffbf00',  // Primary yellow
+          600: '#e6ac00',
+          700: '#cc9900',
+          800: '#b38600',
+          900: '#997300',
+        },
+        'bee-black': {
+          50: '#f2f2f2',
+          100: '#d9d9d9',
+          200: '#bfbfbf',
+          300: '#a6a6a6',
+          400: '#8c8c8c',
+          500: '#4d4d4d',  // Primary black
+          600: '#404040',
+          700: '#333333',
+          800: '#262626',
+          900: '#1a1a1a',
+        },
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
+          50: '#f0f4ff',
+          100: '#e0e9ff',
+          200: '#b3c6ff',
+          300: '#4d88ff',  // Bright blue
+          400: '#1a66ff',
+          500: '#0044cc',  // Primary blue
+          600: '#0039b3',
+          700: '#002d99',
+          800: '#002266',
+          900: '#001133',
         },
         secondary: {
           50: '#f5f3ff',

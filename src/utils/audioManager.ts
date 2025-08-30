@@ -7,6 +7,7 @@ export interface SoundOptions {
   onend?: () => void;
   onerror?: (error: Error) => void;
   preload?: boolean;
+  [key: string]: any; // Allow additional properties
 }
 
 interface Sound {
@@ -147,7 +148,7 @@ class AudioManager {
 
     // If not found by key, try to find by path
     if (!sound) {
-      for (const snd of this.sounds.values()) {
+      for (const [_, snd] of this.sounds) {
         if (snd.path === keyOrPath) {
           sound = snd;
           break;
@@ -162,32 +163,50 @@ class AudioManager {
       }
     }
 
-    try {
-      // Update sound settings
-      sound.sound.loop(loop);
-      sound.sound.volume(volume);
+    // Set volume and loop
+    sound.sound.volume(volume);
+    sound.sound.loop(loop);
 
-      // Set up event handlers
-      if (onend) {
-        sound.sound.off('end');
-        sound.sound.once('end', onend);
-      }
+    // Set up event handlers
+    if (onend) {
+      sound.sound.off('end');
+      sound.sound.on('end', onend);
+    }
 
-      if (onerror) {
-        sound.sound.off('loaderror');
-        sound.sound.once('loaderror', (_, error) =>
-          onerror(error instanceof Error ? error : new Error(String(error)))
-        );
-      }
+    if (onerror) {
+      sound.sound.off('loaderror');
+      sound.sound.on('loaderror', (_, error) => onerror(new Error(`Failed to load sound: ${error}`)));
+      sound.sound.off('playerror');
+      sound.sound.on('playerror', () => onerror(new Error('Failed to play sound')));
+    }
 
-      // Play the sound
-      return sound.sound.play();
-    } catch (error) {
-      console.error(`Error playing sound ${keyOrPath}:`, error);
-      if (onerror) {
-        onerror(error instanceof Error ? error : new Error(String(error)));
+    // Play the sound
+    const soundId = sound.sound.play();
+    return soundId;
+  }
+
+  /**
+   * Stop a playing sound
+   * @param keyOrId Sound key or Howl instance ID
+   */
+  public stopSound(keyOrId: string | number): void {
+    if (typeof keyOrId === 'number') {
+      // Stop a specific sound by ID
+      // We'll need to find the sound instance that contains this ID
+      // and stop it directly
+      for (const sound of this.sounds.values()) {
+        const soundIds = sound.sound.ids();
+        if (soundIds.includes(keyOrId)) {
+          sound.sound.stop(keyOrId);
+          break;
+        }
       }
-      return null;
+    } else {
+      // Stop all sounds with this key
+      const sound = this.sounds.get(keyOrId);
+      if (sound) {
+        sound.sound.stop();
+      }
     }
   }
 
@@ -195,27 +214,38 @@ class AudioManager {
    * Load a music track
    * @param key Unique identifier for the music
    * @param src Path to the audio file
-   * @param loop Whether to loop the music
+   * @param options Music options
    */
-  public loadMusic(key: string, src: string, loop = true): void {
+  public loadMusic(
+    key: string,
+    src: string,
+    options: Omit<SoundOptions, 'volume'> = {}
+  ): void {
     if (this.music.has(key)) {
       return;
     }
+
+    const { loop = true, onend, onerror, preload = true } = options;
 
     const music = new Howl({
       src: [src],
       loop,
       volume: this.settings.musicVolume,
+      preload,
       onload: () => {
         console.log(`Music loaded: ${key}`);
       },
       onloaderror: (_, error) => {
         console.error(`Error loading music ${key}:`, error);
+        if (onerror) onerror(new Error(`Failed to load music: ${key}`));
       },
       onend: () => {
-        if (this.activeMusic?.key === key) {
-          this.activeMusic = null;
-        }
+        if (onend) onend();
+      },
+      onplayerror: () => {
+        const error = new Error(`Failed to play music: ${key}`);
+        console.error(error.message);
+        if (onerror) onerror(error);
       },
     });
 
@@ -225,52 +255,58 @@ class AudioManager {
   /**
    * Play a music track
    * @param key Music key
-   * @param options Play options
+   * @param options Music options
+   * @returns Sound ID or null if failed
    */
-  public playMusic(key: string, options: { volume?: number; fadeIn?: boolean } = {}): void {
-    if (this.settings.isMusicMuted) return;
-
-    const music = this.music.get(key);
-    if (!music) {
-      console.warn(`Music ${key} not found`);
-      return;
+  public playMusic(
+    key: string,
+    options: Omit<SoundOptions, 'preload' | 'volume'> = {}
+  ): number | null {
+    if (this.settings.isMusicMuted) {
+      return null;
     }
 
-    // Stop currently playing music
+    const { loop = true, onend, onerror } = options;
+    const music = this.music.get(key);
+
+    if (!music) {
+      console.error(`Music not found: ${key}`);
+      if (onerror) onerror(new Error(`Music not found: ${key}`));
+      return null;
+    }
+
+    // Stop currently playing music if any
     this.stopMusic();
 
-    // Set volume
-    const volume = options.volume ?? this.settings.musicVolume;
+    // Set loop and volume
+    music.loop(loop);
+    music.volume(this.settings.musicVolume);
 
-    if (options.fadeIn) {
-      music.volume(0);
-      music.play();
-      music.fade(0, volume, 1000);
-    } else {
-      music.volume(volume);
-      music.play();
+    // Set up event handlers
+    if (onend) {
+      music.off('end');
+      music.on('end', onend);
     }
 
+    if (onerror) {
+      music.off('loaderror');
+      music.on('loaderror', (_, error) => onerror(new Error(`Failed to load music: ${error}`)));
+      music.off('playerror');
+      music.on('playerror', () => onerror(new Error('Failed to play music')));
+    }
+
+    // Play the music
+    const musicId = music.play();
     this.activeMusic = { key, instance: music };
+    return musicId;
   }
 
   /**
    * Stop the currently playing music
-   * @param fadeOut Whether to fade out the music
    */
-  public stopMusic(fadeOut = false): void {
-    if (!this.activeMusic) return;
-
-    const { instance } = this.activeMusic;
-
-    if (fadeOut) {
-      instance.fade(instance.volume(), 0, 1000);
-      setTimeout(() => {
-        instance.stop();
-        this.activeMusic = null;
-      }, 1000);
-    } else {
-      instance.stop();
+  public stopMusic(): void {
+    if (this.activeMusic) {
+      this.activeMusic.instance.stop();
       this.activeMusic = null;
     }
   }
@@ -279,16 +315,18 @@ class AudioManager {
    * Pause the currently playing music
    */
   public pauseMusic(): void {
-    if (!this.activeMusic) return;
-    this.activeMusic.instance.pause();
+    if (this.activeMusic) {
+      this.activeMusic.instance.pause();
+    }
   }
 
   /**
    * Resume the currently paused music
    */
   public resumeMusic(): void {
-    if (!this.activeMusic) return;
-    this.activeMusic.instance.play();
+    if (this.activeMusic && !this.activeMusic.instance.playing()) {
+      this.activeMusic.instance.play();
+    }
   }
 
   /**
@@ -296,8 +334,8 @@ class AudioManager {
    * @param volume Volume level (0.0 to 1.0)
    */
   public setSfxVolume(volume: number): void {
-    this.settings.sfxVolume = volume;
-    Howler.volume(volume);
+    this.settings.sfxVolume = Math.max(0, Math.min(1, volume));
+    Howler.volume(this.settings.sfxVolume);
   }
 
   /**
@@ -305,53 +343,41 @@ class AudioManager {
    * @param volume Volume level (0.0 to 1.0)
    */
   public setMusicVolume(volume: number): void {
-    this.settings.musicVolume = volume;
+    this.settings.musicVolume = Math.max(0, Math.min(1, volume));
     if (this.activeMusic) {
-      this.activeMusic.instance.volume(volume);
+      this.activeMusic.instance.volume(this.settings.musicVolume);
     }
   }
 
   /**
    * Toggle mute state for sound effects
+   * @param muted Whether to mute or unmute
    */
-  public toggleMute(): void {
-    this.settings.areSoundsMuted = !this.settings.areSoundsMuted;
+  public toggleSounds(muted?: boolean): void {
+    this.settings.areSoundsMuted = muted !== undefined ? muted : !this.settings.areSoundsMuted;
     Howler.mute(this.settings.areSoundsMuted);
   }
 
   /**
-   * Toggle music on/off
+   * Toggle mute state for music
+   * @param muted Whether to mute or unmute
    */
-  public toggleMusic(): void {
-    this.settings.isMusicMuted = !this.settings.isMusicMuted;
-
-    if (this.settings.isMusicMuted) {
-      this.pauseMusic();
-    } else if (this.activeMusic) {
-      this.resumeMusic();
+  public toggleMusic(muted?: boolean): void {
+    this.settings.isMusicMuted = muted !== undefined ? muted : !this.settings.isMusicMuted;
+    if (this.activeMusic) {
+      this.activeMusic.instance.mute(this.settings.isMusicMuted);
     }
   }
 
   /**
-   * Save audio settings to localStorage
-   */
-  public saveSettings(): void {
-    try {
-      localStorage.setItem('audioSettings', JSON.stringify(this.settings));
-    } catch (error) {
-      console.error('Error saving audio settings:', error);
-    }
-  }
-
-  /**
-   * Load audio settings from localStorage
+   * Load settings from localStorage
    */
   public loadSettings(): void {
     try {
       const savedSettings = localStorage.getItem('audioSettings');
       if (savedSettings) {
-        const parsedSettings = JSON.parse(savedSettings);
-        this.settings = { ...this.settings, ...parsedSettings };
+        const settings = JSON.parse(savedSettings);
+        this.settings = { ...this.settings, ...settings };
 
         // Apply loaded settings
         this.setSfxVolume(this.settings.sfxVolume);
@@ -365,18 +391,23 @@ class AudioManager {
       console.error('Error loading audio settings:', error);
     }
   }
+
+  /**
+   * Save settings to localStorage
+   */
+  public saveSettings(): void {
+    try {
+      localStorage.setItem('audioSettings', JSON.stringify(this.settings));
+    } catch (error) {
+      console.error('Error saving audio settings:', error);
+    }
+  }
 }
 
 // Create and export the audio manager instance
 export const audioManager = new AudioManager();
 
-// Load settings when the module is imported in a browser environment
-if (typeof window !== 'undefined') {
-  try {
-    audioManager.loadSettings();
-  } catch (error) {
-    console.error('Failed to load audio settings:', error);
-  }
-}
+// Load settings when the module is imported
+audioManager.loadSettings();
 
 export default audioManager;
