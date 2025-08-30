@@ -82,14 +82,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       playTimeout();
       handleIncorrectAttempt();
     });
-
-  React.useEffect(() => {
-    if (localStorage.getItem('teacherMode') === 'true') {
-      document.body.classList.add('teacher-mode');
-    } else {
-      document.body.classList.remove('teacher-mode');
-    }
-  }, []);
+    React.useEffect(() => {
+      if (localStorage.getItem('teacherMode') === 'true') {
+        document.body.classList.add('teacher-mode');
+      } else {
+        document.body.classList.remove('teacher-mode');
+      }
+    }, []);
 
   React.useEffect(() => {
     if (currentWord) {
