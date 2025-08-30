@@ -7,6 +7,8 @@ export interface Word {
   prefix?: string;
   suffix?: string;
   pronunciation?: string;
+  /** Optional source the word list was generated from */
+  source?: string;
 }
 
 export interface Participant {
