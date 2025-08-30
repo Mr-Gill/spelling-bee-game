@@ -1,4 +1,4 @@
 const fs = require('fs-extra');
 
-// Copy img directory to build directory
-fs.copySync('img', 'build/img');
+// Copy img directory to dist directory
+fs.copySync('img', 'dist/img');
