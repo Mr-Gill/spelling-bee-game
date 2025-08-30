@@ -44,7 +44,8 @@ const SpellingBeeGame = () => {
                 tricky: [...wordDatabase.tricky, ...customWords.tricky],
             };
         }
-        setSoundEnabled(gameConfig.soundEnabled);
+        setGameConfig({ ...config, wordDatabase: finalWordDatabase });
+        setSoundEnabled(config.soundEnabled);
         setMusicStyle(config.musicStyle);
         setMusicVolume(config.musicVolume);
         setIsMusicPlaying(true);
