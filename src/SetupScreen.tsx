@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { GameConfig, OptionsState, Word, WordType } from './types';
-import { Participant, Team } from '../types/participant';
+import { GameConfig, OptionsState, WordType } from './types';
+import { Participant, Team } from './types/participant';
 import { parseWordList } from './utils/parseWordList';
 import useRoster from '../hooks/useRoster';
 import beeImg from '../img/avatars/bee.svg';
@@ -209,6 +209,29 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     musicVolume: parseFloat(localStorage.getItem('musicVolume') ?? '1'),
   });
 
+  const addStudent = () => {
+    if (studentName.trim()) {
+      const newStudent = createParticipant(studentName, initialDifficulty);
+      setStudents([...students, newStudent]);
+      setStudentName('');
+    }
+  };
+
+  const updateStudentName = (index: number, name: string) => {
+    const updatedStudents = [...students];
+    updatedStudents[index].name = name;
+    setStudents(updatedStudents);
+  };
+
+  const removeStudent = (index: number) => {
+    const updatedStudents = [...students];
+    updatedStudents.splice(index, 1);
+    setStudents(updatedStudents);
+  };
+
+  const setTeamsParticipants = (teams: Team[]) => setTeams(teams);
+  const setStudentsParticipants = (students: Participant[]) => setStudents(students);
+
   const randomizeTeams = () => {
     if (students.length < 2) {
       setRandomizeError('Add at least two students to create teams.');
@@ -245,7 +268,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setRandomizeError('');
   };
   
-  const parseWordList = (content: string) => {
+  const parseCustomWordList = (content: string) => {
     try {
       const words = parseWordList(content);
       setParsedCustomWords(words);
@@ -308,7 +331,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
   useEffect(() => {
     if (customWordListText) {
-      parseWordList(customWordListText);
+      parseCustomWordList(customWordListText);
     }
   }, [customWordListText]);
 
@@ -415,7 +438,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         avatars={avatars}
         addTeam={handleAddTeam}
         removeTeam={removeTeam}
-        updateTeamName={updateTeamName}
+        updateTeamName={(id: string, name: string) => updateTeam(id, { name })}
       />
     </>
   ) : (
@@ -451,7 +474,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 avatars={avatars}
                 addParticipant={addStudentParticipant}
                 removeParticipant={removeStudentParticipant}
-                updateName={updateStudentParticipant}
+                updateParticipant={updateStudentParticipant}
                 createParticipant={createParticipant}
                 initialDifficulty={options.initialDifficulty}
               />
