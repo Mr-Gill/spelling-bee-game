@@ -78,8 +78,9 @@ const SpellingBeeGame = () => {
     // Handle background music on different screens
     const musicStyle = gameConfig?.musicStyle || 'Funk';
     const musicVolume = gameConfig?.musicVolume ?? 0.5;
-    const trackVariant = gameState === 'playing' ? 'instrumental' : 'vocal';
-    useMusic(musicStyle, trackVariant, musicVolume, gameConfig?.soundEnabled ?? true);
+    const screen = gameState === 'playing' ? 'game' : 'menu';
+    const trackVariant = screen === 'game' ? 'instrumental' : 'vocal';
+    useMusic(musicStyle, trackVariant, musicVolume, gameConfig?.soundEnabled ?? true, screen);
 
     if (gameState === "setup") {
         return <SetupScreen onStartGame={handleStartGame} onAddCustomWords={handleAddCustomWords} onViewAchievements={handleViewAchievements} />;
