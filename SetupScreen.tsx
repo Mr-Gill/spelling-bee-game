@@ -18,13 +18,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const avatars = [beeImg, bookImg, trophyImg];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
+  const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
+  const [startingLives, setStartingLives] = useState(10);
+
   const getDefaultTeams = (): Participant[] => [
-    { name: 'Team Alpha', lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
-    { name: 'Team Beta', lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
+    { name: 'Team Alpha', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
+    { name: 'Team Beta', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
   ];
 
   const [teams, setTeams] = useState<Participant[]>(getDefaultTeams());
-  const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
   const [parsedCustomWords, setParsedCustomWords] = useState<Word[]>([]);
@@ -65,6 +67,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
     localStorage.setItem('teacherMode', String(teacherMode));
   }, [teacherMode]);
+
+  useEffect(() => {
+    setStartingLives(gameMode === 'team' ? 10 : 5);
+  }, [gameMode]);
   
   useEffect(() => {
     const savedTeams = localStorage.getItem('teams');
@@ -94,6 +100,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     localStorage.setItem('students', JSON.stringify(newStudents));
   };
 
+  useEffect(() => {
+    if (gameMode === 'team') {
+      updateTeams(teams.map(t => ({ ...t, lives: startingLives })));
+    } else {
+      updateStudents(students.map(s => ({ ...s, lives: startingLives })));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startingLives, gameMode]);
+
   const clearRoster = () => {
     localStorage.removeItem('teams');
     localStorage.removeItem('students');
@@ -102,7 +117,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
 
   const createParticipant = (name: string, difficulty: number): Participant => ({
-    name: name.trim(), lives: 5, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
+    name: name.trim(), lives: startingLives, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
   });
 
   const addTeam = () => updateTeams([...teams, createParticipant('', 0)]);
@@ -317,6 +332,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4">Starting Lives ❤️</h2>
+                <input type="number" min={1} value={startingLives} onChange={e => setStartingLives(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full" />
+            </div>
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Skip Penalty ⏭️</h2>
                 <div className="flex gap-4">
