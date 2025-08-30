@@ -4,6 +4,7 @@ export {}; // Empty export to mark as module
 export interface Word {
   word: string;
   syllables: string[];
+  phonemes: string[];
   definition: string;
   origin: string;
   example: string;

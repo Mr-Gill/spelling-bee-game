@@ -10,7 +10,8 @@
       "suffix": "",
       "prefixMeaning": "",
       "suffixMeaning": "",
-      "pronunciation": "FREND"
+      "pronunciation": "FREND",
+      "phonemes": ["F", "R", "EH", "N", "D"]
     },
     {
       "word": "happy",
@@ -22,7 +23,8 @@
       "suffix": "py",
       "prefixMeaning": "luck, fortune",
       "suffixMeaning": "characterized by",
-      "pronunciation": "HAP-ee"
+      "pronunciation": "HAP-ee",
+      "phonemes": ["H", "AE", "P", "EE"]
     }
   ],
   "medium": [
@@ -36,7 +38,8 @@
       "suffix": "ary",
       "prefixMeaning": "unavoidable",
       "suffixMeaning": "related to",
-      "pronunciation": "NES-uh-ser-ee"
+      "pronunciation": "NES-uh-ser-ee",
+      "phonemes": ["N", "EH", "S", "AH", "S", "EH", "R", "EE"]
     }
   ],
   "tricky": [
@@ -50,7 +53,8 @@
       "suffix": "anthemum",
       "prefixMeaning": "gold",
       "suffixMeaning": "flower",
-      "pronunciation": "kri-SAN-thuh-mum"
+      "pronunciation": "kri-SAN-thuh-mum",
+      "phonemes": ["K", "R", "IH", "S", "AE", "N", "TH", "AH", "M", "AH", "M"]
     }
   ]
 }

@@ -1,6 +1,7 @@
 export interface Word {
   word: string;
   syllables: string[];
+  phonemes: string[];
   definition: string;
   origin: string;
   example: string;
@@ -19,6 +20,7 @@ const FALLBACK_WORDS: Word[] = [
   {
     word: 'education',
     syllables: ['ed', 'u', 'ca', 'tion'],
+    phonemes: ['EH', 'J', 'OO', 'K', 'AY', 'SH', 'U', 'N'],
     definition: 'The process of receiving or giving systematic instruction, especially at a school or university.',
     origin: 'Latin "educatio", from "educare" meaning "to bring up, rear, educate".',
     example: 'The school is committed to providing quality education to all its students.',
@@ -29,6 +31,7 @@ const FALLBACK_WORDS: Word[] = [
   {
     word: 'spelling',
     syllables: ['spell', 'ing'],
+    phonemes: ['S', 'P', 'EH', 'L', 'IH', 'NG'],
     definition: 'The process of writing or naming the letters of a word.',
     origin: 'Old English "spellian" meaning "to tell, speak, utter".',
     example: 'She won first place in the school spelling competition.',
