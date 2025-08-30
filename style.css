@@ -157,8 +157,13 @@ video {
     animation: pulse 1s infinite;
 }
 
+.timer-warning-chill {
+    color: #ef4444;
+    animation: pulse 3s infinite;
+}
+
 .timer-normal {
-    color: white;
+    color: #facc15;
 }
 
 /* Word reveal animation */

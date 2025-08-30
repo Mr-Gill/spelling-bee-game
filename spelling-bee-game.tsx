@@ -14,10 +14,18 @@ const SpellingBeeGame = () => {
     const [gameResults, setGameResults] = useState(null);
     const [customWords, setCustomWords] = useState({ easy: [], medium: [], tricky: [] });
     const [wordDatabase, setWordDatabase] = useState({ easy: [], medium: [], tricky: [] });
-    const [musicStyle, setMusicStyle] = useState('Funk');
-    const [musicVolume, setMusicVolume] = useState(0.5);
+    const [musicStyle, setMusicStyle] = useState(() => localStorage.getItem('musicStyle') || 'Funk');
+    const [musicVolume, setMusicVolume] = useState(() => parseFloat(localStorage.getItem('musicVolume') ?? '0.5'));
     const [soundEnabled, setSoundEnabled] = useState(true);
     const [isMusicPlaying, setIsMusicPlaying] = useState(true);
+
+    useEffect(() => {
+        localStorage.setItem('musicStyle', musicStyle);
+    }, [musicStyle]);
+
+    useEffect(() => {
+        localStorage.setItem('musicVolume', String(musicVolume));
+    }, [musicVolume]);
 
     useEffect(() => {
         fetch('words.json')

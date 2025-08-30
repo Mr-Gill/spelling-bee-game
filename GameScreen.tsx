@@ -1,5 +1,5 @@
 import React from "react";
-import { SkipForward } from "lucide-react";
+import { SkipForward, Music } from "lucide-react";
 import {
   GameConfig,
   Word,
@@ -20,11 +20,21 @@ import useWordSelection, { difficultyOrder } from "./utils/useWordSelection";
 import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintPanel from "./components/HintPanel";
 import AvatarSelector from "./components/AvatarSelector";
+import { AudioSettings } from "./components/AudioSettings";
 import { audioManager } from "./utils/audio";
 
 interface GameScreenProps {
   config: GameConfig;
   onEndGame: (results: GameResults) => void;
+  musicStyle: string;
+  onMusicStyleChange: (style: string) => void;
+  musicVolume?: number;
+  onMusicVolumeChange?: (volume: number) => void;
+  soundEnabled?: boolean;
+  onSoundEnabledChange?: (enabled: boolean) => void;
+  isMusicPlaying?: boolean;
+  onToggleMusicPlaying?: () => void;
+  onQuit?: () => void;
 }
 
 interface Feedback {
@@ -34,7 +44,12 @@ interface Feedback {
 
 // difficultyOrder is imported from useWordSelection
 
-const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
+const GameScreen: React.FC<GameScreenProps> = ({
+  config,
+  onEndGame,
+  musicStyle,
+  onMusicStyleChange,
+}) => {
   const [participants, setParticipants] = React.useState<Participant[]>(
     config.participants.map((p) => ({
       ...p,
@@ -85,6 +100,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState("");
+  const [showAudioSettings, setShowAudioSettings] = React.useState(false);
+
+  const handleTrackChange = (style: string) => {
+    onMusicStyleChange(style);
+  };
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);
@@ -109,6 +129,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     playTimeout();
     handleIncorrectAttempt();
   });
+
+  const timerClass =
+    timeLeft <= 10
+      ? config.chillMode
+        ? "timer-warning-chill"
+        : "timer-warning"
+      : "timer-normal";
   React.useEffect(() => {
     if (localStorage.getItem("teacherMode") === "true") {
       document.body.classList.add("teacher-mode");
@@ -478,18 +505,23 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       )}
 
       <div className="absolute top-8 right-8 text-center z-50">
-        <div
-          className={`text-6xl font-bold ${timeLeft <= 10 ? "text-red-500" : "text-yellow-300"}`}
-        >
-          {timeLeft}
-        </div>
+        <div className={`text-6xl font-bold ${timerClass}`}>{timeLeft}</div>
         <div className="text-lg">seconds left</div>
-        <button
-          onClick={isPaused ? resumeTimer : pauseTimer}
-          className="mt-2 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
-        >
-          {isPaused ? "Resume" : "Pause"}
-        </button>
+        <div className="flex justify-center space-x-2 mt-2">
+          <button
+            onClick={isPaused ? resumeTimer : pauseTimer}
+            className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+          >
+            {isPaused ? "Resume" : "Pause"}
+          </button>
+          <button
+            onClick={() => setShowAudioSettings((s) => !s)}
+            className="bg-yellow-300 text-black p-2 rounded-lg"
+            aria-label="Music settings"
+          >
+            <Music className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       <audio-controls className="audio-controls">
@@ -595,6 +627,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       {isPaused && (
         <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40">
           Paused
+        </div>
+      )}
+
+      {showAudioSettings && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg w-80">
+            <AudioSettings
+              currentTrack={musicStyle}
+              onTrackChange={handleTrackChange}
+            />
+          </div>
         </div>
       )}
     </div>
