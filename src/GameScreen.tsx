@@ -605,7 +605,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       {currentWord && (
         <div className="w-full max-w-4xl text-center">
           <img src={`${process.env.PUBLIC_URL || ''}/img/books.svg`} alt="Book icon" className="w-10 h-10 mx-auto mb-6" />
-          <h2 className="text-4xl font-bold mb-6 uppercase font-heading">
+          <h2 className="text-4xl font-bold mb-6 uppercase font-sans">
             Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
           </h2>
           {isTeamMode && currentStudent && (

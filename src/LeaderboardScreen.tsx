@@ -45,7 +45,7 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center font-body">
-        <h1 className="text-6xl font-bold mb-8 text-yellow-300 uppercase font-heading">🏅 Leaderboard</h1>
+        <h1 className="text-6xl font-bold mb-8 text-yellow-300 uppercase font-sans">🏅 Leaderboard</h1>
       <div className="bg-white/10 p-8 rounded-lg w-full max-w-md scorecard">
         {error ? (
           <div className="text-xl text-red-300">{error}</div>

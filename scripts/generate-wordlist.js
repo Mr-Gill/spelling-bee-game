@@ -52,6 +52,56 @@ const STATIC_WORDS = [
     "prefix": "",
     "suffix": "-ence",
     "pronunciation": "SY-uhns"
+  },
+  {
+    "word": "literature",
+    "syllables": ["lit", "er", "a", "ture"],
+    "definition": "Written works, especially those considered of superior or lasting artistic merit.",
+    "origin": "From Latin 'litteratura' meaning 'writing, grammar'.",
+    "example": "She studied English literature in college.",
+    "prefix": "",
+    "suffix": "-ture",
+    "pronunciation": "LIT-er-uh-cher"
+  },
+  {
+    "word": "history",
+    "syllables": ["his", "to", "ry"],
+    "definition": "The study of past events, particularly in human affairs.",
+    "origin": "From Greek 'historia' meaning 'inquiry, knowledge acquired by investigation'.",
+    "example": "We learned about ancient civilizations in history class.",
+    "prefix": "",
+    "suffix": "-story",
+    "pronunciation": "HIS-tuh-ree"
+  },
+  {
+    "word": "geography",
+    "syllables": ["ge", "og", "ra", "phy"],
+    "definition": "The study of the physical features of the earth and its atmosphere.",
+    "origin": "From Greek 'geographia' meaning 'earth description'.",
+    "example": "We're studying European geography this semester.",
+    "prefix": "geo-",
+    "suffix": "-graphy",
+    "pronunciation": "jee-OG-ruh-fee"
+  },
+  {
+    "word": "biology",
+    "syllables": ["bi", "ol", "o", "gy"],
+    "definition": "The study of living organisms, divided into many specialized fields.",
+    "origin": "From Greek 'bios' (life) + 'logia' (study of).",
+    "example": "Biology class taught us about the human body and ecosystems.",
+    "prefix": "bio-",
+    "suffix": "-logy",
+    "pronunciation": "by-OL-uh-jee"
+  },
+  {
+    "word": "chemistry",
+    "syllables": ["chem", "is", "try"],
+    "definition": "The branch of science that deals with the identification of substances.",
+    "origin": "From Greek 'khemeia' meaning 'art of alloying metals'.",
+    "example": "We conducted experiments in chemistry lab.",
+    "prefix": "",
+    "suffix": "-try",
+    "pronunciation": "KEM-uh-stree"
   }
 ];
 

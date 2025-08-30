@@ -226,6 +226,54 @@ Copy the array from `choices[0].message.content` into a file in `wordlists/`. Th
 
 ---
 
+## 🔊 **Audio Generation**
+
+This project includes scripts to generate high-quality audio files using ElevenLabs' text-to-speech API. The audio includes word pronunciations, UI feedback sounds, and sound effects.
+
+### Prerequisites
+1. **Get an API Key**
+   - Sign up at [ElevenLabs](https://elevenlabs.io/)
+   - Create an API key in your account settings
+
+2. **Set Up Environment**
+   - Copy `.env.example` to `.env`
+   - Add your ElevenLabs API key to the `.env` file
+
+### Generating Audio Files
+
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Generate Sound Effects**
+   ```bash
+   npm run generate:sfx
+   ```
+   This will create UI and feedback sounds in `public/audio/sfx/`
+
+3. **Generate Word Pronunciations**
+   ```bash
+   npm run generate:audio
+   ```
+   This will generate audio files for all words in the word list
+
+4. **Generate Everything**
+   ```bash
+   npm run generate:all-audio
+   ```
+   This will generate both sound effects and word pronunciations
+
+### Audio File Structure
+- `public/audio/words/` - Word pronunciation files (e.g., `apple.mp3`)
+- `public/audio/sfx/` - Sound effects (e.g., `correct.mp3`, `wrong.mp3`)
+- `public/audio/ui/` - UI interaction sounds (e.g., `click.mp3`)
+
+### Customizing Audio
+- Edit `scripts/generate-audio.ts` to modify word pronunciations
+- Edit `scripts/generate-sfx.ts` to modify sound effects
+- Update voice settings in `.env`
+
 ## 🚀 **Build & Deployment**
 
 1. Install dependencies:

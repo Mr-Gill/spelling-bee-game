@@ -1,9 +1,18 @@
 // Audio Manager Implementation
 import { Howl, Howler } from 'howler';
 
+export interface SoundOptions {
+  loop?: boolean;
+  volume?: number;
+  onend?: () => void;
+  onerror?: (error: any) => void;
+  preload?: boolean;
+}
+
 interface Sound {
   key: string;
   sound: Howl;
+  path: string;
 }
 
 export interface AudioSettings {
@@ -11,42 +20,173 @@ export interface AudioSettings {
   isMusicMuted: boolean;
   sfxVolume: number;
   musicVolume: number;
+  wordVolume: number;
 }
 
 class AudioManager {
   private sounds: Map<string, Sound> = new Map();
   private music: Map<string, Howl> = new Map();
   private activeMusic: { key: string; instance: Howl } | null = null;
+  // AudioContext is reserved for future use
+  // private globalAudioContext: AudioContext | null = null;
   
   public settings: AudioSettings = {
     areSoundsMuted: false,
     isMusicMuted: false,
     sfxVolume: 0.7,
     musicVolume: 0.7,
+    wordVolume: 1.0,
   };
 
-  // Load a sound effect
-  public loadSound(key: string, src: string, loop = false): void {
+  /**
+   * Load a sound effect
+   * @param key Unique identifier for the sound
+   * @param src Path to the audio file
+   * @param options Sound options
+   */
+  public loadSound(
+    key: string, 
+    src: string, 
+    options: SoundOptions = {}
+  ): void {
+    const {
+      loop = false,
+      volume = this.settings.sfxVolume,
+      onend,
+      onerror,
+      preload = true
+    } = options;
+
+    // Skip if already loaded
+    if (this.sounds.has(key)) {
+      return;
+    }
+
     const sound = new Howl({
       src: [src],
       loop,
-      volume: this.settings.sfxVolume,
+      volume,
+      preload,
+      onload: () => {
+        console.log(`Sound loaded: ${key}`);
+      },
       onloaderror: (_, error) => {
         console.error(`Error loading sound ${key}:`, error);
+        if (onerror) onerror(error);
       },
+      onend: () => {
+        if (onend) onend();
+      },
+      onplayerror: () => {
+        console.error(`Error playing sound: ${key}`);
+        if (onerror) onerror(new Error(`Failed to play sound: ${key}`));
+      }
     });
 
-    this.sounds.set(key, { key, sound });
+    this.sounds.set(key, { key, sound, path: src });
   }
 
-  // Get a sound by key
+  /**
+   * Check if a sound is loaded
+   * @param key Sound key or path
+   */
+  public isSoundLoaded(keyOrPath: string): boolean {
+    // Check by key first
+    const sound = this.sounds.get(keyOrPath);
+    if (sound) {
+      return sound.sound.state() === 'loaded';
+    }
+    
+    // Check by path
+    for (const [_, snd] of this.sounds) {
+      if (snd.path === keyOrPath) {
+        return snd.sound.state() === 'loaded';
+      }
+    }
+    
+    return false;
+  }
+
+  /**
+   * Get a sound by key
+   * @param key Sound key
+   */
   public getSound(key: string): Howl | undefined {
     return this.sounds.get(key)?.sound;
   }
 
-  // Get a music track by key
+  /**
+   * Get a music track by key
+   * @param key Music key
+   */
   public getMusic(key: string): Howl | undefined {
     return this.music.get(key);
+  }
+  
+  /**
+   * Play a sound effect
+   * @param key Sound key or path
+   * @param options Sound options
+   * @returns Sound ID or null if failed
+   */
+  public playSound(
+    keyOrPath: string, 
+    options: Omit<SoundOptions, 'preload'> = {}
+  ): number | null {
+    if (this.settings.areSoundsMuted) {
+      return null;
+    }
+    
+    const {
+      loop = false,
+      volume = this.settings.sfxVolume,
+      onend,
+      onerror
+    } = options;
+    
+    // Try to find by key first
+    let sound = this.sounds.get(keyOrPath);
+    
+    // If not found by key, try to find by path
+    if (!sound) {
+      for (const [_, snd] of this.sounds) {
+        if (snd.path === keyOrPath) {
+          sound = snd;
+          break;
+        }
+      }
+      
+      // If still not found, try to load it
+      if (!sound) {
+        this.loadSound(keyOrPath, keyOrPath, { ...options, preload: true });
+        console.warn(`Sound not preloaded: ${keyOrPath}, attempting to load...`);
+        return null;
+      }
+    }
+    
+    try {
+      // Update sound settings
+      sound.sound.loop(loop);
+      sound.sound.volume(volume);
+      
+      // Set up event handlers
+      if (onend) {
+        sound.sound.off('end');
+        sound.sound.once('end', onend);
+      }
+      
+      if (onerror) {
+        sound.sound.off('loaderror');
+        sound.sound.once('loaderror', (_, error) => onerror(error));
+      }
+      
+      // Play the sound
+      return sound.sound.play();
+    } catch (error) {
+      console.error(`Error playing sound ${keyOrPath}:`, error);
+      if (onerror) onerror(error);
+      return null;
+    }
   }
 
   // Load a music track
@@ -92,14 +232,6 @@ class AudioManager {
     if (options.loop !== undefined) {
       sound.loop(options.loop);
     }
-    
-    sound.play();
-  }
-
-  // Stop a sound effect
-  public stopSound(key: string): void {
-    const soundData = this.sounds.get(key);
-    soundData?.sound.stop();
   }
 
   // Play music

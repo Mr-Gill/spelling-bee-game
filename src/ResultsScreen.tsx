@@ -103,8 +103,8 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center font-body">
-        <h1 className="text-6xl font-bold mb-4 text-yellow-300 uppercase font-heading">🏆 Game Over! 🏆</h1>
-        <h2 className="text-4xl mb-8 uppercase font-heading">{getWinnerMessage()}</h2>
+        <h1 className="text-6xl font-bold mb-4 text-yellow-300 uppercase font-sans">🏆 Game Over! 🏆</h1>
+        <h2 className="text-4xl mb-8 uppercase font-sans">{getWinnerMessage()}</h2>
 
       {results?.duration && (<div className="text-2xl mb-6">Game Duration: {results.duration} seconds</div>)}
       
@@ -115,7 +115,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
       </div>
 
         <div className="bg-white/10 p-8 rounded-lg w-full max-w-md scorecard font-body">
-          <h3 className="text-3xl font-bold mb-4 uppercase font-heading">📊 Final Scores</h3>
+          <h3 className="text-3xl font-bold mb-4 uppercase font-sans">📊 Final Scores</h3>
         {results && results.participants.map((p, index) => (
           <div key={index} className="text-left text-xl mb-3">
             <div className="flex items-center gap-2">
@@ -141,7 +141,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
 
       {results.missedWords && results.missedWords.length > 0 && (
           <div className="bg-white/10 p-8 rounded-lg w-full max-w-md mt-8 scorecard font-body">
-            <h3 className="text-3xl font-bold mb-4 uppercase font-heading">❌ Missed Words</h3>
+            <h3 className="text-3xl font-bold mb-4 uppercase font-sans">❌ Missed Words</h3>
           {results.missedWords.map((w, index) => (
             <div key={index} className="text-left text-xl mb-2">
               <span className="font-bold">{w.word}</span> - {w.definition}

@@ -8,7 +8,7 @@
   "scripts": {
     "start": "npx serve dist",
     "serve": "npx serve dist",
-    "build:css": "npx @tailwindcss/cli -i ./src/tailwind.css -o ./tailwind.css --minify",
+    "build:css": "npx tailwindcss -i ./src/tailwind.css -o ./tailwind.css --minify",
     "build": "npm run build:css && npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --external:lucide-react --external:uuid --external:canvas-confetti --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file && node scripts/copy-assets.js && node scripts/copy-wordlist.js",
     "watch": "npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --watch",
     "test": "node --test",
@@ -16,7 +16,10 @@
     "deploy": "gh-pages -d dist",
     "dev:wordlist": "tsc scripts/ai-wordlist.ts --esModuleInterop --resolveJsonModule --module commonjs --target es2020 --outDir scripts && node scripts/ai-wordlist.js",
     "postbuild": "node postbuild.js",
-    "dev:curriculum": "tsc api/curriculumWordService.ts --outDir api && node api/curriculumWordService.js"
+    "dev:curriculum": "tsc api/curriculumWordService.ts --outDir api && node api/curriculumWordService.js",
+    "generate:audio": "ts-node scripts/generate-audio.ts",
+    "generate:sfx": "ts-node scripts/generate-sfx.ts",
+    "generate:all-audio": "npm run generate:sfx && npm run generate:audio"
   },
   "repository": {
     "type": "git",
@@ -50,7 +53,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@tailwindcss/cli": "^4.1.12",
+    "tailwindcss": "^3.4.0",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
     "@types/canvas-confetti": "^1.9.0",
@@ -59,16 +62,15 @@
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
     "autoprefixer": "^10.4.21",
+    "axios": "^1.11.0",
     "dotenv": "^17.2.1",
     "elevenlabs": "^1.59.0",
     "esbuild": "^0.25.9",
-    "gh-pages": "^6.1.0",
-    "pa11y-ci": "^4.0.1",
     "postcss": "^8.5.6",
     "prettier": "^3.0.3",
     "serve": "^14.2.1",
-    "tailwindcss": "^4.1.12",
-    "typescript": "^5.2.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   },
   "browserslist": [
     "defaults",

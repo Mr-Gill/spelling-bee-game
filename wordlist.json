@@ -1,7 +1,54 @@
 [
   {
+    "word": "mathematics",
+    "syllables": [
+      "math",
+      "e",
+      "mat",
+      "ics"
+    ],
+    "definition": "The abstract science of number, quantity, and space.",
+    "origin": "From Greek 'mathēmatikē' meaning 'mathematical, scientific'.",
+    "example": "She excelled in mathematics and won several awards.",
+    "prefix": "",
+    "suffix": "-ics",
+    "pronunciation": "math-uh-MAT-iks"
+  },
+  {
+    "word": "science",
+    "syllables": [
+      "sci",
+      "ence"
+    ],
+    "definition": "The systematic study of the structure and behavior of the physical and natural world.",
+    "origin": "From Latin 'scientia' meaning 'knowledge'.",
+    "example": "The science fair showcased many innovative student projects.",
+    "prefix": "",
+    "suffix": "-ence",
+    "pronunciation": "SY-uhns"
+  },
+  {
+    "word": "chemistry",
+    "syllables": [
+      "chem",
+      "is",
+      "try"
+    ],
+    "definition": "The branch of science that deals with the identification of substances.",
+    "origin": "From Greek 'khemeia' meaning 'art of alloying metals'.",
+    "example": "We conducted experiments in chemistry lab.",
+    "prefix": "",
+    "suffix": "-try",
+    "pronunciation": "KEM-uh-stree"
+  },
+  {
     "word": "education",
-    "syllables": ["ed", "u", "ca", "tion"],
+    "syllables": [
+      "ed",
+      "u",
+      "ca",
+      "tion"
+    ],
     "definition": "The process of receiving or giving systematic instruction, especially at a school or university.",
     "origin": "Latin 'educatio', from 'educare' meaning 'to bring up, rear, educate'.",
     "example": "The school is committed to providing quality education to all its students.",
@@ -11,22 +58,15 @@
   },
   {
     "word": "spelling",
-    "syllables": ["spell", "ing"],
+    "syllables": [
+      "spell",
+      "ing"
+    ],
     "definition": "The process of writing or naming the letters of a word.",
     "origin": "Old English 'spellian' meaning 'to tell, speak, utter'.",
     "example": "She won first place in the school spelling competition.",
     "prefix": "",
     "suffix": "-ing",
     "pronunciation": "SPEL-ing"
-  },
-  {
-    "word": "vocabulary",
-    "syllables": ["vo", "cab", "u", "lar", "y"],
-    "definition": "The body of words used in a particular language or known to a particular person.",
-    "origin": "Late Latin 'vocabularium', from Latin 'vocabulum' meaning 'name, word'.",
-    "example": "Reading regularly helps to expand your vocabulary.",
-    "prefix": "",
-    "suffix": "-ary",
-    "pronunciation": "voh-KAB-yuh-lair-ee"
   }
 ]

@@ -29,7 +29,7 @@ export const AudioControls: React.FC = () => {
     setLocalVolume(volume);
   }, [volume]);
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVolumeChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value);
     setLocalVolume(newVolume);
     

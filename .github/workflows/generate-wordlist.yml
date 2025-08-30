@@ -4,18 +4,22 @@ on:
   workflow_dispatch:
     inputs:
       topic:
-        description: 'Topic for word list'
+        description: 'Topic for word list (e.g., science, math, history)'
         required: true
         default: 'education'
       count:
-        description: 'Number of words to generate'
+        description: 'Number of words to generate (max 10)'
         required: true
-        default: '50'
+        default: '10'
   push:
     branches: [ main ]
     paths:
       - 'scripts/generate-wordlist.js'
       - '.github/workflows/generate-wordlist.yml'
+      - 'wordlist.json'
+  schedule:
+    # Run at midnight UTC on the first day of each month
+    - cron: '0 0 1 * *'
 
 jobs:
   generate:
@@ -42,15 +46,24 @@ jobs:
         run: |
           # Use input parameters if provided, otherwise use defaults
           TOPIC="${{ github.event.inputs.topic || 'education' }}"
-          COUNT="${{ github.event.inputs.count || 50 }}"
+          COUNT="${{ github.event.inputs.count || 10 }}"
+          
+          # Ensure count is between 1 and 10
+          if [[ $COUNT -lt 1 ]]; then COUNT=1; fi
+          if [[ $COUNT -gt 10 ]]; then COUNT=10; fi
+          
           echo "Generating $COUNT words about $TOPIC"
           node scripts/generate-wordlist.js "$TOPIC" "$COUNT"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Build project
-        run: |
-          npm run build
+          # Verify the word list was generated
+          if [ ! -f wordlist.json ]; then
+            echo "Error: wordlist.json was not generated"
+            exit 1
+          fi
+          
+          # Add the word list to the dist directory for deployment
+          mkdir -p dist
+          cp wordlist.json dist/
           
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
@@ -59,10 +72,15 @@ jobs:
           branch: gh-pages
           clean: true
           
-      - name: Commit word list
-        if: github.event_name == 'workflow_dispatch'
+      - name: Commit word list changes
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'actions@github.com'
           git add wordlist.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Update word list" && git push)
+          if ! git diff --quiet && ! git diff --staged --quiet; then
+            git commit -m "Update word list ($(date +'%Y-%m-%d'))"
+            git push
+          else
+            echo "No changes to commit"
+          fi
