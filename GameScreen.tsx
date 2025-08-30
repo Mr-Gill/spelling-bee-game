@@ -11,7 +11,10 @@ import loseLifeSoundFile from './audio/lose-life.mp3';
 import { launchConfetti } from './utils/confetti';
 import { speak } from './utils/tts';
 import useSound from './utils/useSound';
+import useTimer from './utils/useTimer';
+import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
+import HintPanel from './components/HintPanel';
 
 interface GameScreenProps {
   config: GameConfig;
@@ -23,14 +26,7 @@ interface Feedback {
   type: string;
 }
 
-interface WordQueues {
-  easy: Word[];
-  medium: Word[];
-  tricky: Word[];
-  review: Word[];
-}
-
-const difficultyOrder: Array<'easy' | 'medium' | 'tricky' | 'review'> = ['easy', 'medium', 'tricky', 'review'];
+// difficultyOrder is imported from useWordSelection
 
 const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [participants, setParticipants] = React.useState<Participant[]>(
@@ -43,46 +39,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     }))
   );
   const [currentParticipantIndex, setCurrentParticipantIndex] = React.useState(0);
-  const [currentWord, setCurrentWord] = React.useState<Word | null>(null);
-  const [timeLeft, setTimeLeft] = React.useState(config.timerDuration);
   const isTeamMode = config.gameMode === 'team';
   const [showWord, setShowWord] = React.useState(true);
-  const [showHint, setShowHint] = React.useState(false);
   const [usedHint, setUsedHint] = React.useState(false);
-  const [showDefinition, setShowDefinition] = React.useState(false);
-  const [showOrigin, setShowOrigin] = React.useState(false);
-  const [showSentence, setShowSentence] = React.useState(false);
-  const [showPrefix, setShowPrefix] = React.useState(false);
-  const [showSuffix, setShowSuffix] = React.useState(false);
   const [letters, setLetters] = React.useState<string[]>([]);
   const [feedback, setFeedback] = React.useState<Feedback>({ message: '', type: '' });
-  const timerRef = React.useRef<NodeJS.Timeout | null>(null);
-  const [startTime] = React.useState(Date.now());
-  const [revealedLetters, setRevealedLetters] = React.useState<boolean[]>([]);
-  const [revealedSyllables, setRevealedSyllables] = React.useState<boolean[]>([]);
   const [extraAttempt, setExtraAttempt] = React.useState(false);
   const [isHelpOpen, setIsHelpOpen] = React.useState(false);
-  const [isPaused, setIsPaused] = React.useState(false);
-
-  const playCorrect = useSound(correctSoundFile, config.soundEnabled);
-  const playWrong = useSound(wrongSoundFile, config.soundEnabled);
-  const playTimeout = useSound(timeoutSoundFile, config.soundEnabled);
-  const playLetterCorrect = useSound(letterCorrectSoundFile, config.soundEnabled);
-  const playLetterWrong = useSound(letterWrongSoundFile, config.soundEnabled);
-  const playShop = useSound(shopSoundFile, config.soundEnabled);
-  const playLoseLife = useSound(loseLifeSoundFile, config.soundEnabled);
-  const hiddenInputRef = React.useRef<HTMLInputElement>(null);
-
-  const shuffleArray = (arr: Word[]) => [...arr].sort(() => Math.random() - 0.5);
-  const [wordQueues, setWordQueues] = React.useState<WordQueues>({
-    easy: shuffleArray(config.wordDatabase.easy),
-    medium: shuffleArray(config.wordDatabase.medium),
-    tricky: shuffleArray(config.wordDatabase.tricky),
-    review: []
-  });
-  const [currentDifficulty, setCurrentDifficulty] = React.useState<'easy' | 'medium' | 'tricky' | 'review'>(
-    difficultyOrder[Math.min(config.difficultyLevel, difficultyOrder.length - 1)]
-  );
+  const { wordQueues, setWordQueues, currentWord, currentDifficulty, selectNextWord } =
+    useWordSelection(config.wordDatabase);
   const [attemptedParticipants, setAttemptedParticipants] = React.useState<Set<number>>(new Set());
   const [missedWords, setMissedWords] = React.useState<Word[]>([]);
   const [unlockedAchievements, setUnlockedAchievements] = React.useState<string[]>(() => {
@@ -94,43 +59,36 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     }
   });
   const [toast, setToast] = React.useState('');
+  const hiddenInputRef = React.useRef<HTMLInputElement>(null);
+  const [startTime] = React.useState(Date.now());
 
-  React.useEffect(() => {
-    if (localStorage.getItem('teacherMode') === 'true') {
-      document.body.classList.add('teacher-mode');
-    } else {
-      document.body.classList.remove('teacher-mode');
-    }
-  }, []);
+    const playCorrect = useSound(correctSoundFile, config.soundEnabled);
+    const playWrong = useSound(wrongSoundFile, config.soundEnabled);
+    const playTimeout = useSound(timeoutSoundFile, config.soundEnabled);
+    const playLetterCorrect = useSound(letterCorrectSoundFile, config.soundEnabled);
+    const playLetterWrong = useSound(letterWrongSoundFile, config.soundEnabled);
+    const playShop = useSound(shopSoundFile, config.soundEnabled);
+    const playLoseLife = useSound(loseLifeSoundFile, config.soundEnabled);
 
-  const startTimer = () => {
-    timerRef.current = setInterval(() => {
-      setTimeLeft(prevTime => {
-        if (prevTime <= 1) {
-          playTimeout();
-          clearInterval(timerRef.current as NodeJS.Timeout);
-          handleIncorrectAttempt();
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-  };
-
-  const pauseTimer = () => {
-    clearInterval(timerRef.current as NodeJS.Timeout);
-    setIsPaused(true);
-  };
-
-  const resumeTimer = () => {
-    setIsPaused(false);
-  };
-
-  React.useEffect(() => {
-    if (!currentWord || isPaused) return;
-    startTimer();
-    return () => clearInterval(timerRef.current as NodeJS.Timeout);
-  }, [currentWord, config.soundEnabled, isPaused]);
+    const {
+      timeLeft,
+      start: startTimer,
+      pause: pauseTimer,
+      resume: resumeTimer,
+      reset: resetTimer,
+      stop: stopTimer,
+      isPaused,
+    } = useTimer(config.timerDuration, () => {
+      playTimeout();
+      handleIncorrectAttempt();
+    });
+    React.useEffect(() => {
+      if (localStorage.getItem('teacherMode') === 'true') {
+        document.body.classList.add('teacher-mode');
+      } else {
+        document.body.classList.remove('teacher-mode');
+      }
+    }, []);
 
   React.useEffect(() => {
     if (currentWord) {
@@ -153,50 +111,19 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentWord, isPaused, letters]);
 
-  React.useEffect(() => {
-    if (!showWord && currentWord) {
-      setRevealedSyllables(Array(currentWord.syllables.length).fill(false));
-    }
-  }, [showWord, currentWord]);
-
-  const selectNextWord = (level: number) => {
-    let index = Math.min(level, difficultyOrder.length - 1);
-    let nextWord: Word | null = null;
-    let nextDifficulty = difficultyOrder[index];
-
-    while (index < difficultyOrder.length) {
-      const diff = difficultyOrder[index];
-      const queue = wordQueues[diff];
-      if (queue.length > 0) {
-        nextWord = queue[0];
-        setWordQueues(prev => ({ ...prev, [diff]: prev[diff].slice(1) }));
-        nextDifficulty = diff;
-        break;
-      }
-      index++;
-    }
-
+  const selectNextWordForLevel = (level: number) => {
+    const nextWord = selectNextWord(level);
     if (nextWord) {
-      setCurrentDifficulty(nextDifficulty);
-      setCurrentWord(nextWord);
-      setTimeLeft(config.timerDuration);
       setAttemptedParticipants(new Set());
-      setRevealedLetters(Array(nextWord.word.length).fill(false));
-      setRevealedSyllables(Array(nextWord.syllables.length).fill(false));
       setExtraAttempt(false);
       setIsHelpOpen(false);
-      setShowHint(false);
       setUsedHint(false);
-      setShowDefinition(false);
-      setShowOrigin(false);
-      setShowSentence(false);
-      setShowPrefix(false);
-      setShowSuffix(false);
       setLetters(Array(nextWord.word.length).fill(''));
       if (hiddenInputRef.current) {
         hiddenInputRef.current.focus();
       }
       speak(nextWord.word);
+      startTimer();
     } else {
       onEndGameWithMissedWords();
     }
@@ -206,12 +133,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     setCurrentParticipantIndex(prevIndex => (prevIndex + 1) % participants.length);
   };
 
-  const handleIncorrectAttempt = () => {
+  function handleIncorrectAttempt() {
     if (extraAttempt) {
       setFeedback({ message: 'Incorrect. You still have one more attempt!', type: 'error' });
       setExtraAttempt(false);
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
-      setTimeLeft(config.timerDuration);
+      startTimer();
       return;
     }
 
@@ -245,16 +172,16 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         }
         setAttemptedParticipants(new Set());
         const nextIndex = (currentParticipantIndex + 1) % participants.length;
-        selectNextWord(updatedParticipants[nextIndex].difficultyLevel);
+        selectNextWordForLevel(updatedParticipants[nextIndex].difficultyLevel);
         nextTurn();
       } else {
         setAttemptedParticipants(newAttempted);
         setUsedHint(false);
         nextTurn();
-        setTimeLeft(config.timerDuration);
+        startTimer();
       }
     }, 2000);
-  };
+  }
 
   const spendPoints = (participantIndex: number, cost: number) => {
     setParticipants(prev =>
@@ -266,64 +193,6 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       })
     );
     playShop();
-  };
-
-  const handleHangmanReveal = () => {
-    const cost = 6;
-    if (participants[currentParticipantIndex].points < cost || !currentWord) return;
-    spendPoints(currentParticipantIndex, cost);
-    setUsedHint(true);
-    const unrevealed = revealedLetters.map((rev, idx) => (!rev ? idx : null)).filter(idx => idx !== null) as number[];
-    if (unrevealed.length === 0) return;
-    const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
-    const newRevealed = [...revealedLetters];
-    newRevealed[randomIndex] = true;
-    setRevealedLetters(newRevealed);
-  };
-
-  const handleVowelReveal = () => {
-    const cost = 4;
-    if (participants[currentParticipantIndex].points < cost || !currentWord) return;
-    spendPoints(currentParticipantIndex, cost);
-    setUsedHint(true);
-    const newRevealed = currentWord.word.split('').map((letter, idx) => revealedLetters[idx] || 'aeiou'.includes(letter.toLowerCase()));
-    setRevealedLetters(newRevealed);
-  };
-
-  const handleFriendSubstitution = () => {
-    const cost = 4;
-    if (participants[currentParticipantIndex].points < cost) return;
-    spendPoints(currentParticipantIndex, cost);
-    setExtraAttempt(true);
-    setUsedHint(true);
-  };
-
-  const handlePrefixReveal = () => {
-    const cost = 3;
-    if (participants[currentParticipantIndex].points < cost || !currentWord) return;
-    spendPoints(currentParticipantIndex, cost);
-    setUsedHint(true);
-    setShowPrefix(true);
-  };
-
-  const handleSuffixReveal = () => {
-    const cost = 3;
-    if (participants[currentParticipantIndex].points < cost || !currentWord) return;
-    spendPoints(currentParticipantIndex, cost);
-    setUsedHint(true);
-    setShowSuffix(true);
-  };
-
-  const handleRevealSyllable = (index: number) => {
-    const cost = 3;
-    if (!currentWord || participants[currentParticipantIndex].points < cost) return;
-    spendPoints(currentParticipantIndex, cost);
-    setUsedHint(true);
-    setRevealedSyllables(prev => {
-      const updated = [...prev];
-      updated[index] = true;
-      return updated;
-    });
   };
 
   const typeLetter = (letter: string) => {
@@ -357,7 +226,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
   const handleSpellingSubmit = () => {
     if (!currentWord) return;
-    clearInterval(timerRef.current as NodeJS.Timeout);
+    stopTimer();
 
     const guess = letters.join('').trim().toLowerCase();
     const isCorrect = guess === currentWord.word.toLowerCase();
@@ -413,7 +282,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
         const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
         setFeedback({ message: '', type: '' });
-        selectNextWord(nextDifficulty);
+        selectNextWordForLevel(nextDifficulty);
         nextTurn();
       }, 2000);
       
@@ -426,7 +295,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   };
 
   const skipWord = () => {
-    clearInterval(timerRef.current as NodeJS.Timeout);
+    stopTimer();
     const isLivesPenalty = config.skipPenaltyType === 'lives';
     const deduction = isLivesPenalty
       ? `-${config.skipPenaltyValue} life${config.skipPenaltyValue > 1 ? 's' : ''}`
@@ -457,7 +326,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
       setFeedback({ message: '', type: '' });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
-      selectNextWord(nextDifficulty);
+      selectNextWordForLevel(nextDifficulty);
       nextTurn();
     }, 1500);
   };
@@ -484,7 +353,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
   React.useEffect(() => {
     if (config.participants.length > 0) {
-      selectNextWord(config.participants[0].difficultyLevel);
+      selectNextWordForLevel(config.participants[0].difficultyLevel);
     }
   }, []);
 
@@ -569,141 +438,16 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
               {showWord ? 'Hide Word' : 'Show Word'}
             </button>
           </div>
-          <div className="bg-white/10 p-6 rounded-lg mb-8">
-            {revealedLetters.some(r => r) && (
-              <p className="text-3xl font-mono mb-4">
-                {currentWord.word
-                  .split('')
-                  .map((letter, idx) => (revealedLetters[idx] ? letter : '_'))
-                  .join(' ')}
-              </p>
-            )}
-            {showDefinition && (
-              <p className="text-2xl mb-2">
-                <strong className="text-yellow-300">Definition:</strong> {currentWord.definition}
-              </p>
-            )}
-            <button
-              onClick={() => {
-                setShowHint(!showHint);
-                if (!showHint) setUsedHint(true);
-              }}
-              className="mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
-            >
-              {showHint ? 'Hide Hint' : 'Show Hint'}
-            </button>
-            {showHint && currentWord && (
-              <div className="mt-4 flex flex-col items-center gap-4">
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {currentWord.syllables.map((syllable, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => speak(syllable)}
-                      disabled={!revealedSyllables[idx] || !showWord}
-                      className="bg-yellow-100 text-black px-2 py-1 rounded disabled:opacity-50"
-                    >
-                      {showWord && revealedSyllables[idx] ? syllable : '???'}
-                    </button>
-                  ))}
-                </div>
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {currentWord.syllables.map((_, idx) =>
-                    !revealedSyllables[idx] && (
-                      <button
-                        key={`reveal-${idx}`}
-                        onClick={() => handleRevealSyllable(idx)}
-                        disabled={participants[currentParticipantIndex].points < 3}
-                        className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
-                      >
-                        {`Reveal syllable ${idx + 1} (-3)`}
-                      </button>
-                    )
-                  )}
-                </div>
-              </div>
-            )}
-            {showOrigin && (
-              <p className="text-xl mb-2">
-                <strong className="text-yellow-300">Origin:</strong> {currentWord.origin}
-              </p>
-            )}
-            {showSentence && (
-              <p className="text-xl">
-                <strong className="text-yellow-300">Example:</strong> "{currentWord.example}"
-              </p>
-            )}
-            {showPrefix && showWord && currentWord.prefix && (
-              <p className="text-xl mb-2">
-                <strong className="text-yellow-300">Prefix:</strong> {currentWord.prefix}
-              </p>
-            )}
-            {showSuffix && showWord && currentWord.suffix && (
-              <p className="text-xl mb-2">
-                <strong className="text-yellow-300">Suffix:</strong> {currentWord.suffix}
-              </p>
-            )}
-            <div className="mt-4 flex gap-4 justify-center">
-              {!showDefinition && (
-                <button
-                  onClick={() => {
-                    if (participants[currentParticipantIndex].points < 1) return;
-                    spendPoints(currentParticipantIndex, 1);
-                    setShowDefinition(true);
-                  }}
-                  disabled={participants[currentParticipantIndex].points < 1}
-                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
-                >
-                  Buy Definition (-1)
-                </button>
-              )}
-              {!showOrigin && (
-                <button
-                  onClick={() => {
-                    if (participants[currentParticipantIndex].points < 1) return;
-                    spendPoints(currentParticipantIndex, 1);
-                    setShowOrigin(true);
-                  }}
-                  disabled={participants[currentParticipantIndex].points < 1}
-                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
-                >
-                  Buy Origin (-1)
-                </button>
-              )}
-              {!showSentence && (
-                <button
-                  onClick={() => {
-                    if (participants[currentParticipantIndex].points < 1) return;
-                    spendPoints(currentParticipantIndex, 1);
-                    setShowSentence(true);
-                  }}
-                  disabled={participants[currentParticipantIndex].points < 1}
-                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
-                >
-                  Buy Sentence (-1)
-                </button>
-              )}
-            </div>
-            <div className="mt-4 flex gap-4 justify-center">
-              {!showPrefix && currentWord.prefix && (
-                <button
-                  onClick={handlePrefixReveal}
-                  disabled={participants[currentParticipantIndex].points < 3}
-                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
-                >
-                  Reveal Prefix (-3)
-                </button>
-              )}
-              {!showSuffix && currentWord.suffix && (
-                <button
-                  onClick={handleSuffixReveal}
-                  disabled={participants[currentParticipantIndex].points < 3}
-                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
-                >
-                  Reveal Suffix (-3)
-                </button>
-              )}
-            </div>
-          </div>
+          <HintPanel
+            word={currentWord}
+            participantPoints={participants[currentParticipantIndex].points}
+            participantIndex={currentParticipantIndex}
+            spendPoints={spendPoints}
+            isTeamMode={isTeamMode}
+            showWord={showWord}
+            onHintUsed={() => setUsedHint(true)}
+            onExtraAttempt={() => setExtraAttempt(true)}
+          />
           <div className="flex gap-2 justify-center mb-4">
             {letters.map((letter, idx) => (
               <div
@@ -726,30 +470,6 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             onSubmit={handleSpellingSubmit}
             soundEnabled={config.soundEnabled}
           />
-
-          <div className="mt-6 flex justify-center gap-4">
-            <button
-              onClick={handleHangmanReveal}
-              disabled={participants[currentParticipantIndex].points < 5 || isTeamMode === false}
-              className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
-            >
-              Hangman Reveal (-5)
-            </button>
-            <button
-              onClick={handleVowelReveal}
-              disabled={participants[currentParticipantIndex].points < 3 || isTeamMode === false}
-              className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
-            >
-              Vowel Reveal (-3)
-            </button>
-            <button
-              onClick={handleFriendSubstitution}
-              disabled={participants[currentParticipantIndex].points < 4 || isTeamMode === false}
-              className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
-            >
-              Friend Sub (-4)
-            </button>
-          </div>
         </div>
       )}
 
