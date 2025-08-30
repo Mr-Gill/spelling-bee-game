@@ -13,9 +13,10 @@ interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
   onAddCustomWords: (words: Word[]) => void;
   onViewAchievements: () => void;
+  onViewHistory: () => void;
 }
 
-const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
+const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewHistory }) => {
   const avatars = [beeImg, bookImg, trophyImg];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
@@ -493,8 +494,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             <button onClick={() => handleStart(false)} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Custom Game</button>
             <button onClick={() => handleStart(true)} className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Session Challenge</button>
         </div>
-        <div className="mt-4 text-center">
+        <div className="mt-4 text-center flex gap-4 justify-center">
             <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold">View Achievements</button>
+            <button onClick={onViewHistory} className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl text-xl font-bold">History</button>
         </div>
       </div>
     </div>
