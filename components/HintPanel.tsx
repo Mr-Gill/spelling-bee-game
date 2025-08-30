@@ -11,6 +11,7 @@ interface HintPanelProps {
   showWord: boolean;
   onHintUsed: () => void;
   onExtraAttempt: () => void;
+  powerUpHintTrigger?: number;
 }
 
 const HintPanel: React.FC<HintPanelProps> = ({
@@ -22,6 +23,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
   showWord,
   onHintUsed,
   onExtraAttempt,
+  powerUpHintTrigger = 0,
 }) => {
   const [showHint, setShowHint] = useState(false);
   const [showDefinition, setShowDefinition] = useState(false);
@@ -42,6 +44,23 @@ const HintPanel: React.FC<HintPanelProps> = ({
     setShowPrefix(false);
     setShowSuffix(false);
   }, [word]);
+
+  useEffect(() => {
+    if (powerUpHintTrigger > 0) {
+      const unrevealed = revealedLetters
+        .map((r, i) => (!r ? i : null))
+        .filter(i => i !== null) as number[];
+      if (unrevealed.length > 0) {
+        const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+        setRevealedLetters(prev => {
+          const updated = [...prev];
+          updated[randomIndex] = true;
+          return updated;
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [powerUpHintTrigger]);
 
   useEffect(() => {
     if (!showWord) {

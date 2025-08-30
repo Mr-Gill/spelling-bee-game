@@ -21,6 +21,7 @@ export interface Participant {
   wordsCorrect: number;
   accuracy?: number;
   avatar?: string;
+  powerUps?: Record<string, number>;
 }
 
 export interface WordDatabase {
