@@ -8,6 +8,8 @@
       "example": "My best friend and I love to play together.",
       "prefix": "",
       "suffix": "",
+      "prefixMeaning": "",
+      "suffixMeaning": "",
       "pronunciation": "FREND"
     },
     {
@@ -18,6 +20,8 @@
       "example": "The children were happy to see the circus.",
       "prefix": "hap",
       "suffix": "py",
+      "prefixMeaning": "luck, fortune",
+      "suffixMeaning": "characterized by",
       "pronunciation": "HAP-ee"
     }
   ],
@@ -30,6 +34,8 @@
       "example": "It is necessary to study hard for the test.",
       "prefix": "necess",
       "suffix": "ary",
+      "prefixMeaning": "unavoidable",
+      "suffixMeaning": "related to",
       "pronunciation": "NES-uh-ser-ee"
     }
   ],
@@ -42,6 +48,8 @@
       "example": "The chrysanthemum bloomed beautifully in autumn.",
       "prefix": "chryso",
       "suffix": "anthemum",
+      "prefixMeaning": "gold",
+      "suffixMeaning": "flower",
       "pronunciation": "kri-SAN-thuh-mum"
     }
   ]

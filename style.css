@@ -1,7 +1,21 @@
 /* Custom styles for Spelling Bee Championship */
 
+<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
+:root {
+  --primary-color: #2563eb; /* Improved contrast blue */
+  --text-color: #1e293b; /* Darker text for better readability */
+  --bg-color: #f8fafc; /* Light background */
+  
+  /* Dark mode variables */
+  --dark-primary: #3b82f6;
+  --dark-text: #f1f5f9;
+  --dark-bg: #0f172a;
+}
+
+=======
+>>>>>>> origin/codex/import-google-fonts-and-configure-tailwind
 * {
     box-sizing: border-box;
 }
@@ -9,7 +23,6 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
     overflow-x: hidden;
     background-image: url('img/bee-honeycomb.svg');
     background-size: 200px 173px;
@@ -17,7 +30,7 @@ body {
 }
 
 body.theme-light {
-    background: #f9fafb;
+    background: #ffffff;
     color: #1f2937;
 }
 
@@ -27,10 +40,10 @@ body.theme-dark {
 }
 
 body.theme-honeycomb {
-    background-color: #fff8dc;
-    background-image: radial-gradient(#facc15 1px, transparent 1px);
+    background-color: #fef7cd;
+    background-image: radial-gradient(#fbbf24 1px, transparent 1px);
     background-size: 20px 20px;
-    color: #3a2b0a;
+    color: #78350f;
 }
 
 /* Teacher Mode increases overall scaling for easier classroom viewing */
@@ -88,6 +101,31 @@ video {
 
 @media (prefers-reduced-motion: reduce) {
     .btn-bounce {
+        animation: none;
+    }
+}
+
+@keyframes bee-fly {
+    0% {
+        transform: translateX(-10vw);
+    }
+    100% {
+        transform: translateX(110vw);
+    }
+}
+
+.flying-bee {
+    position: fixed;
+    top: 50vh;
+    left: -10vw;
+    width: 80px;
+    z-index: 1000;
+    pointer-events: none;
+    animation: bee-fly 8s linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flying-bee {
         animation: none;
     }
 }
@@ -191,6 +229,57 @@ video {
 
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.5);
+}
+
+/* Audio controls */
+.audio-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    gap: 10px;
+}
+
+.audio-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.audio-btn:hover {
+    transform: scale(1.1);
+}
+
+.audio-btn.muted {
+    opacity: 0.5;
+}
+
+/* Theme toggle styles */
+.theme-toggle {
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  z-index: 100;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dark-mode {
+  --primary-color: var(--dark-primary);
+  --text-color: var(--dark-text);
+  --bg-color: var(--dark-bg);
 }
 
 /* Responsive design */
