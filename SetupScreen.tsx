@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GameConfig, Word } from './types';
 import { parseWordList } from './utils/parseWordList';
 import bookImg from './img/avatars/book.svg';
@@ -72,6 +72,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState('light');
   const [teacherMode, setTeacherMode] = useState<boolean>(() => localStorage.getItem('teacherMode') === 'true');
+  const [hideNames, setHideNames] = useState<boolean>(() => localStorage.getItem('hideNames') === 'true');
   const [aiGrade, setAiGrade] = useState(5);
   const [aiTopic, setAiTopic] = useState('');
   const [aiCount, setAiCount] = useState(10);
@@ -93,6 +94,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
     localStorage.setItem('teacherMode', String(teacherMode));
   }, [teacherMode]);
+
+  useEffect(() => {
+    localStorage.setItem('hideNames', String(hideNames));
+  }, [hideNames]);
 
   useEffect(() => {
     setStartingLives(gameMode === 'team' ? 10 : 5);
@@ -356,6 +361,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       skipPenaltyValue: options.skipPenaltyValue,
       soundEnabled: options.soundEnabled,
       effectsEnabled: options.effectsEnabled,
+      hideNames,
       difficultyLevel: options.initialDifficulty,
       progressionSpeed: options.progressionSpeed,
       musicStyle: options.musicStyle,
@@ -498,6 +504,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Teacher Mode 👩‍🏫</h2>
                 <label className="flex items-center gap-2 text-white"><input type="checkbox" checked={teacherMode} onChange={e => setTeacherMode(e.target.checked)} /><span>Enable larger fonts and spacing</span></label>
+            </div>
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Hide Names 🙈</h2>
+                <label className="flex items-center gap-2 text-white"><input type="checkbox" checked={hideNames} onChange={e => setHideNames(e.target.checked)} /><span>Hide student names on scoreboard</span></label>
             </div>
              <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Music 🎵</h2>
