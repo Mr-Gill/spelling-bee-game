@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Word, Participant, GameConfig } from './types';
+import React, { useState } from 'react';
+import { GameConfig, Word } from './types';
+import { parseWordList } from './utils/parseWordList';
+import { achievements } from './constants/achievements';
+import GameOptions from './components/GameOptions';
+import StudentRoster from './components/StudentRoster';
+import TeamForm from './components/TeamForm';
 import beeImg from './img/avatars/bee.svg';
 import bookImg from './img/avatars/book.svg';
 import trophyImg from './img/avatars/trophy.svg';
-<<<<<<< HEAD
-import { parseWordList as parseWordListUtil } from './utils/parseWordList';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.

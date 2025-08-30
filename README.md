@@ -98,8 +98,12 @@ Students earn points for correct answers and can strategically spend them on ass
 git clone https://github.com/SquidgyG/spelling-bee-game.git
 cd spelling-bee-game
 
+# Install dependencies and build
+npm install
+npm run build
+
 # Open in browser
-open index.html
+open dist/index.html
 ```
 
 ---
@@ -210,7 +214,7 @@ Copy the array from `choices[0].message.content` into a file in `wordlists/`. Th
 
 ## 🔧 **Customization Options**
 
-### ⚙️ **Easy Modifications** (Edit `app.js`)
+### ⚙️ **Easy Modifications** (Edit `spelling-bee-game.tsx` then run `npm run build` to generate `dist/app.js`)
 ```javascript
 // Change timer duration
 setTimeLeft(30) // 30 seconds (default)
