@@ -27,6 +27,7 @@ import AvatarSelector from "./components/AvatarSelector";
 import { AudioSettings } from "./components/AudioSettings";
 import { useAudio } from "./AudioContext";
 import CircularTimer from "./components/CircularTimer";
+import PhonicsBreakdown from "./components/PhonicsBreakdown";
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -644,6 +645,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
             onHintUsed={() => setUsedHint(true)}
             onExtraAttempt={() => setExtraAttempt(true)}
           />
+          {currentWord.phonemes && (
+            <div className="mt-6">
+              <PhonicsBreakdown phonemes={currentWord.phonemes} />
+            </div>
+          )}
           <div className="flex gap-2 justify-center mb-8">
             {letters.map((letter, idx) => (
               <div
