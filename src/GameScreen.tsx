@@ -1,5 +1,5 @@
 import React from "react";
-import { SkipForward, Play, Pause, Volume2, VolumeX } from "lucide-react";
+import { SkipForward, Play, Pause, Volume2, VolumeX, Users } from "lucide-react";
 import {
   GameConfig,
   Word,
@@ -40,6 +40,8 @@ interface Feedback {
 }
 
 // difficultyOrder is imported from useWordSelection
+const MAX_SKIP_TURNS = 1;
+const MAX_ASK_FRIEND = 1;
 
 const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const isTeamMode = config.gameMode === "team";
@@ -52,6 +54,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       correct: 0,
       wordsAttempted: 0,
       wordsCorrect: 0,
+      skipsRemaining: MAX_SKIP_TURNS,
+      askFriendRemaining: MAX_ASK_FRIEND,
     })),
   );
 
@@ -429,38 +433,33 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     handleIncorrectAttempt();
   };
 
-  const skipWord = () => {
+  const handleSkipTurn = () => {
+    if (!currentWord) return;
     stopTimer();
-    const isLivesPenalty = config.skipPenaltyType === "lives";
-    const deduction = isLivesPenalty
-      ? `-${config.skipPenaltyValue} life${config.skipPenaltyValue > 1 ? "s" : ""}`
-      : `-${config.skipPenaltyValue} pts`;
-
-    const updatedParticipants = participants.map((p, index) => {
-      if (index === currentParticipantIndex) {
-        const updated = {
-          ...p,
-          streak: 0,
-          wordsAttempted: p.wordsAttempted + 1,
-        };
-        return isLivesPenalty
-          ? { ...updated, lives: p.lives - config.skipPenaltyValue }
-          : { ...updated, points: p.points - config.skipPenaltyValue };
-      }
-      return p;
-    });
+    const updatedParticipants = participants.map((p, index) =>
+      index === currentParticipantIndex
+        ? { ...p, skipsRemaining: (p.skipsRemaining || 0) - 1 }
+        : p,
+    );
     setParticipants(updatedParticipants);
 
-    if (isLivesPenalty) {
-      playLoseLife();
+    try {
+      const existing = JSON.parse(localStorage.getItem("skippedTurns") || "[]");
+      existing.push({
+        name: participants[currentParticipantIndex].name,
+        word: currentWord.word,
+        time: new Date().toISOString(),
+      });
+      localStorage.setItem("skippedTurns", JSON.stringify(existing));
+    } catch {
+      // ignore logging errors
     }
-    setFeedback({ message: `Word Skipped (${deduction})`, type: "info" });
-    if (currentWord) {
-      setWordQueues((prev) => ({
-        ...prev,
-        review: [...prev.review, currentWord],
-      }));
-    }
+
+    setWordQueues((prev) => ({
+      ...prev,
+      review: [...prev.review, currentWord],
+    }));
+    setFeedback({ message: "Turn Skipped", type: "info" });
     setAttemptedParticipants(new Set());
 
     setTimeout(() => {
@@ -468,10 +467,26 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         (currentParticipantIndex + 1) % updatedParticipants.length;
       const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
       setFeedback({ message: "", type: "" });
-      if (currentWord) setLetters(Array(currentWord.word.length).fill(""));
+      setLetters(Array(currentWord.word.length).fill(""));
       selectNextWordForLevel(nextDifficulty);
       nextTurn();
-    }, 1500);
+    }, 1000);
+  };
+
+  const handleAskFriend = () => {
+    const remaining =
+      participants[currentParticipantIndex].askFriendRemaining || 0;
+    if (remaining <= 0) return;
+    setParticipants((prev) =>
+      prev.map((p, index) =>
+        index === currentParticipantIndex
+          ? { ...p, askFriendRemaining: remaining - 1 }
+          : p,
+      ),
+    );
+    setIsHelpOpen(true);
+    setFeedback({ message: "A teammate may help!", type: "info" });
+    setTimeout(() => setFeedback({ message: "", type: "" }), 2000);
   };
 
   const onEndGameWithMissedWords = () => {
@@ -591,7 +606,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
       {currentWord && (
         <div className="w-full max-w-4xl text-center">
-<img src="img/books.svg" alt="Book icon" className="w-10 h-10 mx-auto mb-4" />
+          <img src="img/books.svg" alt="Book icon" className="w-10 h-10 mx-auto mb-4" />
           <h2 className="text-4xl font-bold mb-2 uppercase font-heading">
             Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
           </h2>
@@ -659,12 +674,33 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
         </div>
       )}
 
-      <button
-        onClick={skipWord}
-        className="absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl"
-      >
-        <SkipForward size={24} />
-      </button>
+      <div className="absolute bottom-8 right-8 flex flex-col gap-4">
+        <button
+          onClick={handleSkipTurn}
+          disabled={
+            (participants[currentParticipantIndex].skipsRemaining || 0) <= 0
+          }
+          className="bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl disabled:opacity-50 flex items-center"
+        >
+          <SkipForward size={24} className="mr-2" /> Skip Turn
+        </button>
+        <button
+          onClick={handleAskFriend}
+          disabled={
+            (participants[currentParticipantIndex].askFriendRemaining || 0) <=
+            0
+          }
+          className="bg-blue-500 hover:bg-blue-600 p-4 rounded-lg text-xl disabled:opacity-50 flex items-center"
+        >
+          <Users size={24} className="mr-2" /> Ask a Friend
+        </button>
+      </div>
+
+      {isHelpOpen && (
+        <div className="absolute bottom-32 right-8 bg-blue-500 p-4 rounded-lg text-xl">
+          Friend assisting...
+        </div>
+      )}
 
       {isPaused && !showAudioSettings && (
         <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-6xl font-bold z-40 gap-8">

@@ -30,6 +30,10 @@ export interface Participant {
   avatar?: string;
   /** Optional team assignment used during setup */
   team?: string;
+  /** Remaining skip turns available for this participant */
+  skipsRemaining?: number;
+  /** Remaining "ask a friend" opportunities */
+  askFriendRemaining?: number;
 }
 
 /**
