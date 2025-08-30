@@ -14,10 +14,11 @@ interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
   onAddCustomWords: (words: Word[]) => void;
   onViewAchievements: () => void;
+  onViewShop: () => void;
 }
 
-const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
-  const avatars = [bookSvgUrl];
+const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewShop }) => {
+  const avatars = [beeImg, bookImg, trophyImg];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
@@ -612,10 +613,17 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </label>
             </div>
         )}
-        <GameOptions 
-          options={options}
-          setOptions={setOptions}
-        />
+
+        {error && <p className="text-red-300 text-center mb-4">{error}</p>}
+        
+        <div className="flex flex-col md:flex-row gap-4 mt-8">
+            <button onClick={() => handleStart(false)} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Custom Game</button>
+            <button onClick={() => handleStart(true)} className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Session Challenge</button>
+        </div>
+        <div className="mt-4 flex justify-center gap-4">
+            <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold">View Achievements</button>
+            <button onClick={onViewShop} className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl text-xl font-bold">Shop</button>
+        </div>
       </div>
     </div>
   );

@@ -88,9 +88,28 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const [toast, setToast] = React.useState("");
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
-  const [currentAvatar, setCurrentAvatar] = React.useState('');
-  const [darkMode, setDarkMode] = React.useState(false);
-  const [showAudioSettings, setShowAudioSettings] = React.useState(false);
+  const [coins, setCoins] = React.useState<number>(() => {
+    if (typeof window === "undefined") return 0;
+    const stored = localStorage.getItem("coins");
+    return stored ? parseInt(stored, 10) : 0;
+  });
+  const [ownedAvatars] = React.useState<string[]>(() => {
+    if (typeof window === "undefined") return ["bee", "book", "trophy"];
+    try {
+      return JSON.parse(
+        localStorage.getItem("ownedAvatars") || "[\"bee\",\"book\",\"trophy\"]",
+      );
+    } catch {
+      return ["bee", "book", "trophy"];
+    }
+  });
+  const [currentAvatar, setCurrentAvatar] = React.useState(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("equippedAvatar") || "";
+  });
+  React.useEffect(() => {
+    localStorage.setItem("equippedAvatar", currentAvatar);
+  }, [currentAvatar]);
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);
@@ -337,6 +356,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
 
       playCorrect();
 
+      const coinReward = 1;
+      const newCoins = coins + coinReward;
+      setCoins(newCoins);
+      localStorage.setItem("coins", String(newCoins));
+
       const prefersReducedMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
       ).matches;
@@ -515,6 +539,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       <AvatarSelector
         currentAvatar={currentAvatar}
         onSelect={(avatar) => setCurrentAvatar(avatar)}
+        availableAvatars={ownedAvatars}
       />
 
       {currentWord && (
