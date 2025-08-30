@@ -5,7 +5,9 @@ import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
+import PracticeScreen from './PracticeScreen';
 import useMusic from './utils/useMusic';
+import { Word } from './types';
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
@@ -18,6 +20,7 @@ const SpellingBeeGame = () => {
     const [musicVolume, setMusicVolume] = useState(0.5);
     const [soundEnabled, setSoundEnabled] = useState(true);
     const [isMusicPlaying, setIsMusicPlaying] = useState(true);
+    const [practiceWords, setPracticeWords] = useState<Word[]>([]);
 
     useEffect(() => {
         fetch('words.json')
@@ -71,6 +74,11 @@ const SpellingBeeGame = () => {
         setGameState("achievements");
     };
 
+    const handlePracticeMissedWords = (words: Word[]) => {
+        setPracticeWords(words);
+        setGameState("practice");
+    };
+
     const handleBackToSetup = () => {
         setGameState("setup");
     };
@@ -107,8 +115,11 @@ const SpellingBeeGame = () => {
             />
         );
     }
+    if (gameState === "practice") {
+        return <PracticeScreen words={practiceWords} onBack={() => setGameState('results')} soundEnabled={soundEnabled} />;
+    }
     if (gameState === "results") {
-        return <ResultsScreen results={gameResults} config={gameConfig} onRestart={handleRestart} onViewLeaderboard={handleViewLeaderboard} />;
+        return <ResultsScreen results={gameResults} config={gameConfig} onRestart={handleRestart} onViewLeaderboard={handleViewLeaderboard} onPractice={handlePracticeMissedWords} />;
     }
     if (gameState === "leaderboard") {
         return <LeaderboardScreen onBack={handleBackToSetup} />;
