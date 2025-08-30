@@ -45,6 +45,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [randomTeamCount, setRandomTeamCount] = useState(0);
   const [randomTeamSize, setRandomTeamSize] = useState(0);
   const [randomizeError, setRandomizeError] = useState('');
+  const [rosterError, setRosterError] = useState('');
   const [skipPenaltyType, setSkipPenaltyType] = useState<'lives' | 'points'>('lives');
   const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => localStorage.getItem('soundEnabled') !== 'false');
@@ -108,6 +109,54 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     localStorage.removeItem('students');
     setTeams(getDefaultTeams());
     setStudents([]);
+  };
+
+  const handleExportRoster = () => {
+    try {
+      const data = JSON.stringify({ teams, students }, null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'roster.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to export roster', err);
+    }
+  };
+
+  const handleImportRoster = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target?.result as string);
+        const { teams: importedTeams, students: importedStudents } = data || {};
+        if (!Array.isArray(importedTeams) || !Array.isArray(importedStudents)) throw new Error();
+
+        const sanitize = (items: any[], existing: Participant[]): Participant[] =>
+          items
+            .filter(item => item && typeof item.name === 'string')
+            .map(item => {
+              const base = createParticipant(item.name, item.difficultyLevel ?? 0);
+              const existingAvatar = existing.find(e => e.name === item.name)?.avatar;
+              return { ...base, ...item, avatar: item.avatar || existingAvatar || getRandomAvatar() };
+            });
+
+        const newTeams = sanitize(importedTeams, teams);
+        const newStudents = sanitize(importedStudents, students);
+        updateTeams(newTeams);
+        updateStudents(newStudents);
+        setRosterError('');
+      } catch (err) {
+        console.error('Failed to import roster', err);
+        setRosterError('Invalid roster file.');
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
   };
 
   const createParticipant = (name: string, difficulty: number): Participant => ({
@@ -366,7 +415,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
                 {randomizeError && <p className="text-red-300">{randomizeError}</p>}
               </div>
-              {students.map((student, index) => (
+          {students.map((student, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
                   <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
                   <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
@@ -375,7 +424,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               ))}
             </>
           )}
-          <button onClick={clearRoster} className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Clear Saved Roster</button>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button onClick={handleExportRoster} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Export Roster</button>
+            <label htmlFor="import-roster" className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded cursor-pointer">Import Roster</label>
+            <input id="import-roster" type="file" accept="application/json" className="hidden" onChange={handleImportRoster} />
+            <button onClick={clearRoster} className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Clear Saved Roster</button>
+          </div>
+          {rosterError && <p className="text-red-300 mt-2">{rosterError}</p>}
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
