@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GameConfig, Word, Participant, OptionsState } from './types';
 import { parseWordList } from './utils/parseWordList';
-import BookSvg from './img/avatars/book.svg?component';
+import bookSvgUrl from './img/avatars/book.svg';
 import TeamForm from './components/TeamForm';
 import StudentRoster from './components/StudentRoster';
 import GameOptions from './components/GameOptions';
@@ -17,7 +17,7 @@ interface SetupScreenProps {
 }
 
 const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
-  const avatars = [BookSvg];
+  const avatars = [bookSvgUrl];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
@@ -251,15 +251,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setRandomizeError('');
   };
   
-  const parseWordList = (content: string): Word[] => {
-    try {
-      return parseWordList(content);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Invalid word list format');
-      return [];
-    }
-  };
-  
   const handleParseWordList = (content: string) => {
     const words = parseWordList(content);
     setParsedCustomWords(words);
@@ -454,23 +445,20 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             </div>
             {students.map((student, index) => (
               <div key={index} className="flex items-center gap-2 mb-2">
-                <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                <img src={student.avatar} alt="avatar" className="w-8 h-8 rounded-full" />
                 <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
                 {students.length > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
               </div>
             ))}
           </div>
-<<<<<<< HEAD
-=======
-        </div>
-        
+        )}
         <div className="bg-white/10 p-6 rounded-lg mb-8">
           <h2 className="text-2xl font-bold mb-4">{gameMode === 'team' ? 'Teams 👥' : 'Students 🧑‍🎓'}</h2>
           {gameMode === 'team' ? (
             <>
               {teams.map((team, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
-                  <img src={team.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                  <img src={team.avatar} alt="avatar" className="w-8 h-8 rounded-full" />
                   <input type="text" value={team.name} onChange={e => updateTeamName(index, e.target.value)} placeholder={`Team ${index + 1} Name`} className="flex-grow p-2 rounded-md bg-white/20 text-white" />
                   {teams.length > 1 && (<button onClick={() => removeTeam(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
                 </div>
@@ -500,7 +488,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               </div>
           {students.map((student, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
-                  <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                  <img src={student.avatar} alt="avatar" className="w-8 h-8 rounded-full" />
                   <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
                   {students.length > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
                 </div>
@@ -623,7 +611,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     <span>Include {missedWordCount} missed words from previous sessions</span>
                 </label>
             </div>
->>>>>>> remotes/origin/codex/add-export/import-roster-controls
         )}
         <GameOptions 
           options={options}
