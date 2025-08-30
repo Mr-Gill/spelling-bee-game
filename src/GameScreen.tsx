@@ -13,10 +13,10 @@ import {
 } from './gameTypes';
 
 // Audio
-import correctSoundFile from "../audio/correct.mp3";
-import wrongSoundFile from "../audio/wrong.mp3";
-import letterCorrectSoundFile from "../audio/letter-correct.mp3";
-import letterWrongSoundFile from "../audio/letter-wrong.mp3";
+import correctSoundFile from "./audio/correct.mp3";
+import wrongSoundFile from "./audio/wrong.mp3";
+import letterCorrectSoundFile from "./audio/letter-correct.mp3";
+import letterWrongSoundFile from "./audio/letter-wrong.mp3";
 
 // Components
 import CircularTimer from './components/CircularTimer';
