@@ -296,13 +296,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
 
   const handleStart = async (isSessionChallenge = false) => {
+    if (!options) return;
+
     let challengeWords: Word[] = [];
     if (isSessionChallenge) {
       try {
         const randomList = bundledWordLists[Math.floor(Math.random() * bundledWordLists.length)];
         const response = await fetch(`wordlists/${randomList.file}`);
         const text = await response.text();
-        challengeWords = JSON.parse(text);
+        challengeWords = parseWordList(text);
       } catch (err) {
         console.error('Failed to load session challenge words', err);
         setError('Failed to load session challenge words.');
