@@ -6,6 +6,7 @@ import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
 import useMusic from './utils/useMusic';
+import type { OptionsState } from './components/GameOptions';
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
@@ -79,9 +80,15 @@ const SpellingBeeGame = () => {
     };
 
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
+        const savedTheme = localStorage.getItem('theme') as OptionsState['theme'] | null;
         if (savedTheme) {
-            document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
+            document.body.classList.remove(
+                'theme-light',
+                'theme-dark',
+                'theme-honeycomb',
+                'theme-honeycomb-animated',
+                'theme-gradient'
+            );
             document.body.classList.add(`theme-${savedTheme}`);
         }
     }, []);

@@ -7,7 +7,7 @@ export interface OptionsState {
   progressionSpeed: number;
   soundEnabled: boolean;
   effectsEnabled: boolean;
-  theme: string;
+  theme: 'light' | 'dark' | 'honeycomb' | 'honeycomb-animated' | 'gradient';
   teacherMode: boolean;
   musicStyle: string;
   musicVolume: number;
@@ -19,8 +19,14 @@ interface GameOptionsProps {
 }
 
 const GameOptions: React.FC<GameOptionsProps> = ({ options, setOptions }) => {
-  const applyTheme = (t: string) => {
-    document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
+  const applyTheme = (t: OptionsState['theme']) => {
+    document.body.classList.remove(
+      'theme-light',
+      'theme-dark',
+      'theme-honeycomb',
+      'theme-honeycomb-animated',
+      'theme-gradient'
+    );
     document.body.classList.add(`theme-${t}`);
   };
 
@@ -133,12 +139,16 @@ const GameOptions: React.FC<GameOptionsProps> = ({ options, setOptions }) => {
         <h2 className="text-2xl font-bold mb-4">Theme 🎨</h2>
         <select
           value={options.theme}
-          onChange={e => setOptions(o => ({ ...o, theme: e.target.value }))}
+          onChange={e =>
+            setOptions(o => ({ ...o, theme: e.target.value as OptionsState['theme'] }))
+          }
           className="p-2 rounded-md bg-white/20 text-white"
         >
           <option value="light">Light</option>
           <option value="dark">Dark</option>
           <option value="honeycomb">Honeycomb</option>
+          <option value="honeycomb-animated">Animated Honeycomb</option>
+          <option value="gradient">Animated Gradient</option>
         </select>
       </div>
 

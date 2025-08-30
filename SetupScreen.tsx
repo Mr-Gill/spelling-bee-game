@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GameConfig, Word } from './types';
 import { parseWordList } from './utils/parseWordList';
 import bookImg from './img/avatars/book.svg';
+import type { OptionsState } from './components/GameOptions';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -80,8 +81,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<string>(() => localStorage.getItem('selectedVoice') ?? '');
 
-  const applyTheme = (t: string) => {
-    document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
+  const applyTheme = (t: OptionsState['theme']) => {
+    document.body.classList.remove(
+      'theme-light',
+      'theme-dark',
+      'theme-honeycomb',
+      'theme-honeycomb-animated',
+      'theme-gradient'
+    );
     document.body.classList.add(`theme-${t}`);
   };
 
@@ -167,7 +174,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     progressionSpeed: 1,
     soundEnabled: localStorage.getItem('soundEnabled') !== 'false',
     effectsEnabled: true,
-    theme: localStorage.getItem('theme') ?? 'light',
+    theme: (localStorage.getItem('theme') as OptionsState['theme']) ?? 'light',
     teacherMode: localStorage.getItem('teacherMode') === 'true',
     musicStyle: localStorage.getItem('musicStyle') ?? 'Funk',
     musicVolume: parseFloat(localStorage.getItem('musicVolume') ?? '1'),
@@ -485,10 +492,21 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Theme 🎨</h2>
-                <select value={theme} onChange={e => { const t = e.target.value; setTheme(t); localStorage.setItem('theme', t); applyTheme(t); }} className="p-2 rounded-md bg-white/20 text-white">
+                <select
+                    value={theme}
+                    onChange={e => {
+                        const t = e.target.value as OptionsState['theme'];
+                        setTheme(t);
+                        localStorage.setItem('theme', t);
+                        applyTheme(t);
+                    }}
+                    className="p-2 rounded-md bg-white/20 text-white"
+                >
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                     <option value="honeycomb">Honeycomb</option>
+                    <option value="honeycomb-animated">Animated Honeycomb</option>
+                    <option value="gradient">Animated Gradient</option>
                 </select>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">

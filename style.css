@@ -44,6 +44,42 @@ body.theme-honeycomb {
     color: #78350f;
 }
 
+@keyframes honeycomb-shift {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 20px 20px;
+    }
+}
+
+@keyframes gradient-move {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+body.theme-honeycomb-animated {
+    background-color: #fef7cd;
+    background-image: radial-gradient(#fbbf24 1px, transparent 1px);
+    background-size: 20px 20px;
+    animation: honeycomb-shift 10s linear infinite;
+    color: #78350f;
+}
+
+body.theme-gradient {
+    background: linear-gradient(45deg, #fde68a, #fbbf24, #f59e0b, #fcd34d);
+    background-size: 400% 400%;
+    animation: gradient-move 15s ease infinite;
+    color: #1f2937;
+}
+
 /* Teacher Mode increases overall scaling for easier classroom viewing */
 body.teacher-mode {
     font-size: 1.25rem;
@@ -324,7 +360,7 @@ video {
 
 /* Print styles */
 @media print {
-    .no-print {
-        display: none;
-    }
+.no-print {
+    display: none;
+}
 }
