@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { GameConfig, Participant, OptionsState } from './types';
-import { parseWordList as parseWordListUtil } from './utils/parseWordList';
+import { GameConfig, OptionsState, Word, WordType } from './types';
+import { Participant, Team } from '../types/participant';
+import { parseWordList } from './utils/parseWordList';
 import useRoster from '../hooks/useRoster';
 import beeImg from '../img/avatars/bee.svg';
 import bookImg from '../img/avatars/book.svg';
@@ -15,14 +16,14 @@ import GameOptions from './components/GameOptions';
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
 type WordDatabase = {
-  easy: Word[];
-  medium: Word[];
-  tricky: Word[];
+  easy: WordType[];
+  medium: WordType[];
+  tricky: WordType[];
 };
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
-  onAddCustomWords: (words: Word[]) => void;
+  onAddCustomWords: (words: WordType[]) => void;
   onViewAchievements: () => void;
 }
 
@@ -38,28 +39,49 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     { name: 'Team Beta', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
   ];
 
-  const {
-    participants: teams,
-    addParticipant: addTeamParticipant,
-    removeParticipant: removeTeam,
-    updateName: updateTeamName,
-    clear: clearTeams,
-    setParticipants: setTeamsParticipants,
-  } = useRoster('teams', getDefaultTeams());
+  const [students, setStudents] = useState<Participant[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
 
-  const {
-    participants: students,
-    addParticipant: addStudentParticipant,
-    removeParticipant: removeStudent,
-    updateName: updateStudentName,
-    clear: clearStudents,
-    setParticipants: setStudentsParticipants,
-  } = useRoster('students', []);
+  const addStudentParticipant = (student: Participant) => {
+    setStudents([...students, student]);
+  };
+
+  const removeStudentParticipant = (id: string) => {
+    setStudents(students.filter(s => s.id !== id));
+  };
+
+  const updateStudentParticipant = (id: string, updates: Partial<Participant>) => {
+    setStudents(students.map(s => s.id === id ? {...s, ...updates} : s));
+  };
+
+  const addBulkStudents = (names: string[]) => {
+    const newStudents = names.map(name => ({
+      id: `student-${Date.now()}-${Math.random()}`,
+      name,
+      avatar: avatars[Math.floor(Math.random() * avatars.length)],
+      score: 0,
+      lives: 3,
+      teamId: null,
+    }));
+    setStudents([...students, ...newStudents]);
+  };
+
+  const handleAddTeam = (team: Team) => {
+    setTeams([...teams, team]);
+  };
+
+  const removeTeam = (id: string) => {
+    setTeams(teams.filter(t => t.id !== id));
+  };
+
+  const updateTeam = (id: string, updates: Partial<Team>) => {
+    setTeams(teams.map(t => t.id === id ? {...t, ...updates} : t));
+  };
 
   const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
-  const [parsedCustomWords, setParsedCustomWords] = useState<Word[]>([]);
-  const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, Word[]>>({});
+  const [parsedCustomWords, setParsedCustomWords] = useState<WordType[]>([]);
+  const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, WordType[]>>({});
   const [includeMissedWords, setIncludeMissedWords] = useState(false);
   const [error, setError] = useState('');
   const bundledWordLists = [
@@ -187,10 +209,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     musicVolume: parseFloat(localStorage.getItem('musicVolume') ?? '1'),
   });
 
-
-  const addTeam = () => addTeamParticipant(createParticipant('', 0));
-
-
   const randomizeTeams = () => {
     if (students.length < 2) {
       setRandomizeError('Add at least two students to create teams.');
@@ -229,7 +247,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   
   const parseWordList = (content: string) => {
     try {
-      const words = parseWordListUtil(content);
+      const words = parseWordList(content);
       setParsedCustomWords(words);
       setError('');
     } catch (e: any) {
@@ -304,13 +322,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const handleStart = async (isSessionChallenge = false) => {
     if (!options) return;
 
-    let challengeWords: Word[] = [];
+    let challengeWords: WordType[] = [];
     if (isSessionChallenge) {
       try {
         const randomList = bundledWordLists[Math.floor(Math.random() * bundledWordLists.length)];
         const response = await fetch(`wordlists/${randomList.file}`);
         const text = await response.text();
-        challengeWords = parseWordListUtil(text);
+        challengeWords = parseWordList(text);
       } catch (err) {
         console.error('Failed to load session challenge words', err);
         setError('Failed to load session challenge words.');
@@ -340,7 +358,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
     setError('');
     
-    let finalWords: Word[] = isSessionChallenge ? challengeWords : parsedCustomWords;
+    let finalWords: WordType[] = isSessionChallenge ? challengeWords : parsedCustomWords;
     if (includeMissedWords && !isSessionChallenge) {
       const extraWords = Object.values(missedWordsCollection).flat();
       finalWords = [...finalWords, ...extraWords];
@@ -395,7 +413,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       <TeamForm
         teams={teams}
         avatars={avatars}
-        addTeam={addTeam}
+        addTeam={handleAddTeam}
         removeTeam={removeTeam}
         updateTeamName={updateTeamName}
       />
@@ -432,8 +450,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 students={students}
                 avatars={avatars}
                 addParticipant={addStudentParticipant}
-                removeParticipant={removeStudent}
-                updateName={updateStudentName}
+                removeParticipant={removeStudentParticipant}
+                updateName={updateStudentParticipant}
                 createParticipant={createParticipant}
                 initialDifficulty={options.initialDifficulty}
               />
