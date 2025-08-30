@@ -25,6 +25,7 @@ import { audioManager } from "./utils/audio";
 interface GameScreenProps {
   config: GameConfig;
   onEndGame: (results: GameResults) => void;
+  onQuit: () => void;
 }
 
 interface Feedback {
@@ -34,7 +35,7 @@ interface Feedback {
 
 // difficultyOrder is imported from useWordSelection
 
-const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
+const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame, onQuit }) => {
   const [participants, setParticipants] = React.useState<Participant[]>(
     config.participants.map((p) => ({
       ...p,
@@ -66,6 +67,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
     currentWord,
     currentDifficulty,
     selectNextWord,
+    setCurrentWord,
   } = useWordSelection(config.wordDatabase);
   const [attemptedParticipants, setAttemptedParticipants] = React.useState<
     Set<number>
@@ -85,6 +87,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
   const hiddenInputRef = React.useRef<HTMLInputElement>(null);
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState("");
+  const [showQuitConfirm, setShowQuitConfirm] = React.useState(false);
 
   const playCorrect = useSound(correctSoundFile, config.soundEnabled);
   const playWrong = useSound(wrongSoundFile, config.soundEnabled);
@@ -591,6 +594,42 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       >
         <SkipForward size={24} />
       </button>
+
+      <button
+        onClick={() => setShowQuitConfirm(true)}
+        className="absolute bottom-8 left-8 bg-gray-500 hover:bg-gray-600 p-4 rounded-lg text-xl"
+      >
+        Back to Setup
+      </button>
+
+      {showQuitConfirm && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
+          <div className="bg-white text-black p-6 rounded-lg max-w-sm text-center">
+            <p className="mb-4 text-xl font-bold">
+              End session? Unsaved progress will be lost.
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => {
+                  stopTimer();
+                  setCurrentWord(null);
+                  setShowQuitConfirm(false);
+                  onQuit();
+                }}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold"
+              >
+                Quit
+              </button>
+              <button
+                onClick={() => setShowQuitConfirm(false)}
+                className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-lg font-bold"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isPaused && (
         <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40">
