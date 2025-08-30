@@ -88,11 +88,16 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState('light');
   const [teacherMode, setTeacherMode] = useState<boolean>(() => localStorage.getItem('teacherMode') === 'true');
+<<<<<<< HEAD
   const [aiGrade, setAiGrade] = useState(5);
   const [aiTopic, setAiTopic] = useState('');
   const [aiCount, setAiCount] = useState(10);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
+=======
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState<string>(() => localStorage.getItem('selectedVoice') ?? '');
+>>>>>>> origin/codex/extend-speak-to-accept-voice-options
 
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
@@ -129,6 +134,21 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   useEffect(() => localStorage.setItem('soundEnabled', String(soundEnabled)), [soundEnabled]);
   useEffect(() => localStorage.setItem('musicStyle', musicStyle), [musicStyle]);
   useEffect(() => localStorage.setItem('musicVolume', String(musicVolume)), [musicVolume]);
+  useEffect(() => {
+    if (selectedVoice) {
+      localStorage.setItem('selectedVoice', selectedVoice);
+    } else {
+      localStorage.removeItem('selectedVoice');
+    }
+  }, [selectedVoice]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    const loadVoices = () => setVoices(window.speechSynthesis.getVoices());
+    loadVoices();
+    window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+    return () => window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+  }, []);
 
   const updateTeams = (newTeams: Participant[]) => {
     setTeams(newTeams);
@@ -476,6 +496,17 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <h2 className="text-2xl font-bold mb-4">Audio & Effects 🔊✨</h2>
                 <label className="flex items-center space-x-3 mb-2"><input type="checkbox" checked={soundEnabled} onChange={e => setSoundEnabled(e.target.checked)} /><span>Enable Sound</span></label>
                 <label className="flex items-center space-x-3"><input type="checkbox" checked={effectsEnabled} onChange={e => setEffectsEnabled(e.target.checked)} /><span>Enable Visual Effects</span></label>
+                {voices.length > 0 && (
+                    <div className="mt-4">
+                        <label className="block mb-2">Voice</label>
+                        <select value={selectedVoice} onChange={e => setSelectedVoice(e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
+                            <option value="">Default</option>
+                            {voices.map(v => (
+                                <option key={v.voiceURI} value={v.voiceURI}>{`${v.name} (${v.lang})`}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Theme 🎨</h2>
