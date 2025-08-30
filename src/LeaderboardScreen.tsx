@@ -8,6 +8,7 @@ interface LeaderboardScreenProps {
 
 const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const storedData = localStorage.getItem('leaderboard');
@@ -18,12 +19,19 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
     } else {
       // Fallback to a default leaderboard if nothing is in storage
       fetch('leaderboard.json')
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) throw new Error('Network response was not ok');
+          return res.json();
+        })
         .then((data: LeaderboardEntry[]) => {
           const sorted = data.sort((a, b) => b.score - a.score).slice(0, 10);
           setEntries(sorted);
+          setError('');
         })
-        .catch(err => console.error("Could not load default leaderboard", err));
+        .catch(err => {
+          console.error('Could not load default leaderboard', err);
+          setError('Failed to load leaderboard.');
+        });
     }
   }, []);
 
@@ -39,7 +47,9 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
     <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center">
       <h1 className="text-6xl font-bold mb-8 text-yellow-300">🏅 Leaderboard</h1>
       <div className="bg-white/10 p-8 rounded-lg w-full max-w-md scorecard">
-        {entries.length === 0 ? (
+        {error ? (
+          <div className="text-xl text-red-300">{error}</div>
+        ) : entries.length === 0 ? (
           <div className="text-xl">No scores yet.</div>
         ) : (
           <ol className="text-xl space-y-2">

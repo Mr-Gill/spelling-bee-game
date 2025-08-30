@@ -17,7 +17,7 @@ body {
 }
 
 body.theme-light {
-    background: #f9fafb;
+    background: #ffffff;
     color: #1f2937;
 }
 
@@ -27,10 +27,10 @@ body.theme-dark {
 }
 
 body.theme-honeycomb {
-    background-color: #fff8dc;
-    background-image: radial-gradient(#facc15 1px, transparent 1px);
+    background-color: #fef7cd;
+    background-image: radial-gradient(#fbbf24 1px, transparent 1px);
     background-size: 20px 20px;
-    color: #3a2b0a;
+    color: #78350f;
 }
 
 /* Teacher Mode increases overall scaling for easier classroom viewing */
