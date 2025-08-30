@@ -8,11 +8,21 @@ export type GameConfig = {
   wordList: WordType[];
 };
 
-export type OptionsState = {
-  initialDifficulty: number;
+export interface OptionsState {
   gameMode: 'individual' | 'team';
   audioEnabled: boolean;
   soundEffectsEnabled: boolean;
-  wordSource: 'curriculum' | 'custom' | 'news';
-  customWordList?: string;
-};
+  wordSource: 'curriculum' | 'news' | 'custom';
+  timerDuration: number;
+  skipPenaltyType: 'points' | 'lives'; // Finalized values
+  skipPenaltyValue: number;
+  progressionSpeed: number; // Changed to number
+  musicStyle: string;
+  musicVolume: number;
+  initialDifficulty: number;
+  soundEnabled: boolean;
+  effectsEnabled: boolean;
+  teacherMode: boolean;
+  theme: string;
+  musicEnabled: boolean;
+}

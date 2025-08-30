@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Participant, Team } from './types/participant';
+import { Participant, Team } from './types';
 import { v4 as uuidv4 } from 'uuid';
 import { GameConfig } from './types/game';
 import { OptionsState } from './types/game';
@@ -10,6 +10,9 @@ import bookImg from './img/avatars/book.svg';
 import trophyImg from './img/avatars/trophy.svg';
 import TeamForm from './components/TeamForm';
 import StudentRoster from './components/StudentRoster';
+import GameOptions from './components/GameOptions';
+import { parseWordList } from './utils/parseWordList';
+import WordListPrompt from './components/WordListPrompt';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -34,52 +37,57 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [startingLives, setStartingLives] = useState(10);
 
-  const getDefaultTeams = (): Participant[] => [
-    { id: uuidv4(), name: 'Team Alpha', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, incorrect: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
-    { id: uuidv4(), name: 'Team Beta', lives: startingLives, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, incorrect: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
-  ];
+  const [options, setOptions] = useState<OptionsState>({
+    gameMode: 'individual',
+    audioEnabled: true,
+    soundEffectsEnabled: true,
+    wordSource: 'curriculum',
+    timerDuration: 60,
+    skipPenaltyType: 'points',
+    skipPenaltyValue: 5,
+    progressionSpeed: 1,
+    musicStyle: 'default',
+    musicVolume: 0.8,
+    initialDifficulty: 1,
+    soundEnabled: true,
+    effectsEnabled: true,
+    teacherMode: false,
+    theme: 'light',
+    musicEnabled: true,
+  });
 
-  const [students, setStudents] = useState<Participant[]>([
-    { id: uuidv4(), name: '', avatar: '', score: 0, lives: 3, teamId: null, points: 0, difficultyLevel: 1, streak: 0, attempted: 0, correct: 0, incorrect: 0 },
-    { id: uuidv4(), name: '', avatar: '', score: 0, lives: 3, teamId: null, points: 0, difficultyLevel: 1, streak: 0, attempted: 0, correct: 0, incorrect: 0 },
-  ]);
+  const createParticipant = (name: string, difficulty: number): Participant => ({
+    id: uuidv4(),
+    name,
+    avatar: '',
+    score: 0,
+    lives: 3,
+    teamId: null,
+    points: 0,
+    difficultyLevel: difficulty,
+    streak: 0,
+    attempted: 0,
+    correct: 0,
+    incorrect: 0,
+    wordsAttempted: 0,
+    wordsCorrect: 0,
+  });
 
-  const [teams, setTeams] = useState<Team[]>([
-    { id: uuidv4(), name: 'Team 1', students: [], score: 0, lives: 3 },
-    { id: uuidv4(), name: 'Team 2', students: [], score: 0, lives: 3 },
-  ]);
+  const createTeam = (name: string): Team => ({
+    id: uuidv4(),
+    name,
+    students: [],
+  });
 
-  const addStudentParticipant = (student: Participant) => {
-    setStudents([...students, student]);
+  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+
+  const handleAddParticipant = (name: string) => {
+    const newParticipant = createParticipant(name, options.initialDifficulty);
+    setParticipants([...participants, newParticipant]);
   };
 
-  const removeStudentParticipant = (id: string) => {
-    setStudents(students.filter(s => s.id !== id));
-  };
-
-  const updateStudentParticipant = (id: string, updates: Partial<Participant>) => {
-    setStudents(students.map(s => s.id === id ? {...s, ...updates} : s));
-  };
-
-  const addBulkStudents = (names: string[]) => {
-    const newStudents = names.map(name => ({
-      id: uuidv4(),
-      name,
-      avatar: avatars[Math.floor(Math.random() * avatars.length)],
-      score: 0,
-      lives: 3,
-      teamId: null,
-      points: 0,
-      difficultyLevel: 1,
-      streak: 0,
-      attempted: 0,
-      correct: 0,
-      incorrect: 0,
-    }));
-    setStudents([...students, ...newStudents]);
-  };
-
-  const handleAddTeam = (team: Team) => {
+  const addTeam = (team: Team) => {
     setTeams([...teams, team]);
   };
 
@@ -151,9 +159,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   
   useEffect(() => {
     const savedTeams = localStorage.getItem('teams');
-    if (savedTeams) try { setTeamsParticipants(JSON.parse(savedTeams).map((t: Participant) => ({ ...t, avatar: t.avatar || getRandomAvatar() }))); } catch {}
+    if (savedTeams) try { setTeams(JSON.parse(savedTeams).map((t: Participant) => ({ ...t, avatar: t.avatar || getRandomAvatar() }))); } catch {}
     const savedStudents = localStorage.getItem('students');
-    if (savedStudents) try { setStudentsParticipants(JSON.parse(savedStudents).map((s: Participant) => ({ ...s, avatar: s.avatar || getRandomAvatar() }))); } catch {}
+    if (savedStudents) try { setParticipants(JSON.parse(savedStudents).map((s: Participant) => ({ ...s, avatar: s.avatar || getRandomAvatar() }))); } catch {}
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       setTheme(savedTheme);
@@ -230,11 +238,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     } catch (error) {
       console.error('Failed to save teams to localStorage', error);
     }
-    setTeamsParticipants(newTeams);
+    setTeams(newTeams);
   };
 
   const updateStudents = (newStudents: Participant[]) => {
-    setStudentsParticipants(newStudents);
+    setParticipants(newStudents);
     try {
       localStorage.setItem('students', JSON.stringify(newStudents, getCircularReplacer()));
     } catch (error) {
@@ -246,7 +254,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     if (gameMode === 'team') {
       updateTeams(teams.map(t => ({ ...t, lives: startingLives })));
     } else {
-      updateStudents(students.map(s => ({ ...s, lives: startingLives })));
+      updateStudents(participants.map(s => ({ ...s, lives: startingLives })));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startingLives, gameMode]);
@@ -262,66 +270,35 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     } catch (error) {
       console.error('Failed to remove students from localStorage', error);
     }
-    setTeamsParticipants(getDefaultTeams());
-    setStudentsParticipants([]);
+    setTeams([]);
+    setParticipants([]);
   };
-
-  const createParticipant = (name: string, difficulty: number): Participant => {
-    return {
-      id: uuidv4(),
-      name,
-      avatar: '',
-      score: 0,
-      lives: 3,
-      teamId: null,
-      points: 0,
-      difficultyLevel: difficulty,
-      streak: 0,
-      attempted: 0,
-      correct: 0,
-      incorrect: 0,
-    };
-  };
-
-  const [options, setOptions] = useState<OptionsState>({
-    skipPenaltyType: 'lives',
-    skipPenaltyValue: 1,
-    initialDifficulty: 0,
-    progressionSpeed: 1,
-    soundEnabled: localStorage.getItem('soundEnabled') !== 'false',
-    effectsEnabled: true,
-    theme: localStorage.getItem('theme') ?? 'light',
-    teacherMode: localStorage.getItem('teacherMode') === 'true',
-    musicEnabled: true,
-    musicStyle: localStorage.getItem('musicStyle') ?? 'Funk',
-    musicVolume: parseFloat(localStorage.getItem('musicVolume') ?? '1'),
-  });
 
   const addStudent = () => {
     if (studentName.trim()) {
-      const newStudent = createParticipant(studentName, initialDifficulty);
-      setStudents([...students, newStudent]);
+      const newStudent = createParticipant(studentName, options.initialDifficulty);
+      setParticipants([...participants, newStudent]);
       setStudentName('');
     }
   };
 
   const updateStudentName = (index: number, name: string) => {
-    const updatedStudents = [...students];
+    const updatedStudents = [...participants];
     updatedStudents[index].name = name;
-    setStudents(updatedStudents);
+    setParticipants(updatedStudents);
   };
 
   const removeStudent = (index: number) => {
-    const updatedStudents = [...students];
+    const updatedStudents = [...participants];
     updatedStudents.splice(index, 1);
-    setStudents(updatedStudents);
+    setParticipants(updatedStudents);
   };
 
   const setTeamsParticipants = (teams: Team[]) => setTeams(teams);
-  const setStudentsParticipants = (students: Participant[]) => setStudents(students);
+  const setStudentsParticipants = (students: Participant[]) => setParticipants(students);
 
   const randomizeTeams = () => {
-    if (students.length < 2) {
+    if (participants.length < 2) {
       setRandomizeError('Add at least two students to create teams.');
       return;
     }
@@ -329,13 +306,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     if (randomTeamCount > 0) {
       count = randomTeamCount;
     } else if (randomTeamSize > 0) {
-      count = Math.ceil(students.length / randomTeamSize);
+      count = Math.ceil(participants.length / randomTeamSize);
     }
     if (count <= 0) {
       setRandomizeError('Specify number of teams or team size.');
       return;
     }
-    const shuffled = [...students];
+    const shuffled = [...participants];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -348,7 +325,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       .filter(group => group.length > 0)
       .map((group, index) => {
         const teamName = `Team ${index + 1}: ${group.map(s => s.name).join(', ')}`;
-        const participant = createParticipant(teamName, initialDifficulty);
+        const participant = createParticipant(teamName, options.initialDifficulty);
         participant.avatar = teams[index]?.avatar || participant.avatar;
         return participant;
       });
@@ -456,7 +433,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         }
         finalParticipants = trimmedTeams.map(t => ({...t, difficultyLevel: options.initialDifficulty}));
     } else {
-        const trimmedStudents = students.filter(student => student.name && student.name.trim() !== "");
+        const trimmedStudents = participants.filter(student => student.name && student.name.trim() !== "");
         if (trimmedStudents.length < 1 && isSessionChallenge) {
              finalParticipants = [createParticipant('Player 1', options.initialDifficulty)];
         } else if (trimmedStudents.length < 2 && !isSessionChallenge) {
@@ -511,6 +488,37 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     };
   };
 
+  const handleOptionChange = (option: keyof OptionsState, value: any) => {
+    setOptions(prev => ({
+      ...prev,
+      [option]: value,
+    }));
+  };
+
+  const addBulkStudents = (students: Participant[]) => {
+    setParticipants([...participants, ...students]);
+  };
+
+  const handleTeamSelect = (team: Team) => {
+    // Add implementation here
+  };
+
+  const handleTeamRemove = (id: string) => {
+    // Add implementation here
+  };
+
+  const handleTeamRename = (id: string, name: string) => {
+    // Add implementation here
+  };
+
+  const handleParticipantRemove = (index: number) => {
+    // Add implementation here
+  };
+
+  const handleParticipantEdit = (index: number, name: string) => {
+    // Add implementation here
+  };
+
   return (
     <div className="min-h-screen p-8 text-white font-body">
       <div className="max-w-7xl mx-auto">
@@ -537,8 +545,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       <TeamForm
         teams={teams}
         avatars={avatars}
-        addTeam={handleAddTeam}
-        removeTeam={removeTeam}
+        addTeam={(team: Team) => addTeam(team)}
+        removeTeam={(id: string) => removeTeam(id)}
         updateTeamName={(id: string, name: string) => updateTeam(id, { name })}
       />
     </>
@@ -550,7 +558,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               </div>
               <div className="mb-4">
                 <textarea value={bulkStudentText} onChange={e => setBulkStudentText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white mb-2" placeholder="Paste names, one per line or separated by commas" rows={4}></textarea>
-                <button onClick={addBulkStudents} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add Names</button>
+                <button onClick={() => addBulkStudents(bulkStudentText.split('\n').map(name => createParticipant(name, options.initialDifficulty)))} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add Names</button>
                 {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
               </div>
               <div className="mb-4">
@@ -563,7 +571,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
                 {randomizeError && <p className="text-red-300">{randomizeError}</p>}
               </div>
-              {students.map((student, index) => (
+              {participants.map((student, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
                   <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
                   <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
@@ -571,12 +579,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
               ))}
               <StudentRoster
-                students={students}
+                participants={participants}
                 avatars={avatars}
-                addParticipant={addStudentParticipant}
-                removeParticipant={removeStudentParticipant}
-                updateParticipant={updateStudentParticipant}
-                createParticipant={createParticipant}
+                onAdd={createParticipant}
+                onRemove={handleParticipantRemove}
+                onEdit={handleParticipantEdit}
+                onAddBulk={addBulkStudents}
                 initialDifficulty={options.initialDifficulty}
               />
             </>
@@ -588,11 +596,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Skip Penalty ⏭️</h2>
                 <div className="flex gap-4">
-                    <select value={skipPenaltyType} onChange={e => setSkipPenaltyType(e.target.value as 'lives' | 'points')} className="p-2 rounded-md bg-white/20 text-white">
+                    <select value={options.skipPenaltyType} onChange={e => handleOptionChange('skipPenaltyType', e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
                         <option value="lives">Lives</option>
                         <option value="points">Points</option>
                     </select>
-                    <input type="number" min={0} value={skipPenaltyValue} onChange={e => setSkipPenaltyValue(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
+                    <input type="number" min={0} value={options.skipPenaltyValue} onChange={e => handleOptionChange('skipPenaltyValue', Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
                 </div>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
@@ -600,7 +608,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <div className="flex gap-4">
                     <div>
                         <label className="block mb-2">Initial Difficulty</label>
-                        <select value={initialDifficulty} onChange={e => setInitialDifficulty(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white">
+                        <select value={options.initialDifficulty} onChange={e => handleOptionChange('initialDifficulty', Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white">
                             <option value={0}>Easy</option>
                             <option value={1}>Medium</option>
                             <option value={2}>Tricky</option>
@@ -608,14 +616,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     </div>
                     <div>
                         <label className="block mb-2">Progression Speed</label>
-                        <input type="number" min={1} value={progressionSpeed} onChange={e => setProgressionSpeed(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
+                        <input type="number" min={1} value={options.progressionSpeed} onChange={e => handleOptionChange('progressionSpeed', Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
                     </div>
                 </div>
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Audio & Effects 🔊✨</h2>
-                <label className="flex items-center space-x-3 mb-2"><input type="checkbox" checked={soundEnabled} onChange={e => setSoundEnabled(e.target.checked)} /><span>Enable Sound</span></label>
-                <label className="flex items-center space-x-3"><input type="checkbox" checked={effectsEnabled} onChange={e => setEffectsEnabled(e.target.checked)} /><span>Enable Visual Effects</span></label>
+                <label className="flex items-center space-x-3 mb-2"><input type="checkbox" checked={options.soundEnabled} onChange={e => handleOptionChange('soundEnabled', e.target.checked)} /><span>Enable Sound</span></label>
+                <label className="flex items-center space-x-3"><input type="checkbox" checked={options.effectsEnabled} onChange={e => handleOptionChange('effectsEnabled', e.target.checked)} /><span>Enable Visual Effects</span></label>
                 {voices.length > 0 && (
                     <div className="mt-4">
                         <label className="block mb-2">Voice</label>
@@ -644,17 +652,22 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Music 🎵</h2>
                 <div className="mb-4">
                     <label className="block mb-2">Style</label>
-                    <select value={musicStyle} onChange={e => setMusicStyle(e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
+                    <select value={options.musicStyle} onChange={e => handleOptionChange('musicStyle', e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
                         {musicStyles.map(style => (<option key={style} value={style}>{style}</option>))}
                     </select>
                 </div>
                 <div>
-                    <label className="block mb-2">Volume: {Math.round(musicVolume * 100)}%</label>
-                    <input type="range" min={0} max={1} step={0.01} value={musicVolume} onChange={e => setMusicVolume(parseFloat(e.target.value))} className="w-full" />
+                    <label className="block mb-2">Volume: {Math.round(options.musicVolume * 100)}%</label>
+                    <input type="range" min={0} max={1} step={0.01} value={options.musicVolume} onChange={e => handleOptionChange('musicVolume', parseFloat(e.target.value))} className="w-full" />
                 </div>
             </div>
         </div>
-        <GameOptions options={options} setOptions={setOptions} />
+        <GameOptions
+          options={options}
+          onOptionChange={(option: keyof OptionsState, value: any) => 
+            setOptions({...options, [option]: value})
+          }
+        />
         
         <div className="bg-white/10 p-6 rounded-lg mb-8 mt-8">
             <h2 className="text-2xl font-bold mb-4 uppercase font-heading">Add Custom Word List 📝</h2>

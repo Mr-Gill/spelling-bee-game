@@ -1,4 +1,4 @@
-export type Participant = {
+export interface Participant {
   id: string;
   name: string;
   avatar: string;
@@ -11,7 +11,9 @@ export type Participant = {
   attempted: number;
   correct: number;
   incorrect: number;
-};
+  wordsAttempted: number;
+  wordsCorrect: number;
+}
 
 export type Team = {
   id: string;

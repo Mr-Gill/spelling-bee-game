@@ -8,3 +8,5 @@ export type Word = {
   phonemes?: string[];
   phonics?: string;
 };
+
+export * from './team';

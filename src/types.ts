@@ -1,3 +1,6 @@
+// Remove duplicate exports and fix augmentation issues
+export {}; // Empty export to mark as module
+
 export interface Word {
   word: string;
   syllables: string[];
@@ -129,7 +132,12 @@ export interface OptionsState {
   theme: string;
 }
 
+export interface ContentItem {
+  type: 'text' | 'image';
+  value: string;
+}
+
 declare module '*.svg' {
-  const content: any;
-  export default content;
+  const svg: any;
+  export default svg;
 }
