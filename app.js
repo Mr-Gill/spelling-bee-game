@@ -25956,20 +25956,45 @@ var init_audioManager = __esm({
         this.music.set(key, music);
       }
       // Play a sound effect
-      playSound(key, options = {}) {
-        if (this.settings.areSoundsMuted) return;
-        const soundData = this.sounds.get(key);
-        if (!soundData) {
-          console.warn(`Sound ${key} not found`);
-          return;
+      playSound(keyOrPath, options = {}) {
+        if (this.settings.areSoundsMuted) {
+          return null;
         }
-        const { sound } = soundData;
-        sound.stop();
-        if (options.volume !== void 0) {
-          sound.volume(options.volume);
+        const {
+          loop = false,
+          volume = this.settings.sfxVolume,
+          onend,
+          onerror
+        } = options;
+        let sound = this.sounds.get(keyOrPath);
+        if (!sound) {
+          for (const [_, snd] of this.sounds) {
+            if (snd.path === keyOrPath) {
+              sound = snd;
+              break;
+            }
+          }
+          if (!sound) {
+            this.loadSound(keyOrPath, keyOrPath, { ...options, preload: true });
+            console.warn(`Sound not preloaded: ${keyOrPath}, attempting to load...`);
+            return null;
+          }
         }
-        if (options.loop !== void 0) {
-          sound.loop(options.loop);
+        try {
+          sound.sound.loop(loop);
+          sound.sound.volume(volume);
+          if (onend) {
+            sound.sound.off("end");
+            sound.sound.once("end", onend);
+          }
+          if (onerror) {
+            sound.sound.off("loaderror");
+            sound.sound.once("loaderror", (_, error) => onerror(error));
+          }
+          return sound.sound.play();
+        } catch (error) {
+          console.error(`Error playing sound ${keyOrPath}:`, error);
+          return null;
         }
       }
       // Play music
@@ -27550,7 +27575,58 @@ var AudioControls = () => {
 
 // src/SetupScreen.tsx
 var import_react9 = __toESM(require_react());
-import { v4 as uuidv4 } from "uuid";
+
+// node_modules/uuid/dist/esm-browser/stringify.js
+var byteToHex = [];
+for (let i = 0; i < 256; ++i) {
+  byteToHex.push((i + 256).toString(16).slice(1));
+}
+function unsafeStringify(arr, offset = 0) {
+  return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+}
+
+// node_modules/uuid/dist/esm-browser/rng.js
+var getRandomValues;
+var rnds8 = new Uint8Array(16);
+function rng() {
+  if (!getRandomValues) {
+    if (typeof crypto === "undefined" || !crypto.getRandomValues) {
+      throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");
+    }
+    getRandomValues = crypto.getRandomValues.bind(crypto);
+  }
+  return getRandomValues(rnds8);
+}
+
+// node_modules/uuid/dist/esm-browser/native.js
+var randomUUID = typeof crypto !== "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto);
+var native_default = { randomUUID };
+
+// node_modules/uuid/dist/esm-browser/v4.js
+function v4(options, buf, offset) {
+  if (native_default.randomUUID && !buf && !options) {
+    return native_default.randomUUID();
+  }
+  options = options || {};
+  const rnds = options.random ?? options.rng?.() ?? rng();
+  if (rnds.length < 16) {
+    throw new Error("Random bytes length must be >= 16");
+  }
+  rnds[6] = rnds[6] & 15 | 64;
+  rnds[8] = rnds[8] & 63 | 128;
+  if (buf) {
+    offset = offset || 0;
+    if (offset < 0 || offset + 16 > buf.length) {
+      throw new RangeError(`UUID byte range ${offset}:${offset + 15} is out of buffer bounds`);
+    }
+    for (let i = 0; i < 16; ++i) {
+      buf[offset + i] = rnds[i];
+    }
+    return buf;
+  }
+  return unsafeStringify(rnds);
+}
+var v4_default = v4;
 
 // src/img/avatars/bee.svg
 var bee_default = "./bee-JMGRCQTT.svg";
@@ -27845,7 +27921,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
     musicEnabled: true
   });
   const createParticipant = (name, difficulty) => ({
-    id: uuidv4(),
+    id: v4_default(),
     name,
     avatar: availableAvatars[Math.floor(Math.random() * availableAvatars.length)],
     score: 0,
@@ -27861,7 +27937,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
     wordsCorrect: 0
   });
   const createTeam = () => ({
-    id: uuidv4(),
+    id: v4_default(),
     name: `Team ${teams.length + 1}`,
     students: []
   });
