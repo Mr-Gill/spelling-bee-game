@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import LeaderboardScreen from './LeaderboardScreen';
 import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
-import ResultsScreen from './ResultsScreen';
+import ResultsScreen from './ResultsScreen.tsx';
 import AchievementsScreen from './AchievementsScreen';
 import HistoryScreen from './HistoryScreen';
 import ShopScreen from '../ShopScreen';

@@ -1,56 +1,100 @@
-import React from "react";
-import { SkipForward, Play, Pause, Volume2, VolumeX, Users } from "lucide-react";
-import {
-  GameConfig,
-  Word,
-  Participant,
-  Team,
-  GameResults,
-  defaultAchievements,
-} from "./types.ts";
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useHelpSystem } from './contexts/HelpSystemContext';
+import { HelpSystemProvider } from './contexts/HelpSystemContext';
+import { 
+  Word, 
+  Participant, 
+  Team 
+} from '../types';
+import { 
+  GameScreenProps, 
+  GameScreenState, 
+  GameResults 
+} from './gameTypes';
+
+// Audio
 import correctSoundFile from "../audio/correct.mp3";
 import wrongSoundFile from "../audio/wrong.mp3";
-import timeoutSoundFile from "../audio/timeout.mp3";
 import letterCorrectSoundFile from "../audio/letter-correct.mp3";
 import letterWrongSoundFile from "../audio/letter-wrong.mp3";
-import shopSoundFile from "../audio/shop.mp3";
-import loseLifeSoundFile from "../audio/lose-life.mp3";
-import beeImg from '../img/avatars/bee.svg';
-import { launchConfetti } from "./utils/confetti";
-import { speak } from "./utils/tts";
-import useSound from "./utils/useSound";
-import useTimer from "./utils/useTimer";
-import useWordSelection, { difficultyOrder } from "./utils/useWordSelection";
-import OnScreenKeyboard from "./components/OnScreenKeyboard";
-import HintPanel from "./components/HintPanel";
-import AvatarSelector from "./components/AvatarSelector";
-import { AudioSettings } from "./components/AudioSettings";
-import { useAudio } from "./AudioContext";
-import CircularTimer from "./components/CircularTimer";
-import PhonicsBreakdown from "./components/PhonicsBreakdown";
 
-const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
+// Components
+import CircularTimer from './components/CircularTimer';
+import OnScreenKeyboard from './components/OnScreenKeyboard';
+import HintPanel from './components/HintPanel';
+// Progress components
+import { ProgressBar, CircularProgress } from './components/BeeProgress';
+
+// Icons
+import { Award } from 'lucide-react';
+
+// Constants
+const MAX_SKIP_TURNS = 3;
+const MAX_ASK_FRIEND = 1;
+const initialTime = 60;
+
+// Types
+interface Feedback {
+  message: string;
+  type: 'success' | 'error' | 'info';
+}
 
 interface GameScreenProps {
-  config: GameConfig;
+  config: GameConfig & { publicUrl?: string; words: Word[]; wordDatabase: WordDatabase };
   onEndGame: (results: GameResults) => void;
 }
 
-interface Feedback {
-  message: string;
-  type: string;
+interface GameScreenState {
+  participants: (Participant & {
+    score: number;
+    maxScore: number;
+  })[];
+  currentParticipantIndex: number;
+  currentWordIndex: number;
+  showShop: boolean;
+  coins: number;
+  revealedIndices: Set<number>;
+  showDefinition: boolean;
+  currentHelp: string | null;
+  feedback: Feedback | null;
+  usedHint: boolean;
+  showWord: boolean;
+  isHelpOpen: boolean;
+  letters: string[];
+  usedLetters: Set<string>;
+  wordQueues: {
+    easy: Word[];
+    medium: Word[];
+    hard: Word[];
+  };
+  extraAttempt: boolean;
+  attemptedParticipants: Set<number>;
+  missedWords: Word[];
+  totalWords: number;
+  gameProgress: number;
+  timeLeft: number;
 }
 
-// difficultyOrder is imported from useWordSelection
-const MAX_SKIP_TURNS = 1;
-const MAX_ASK_FRIEND = 1;
+// Main GameScreen component
+export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
+  const isTeamMode = config.gameMode === 'team';
+  const handleNextWord = useCallback(() => {
+    setState(prev => {
+      const nextIndex = (prev.currentParticipantIndex + 1) % prev.participants.length;
+      return {
+        ...prev,
+        currentParticipantIndex: nextIndex,
+        currentWordIndex: prev.currentWordIndex + 1,
+        revealedIndices: new Set<number>(),
+        showDefinition: false,
+        feedback: null,
+        usedLetters: new Set<string>()
+      };
+    });
+  }, []);
 
-const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
-  const isTeamMode = config.gameMode === "team";
-  const [participants, setParticipants] = React.useState<
-    (Participant | Team)[]
-  >(
-    (config.participants as (Participant | Team)[]).map((p) => ({
+  const [state, setState] = useState<GameScreenState>({
+    participants: (config.participants as Participant[]).map(p => ({
       ...p,
       attempted: 0,
       correct: 0,
@@ -58,681 +102,397 @@ const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
       wordsCorrect: 0,
       skipsRemaining: MAX_SKIP_TURNS,
       askFriendRemaining: MAX_ASK_FRIEND,
+      achievements: [],
+      points: 0,
+      teamId: isTeamMode ? (p as Team).teamId : `p-${Date.now()}`,
+      avatar: 'bee' as const,
+      score: 0,
+      maxScore: 100 // Base max score, will be updated
     })),
-  );
+    currentParticipantIndex: 0,
+    currentWordIndex: 0,
+    showShop: false,
+    coins: 100,
+    revealedIndices: new Set<number>(),
+    showDefinition: false,
+    currentHelp: null,
+    feedback: null,
+    usedHint: false,
+    showWord: true,
+    isHelpOpen: false,
+    letters: [],
+    usedLetters: new Set<string>(),
+    wordQueues: {
+      easy: [],
+      medium: [],
+      hard: []
+    },
+    extraAttempt: false,
+    attemptedParticipants: new Set<number>(),
+    missedWords: [],
+    totalWords: 0,
+    gameProgress: 0,
+    timeLeft: initialTime
+  });
 
-  const shuffle = <T,>(arr: T[]): T[] => {
-    const copy = [...arr];
-    for (let i = copy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copy[i], copy[j]] = [copy[j], copy[i]];
+  const { 
+    revealLetter: revealLetterHelp, 
+    getDefinition: getDefinitionHelp, 
+    addTime: addTimeHelp, 
+    skipWord: skipWordHelp, 
+    isHelpUsed, 
+    setHelpUsed 
+  } = useHelpSystem();
+
+  const timerRef = useRef<any>(null);
+
+  // Calculate game progress
+  useEffect(() => {
+    // Update total words when word database is available
+    if (config.wordDatabase) {
+      const words = Object.values(config.wordDatabase).flat();
+      setState(prev => ({ ...prev, totalWords: words.length }));
+      
+      // Update participants' max score
+      setState(prev => ({
+        ...prev,
+        participants: prev.participants.map(p => ({
+          ...p,
+          maxScore: words.length * 10 // 10 points per word
+        }))
+      }));
     }
-    return copy;
-  };
+  }, [config.wordDatabase]);
 
-  const [teamQueues, setTeamQueues] = React.useState<Participant[][]>(() => {
-    if (!isTeamMode) return [];
-    return (config.participants as Team[]).map((t) => shuffle([...t.students]));
-  });
+  useEffect(() => {
+    const gameProgress = state.totalWords > 0 
+      ? Math.min(100, Math.round((state.currentWordIndex / state.totalWords) * 100))
+      : 0;
+    setState(prev => ({ ...prev, gameProgress }));
+  }, [state.currentWordIndex, state.totalWords]);
 
-  const [currentParticipantIndex, setCurrentParticipantIndex] =
-    React.useState(0);
-
-  const currentStudent = React.useMemo(() => {
-    if (!isTeamMode) return null;
-    const queue = teamQueues[currentParticipantIndex] || [];
-    return queue[0] || null;
-  }, [teamQueues, currentParticipantIndex, isTeamMode]);
-  const [showWord, setShowWord] = React.useState(true);
-  const [usedHint, setUsedHint] = React.useState(false);
-  const [letters, setLetters] = React.useState<string[]>([]);
-  const usedLetters = React.useMemo(
-    () => new Set(letters.filter((l) => l !== "").map((l) => l.toLowerCase())),
-    [letters],
-  );
-  const [feedback, setFeedback] = React.useState<Feedback>({
-    message: "",
-    type: "",
-  });
-  const [extraAttempt, setExtraAttempt] = React.useState(false);
-  const [isHelpOpen, setIsHelpOpen] = React.useState(false);
-  const {
-    wordQueues,
-    setWordQueues,
-    currentWord,
-    currentDifficulty,
-    selectNextWord,
-  } = useWordSelection(config.wordDatabase);
-  const [attemptedParticipants, setAttemptedParticipants] = React.useState<
-    Set<number>
-  >(new Set());
-  const [missedWords, setMissedWords] = React.useState<Word[]>([]);
-  const [unlockedAchievements, setUnlockedAchievements] = React.useState<
-    string[]
-  >(() => {
-    if (typeof window === "undefined") return [];
+  const handleShowDefinition = useCallback(async (word: string) => {
+    setState(prev => ({ ...prev, showDefinition: true }));
     try {
-      return JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
-    } catch {
-      return [];
+      const definition = await getDefinitionHelp(word);
+      setHelpUsed('hint-definition');
+      setState(prev => ({
+        ...prev,
+        currentHelp: `Definition: ${definition}`,
+        feedback: { message: 'Definition shown', type: 'info' }
+      }));
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        feedback: { message: 'Failed to load definition', type: 'error' }
+      }));
     }
-  });
-  const [toast, setToast] = React.useState("");
-  const hiddenInputRef = React.useRef<HTMLInputElement>(null);
-  const [startTime] = React.useState(Date.now());
-  const [coins, setCoins] = React.useState<number>(() => {
-    if (typeof window === "undefined") return 0;
-    const stored = localStorage.getItem("coins");
-    return stored ? parseInt(stored, 10) : 0;
-  });
-  const [ownedAvatars] = React.useState<string[]>(() => {
-    if (typeof window === "undefined") return ["bee", "book", "trophy"];
-    try {
-      return JSON.parse(
-        localStorage.getItem("ownedAvatars") || "[\"bee\",\"book\",\"trophy\"]",
-      );
-    } catch {
-      return ["bee", "book", "trophy"];
-    }
-  });
-  const [currentAvatar, setCurrentAvatar] = React.useState(() => {
-    if (typeof window === "undefined") return "";
-    return localStorage.getItem("equippedAvatar") || "";
-  });
-  React.useEffect(() => {
-    localStorage.setItem("equippedAvatar", currentAvatar);
-  }, [currentAvatar]);
+  }, [getDefinitionHelp, setHelpUsed]);
 
-  const { muted, toggleMute } = useAudio();
+  const handleAddTimeHelp = useCallback(() => {
+    addTimeHelp(30);
+    setHelpUsed('extra-time');
+    setState(prev => ({
+      ...prev,
+      currentHelp: 'Added 30 seconds to the timer!',
+      feedback: { message: 'Added 30 seconds to the timer!', type: 'success' }
+    }));
+  }, [addTimeHelp, setHelpUsed]);
 
-  const playCorrect = useSound(correctSoundFile, !muted);
-  const playWrong = useSound(wrongSoundFile, !muted);
-  const playTimeout = useSound(timeoutSoundFile, !muted);
-  const playLetterCorrect = useSound(
-    letterCorrectSoundFile,
-    !muted,
-  );
-  const playLetterWrong = useSound(letterWrongSoundFile, !muted);
-  const playShop = useSound(shopSoundFile, !muted);
-  const playLoseLife = useSound(loseLifeSoundFile, !muted);
+  const handleSkipWordHelp = useCallback(() => {
+    skipWordHelp();
+    setHelpUsed('skip-word');
+    setState(prev => ({
+      ...prev,
+      currentHelp: 'Skipped to the next word!',
+      feedback: { message: 'Skipped to the next word!', type: 'info' }
+    }));
+    handleNextWord();
+  }, [skipWordHelp, setHelpUsed, handleNextWord]);
 
-  const {
-    timeLeft,
-    start: startTimer,
-    pause: pauseTimer,
-    resume: resumeTimer,
-    reset: resetTimer,
-    stop: stopTimer,
-    isPaused,
-  } = useTimer(config.timerDuration, () => {
-    playTimeout();
-    handleIncorrectAttempt();
-  });
-  React.useEffect(() => {
-    if (!isPaused) {
-      setShowAudioSettings(false);
-    }
-  }, [isPaused]);
-  React.useEffect(() => {
-    if (localStorage.getItem('teacherMode') === 'true') {
-      document.body.classList.add('teacher-mode');
-    } else {
-      document.body.classList.remove("teacher-mode");
-    }
+  // Sound effects function
+  const playSound = useCallback((soundFile: string) => {
+    const audio = new Audio(soundFile);
+    audio.volume = 0.3;
+    audio.play().catch(e => console.error("Audio playback failed:", e));
   }, []);
 
-  React.useEffect(() => {
-    if (currentWord) {
-      setLetters(Array.from({ length: currentWord.word.length }, () => ""));
-    }
-  }, [currentWord]);
+  const currentWord = config.words[state.currentWordIndex];
+  const currentParticipant = state.participants[state.currentParticipantIndex];
 
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!currentWord || isPaused) return;
-      if (/^[a-zA-Z]$/.test(e.key)) {
-        typeLetter(e.key);
-      } else if (e.key === "Backspace") {
-        handleVirtualBackspace();
-      } else if (e.key === "Enter") {
-        handleSpellingSubmit();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentWord, isPaused, letters]);
+  const handleSpellingSubmit = useCallback(() => {
+    if (!currentWord) return;
 
-  const selectNextWordForLevel = (level: number) => {
-    const nextWord = selectNextWord(level);
-    if (nextWord) {
-      setAttemptedParticipants(new Set());
-      setExtraAttempt(false);
-      setIsHelpOpen(false);
-      setUsedHint(false);
-      setLetters(Array(nextWord.word.length).fill(""));
-      if (hiddenInputRef.current) {
-        hiddenInputRef.current.focus();
-      }
-      speak(nextWord.word);
-      startTimer();
-    } else {
-      onEndGameWithMissedWords();
-    }
-  };
+    const submittedWord = state.letters.join('');
+    const isCorrect = submittedWord.toLowerCase() === currentWord.word.toLowerCase();
+    
+    // Calculate time bonus (max 5 points for quick answers)
+    const timeLeftPercentage = state.timeLeft / 60;
+    const timeBonus = Math.floor(timeLeftPercentage * 5);
 
-  const nextTurn = () => {
-    if (isTeamMode) {
-      setTeamQueues((prev) => {
-        const newQueues = [...prev];
-        const queue = [...newQueues[currentParticipantIndex]];
-        queue.shift();
-        if (queue.length === 0) {
-          const team = participants[currentParticipantIndex] as Team;
-          newQueues[currentParticipantIndex] = shuffle([...team.students]);
-        } else {
-          newQueues[currentParticipantIndex] = queue;
-        }
-        return newQueues;
-      });
-    }
-    setCurrentParticipantIndex(
-      (prevIndex) => (prevIndex + 1) % participants.length,
-    );
-  };
+    // Play sound based on correctness
+    playSound(isCorrect ? correctSoundFile : wrongSoundFile);
 
-  function handleIncorrectAttempt() {
-    if (extraAttempt) {
-      setFeedback({
-        message: "Incorrect. You still have one more attempt!",
-        type: "error",
-      });
-      setExtraAttempt(false);
-      if (currentWord) setLetters(Array(currentWord.word.length).fill(""));
-      startTimer();
-      return;
-    }
-
-    setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
-    if (currentWord) setMissedWords((prev) => [...prev, currentWord]);
-
-    const updatedParticipants = participants.map((p, index) => {
-      if (index === currentParticipantIndex) {
+    setState(prev => {
+      const updatedParticipants = [...prev.participants];
+      const currentParticipant = updatedParticipants[prev.currentParticipantIndex];
+      
+      currentParticipant.attempted += 1;
+      currentParticipant.wordsAttempted += 1;
+      
+      if (isCorrect) {
+        currentParticipant.correct += 1;
+        currentParticipant.wordsCorrect += 1;
+        currentParticipant.score += 10 + timeBonus;
+        currentParticipant.points += 5 + timeBonus;
+        
         return {
-          ...p,
-          lives: p.lives - 1,
-          streak: 0,
-          difficultyLevel: Math.max(
-            0,
-            p.difficultyLevel - config.progressionSpeed,
-          ),
+          ...prev,
+          participants: updatedParticipants,
+          coins: prev.coins + 5 + timeBonus,
+          feedback: { message: `Correct! +${timeBonus} time bonus`, type: 'success' },
+          attemptedParticipants: new Set<number>()
         };
-      }
-      return p;
-    });
-    setParticipants(updatedParticipants);
-
-    playLoseLife();
-    if (currentWord) setLetters(Array(currentWord.word.length).fill(""));
-
-    const newAttempted = new Set(attemptedParticipants);
-    newAttempted.add(currentParticipantIndex);
-
-    setTimeout(() => {
-      setFeedback({ message: "", type: "" });
-      if (newAttempted.size >= participants.length) {
-        if (currentWord) {
-          setWordQueues((prev) => ({
-            ...prev,
-            review: [...prev.review, currentWord],
-          }));
-        }
-        setAttemptedParticipants(new Set());
-        const nextIndex = (currentParticipantIndex + 1) % participants.length;
-        selectNextWordForLevel(updatedParticipants[nextIndex].difficultyLevel);
-        nextTurn();
       } else {
-        setAttemptedParticipants(newAttempted);
-        setUsedHint(false);
-        nextTurn();
-        startTimer();
-      }
-    }, 2000);
-  }
-
-  const spendPoints = (participantIndex: number, cost: number) => {
-    setParticipants((prev) =>
-      prev.map((p, index) => {
-        if (index === participantIndex) {
-          return { ...p, points: p.points - cost };
-        }
-        return p;
-      }),
-    );
-    playShop();
-  };
-
-  const typeLetter = (letter: string) => {
-    if (!currentWord) return;
-    setLetters((prev) => {
-      const index = prev.findIndex((l) => l === "");
-      if (index === -1) return prev;
-      const newLetters = [...prev];
-      newLetters[index] = letter;
-      const isCorrectLetter =
-        currentWord.word[index].toLowerCase() === letter.toLowerCase();
-      const play = isCorrectLetter ? playLetterCorrect : playLetterWrong;
-      play();
-      return newLetters;
-    });
-  };
-
-  const handleVirtualLetter = (letter: string) => {
-    typeLetter(letter);
-  };
-
-  const handleVirtualBackspace = () => {
-    setLetters((prev) => {
-      const reverseIndex = [...prev].reverse().findIndex((l) => l !== "");
-      if (reverseIndex === -1) return prev;
-      const index = prev.length - 1 - reverseIndex;
-      const newLetters = [...prev];
-      newLetters[index] = "";
-      return newLetters;
-    });
-  };
-
-  const handleSpellingSubmit = () => {
-    if (!currentWord) return;
-    stopTimer();
-
-    const guess = letters.join("").trim().toLowerCase();
-    const isCorrect = guess === currentWord.word.toLowerCase();
-    const shouldCountWord = isCorrect || !extraAttempt;
-
-    const updatedParticipants = participants.map((p, index) => {
-      if (index === currentParticipantIndex) {
-        const multipliers: Record<string, number> = {
-          easy: 1,
-          medium: 2,
-          tricky: 3,
-        };
-        const basePoints = 5;
-        const multiplier = multipliers[currentDifficulty] || 1;
-        const bonus = p.streak * 2;
-        const pointsEarned = basePoints * multiplier + bonus;
         return {
-          ...p,
-          attempted: p.attempted + 1,
-          correct: p.correct + (isCorrect ? 1 : 0),
-          wordsAttempted: p.wordsAttempted + (shouldCountWord ? 1 : 0),
-          wordsCorrect: p.wordsCorrect + (shouldCountWord && isCorrect ? 1 : 0),
-          points: isCorrect ? p.points + pointsEarned : p.points,
-          streak: isCorrect ? p.streak + 1 : 0,
-          difficultyLevel: isCorrect
-            ? usedHint
-              ? p.difficultyLevel
-              : p.difficultyLevel + config.progressionSpeed
-            : p.difficultyLevel,
+          ...prev,
+          participants: updatedParticipants,
+          feedback: { message: 'Try again!', type: 'error' },
+          attemptedParticipants: new Set([...prev.attemptedParticipants, prev.currentParticipantIndex])
         };
       }
-      return p;
     });
-    setParticipants(updatedParticipants);
 
     if (isCorrect) {
-      const participant = updatedParticipants[currentParticipantIndex];
-      const newlyUnlocked = defaultAchievements.filter(
-        (ach) =>
-          participant.wordsCorrect >= ach.threshold &&
-          !unlockedAchievements.includes(ach.id),
-      );
-
-      if (newlyUnlocked.length > 0) {
-        const updatedUnlocked = [
-          ...unlockedAchievements,
-          ...newlyUnlocked.map((a) => a.id),
-        ];
-        setUnlockedAchievements(updatedUnlocked);
-        localStorage.setItem(
-          "unlockedAchievements",
-          JSON.stringify(updatedUnlocked),
-        );
-        const first = newlyUnlocked[0];
-        setToast(`Achievement unlocked: ${first.icon} ${first.name}!`);
-        setTimeout(() => setToast(""), 3000);
-      }
-
-      playCorrect();
-
-      const coinReward = 1;
-      const newCoins = coins + coinReward;
-      setCoins(newCoins);
-      localStorage.setItem("coins", String(newCoins));
-
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
-      if (config.effectsEnabled && !prefersReducedMotion) {
-        launchConfetti();
-      }
-
-      setFeedback({ message: "Correct! 🎉", type: "success" });
-
-      setTimeout(() => {
-        const nextIndex =
-          (currentParticipantIndex + 1) % updatedParticipants.length;
-        const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
-        setFeedback({ message: "", type: "" });
-        selectNextWordForLevel(nextDifficulty);
-        nextTurn();
-      }, 2000);
-
-      return; // Stop execution for the correct case
+      setTimeout(handleNextWord, 1500);
     }
+  }, [currentWord, state.letters, state.timeLeft, handleNextWord, playSound]);
 
-    // This part only runs if the answer was incorrect
-    playWrong();
-    handleIncorrectAttempt();
-  };
-
-  const handleSkipTurn = () => {
+  const typeLetter = useCallback((letter: string) => {
     if (!currentWord) return;
-    stopTimer();
-    const updatedParticipants = participants.map((p, index) =>
-      index === currentParticipantIndex
-        ? { ...p, skipsRemaining: (p.skipsRemaining || 0) - 1 }
-        : p,
-    );
-    setParticipants(updatedParticipants);
-
-    try {
-      const existing = JSON.parse(localStorage.getItem("skippedTurns") || "[]");
-      existing.push({
-        name: participants[currentParticipantIndex].name,
-        word: currentWord.word,
-        time: new Date().toISOString(),
-      });
-      localStorage.setItem("skippedTurns", JSON.stringify(existing));
-    } catch {
-      // ignore logging errors
-    }
-
-    setWordQueues((prev) => ({
+    
+    const currentLetter = currentWord.word[state.letters.length].toLowerCase();
+    playSound(currentLetter === letter.toLowerCase() ? letterCorrectSoundFile : letterWrongSoundFile);
+    
+    setState(prev => ({
       ...prev,
-      review: [...prev.review, currentWord],
+      letters: [...prev.letters, letter],
+      usedLetters: new Set([...prev.usedLetters, letter.toLowerCase()])
     }));
-    setFeedback({ message: "Turn Skipped", type: "info" });
-    setAttemptedParticipants(new Set());
+  }, [currentWord, state.letters.length, state.usedLetters, playSound]);
 
-    setTimeout(() => {
-      const nextIndex =
-        (currentParticipantIndex + 1) % updatedParticipants.length;
-      const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
-      setFeedback({ message: "", type: "" });
-      setLetters(Array(currentWord.word.length).fill(""));
-      selectNextWordForLevel(nextDifficulty);
-      nextTurn();
-    }, 1000);
-  };
+  // Set up event listeners for help system
+  useEffect(() => {
+    const handleAddTime = (e: CustomEvent<{ seconds: number }>) => {
+      const { seconds } = e.detail;
+      if (timerRef.current) {
+        timerRef.current.addSeconds(seconds);
+      }
+    };
 
-  const handleAskFriend = () => {
-    const remaining =
-      participants[currentParticipantIndex].askFriendRemaining || 0;
-    if (remaining <= 0) return;
-    setParticipants((prev) =>
-      prev.map((p, index) =>
-        index === currentParticipantIndex
-          ? { ...p, askFriendRemaining: remaining - 1 }
-          : p,
-      ),
-    );
-    setIsHelpOpen(true);
-    setFeedback({ message: "A teammate may help!", type: "info" });
-    setTimeout(() => setFeedback({ message: "", type: "" }), 2000);
-  };
+    const handleSkipWord = () => handleNextWord();
 
-  const onEndGameWithMissedWords = () => {
-    const lessonKey = new Date().toISOString().split("T")[0];
-    const stored = JSON.parse(
-      localStorage.getItem("missedWordsCollection") || "{}",
-    );
-    const existing = stored[lessonKey] || [];
-    stored[lessonKey] = [...existing, ...missedWords];
-    localStorage.setItem("missedWordsCollection", JSON.stringify(stored));
-    const activeParticipants = participants.filter((p) => p.lives > 0);
-    const finalParticipants = participants.map((p) => ({
-      ...p,
-      accuracy:
-        p.wordsAttempted > 0 ? (p.wordsCorrect / p.wordsAttempted) * 100 : 0,
-    }));
-    onEndGame({
-      winner: activeParticipants.length === 1 ? activeParticipants[0] : null,
-      participants: finalParticipants,
-      gameMode: config.gameMode,
-      duration: Math.round((Date.now() - startTime) / 1000),
-      missedWords,
-    });
-  };
+    window.addEventListener('addTime', handleAddTime as EventListener);
+    window.addEventListener('skipWord', handleSkipWord);
 
-  React.useEffect(() => {
-    if (config.participants.length > 0) {
-      selectNextWordForLevel(config.participants[0].difficultyLevel);
+    return () => {
+      window.removeEventListener('addTime', handleAddTime as EventListener);
+      window.removeEventListener('skipWord', handleSkipWord);
+    };
+  }, [handleNextWord]);
+
+  // Clear current help and feedback after delay
+  useEffect(() => {
+    const timers: NodeJS.Timeout[] = [];
+    
+    if (state.currentHelp) {
+      const timer = setTimeout(() => 
+        setState(prev => ({ ...prev, currentHelp: null })), 3000);
+      timers.push(timer);
     }
-  }, []);
-
-  React.useEffect(() => {
-    if (!participants || participants.length === 0) return;
-    const activeParticipants = participants.filter((p) => p.lives > 0);
-    if (activeParticipants.length <= 1) {
-      onEndGameWithMissedWords();
+    
+    if (state.feedback) {
+      const timer = setTimeout(() => 
+        setState(prev => ({ ...prev, feedback: null })), 3000);
+      timers.push(timer);
     }
-  }, [participants]);
-
-  const [showAudioSettings, setShowAudioSettings] = React.useState(false);
+    
+    return () => timers.forEach(clearTimeout);
+  }, [state.currentHelp, state.feedback]);
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center font-body">
-      <input
-        ref={hiddenInputRef}
-        type="text"
-        className="absolute opacity-0 pointer-events-none"
-        aria-hidden="true"
-        tabIndex={-1}
-      />
-      {toast && (
-        <div className="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50">
-          {toast}
-        </div>
-      )}
-      <div className="absolute top-8 left-8 flex gap-8 items-center">
-        <img src={`${process.env.PUBLIC_URL || ''}/img/bee.svg`} alt="Bee icon" className="w-12 h-12" />
-        {participants.map((p, index) => (
-          <div key={index} className="text-center bg-white/10 p-4 rounded-lg">
-            <div className="text-2xl font-bold">{p.name}</div>
-            <div className="text-4xl font-bold text-yellow-300">
-              {"❤️".repeat(p.lives)}
+    <div className="game-screen">
+      <div className="game-area">
+        <header className="game-header">
+          <div className="progress-container">
+            <CircularProgress 
+              value={state.gameProgress} 
+              size={60}
+              strokeWidth={8}
+            />
+            <div className="flex items-center space-x-2 mr-4">
+              <CircularProgress 
+                value={Math.round((currentParticipant.score / currentParticipant.maxScore) * 100)} 
+                size={40}
+                strokeWidth={4}
+                variant="primary"
+              />
+              <span className="text-bee-yellow-600 font-medium">
+                {currentParticipant.score}/{currentParticipant.maxScore}
+              </span>
             </div>
-            <div className="text-xl font-bold text-green-400">
-              {p.points} pts
+            <ProgressBar 
+              value={currentParticipant.score} 
+              max={currentParticipant.maxScore}
+              size="md"
+              showLabel
+            />
+            <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2 mb-4">
+              <ProgressBar 
+                value={Math.round((state.currentWordIndex / state.totalWords) * 100)}
+                size="sm"
+                variant="primary"
+                className="h-full"
+              />
+              <div className="flex justify-between text-xs mt-1">
+                <span>Progress: {state.currentWordIndex}/{state.totalWords} words</span>
+                <span>{Math.round((state.currentWordIndex / state.totalWords) * 100)}%</span>
+              </div>
             </div>
           </div>
-        ))}
-      </div>
+          <div className="timer-container">
+            <CircularTimer 
+              timeLeft={state.timeLeft}
+              total={initialTime}
+            />
+          </div>
+          <div className="coins-display">
+            <img src={`${process.env.PUBLIC_URL}/img/bee.svg`} alt="Bee" />
+            {state.coins}
+          </div>
+        </header>
 
-      {feedback.message && (
-        <div
-          className={`absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${
-            feedback.type === "success"
-              ? "bg-green-500"
-              : feedback.type === "error"
-                ? "bg-red-500"
-                : "bg-blue-500"
-          }`}
-        >
-          {feedback.message}
-        </div>
-      )}
-
-      <div className="absolute top-8 right-8 text-center z-50 bg-white/10 p-4 rounded-lg">
-        <CircularTimer timeLeft={timeLeft} total={config.timerDuration} />
-        <div className="text-lg mt-2">seconds left</div>
-        <button
-          onClick={isPaused ? resumeTimer : pauseTimer}
-          className="mt-2 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
-        >
-          {isPaused ? "Resume" : "Pause"}
-        </button>
-      </div>
-
-      {/* TODO: Replace with proper audio management */}
-      {/* <audio-controls className="audio-controls">
-        <button
-          className={`audio-btn ${soundEnabled ? "" : "muted"}`}
-          onClick={() => {
-            soundEnabled ? playWrong() : playCorrect();
-          }}
-        >
-          {soundEnabled ? "🔊" : "🔇"}
-        </button>
-      </audio-controls> */}
-
-      <AvatarSelector
-        currentAvatar={currentAvatar}
-        onSelect={(avatar) => setCurrentAvatar(avatar)}
-        availableAvatars={ownedAvatars}
-      />
-
-      {currentWord && (
-        <div className="w-full max-w-4xl text-center">
-          <img src={`${process.env.PUBLIC_URL || ''}/img/books.svg`} alt="Book icon" className="w-10 h-10 mx-auto mb-6" />
-          <h2 className="text-4xl font-bold mb-6 uppercase font-sans">
-            Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
-          </h2>
-          {isTeamMode && currentStudent && (
-            <div className="text-xl mb-6">Hot Seat: {currentStudent.name}</div>
+        <div className="word-area">
+          {state.showWord && currentWord && (
+            <div className="current-word">
+              {currentWord.word.split('').map((letter, index) => (
+                <span 
+                  key={index} 
+                  className={`letter ${state.revealedIndices.has(index) ? 'revealed' : ''}`}
+                >
+                  {state.revealedIndices.has(index) ? letter : '_'}
+                </span>
+              ))}
+            </div>
           )}
-          <div className="relative mb-10 pt-12">
-            {showWord && (
-              <div className="inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg">
-                {currentWord.word}
-                {currentWord.pronunciation && (
-                  <span className="ml-4 text-5xl text-yellow-300">
-                    {currentWord.pronunciation}
-                  </span>
-                )}
-              </div>
+          {currentWord && (
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                Difficulty: 
+                <span className={`font-bold ${
+                  currentWord.difficulty === 'easy' ? 'text-green-500' :
+                  currentWord.difficulty === 'medium' ? 'text-amber-500' : 'text-red-500'
+                }`}>
+                  {currentWord.difficulty}
+                </span>
+              </span>
+              <ProgressBar 
+                value={currentWord.difficulty === 'easy' ? 33 : 
+                      currentWord.difficulty === 'medium' ? 66 : 100}
+                size="sm"
+                variant={
+                  currentWord.difficulty === 'easy' ? 'success' :
+                  currentWord.difficulty === 'medium' ? 'warning' : 'danger'
+                }
+                className="w-24"
+              />
+            </div>
+          )}
+          {currentWord && (
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                Difficulty: 
+                <span className={`font-bold ${
+                  currentWord.difficulty === 'easy' ? 'text-green-500' :
+                  currentWord.difficulty === 'medium' ? 'text-amber-500' : 'text-red-500'
+                }`}>
+                  {currentWord.difficulty}
+                </span>
+              </span>
+              <ProgressBar 
+                value={currentWord.difficulty === 'easy' ? 33 : 
+                      currentWord.difficulty === 'medium' ? 66 : 100}
+                size="sm"
+                variant={
+                  currentWord.difficulty === 'easy' ? 'success' :
+                  currentWord.difficulty === 'medium' ? 'warning' : 'danger'
+                }
+                className="w-24"
+              />
+            </div>
+          )}
+          <HintPanel 
+            word={currentWord?.word || ''}
+            onRevealLetter={() => handleRevealLetter(
+              currentWord?.word || '',
+              state.revealedIndices
             )}
-            <button
-              onClick={() => speak(currentWord.word)}
-              className="absolute top-0 left-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
-            >
-              Replay Word
-            </button>
-            <button
-              onClick={() => setShowWord(!showWord)}
-              className="absolute top-0 right-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
-            >
-              {showWord ? "Hide Word" : "Show Word"}
-            </button>
-          </div>
-          <HintPanel
-            word={currentWord}
-            participantPoints={participants[currentParticipantIndex].points}
-            participantIndex={currentParticipantIndex}
-            spendPoints={spendPoints}
-            isTeamMode={isTeamMode}
-            showWord={showWord}
-            onHintUsed={() => setUsedHint(true)}
-            onExtraAttempt={() => setExtraAttempt(true)}
+            onShowDefinition={() => handleShowDefinition(currentWord?.word || '')}
+            onAddTime={handleAddTimeHelp}
+            onSkipWord={handleSkipWordHelp}
+            isHelpUsed={isHelpUsed}
+            coins={state.coins}
           />
-          {currentWord.phonemes && (
-            <div className="mt-6">
-              <PhonicsBreakdown phonemes={currentWord.phonemes} />
+
+          {state.feedback && (
+            <div className={`feedback ${state.feedback.type}`}>
+              {state.feedback.message}
             </div>
           )}
-          <div className="flex gap-2 justify-center mb-8">
-            {letters.map((letter, idx) => (
-              <div
-                key={idx}
-                className={`w-12 h-16 text-4xl flex items-center justify-center rounded-lg border-b-2 ${
-                  letter
-                    ? letter.toLowerCase() ===
-                      currentWord.word[idx].toLowerCase()
-                      ? "bg-green-500"
-                      : "bg-red-500"
-                    : "bg-white/20"
-                }`}
-              >
-                {letter.toUpperCase()}
-              </div>
-            ))}
-          </div>
-          <OnScreenKeyboard
-            onLetter={handleVirtualLetter}
-            onBackspace={handleVirtualBackspace}
-            onSubmit={handleSpellingSubmit}
-            soundEnabled={!muted}
-            usedLetters={usedLetters}
-          />
-        </div>
-      )}
 
-      <div className="absolute bottom-8 right-8 flex flex-col gap-4">
-        <button
-          onClick={handleSkipTurn}
-          disabled={
-            (participants[currentParticipantIndex].skipsRemaining || 0) <= 0
-          }
-          className="bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl disabled:opacity-50 flex items-center"
-        >
-          <SkipForward size={24} className="mr-2" /> Skip Turn
-        </button>
-        <button
-          onClick={handleAskFriend}
-          disabled={
-            (participants[currentParticipantIndex].askFriendRemaining || 0) <=
-            0
-          }
-          className="bg-blue-500 hover:bg-blue-600 p-4 rounded-lg text-xl disabled:opacity-50 flex items-center"
-        >
-          <Users size={24} className="mr-2" /> Ask a Friend
-        </button>
-      </div>
-
-      {isHelpOpen && (
-        <div className="absolute bottom-32 right-8 bg-blue-500 p-4 rounded-lg text-xl">
-          Friend assisting...
-        </div>
-      )}
-
-      {isPaused && !showAudioSettings && (
-        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-6xl font-bold z-40 gap-8">
-          <div>Paused</div>
-          <button
-            onClick={() => setShowAudioSettings(true)}
-            className="bg-yellow-300 text-black px-6 py-3 rounded-lg text-2xl font-bold hover:bg-yellow-400 transition-colors"
+          {state.currentHelp && (
+            <div className="help-message">
+              {state.currentHelp}
+            </div>
+          )}
+          <button 
+            onClick={handleSpellingSubmit}
+            className="submit-button"
+            disabled={state.letters.length === 0}
           >
-            Audio Settings
+            Submit
           </button>
         </div>
-      )}
 
-      {showAudioSettings && isPaused && (
-        <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg max-w-md w-full relative">
-            <button
-              onClick={() => setShowAudioSettings(false)}
-              className="absolute top-2 right-2 text-black"
-              aria-label="Close audio settings"
-            >
-              ✕
-            </button>
-            <AudioSettings />
-          </div>
+        <OnScreenKeyboard 
+          onLetter={typeLetter}
+          onBackspace={() => setState(prev => ({...prev, letters: prev.letters.slice(0, -1)}))}
+          onSubmit={handleSpellingSubmit}
+          soundEnabled={true}
+          usedLetters={state.usedLetters}
+          currentWord={currentWord?.word}
+        />
+      </div>
+
+      {state.showShop && (
+        <div className="shop-modal">
+          <h2>Help Shop</h2>
+          <button onClick={() => setState(prev => ({ ...prev, showShop: false }))}>
+            Close
+          </button>
         </div>
       )}
     </div>
   );
 };
 
-export default GameScreen;
+// Wrap with HelpSystemProvider
+export const GameScreenWithProvider: React.FC<GameScreenProps> = (props) => {
+  return (
+    <HelpSystemProvider>
+      <GameScreen {...props} />
+    </HelpSystemProvider>
+  );
+};
+
+export default GameScreenWithProvider;

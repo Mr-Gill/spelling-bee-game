@@ -10,6 +10,27 @@ const copyAssets = () => {
     // Copy image assets from src
     fs.copySync('src/img', 'dist/img');
     
+    // Copy index.html
+    if (fs.existsSync('index.html')) {
+      fs.copySync('index.html', 'dist/index.html');
+    }
+
+    // Copy service worker
+    if (fs.existsSync('service-worker.js')) {
+      fs.copySync('service-worker.js', 'dist/service-worker.js');
+    }
+
+    // Copy data files
+    if (fs.existsSync('leaderboard.json')) {
+      fs.copySync('leaderboard.json', 'dist/leaderboard.json');
+    }
+    if (fs.existsSync('words.json')) {
+      fs.copySync('words.json', 'dist/words.json');
+    }
+    if (fs.existsSync('wordlist.json')) {
+      fs.copySync('wordlist.json', 'dist/wordlist.json');
+    }
+
     // Copy image assets from root (in case there are additional files)
     if (fs.existsSync('img')) {
       fs.copySync('img', 'dist/img');
