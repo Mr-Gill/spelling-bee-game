@@ -24,6 +24,8 @@ interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
   onAddCustomWords: (words: any[]) => void;
   onViewAchievements: () => void;
+  onViewHistory: () => void;
+  onViewShop?: () => void;
 }
 
 // Using direct paths to assets in the public directory
@@ -34,7 +36,7 @@ const trophyImg = '../img/trophy.svg';
 // Available avatars for participants
 const availableAvatars = [beeImg, bookImg, trophyImg];
 
-const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
+const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewHistory }) => {
 
   const [gameMode, setGameMode] = useState<GameMode>('team');
   const [startingLives, setStartingLives] = useState(10);
@@ -777,8 +779,19 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
           <button onClick={() => handleStart(false)} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Custom Game</button>
           <button onClick={() => handleStart(true)} className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Session Challenge</button>
         </div>
-        <div className="mt-4 text-center">
-          <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold">View Achievements</button>
+        <div className="mt-4 text-center flex flex-col sm:flex-row gap-4 justify-center">
+          <button
+            onClick={onViewAchievements}
+            className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold"
+          >
+            View Achievements
+          </button>
+          <button
+            onClick={onViewHistory}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl text-xl font-bold"
+          >
+            View History
+          </button>
         </div>
       </div>
     </div>

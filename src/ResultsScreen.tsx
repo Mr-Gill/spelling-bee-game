@@ -56,7 +56,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
     const history: { date: string; score: number; duration: number }[] = JSON.parse(
       localStorage.getItem('sessionHistory') || '[]'
     );
-    history.push({ date: new Date().toISOString(), score: totalScore, duration: results.duration });
+    history.push({ date: new Date().toISOString(), score: totalScore, duration: results.duration || 0 });
     localStorage.setItem('sessionHistory', JSON.stringify(history));
 
     const storedBest = Number(localStorage.getItem('bestClassScore') || '0');
