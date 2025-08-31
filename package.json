@@ -4,7 +4,7 @@
   "description": "A comprehensive, classroom-ready spelling bee game with rich educational content and advanced features",
   "private": true,
   "main": "index.html",
-  "homepage": "https://squidgyg.github.io/spelling-bee-game/",
+  "homepage": "https://SquidgyG.github.io/SpellingBeeGame",
   "scripts": {
     "start": "npx serve dist",
     "serve": "npx serve dist",
