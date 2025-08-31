@@ -22,6 +22,7 @@ import letterWrongSoundFile from "../audio/letter-wrong.mp3";
 import CircularTimer from './components/CircularTimer';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
+import { HelpShop } from './components/HelpShop'; // Fix HelpShop import
 // Progress components
 import { ProgressBar, CircularProgress } from './components/BeeProgress';
 
@@ -475,12 +476,11 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
       </div>
 
       {state.showShop && (
-        <div className="shop-modal">
-          <h2>Help Shop</h2>
-          <button onClick={() => setState(prev => ({ ...prev, showShop: false }))}>
-            Close
-          </button>
-        </div>
+        <HelpShop 
+          onClose={() => setState(prev => ({ ...prev, showShop: false }))}
+          coins={state.coins}
+          onPurchase={(cost) => setState(prev => ({ ...prev, coins: prev.coins - cost }))}
+        />
       )}
     </div>
   );
