@@ -30,11 +30,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // node_modules/react/cjs/react.development.js
 var require_react_development = __commonJS({
-  "node_modules/react/cjs/react.development.js"(exports, module) {
+  "node_modules/react/cjs/react.development.js"(exports, module2) {
     "use strict";
     if (true) {
       (function() {
@@ -478,7 +477,7 @@ var require_react_development = __commonJS({
             }
           }
         }
-        var ReactElement = function(type, key, ref, self, source, owner, props) {
+        var ReactElement = function(type, key, ref, self2, source, owner, props) {
           var element = {
             // This tag allows us to uniquely identify this as a React Element
             $$typeof: REACT_ELEMENT_TYPE,
@@ -502,7 +501,7 @@ var require_react_development = __commonJS({
               configurable: false,
               enumerable: false,
               writable: false,
-              value: self
+              value: self2
             });
             Object.defineProperty(element, "_source", {
               configurable: false,
@@ -522,7 +521,7 @@ var require_react_development = __commonJS({
           var props = {};
           var key = null;
           var ref = null;
-          var self = null;
+          var self2 = null;
           var source = null;
           if (config != null) {
             if (hasValidRef(config)) {
@@ -537,7 +536,7 @@ var require_react_development = __commonJS({
               }
               key = "" + config.key;
             }
-            self = config.__self === void 0 ? null : config.__self;
+            self2 = config.__self === void 0 ? null : config.__self;
             source = config.__source === void 0 ? null : config.__source;
             for (propName in config) {
               if (hasOwnProperty.call(config, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
@@ -579,7 +578,7 @@ var require_react_development = __commonJS({
               }
             }
           }
-          return ReactElement(type, key, ref, self, source, ReactCurrentOwner.current, props);
+          return ReactElement(type, key, ref, self2, source, ReactCurrentOwner.current, props);
         }
         function cloneAndReplaceKey(oldElement, newKey) {
           var newElement = ReactElement(oldElement.type, newKey, oldElement.ref, oldElement._self, oldElement._source, oldElement._owner, oldElement.props);
@@ -593,7 +592,7 @@ var require_react_development = __commonJS({
           var props = assign({}, element.props);
           var key = element.key;
           var ref = element.ref;
-          var self = element._self;
+          var self2 = element._self;
           var source = element._source;
           var owner = element._owner;
           if (config != null) {
@@ -631,7 +630,7 @@ var require_react_development = __commonJS({
             }
             props.children = childArray;
           }
-          return ReactElement(element.type, key, ref, self, source, owner, props);
+          return ReactElement(element.type, key, ref, self2, source, owner, props);
         }
         function isValidElement(object) {
           return typeof object === "object" && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
@@ -791,7 +790,7 @@ var require_react_development = __commonJS({
           }
           return children;
         }
-        function createContext3(defaultValue) {
+        function createContext9(defaultValue) {
           var context = {
             $$typeof: REACT_CONTEXT_TYPE,
             // As a workaround to support multiple concurrent renderers, we categorize
@@ -978,7 +977,7 @@ var require_react_development = __commonJS({
           }
           return lazyType;
         }
-        function forwardRef3(render) {
+        function forwardRef2(render) {
           {
             if (render != null && render.$$typeof === REACT_MEMO_TYPE) {
               error("forwardRef requires a render function but received a `memo` component. Instead of forwardRef(memo(...)), use memo(forwardRef(...)).");
@@ -1039,7 +1038,7 @@ var require_react_development = __commonJS({
           }
           return false;
         }
-        function memo(type, compare) {
+        function memo2(type, compare) {
           {
             if (!isValidElementType(type)) {
               error("memo: The first argument must be a component. Instead received: %s", type === null ? "null" : typeof type);
@@ -1077,7 +1076,7 @@ var require_react_development = __commonJS({
           }
           return dispatcher;
         }
-        function useContext3(Context) {
+        function useContext9(Context) {
           var dispatcher = resolveDispatcher();
           {
             if (Context._context !== void 0) {
@@ -1091,7 +1090,7 @@ var require_react_development = __commonJS({
           }
           return dispatcher.useContext(Context);
         }
-        function useState11(initialState) {
+        function useState12(initialState) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useState(initialState);
         }
@@ -1099,33 +1098,33 @@ var require_react_development = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useReducer(reducer, initialArg, init);
         }
-        function useRef6(initialValue) {
+        function useRef10(initialValue) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useRef(initialValue);
         }
-        function useEffect9(create, deps) {
+        function useEffect15(create2, deps) {
           var dispatcher = resolveDispatcher();
-          return dispatcher.useEffect(create, deps);
+          return dispatcher.useEffect(create2, deps);
         }
-        function useInsertionEffect(create, deps) {
+        function useInsertionEffect2(create2, deps) {
           var dispatcher = resolveDispatcher();
-          return dispatcher.useInsertionEffect(create, deps);
+          return dispatcher.useInsertionEffect(create2, deps);
         }
-        function useLayoutEffect(create, deps) {
+        function useLayoutEffect2(create2, deps) {
           var dispatcher = resolveDispatcher();
-          return dispatcher.useLayoutEffect(create, deps);
+          return dispatcher.useLayoutEffect(create2, deps);
         }
         function useCallback6(callback, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useCallback(callback, deps);
         }
-        function useMemo(create, deps) {
+        function useMemo6(create2, deps) {
           var dispatcher = resolveDispatcher();
-          return dispatcher.useMemo(create, deps);
+          return dispatcher.useMemo(create2, deps);
         }
-        function useImperativeHandle(ref, create, deps) {
+        function useImperativeHandle(ref, create2, deps) {
           var dispatcher = resolveDispatcher();
-          return dispatcher.useImperativeHandle(ref, create, deps);
+          return dispatcher.useImperativeHandle(ref, create2, deps);
         }
         function useDebugValue(value, formatterFn) {
           {
@@ -1141,7 +1140,7 @@ var require_react_development = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useDeferredValue(value);
         }
-        function useId() {
+        function useId2() {
           var dispatcher = resolveDispatcher();
           return dispatcher.useId();
         }
@@ -1253,9 +1252,9 @@ var require_react_development = __commonJS({
             return "";
           }
           {
-            var frame = componentFrameCache.get(fn);
-            if (frame !== void 0) {
-              return frame;
+            var frame2 = componentFrameCache.get(fn);
+            if (frame2 !== void 0) {
+              return frame2;
             }
           }
           var control;
@@ -1690,8 +1689,8 @@ var require_react_development = __commonJS({
           if (enqueueTaskImpl === null) {
             try {
               var requireString = ("require" + Math.random()).slice(0, 7);
-              var nodeRequire = module && module[requireString];
-              enqueueTaskImpl = nodeRequire.call(module, "timers").setImmediate;
+              var nodeRequire = module2 && module2[requireString];
+              enqueueTaskImpl = nodeRequire.call(module2, "timers").setImmediate;
             } catch (_err) {
               enqueueTaskImpl = function(callback) {
                 {
@@ -1872,29 +1871,29 @@ var require_react_development = __commonJS({
         exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactSharedInternals;
         exports.act = act;
         exports.cloneElement = cloneElement$1;
-        exports.createContext = createContext3;
+        exports.createContext = createContext9;
         exports.createElement = createElement$1;
         exports.createFactory = createFactory;
         exports.createRef = createRef;
-        exports.forwardRef = forwardRef3;
+        exports.forwardRef = forwardRef2;
         exports.isValidElement = isValidElement;
         exports.lazy = lazy;
-        exports.memo = memo;
+        exports.memo = memo2;
         exports.startTransition = startTransition;
         exports.unstable_act = act;
         exports.useCallback = useCallback6;
-        exports.useContext = useContext3;
+        exports.useContext = useContext9;
         exports.useDebugValue = useDebugValue;
         exports.useDeferredValue = useDeferredValue;
-        exports.useEffect = useEffect9;
-        exports.useId = useId;
+        exports.useEffect = useEffect15;
+        exports.useId = useId2;
         exports.useImperativeHandle = useImperativeHandle;
-        exports.useInsertionEffect = useInsertionEffect;
-        exports.useLayoutEffect = useLayoutEffect;
-        exports.useMemo = useMemo;
+        exports.useInsertionEffect = useInsertionEffect2;
+        exports.useLayoutEffect = useLayoutEffect2;
+        exports.useMemo = useMemo6;
         exports.useReducer = useReducer;
-        exports.useRef = useRef6;
-        exports.useState = useState11;
+        exports.useRef = useRef10;
+        exports.useState = useState12;
         exports.useSyncExternalStore = useSyncExternalStore;
         exports.useTransition = useTransition;
         exports.version = ReactVersion;
@@ -1908,12 +1907,12 @@ var require_react_development = __commonJS({
 
 // node_modules/react/index.js
 var require_react = __commonJS({
-  "node_modules/react/index.js"(exports, module) {
+  "node_modules/react/index.js"(exports, module2) {
     "use strict";
     if (false) {
-      module.exports = null;
+      module2.exports = null;
     } else {
-      module.exports = require_react_development();
+      module2.exports = require_react_development();
     }
   }
 });
@@ -2012,9 +2011,9 @@ var require_scheduler_development = __commonJS({
           };
         } else {
           var localDate = Date;
-          var initialTime = localDate.now();
+          var initialTime2 = localDate.now();
           exports.unstable_now = function() {
-            return localDate.now() - initialTime;
+            return localDate.now() - initialTime2;
           };
         }
         var maxSigned31BitInt = 1073741823;
@@ -2065,7 +2064,7 @@ var require_scheduler_development = __commonJS({
             }
           }
         }
-        function flushWork(hasTimeRemaining, initialTime2) {
+        function flushWork(hasTimeRemaining, initialTime3) {
           isHostCallbackScheduled = false;
           if (isHostTimeoutScheduled) {
             isHostTimeoutScheduled = false;
@@ -2076,7 +2075,7 @@ var require_scheduler_development = __commonJS({
           try {
             if (enableProfiling) {
               try {
-                return workLoop(hasTimeRemaining, initialTime2);
+                return workLoop(hasTimeRemaining, initialTime3);
               } catch (error) {
                 if (currentTask !== null) {
                   var currentTime = exports.unstable_now();
@@ -2086,7 +2085,7 @@ var require_scheduler_development = __commonJS({
                 throw error;
               }
             } else {
-              return workLoop(hasTimeRemaining, initialTime2);
+              return workLoop(hasTimeRemaining, initialTime3);
             }
           } finally {
             currentTask = null;
@@ -2094,8 +2093,8 @@ var require_scheduler_development = __commonJS({
             isPerformingWork = false;
           }
         }
-        function workLoop(hasTimeRemaining, initialTime2) {
-          var currentTime = initialTime2;
+        function workLoop(hasTimeRemaining, initialTime3) {
+          var currentTime = initialTime3;
           advanceTimers(currentTime);
           currentTask = peek(taskQueue);
           while (currentTask !== null && !enableSchedulerDebugging) {
@@ -2187,9 +2186,9 @@ var require_scheduler_development = __commonJS({
           var currentTime = exports.unstable_now();
           var startTime2;
           if (typeof options === "object" && options !== null) {
-            var delay = options.delay;
-            if (typeof delay === "number" && delay > 0) {
-              startTime2 = currentTime + delay;
+            var delay2 = options.delay;
+            if (typeof delay2 === "number" && delay2 > 0) {
+              startTime2 = currentTime + delay2;
             } else {
               startTime2 = currentTime;
             }
@@ -2370,12 +2369,12 @@ var require_scheduler_development = __commonJS({
 
 // node_modules/scheduler/index.js
 var require_scheduler = __commonJS({
-  "node_modules/scheduler/index.js"(exports, module) {
+  "node_modules/scheduler/index.js"(exports, module2) {
     "use strict";
     if (false) {
-      module.exports = null;
+      module2.exports = null;
     } else {
-      module.exports = require_scheduler_development();
+      module2.exports = require_scheduler_development();
     }
   }
 });
@@ -2390,9 +2389,9 @@ var require_react_dom_development = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React11 = require_react();
+        var React14 = require_react();
         var Scheduler = require_scheduler();
-        var ReactSharedInternals = React11.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React14.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -3320,9 +3319,9 @@ var require_react_dom_development = __commonJS({
             return "";
           }
           {
-            var frame = componentFrameCache.get(fn);
-            if (frame !== void 0) {
-              return frame;
+            var frame2 = componentFrameCache.get(fn);
+            if (frame2 !== void 0) {
+              return frame2;
             }
           }
           var control;
@@ -3999,7 +3998,7 @@ var require_react_dom_development = __commonJS({
           {
             if (props.value == null) {
               if (typeof props.children === "object" && props.children !== null) {
-                React11.Children.forEach(props.children, function(child) {
+                React14.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -7359,25 +7358,25 @@ var require_react_dom_development = __commonJS({
           }
           return listenerWrapper.bind(null, domEventName, eventSystemFlags, targetContainer);
         }
-        function dispatchDiscreteEvent(domEventName, eventSystemFlags, container, nativeEvent) {
+        function dispatchDiscreteEvent(domEventName, eventSystemFlags, container2, nativeEvent) {
           var previousPriority = getCurrentUpdatePriority();
           var prevTransition = ReactCurrentBatchConfig.transition;
           ReactCurrentBatchConfig.transition = null;
           try {
             setCurrentUpdatePriority(DiscreteEventPriority);
-            dispatchEvent(domEventName, eventSystemFlags, container, nativeEvent);
+            dispatchEvent(domEventName, eventSystemFlags, container2, nativeEvent);
           } finally {
             setCurrentUpdatePriority(previousPriority);
             ReactCurrentBatchConfig.transition = prevTransition;
           }
         }
-        function dispatchContinuousEvent(domEventName, eventSystemFlags, container, nativeEvent) {
+        function dispatchContinuousEvent(domEventName, eventSystemFlags, container2, nativeEvent) {
           var previousPriority = getCurrentUpdatePriority();
           var prevTransition = ReactCurrentBatchConfig.transition;
           ReactCurrentBatchConfig.transition = null;
           try {
             setCurrentUpdatePriority(ContinuousEventPriority);
-            dispatchEvent(domEventName, eventSystemFlags, container, nativeEvent);
+            dispatchEvent(domEventName, eventSystemFlags, container2, nativeEvent);
           } finally {
             setCurrentUpdatePriority(previousPriority);
             ReactCurrentBatchConfig.transition = prevTransition;
@@ -9081,8 +9080,8 @@ var require_react_dom_development = __commonJS({
                 }
                 var nodeTag = node.tag;
                 if (nodeTag === HostRoot || nodeTag === HostPortal) {
-                  var container = node.stateNode.containerInfo;
-                  if (isMatchingRootContainer(container, targetContainerNode)) {
+                  var container2 = node.stateNode.containerInfo;
+                  if (isMatchingRootContainer(container2, targetContainerNode)) {
                     break;
                   }
                   if (nodeTag === HostPortal) {
@@ -9098,8 +9097,8 @@ var require_react_dom_development = __commonJS({
                       grandNode = grandNode.return;
                     }
                   }
-                  while (container !== null) {
-                    var parentNode = getClosestInstanceFromNode(container);
+                  while (container2 !== null) {
+                    var parentNode = getClosestInstanceFromNode(container2);
                     if (parentNode === null) {
                       return;
                     }
@@ -9108,7 +9107,7 @@ var require_react_dom_development = __commonJS({
                       node = ancestorInst = parentNode;
                       continue mainLoop;
                     }
-                    container = container.parentNode;
+                    container2 = container2.parentNode;
                   }
                 }
                 node = node.return;
@@ -9360,10 +9359,10 @@ var require_react_dom_development = __commonJS({
         function getOwnerDocumentFromRootContainer(rootContainerElement) {
           return rootContainerElement.nodeType === DOCUMENT_NODE ? rootContainerElement : rootContainerElement.ownerDocument;
         }
-        function noop() {
+        function noop2() {
         }
         function trapClickOnNonInteractiveElement(node) {
-          node.onclick = noop;
+          node.onclick = noop2;
         }
         function setInitialDOMProperties(tag, domElement, rootContainerElement, nextProps, isCustomComponentTag) {
           for (var propKey in nextProps) {
@@ -10238,9 +10237,9 @@ var require_react_dom_development = __commonJS({
               break;
             }
             default: {
-              var container = nodeType === COMMENT_NODE ? rootContainerInstance.parentNode : rootContainerInstance;
-              var ownNamespace = container.namespaceURI || null;
-              type = container.tagName;
+              var container2 = nodeType === COMMENT_NODE ? rootContainerInstance.parentNode : rootContainerInstance;
+              var ownNamespace = container2.namespaceURI || null;
+              type = container2.tagName;
               namespace = getChildNamespace(ownNamespace, type);
               break;
             }
@@ -10388,16 +10387,16 @@ var require_react_dom_development = __commonJS({
         function appendChild(parentInstance, child) {
           parentInstance.appendChild(child);
         }
-        function appendChildToContainer(container, child) {
+        function appendChildToContainer(container2, child) {
           var parentNode;
-          if (container.nodeType === COMMENT_NODE) {
-            parentNode = container.parentNode;
-            parentNode.insertBefore(child, container);
+          if (container2.nodeType === COMMENT_NODE) {
+            parentNode = container2.parentNode;
+            parentNode.insertBefore(child, container2);
           } else {
-            parentNode = container;
+            parentNode = container2;
             parentNode.appendChild(child);
           }
-          var reactRootContainer = container._reactRootContainer;
+          var reactRootContainer = container2._reactRootContainer;
           if ((reactRootContainer === null || reactRootContainer === void 0) && parentNode.onclick === null) {
             trapClickOnNonInteractiveElement(parentNode);
           }
@@ -10405,21 +10404,21 @@ var require_react_dom_development = __commonJS({
         function insertBefore(parentInstance, child, beforeChild) {
           parentInstance.insertBefore(child, beforeChild);
         }
-        function insertInContainerBefore(container, child, beforeChild) {
-          if (container.nodeType === COMMENT_NODE) {
-            container.parentNode.insertBefore(child, beforeChild);
+        function insertInContainerBefore(container2, child, beforeChild) {
+          if (container2.nodeType === COMMENT_NODE) {
+            container2.parentNode.insertBefore(child, beforeChild);
           } else {
-            container.insertBefore(child, beforeChild);
+            container2.insertBefore(child, beforeChild);
           }
         }
         function removeChild(parentInstance, child) {
           parentInstance.removeChild(child);
         }
-        function removeChildFromContainer(container, child) {
-          if (container.nodeType === COMMENT_NODE) {
-            container.parentNode.removeChild(child);
+        function removeChildFromContainer(container2, child) {
+          if (container2.nodeType === COMMENT_NODE) {
+            container2.parentNode.removeChild(child);
           } else {
-            container.removeChild(child);
+            container2.removeChild(child);
           }
         }
         function clearSuspenseBoundary(parentInstance, suspenseInstance) {
@@ -10446,13 +10445,13 @@ var require_react_dom_development = __commonJS({
           } while (node);
           retryIfBlockedOn(suspenseInstance);
         }
-        function clearSuspenseBoundaryFromContainer(container, suspenseInstance) {
-          if (container.nodeType === COMMENT_NODE) {
-            clearSuspenseBoundary(container.parentNode, suspenseInstance);
-          } else if (container.nodeType === ELEMENT_NODE) {
-            clearSuspenseBoundary(container, suspenseInstance);
+        function clearSuspenseBoundaryFromContainer(container2, suspenseInstance) {
+          if (container2.nodeType === COMMENT_NODE) {
+            clearSuspenseBoundary(container2.parentNode, suspenseInstance);
+          } else if (container2.nodeType === ELEMENT_NODE) {
+            clearSuspenseBoundary(container2, suspenseInstance);
           }
-          retryIfBlockedOn(container);
+          retryIfBlockedOn(container2);
         }
         function hideInstance(instance) {
           instance = instance;
@@ -10475,12 +10474,12 @@ var require_react_dom_development = __commonJS({
         function unhideTextInstance(textInstance, text) {
           textInstance.nodeValue = text;
         }
-        function clearContainer(container) {
-          if (container.nodeType === ELEMENT_NODE) {
-            container.textContent = "";
-          } else if (container.nodeType === DOCUMENT_NODE) {
-            if (container.documentElement) {
-              container.removeChild(container.documentElement);
+        function clearContainer(container2) {
+          if (container2.nodeType === ELEMENT_NODE) {
+            container2.textContent = "";
+          } else if (container2.nodeType === DOCUMENT_NODE) {
+            if (container2.documentElement) {
+              container2.removeChild(container2.documentElement);
             }
           }
         }
@@ -10618,8 +10617,8 @@ var require_react_dom_development = __commonJS({
           }
           return null;
         }
-        function commitHydratedContainer(container) {
-          retryIfBlockedOn(container);
+        function commitHydratedContainer(container2) {
+          retryIfBlockedOn(container2);
         }
         function commitHydratedSuspenseInstance(suspenseInstance) {
           retryIfBlockedOn(suspenseInstance);
@@ -11114,8 +11113,8 @@ var require_react_dom_development = __commonJS({
         function getTreeId() {
           var overflow = treeContextOverflow;
           var idWithLeadingBit = treeContextId;
-          var id = idWithLeadingBit & ~getLeadingBit(idWithLeadingBit);
-          return id.toString(32) + overflow;
+          var id3 = idWithLeadingBit & ~getLeadingBit(idWithLeadingBit);
+          return id3.toString(32) + overflow;
         }
         function pushTreeFork(workInProgress2, totalChildren) {
           warnIfNotHydrating();
@@ -11144,9 +11143,9 @@ var require_react_dom_development = __commonJS({
             var restOfBaseLength = baseLength - numberOfOverflowBits;
             var restOfLength = getBitLength(totalChildren) + restOfBaseLength;
             var restOfNewBits = slot << restOfBaseLength;
-            var id = restOfNewBits | restOfBaseId;
+            var id3 = restOfNewBits | restOfBaseId;
             var overflow = newOverflow + baseOverflow;
-            treeContextId = 1 << restOfLength | id;
+            treeContextId = 1 << restOfLength | id3;
             treeContextOverflow = overflow;
           } else {
             var newBits = slot << baseLength;
@@ -11166,11 +11165,11 @@ var require_react_dom_development = __commonJS({
             pushTreeId(workInProgress2, numberOfForks, slotIndex);
           }
         }
-        function getBitLength(number) {
-          return 32 - clz32(number);
+        function getBitLength(number2) {
+          return 32 - clz32(number2);
         }
-        function getLeadingBit(id) {
-          return 1 << getBitLength(id) - 1;
+        function getLeadingBit(id3) {
+          return 1 << getBitLength(id3) - 1;
         }
         function popTreeContext(workInProgress2) {
           while (workInProgress2 === treeForkProvider) {
@@ -13984,10 +13983,10 @@ var require_react_dom_development = __commonJS({
         function rerenderState(initialState) {
           return rerenderReducer(basicStateReducer);
         }
-        function pushEffect(tag, create, destroy, deps) {
+        function pushEffect(tag, create2, destroy, deps) {
           var effect = {
             tag,
-            create,
+            create: create2,
             destroy,
             deps,
             // Circular
@@ -14025,13 +14024,13 @@ var require_react_dom_development = __commonJS({
           var hook = updateWorkInProgressHook();
           return hook.memoizedState;
         }
-        function mountEffectImpl(fiberFlags, hookFlags, create, deps) {
+        function mountEffectImpl(fiberFlags, hookFlags, create2, deps) {
           var hook = mountWorkInProgressHook();
           var nextDeps = deps === void 0 ? null : deps;
           currentlyRenderingFiber$1.flags |= fiberFlags;
-          hook.memoizedState = pushEffect(HasEffect | hookFlags, create, void 0, nextDeps);
+          hook.memoizedState = pushEffect(HasEffect | hookFlags, create2, void 0, nextDeps);
         }
-        function updateEffectImpl(fiberFlags, hookFlags, create, deps) {
+        function updateEffectImpl(fiberFlags, hookFlags, create2, deps) {
           var hook = updateWorkInProgressHook();
           var nextDeps = deps === void 0 ? null : deps;
           var destroy = void 0;
@@ -14041,31 +14040,31 @@ var require_react_dom_development = __commonJS({
             if (nextDeps !== null) {
               var prevDeps = prevEffect.deps;
               if (areHookInputsEqual(nextDeps, prevDeps)) {
-                hook.memoizedState = pushEffect(hookFlags, create, destroy, nextDeps);
+                hook.memoizedState = pushEffect(hookFlags, create2, destroy, nextDeps);
                 return;
               }
             }
           }
           currentlyRenderingFiber$1.flags |= fiberFlags;
-          hook.memoizedState = pushEffect(HasEffect | hookFlags, create, destroy, nextDeps);
+          hook.memoizedState = pushEffect(HasEffect | hookFlags, create2, destroy, nextDeps);
         }
-        function mountEffect(create, deps) {
+        function mountEffect(create2, deps) {
           if ((currentlyRenderingFiber$1.mode & StrictEffectsMode) !== NoMode) {
-            return mountEffectImpl(MountPassiveDev | Passive | PassiveStatic, Passive$1, create, deps);
+            return mountEffectImpl(MountPassiveDev | Passive | PassiveStatic, Passive$1, create2, deps);
           } else {
-            return mountEffectImpl(Passive | PassiveStatic, Passive$1, create, deps);
+            return mountEffectImpl(Passive | PassiveStatic, Passive$1, create2, deps);
           }
         }
-        function updateEffect(create, deps) {
-          return updateEffectImpl(Passive, Passive$1, create, deps);
+        function updateEffect(create2, deps) {
+          return updateEffectImpl(Passive, Passive$1, create2, deps);
         }
-        function mountInsertionEffect(create, deps) {
-          return mountEffectImpl(Update, Insertion, create, deps);
+        function mountInsertionEffect(create2, deps) {
+          return mountEffectImpl(Update, Insertion, create2, deps);
         }
-        function updateInsertionEffect(create, deps) {
-          return updateEffectImpl(Update, Insertion, create, deps);
+        function updateInsertionEffect(create2, deps) {
+          return updateEffectImpl(Update, Insertion, create2, deps);
         }
-        function mountLayoutEffect(create, deps) {
+        function mountLayoutEffect(create2, deps) {
           var fiberFlags = Update;
           {
             fiberFlags |= LayoutStatic;
@@ -14073,15 +14072,15 @@ var require_react_dom_development = __commonJS({
           if ((currentlyRenderingFiber$1.mode & StrictEffectsMode) !== NoMode) {
             fiberFlags |= MountLayoutDev;
           }
-          return mountEffectImpl(fiberFlags, Layout, create, deps);
+          return mountEffectImpl(fiberFlags, Layout, create2, deps);
         }
-        function updateLayoutEffect(create, deps) {
-          return updateEffectImpl(Update, Layout, create, deps);
+        function updateLayoutEffect(create2, deps) {
+          return updateEffectImpl(Update, Layout, create2, deps);
         }
-        function imperativeHandleEffect(create, ref) {
+        function imperativeHandleEffect(create2, ref) {
           if (typeof ref === "function") {
             var refCallback = ref;
-            var _inst = create();
+            var _inst = create2();
             refCallback(_inst);
             return function() {
               refCallback(null);
@@ -14093,17 +14092,17 @@ var require_react_dom_development = __commonJS({
                 error("Expected useImperativeHandle() first argument to either be a ref callback or React.createRef() object. Instead received: %s.", "an object with keys {" + Object.keys(refObject).join(", ") + "}");
               }
             }
-            var _inst2 = create();
+            var _inst2 = create2();
             refObject.current = _inst2;
             return function() {
               refObject.current = null;
             };
           }
         }
-        function mountImperativeHandle(ref, create, deps) {
+        function mountImperativeHandle(ref, create2, deps) {
           {
-            if (typeof create !== "function") {
-              error("Expected useImperativeHandle() second argument to be a function that creates a handle. Instead received: %s.", create !== null ? typeof create : "null");
+            if (typeof create2 !== "function") {
+              error("Expected useImperativeHandle() second argument to be a function that creates a handle. Instead received: %s.", create2 !== null ? typeof create2 : "null");
             }
           }
           var effectDeps = deps !== null && deps !== void 0 ? deps.concat([ref]) : null;
@@ -14114,16 +14113,16 @@ var require_react_dom_development = __commonJS({
           if ((currentlyRenderingFiber$1.mode & StrictEffectsMode) !== NoMode) {
             fiberFlags |= MountLayoutDev;
           }
-          return mountEffectImpl(fiberFlags, Layout, imperativeHandleEffect.bind(null, create, ref), effectDeps);
+          return mountEffectImpl(fiberFlags, Layout, imperativeHandleEffect.bind(null, create2, ref), effectDeps);
         }
-        function updateImperativeHandle(ref, create, deps) {
+        function updateImperativeHandle(ref, create2, deps) {
           {
-            if (typeof create !== "function") {
-              error("Expected useImperativeHandle() second argument to be a function that creates a handle. Instead received: %s.", create !== null ? typeof create : "null");
+            if (typeof create2 !== "function") {
+              error("Expected useImperativeHandle() second argument to be a function that creates a handle. Instead received: %s.", create2 !== null ? typeof create2 : "null");
             }
           }
           var effectDeps = deps !== null && deps !== void 0 ? deps.concat([ref]) : null;
-          return updateEffectImpl(Update, Layout, imperativeHandleEffect.bind(null, create, ref), effectDeps);
+          return updateEffectImpl(Update, Layout, imperativeHandleEffect.bind(null, create2, ref), effectDeps);
         }
         function mountDebugValue(value, formatterFn) {
         }
@@ -14268,26 +14267,26 @@ var require_react_dom_development = __commonJS({
           var hook = mountWorkInProgressHook();
           var root2 = getWorkInProgressRoot();
           var identifierPrefix = root2.identifierPrefix;
-          var id;
+          var id3;
           if (getIsHydrating()) {
             var treeId = getTreeId();
-            id = ":" + identifierPrefix + "R" + treeId;
+            id3 = ":" + identifierPrefix + "R" + treeId;
             var localId = localIdCounter++;
             if (localId > 0) {
-              id += "H" + localId.toString(32);
+              id3 += "H" + localId.toString(32);
             }
-            id += ":";
+            id3 += ":";
           } else {
             var globalClientId = globalClientIdCounter++;
-            id = ":" + identifierPrefix + "r" + globalClientId.toString(32) + ":";
+            id3 = ":" + identifierPrefix + "r" + globalClientId.toString(32) + ":";
           }
-          hook.memoizedState = id;
-          return id;
+          hook.memoizedState = id3;
+          return id3;
         }
         function updateId() {
           var hook = updateWorkInProgressHook();
-          var id = hook.memoizedState;
-          return id;
+          var id3 = hook.memoizedState;
+          return id3;
         }
         function dispatchReducerAction(fiber, queue, action) {
           {
@@ -14445,38 +14444,38 @@ var require_react_dom_development = __commonJS({
               mountHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create, deps) {
+            useEffect: function(create2, deps) {
               currentHookNameInDev = "useEffect";
               mountHookTypesDev();
               checkDepsAreArrayDev(deps);
-              return mountEffect(create, deps);
+              return mountEffect(create2, deps);
             },
-            useImperativeHandle: function(ref, create, deps) {
+            useImperativeHandle: function(ref, create2, deps) {
               currentHookNameInDev = "useImperativeHandle";
               mountHookTypesDev();
               checkDepsAreArrayDev(deps);
-              return mountImperativeHandle(ref, create, deps);
+              return mountImperativeHandle(ref, create2, deps);
             },
-            useInsertionEffect: function(create, deps) {
+            useInsertionEffect: function(create2, deps) {
               currentHookNameInDev = "useInsertionEffect";
               mountHookTypesDev();
               checkDepsAreArrayDev(deps);
-              return mountInsertionEffect(create, deps);
+              return mountInsertionEffect(create2, deps);
             },
-            useLayoutEffect: function(create, deps) {
+            useLayoutEffect: function(create2, deps) {
               currentHookNameInDev = "useLayoutEffect";
               mountHookTypesDev();
               checkDepsAreArrayDev(deps);
-              return mountLayoutEffect(create, deps);
+              return mountLayoutEffect(create2, deps);
             },
-            useMemo: function(create, deps) {
+            useMemo: function(create2, deps) {
               currentHookNameInDev = "useMemo";
               mountHookTypesDev();
               checkDepsAreArrayDev(deps);
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnMountInDEV;
               try {
-                return mountMemo(create, deps);
+                return mountMemo(create2, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -14554,33 +14553,33 @@ var require_react_dom_development = __commonJS({
               updateHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create, deps) {
+            useEffect: function(create2, deps) {
               currentHookNameInDev = "useEffect";
               updateHookTypesDev();
-              return mountEffect(create, deps);
+              return mountEffect(create2, deps);
             },
-            useImperativeHandle: function(ref, create, deps) {
+            useImperativeHandle: function(ref, create2, deps) {
               currentHookNameInDev = "useImperativeHandle";
               updateHookTypesDev();
-              return mountImperativeHandle(ref, create, deps);
+              return mountImperativeHandle(ref, create2, deps);
             },
-            useInsertionEffect: function(create, deps) {
+            useInsertionEffect: function(create2, deps) {
               currentHookNameInDev = "useInsertionEffect";
               updateHookTypesDev();
-              return mountInsertionEffect(create, deps);
+              return mountInsertionEffect(create2, deps);
             },
-            useLayoutEffect: function(create, deps) {
+            useLayoutEffect: function(create2, deps) {
               currentHookNameInDev = "useLayoutEffect";
               updateHookTypesDev();
-              return mountLayoutEffect(create, deps);
+              return mountLayoutEffect(create2, deps);
             },
-            useMemo: function(create, deps) {
+            useMemo: function(create2, deps) {
               currentHookNameInDev = "useMemo";
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnMountInDEV;
               try {
-                return mountMemo(create, deps);
+                return mountMemo(create2, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -14658,33 +14657,33 @@ var require_react_dom_development = __commonJS({
               updateHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create, deps) {
+            useEffect: function(create2, deps) {
               currentHookNameInDev = "useEffect";
               updateHookTypesDev();
-              return updateEffect(create, deps);
+              return updateEffect(create2, deps);
             },
-            useImperativeHandle: function(ref, create, deps) {
+            useImperativeHandle: function(ref, create2, deps) {
               currentHookNameInDev = "useImperativeHandle";
               updateHookTypesDev();
-              return updateImperativeHandle(ref, create, deps);
+              return updateImperativeHandle(ref, create2, deps);
             },
-            useInsertionEffect: function(create, deps) {
+            useInsertionEffect: function(create2, deps) {
               currentHookNameInDev = "useInsertionEffect";
               updateHookTypesDev();
-              return updateInsertionEffect(create, deps);
+              return updateInsertionEffect(create2, deps);
             },
-            useLayoutEffect: function(create, deps) {
+            useLayoutEffect: function(create2, deps) {
               currentHookNameInDev = "useLayoutEffect";
               updateHookTypesDev();
-              return updateLayoutEffect(create, deps);
+              return updateLayoutEffect(create2, deps);
             },
-            useMemo: function(create, deps) {
+            useMemo: function(create2, deps) {
               currentHookNameInDev = "useMemo";
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
               try {
-                return updateMemo(create, deps);
+                return updateMemo(create2, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -14762,33 +14761,33 @@ var require_react_dom_development = __commonJS({
               updateHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create, deps) {
+            useEffect: function(create2, deps) {
               currentHookNameInDev = "useEffect";
               updateHookTypesDev();
-              return updateEffect(create, deps);
+              return updateEffect(create2, deps);
             },
-            useImperativeHandle: function(ref, create, deps) {
+            useImperativeHandle: function(ref, create2, deps) {
               currentHookNameInDev = "useImperativeHandle";
               updateHookTypesDev();
-              return updateImperativeHandle(ref, create, deps);
+              return updateImperativeHandle(ref, create2, deps);
             },
-            useInsertionEffect: function(create, deps) {
+            useInsertionEffect: function(create2, deps) {
               currentHookNameInDev = "useInsertionEffect";
               updateHookTypesDev();
-              return updateInsertionEffect(create, deps);
+              return updateInsertionEffect(create2, deps);
             },
-            useLayoutEffect: function(create, deps) {
+            useLayoutEffect: function(create2, deps) {
               currentHookNameInDev = "useLayoutEffect";
               updateHookTypesDev();
-              return updateLayoutEffect(create, deps);
+              return updateLayoutEffect(create2, deps);
             },
-            useMemo: function(create, deps) {
+            useMemo: function(create2, deps) {
               currentHookNameInDev = "useMemo";
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnRerenderInDEV;
               try {
-                return updateMemo(create, deps);
+                return updateMemo(create2, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -14869,38 +14868,38 @@ var require_react_dom_development = __commonJS({
               mountHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create, deps) {
+            useEffect: function(create2, deps) {
               currentHookNameInDev = "useEffect";
               warnInvalidHookAccess();
               mountHookTypesDev();
-              return mountEffect(create, deps);
+              return mountEffect(create2, deps);
             },
-            useImperativeHandle: function(ref, create, deps) {
+            useImperativeHandle: function(ref, create2, deps) {
               currentHookNameInDev = "useImperativeHandle";
               warnInvalidHookAccess();
               mountHookTypesDev();
-              return mountImperativeHandle(ref, create, deps);
+              return mountImperativeHandle(ref, create2, deps);
             },
-            useInsertionEffect: function(create, deps) {
+            useInsertionEffect: function(create2, deps) {
               currentHookNameInDev = "useInsertionEffect";
               warnInvalidHookAccess();
               mountHookTypesDev();
-              return mountInsertionEffect(create, deps);
+              return mountInsertionEffect(create2, deps);
             },
-            useLayoutEffect: function(create, deps) {
+            useLayoutEffect: function(create2, deps) {
               currentHookNameInDev = "useLayoutEffect";
               warnInvalidHookAccess();
               mountHookTypesDev();
-              return mountLayoutEffect(create, deps);
+              return mountLayoutEffect(create2, deps);
             },
-            useMemo: function(create, deps) {
+            useMemo: function(create2, deps) {
               currentHookNameInDev = "useMemo";
               warnInvalidHookAccess();
               mountHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnMountInDEV;
               try {
-                return mountMemo(create, deps);
+                return mountMemo(create2, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -14990,38 +14989,38 @@ var require_react_dom_development = __commonJS({
               updateHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create, deps) {
+            useEffect: function(create2, deps) {
               currentHookNameInDev = "useEffect";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateEffect(create, deps);
+              return updateEffect(create2, deps);
             },
-            useImperativeHandle: function(ref, create, deps) {
+            useImperativeHandle: function(ref, create2, deps) {
               currentHookNameInDev = "useImperativeHandle";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateImperativeHandle(ref, create, deps);
+              return updateImperativeHandle(ref, create2, deps);
             },
-            useInsertionEffect: function(create, deps) {
+            useInsertionEffect: function(create2, deps) {
               currentHookNameInDev = "useInsertionEffect";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateInsertionEffect(create, deps);
+              return updateInsertionEffect(create2, deps);
             },
-            useLayoutEffect: function(create, deps) {
+            useLayoutEffect: function(create2, deps) {
               currentHookNameInDev = "useLayoutEffect";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateLayoutEffect(create, deps);
+              return updateLayoutEffect(create2, deps);
             },
-            useMemo: function(create, deps) {
+            useMemo: function(create2, deps) {
               currentHookNameInDev = "useMemo";
               warnInvalidHookAccess();
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
               try {
-                return updateMemo(create, deps);
+                return updateMemo(create2, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -15111,38 +15110,38 @@ var require_react_dom_development = __commonJS({
               updateHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create, deps) {
+            useEffect: function(create2, deps) {
               currentHookNameInDev = "useEffect";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateEffect(create, deps);
+              return updateEffect(create2, deps);
             },
-            useImperativeHandle: function(ref, create, deps) {
+            useImperativeHandle: function(ref, create2, deps) {
               currentHookNameInDev = "useImperativeHandle";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateImperativeHandle(ref, create, deps);
+              return updateImperativeHandle(ref, create2, deps);
             },
-            useInsertionEffect: function(create, deps) {
+            useInsertionEffect: function(create2, deps) {
               currentHookNameInDev = "useInsertionEffect";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateInsertionEffect(create, deps);
+              return updateInsertionEffect(create2, deps);
             },
-            useLayoutEffect: function(create, deps) {
+            useLayoutEffect: function(create2, deps) {
               currentHookNameInDev = "useLayoutEffect";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateLayoutEffect(create, deps);
+              return updateLayoutEffect(create2, deps);
             },
-            useMemo: function(create, deps) {
+            useMemo: function(create2, deps) {
               currentHookNameInDev = "useMemo";
               warnInvalidHookAccess();
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
               try {
-                return updateMemo(create, deps);
+                return updateMemo(create2, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -18867,13 +18866,13 @@ var require_react_dom_development = __commonJS({
                     markComponentLayoutEffectMountStarted(finishedWork);
                   }
                 }
-                var create = effect.create;
+                var create2 = effect.create;
                 {
                   if ((flags & Insertion) !== NoFlags$1) {
                     setIsRunningInsertionEffect(true);
                   }
                 }
-                effect.destroy = create();
+                effect.destroy = create2();
                 {
                   if ((flags & Insertion) !== NoFlags$1) {
                     setIsRunningInsertionEffect(false);
@@ -18919,7 +18918,7 @@ var require_react_dom_development = __commonJS({
               switch (finishedWork.tag) {
                 case Profiler: {
                   var passiveEffectDuration = finishedWork.stateNode.passiveEffectDuration;
-                  var _finishedWork$memoize = finishedWork.memoizedProps, id = _finishedWork$memoize.id, onPostCommit = _finishedWork$memoize.onPostCommit;
+                  var _finishedWork$memoize = finishedWork.memoizedProps, id3 = _finishedWork$memoize.id, onPostCommit = _finishedWork$memoize.onPostCommit;
                   var commitTime2 = getCommitTime();
                   var phase = finishedWork.alternate === null ? "mount" : "update";
                   {
@@ -18928,7 +18927,7 @@ var require_react_dom_development = __commonJS({
                     }
                   }
                   if (typeof onPostCommit === "function") {
-                    onPostCommit(id, phase, passiveEffectDuration, commitTime2);
+                    onPostCommit(id3, phase, passiveEffectDuration, commitTime2);
                   }
                   var parentFiber = finishedWork.return;
                   outer: while (parentFiber !== null) {
@@ -22041,14 +22040,14 @@ var require_react_dom_development = __commonJS({
         var findHostInstancesForRefresh = function(root2, families) {
           {
             var hostInstances = /* @__PURE__ */ new Set();
-            var types = new Set(families.map(function(family) {
+            var types2 = new Set(families.map(function(family) {
               return family.current;
             }));
-            findHostInstancesForMatchingFibersRecursively(root2.current, types, hostInstances);
+            findHostInstancesForMatchingFibersRecursively(root2.current, types2, hostInstances);
             return hostInstances;
           }
         };
-        function findHostInstancesForMatchingFibersRecursively(fiber, types, hostInstances) {
+        function findHostInstancesForMatchingFibersRecursively(fiber, types2, hostInstances) {
           {
             var child = fiber.child, sibling = fiber.sibling, tag = fiber.tag, type = fiber.type;
             var candidateType = null;
@@ -22064,7 +22063,7 @@ var require_react_dom_development = __commonJS({
             }
             var didMatch = false;
             if (candidateType !== null) {
-              if (types.has(candidateType)) {
+              if (types2.has(candidateType)) {
                 didMatch = true;
               }
             }
@@ -22072,11 +22071,11 @@ var require_react_dom_development = __commonJS({
               findHostInstancesForFiberShallowly(fiber, hostInstances);
             } else {
               if (child !== null) {
-                findHostInstancesForMatchingFibersRecursively(child, types, hostInstances);
+                findHostInstancesForMatchingFibersRecursively(child, types2, hostInstances);
               }
             }
             if (sibling !== null) {
-              findHostInstancesForMatchingFibersRecursively(sibling, types, hostInstances);
+              findHostInstancesForMatchingFibersRecursively(sibling, types2, hostInstances);
             }
           }
         }
@@ -22707,21 +22706,21 @@ var require_react_dom_development = __commonJS({
           scheduleInitialHydrationOnRoot(root2, lane, eventTime);
           return root2;
         }
-        function updateContainer(element, container, parentComponent, callback) {
+        function updateContainer(element, container2, parentComponent, callback) {
           {
-            onScheduleRoot(container, element);
+            onScheduleRoot(container2, element);
           }
-          var current$1 = container.current;
+          var current$1 = container2.current;
           var eventTime = requestEventTime();
           var lane = requestUpdateLane(current$1);
           {
             markRenderScheduled(lane);
           }
           var context = getContextForSubtree(parentComponent);
-          if (container.context === null) {
-            container.context = context;
+          if (container2.context === null) {
+            container2.context = context;
           } else {
-            container.pendingContext = context;
+            container2.pendingContext = context;
           }
           {
             if (isRendering && current !== null && !didWarnAboutNestedUpdates) {
@@ -22749,8 +22748,8 @@ var require_react_dom_development = __commonJS({
           }
           return lane;
         }
-        function getPublicRootInstance(container) {
-          var containerFiber = container.current;
+        function getPublicRootInstance(container2) {
+          var containerFiber = container2.current;
           if (!containerFiber.child) {
             return null;
           }
@@ -22916,16 +22915,16 @@ var require_react_dom_development = __commonJS({
           var copyWithSet = function(obj, path, value) {
             return copyWithSetImpl(obj, path, 0, value);
           };
-          var findHook = function(fiber, id) {
+          var findHook = function(fiber, id3) {
             var currentHook2 = fiber.memoizedState;
-            while (currentHook2 !== null && id > 0) {
+            while (currentHook2 !== null && id3 > 0) {
               currentHook2 = currentHook2.next;
-              id--;
+              id3--;
             }
             return currentHook2;
           };
-          overrideHookState = function(fiber, id, path, value) {
-            var hook = findHook(fiber, id);
+          overrideHookState = function(fiber, id3, path, value) {
+            var hook = findHook(fiber, id3);
             if (hook !== null) {
               var newState = copyWithSet(hook.memoizedState, path, value);
               hook.memoizedState = newState;
@@ -22937,8 +22936,8 @@ var require_react_dom_development = __commonJS({
               }
             }
           };
-          overrideHookStateDeletePath = function(fiber, id, path) {
-            var hook = findHook(fiber, id);
+          overrideHookStateDeletePath = function(fiber, id3, path) {
+            var hook = findHook(fiber, id3);
             if (hook !== null) {
               var newState = copyWithDelete(hook.memoizedState, path);
               hook.memoizedState = newState;
@@ -22950,8 +22949,8 @@ var require_react_dom_development = __commonJS({
               }
             }
           };
-          overrideHookStateRenamePath = function(fiber, id, oldPath, newPath) {
-            var hook = findHook(fiber, id);
+          overrideHookStateRenamePath = function(fiber, id3, oldPath, newPath) {
+            var hook = findHook(fiber, id3);
             if (hook !== null) {
               var newState = copyWithRename(hook.memoizedState, oldPath, newPath);
               hook.memoizedState = newState;
@@ -23074,11 +23073,11 @@ var require_react_dom_development = __commonJS({
             } else if (typeof arguments[1] !== "undefined") {
               error("You passed a second argument to root.render(...) but it only accepts one argument.");
             }
-            var container = root2.containerInfo;
-            if (container.nodeType !== COMMENT_NODE) {
+            var container2 = root2.containerInfo;
+            if (container2.nodeType !== COMMENT_NODE) {
               var hostInstance = findHostInstanceWithNoPortals(root2.current);
               if (hostInstance) {
-                if (hostInstance.parentNode !== container) {
+                if (hostInstance.parentNode !== container2) {
                   error("render(...): It looks like the React-rendered content of the root container was removed without using React. This is not supported and will cause errors. Instead, call root.unmount() to empty a root's container.");
                 }
               }
@@ -23095,7 +23094,7 @@ var require_react_dom_development = __commonJS({
           var root2 = this._internalRoot;
           if (root2 !== null) {
             this._internalRoot = null;
-            var container = root2.containerInfo;
+            var container2 = root2.containerInfo;
             {
               if (isAlreadyRendering()) {
                 error("Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.");
@@ -23104,14 +23103,14 @@ var require_react_dom_development = __commonJS({
             flushSync(function() {
               updateContainer(null, root2, null, null);
             });
-            unmarkContainerAsRoot(container);
+            unmarkContainerAsRoot(container2);
           }
         };
-        function createRoot(container, options2) {
-          if (!isValidContainer(container)) {
+        function createRoot(container2, options2) {
+          if (!isValidContainer(container2)) {
             throw new Error("createRoot(...): Target container is not a DOM element.");
           }
-          warnIfReactDOMContainerInDEV(container);
+          warnIfReactDOMContainerInDEV(container2);
           var isStrictMode = false;
           var concurrentUpdatesByDefaultOverride = false;
           var identifierPrefix = "";
@@ -23140,9 +23139,9 @@ var require_react_dom_development = __commonJS({
               transitionCallbacks = options2.transitionCallbacks;
             }
           }
-          var root2 = createContainer(container, ConcurrentRoot, null, isStrictMode, concurrentUpdatesByDefaultOverride, identifierPrefix, onRecoverableError);
-          markContainerAsRoot(root2.current, container);
-          var rootContainerElement = container.nodeType === COMMENT_NODE ? container.parentNode : container;
+          var root2 = createContainer(container2, ConcurrentRoot, null, isStrictMode, concurrentUpdatesByDefaultOverride, identifierPrefix, onRecoverableError);
+          markContainerAsRoot(root2.current, container2);
+          var rootContainerElement = container2.nodeType === COMMENT_NODE ? container2.parentNode : container2;
           listenToAllSupportedEvents(rootContainerElement);
           return new ReactDOMRoot(root2);
         }
@@ -23155,11 +23154,11 @@ var require_react_dom_development = __commonJS({
           }
         }
         ReactDOMHydrationRoot.prototype.unstable_scheduleHydration = scheduleHydration;
-        function hydrateRoot(container, initialChildren, options2) {
-          if (!isValidContainer(container)) {
+        function hydrateRoot(container2, initialChildren, options2) {
+          if (!isValidContainer(container2)) {
             throw new Error("hydrateRoot(...): Target container is not a DOM element.");
           }
-          warnIfReactDOMContainerInDEV(container);
+          warnIfReactDOMContainerInDEV(container2);
           {
             if (initialChildren === void 0) {
               error("Must provide initial children as second argument to hydrateRoot. Example usage: hydrateRoot(domContainer, <App />)");
@@ -23182,9 +23181,9 @@ var require_react_dom_development = __commonJS({
               onRecoverableError = options2.onRecoverableError;
             }
           }
-          var root2 = createHydrationContainer(initialChildren, null, container, ConcurrentRoot, hydrationCallbacks, isStrictMode, concurrentUpdatesByDefaultOverride, identifierPrefix, onRecoverableError);
-          markContainerAsRoot(root2.current, container);
-          listenToAllSupportedEvents(container);
+          var root2 = createHydrationContainer(initialChildren, null, container2, ConcurrentRoot, hydrationCallbacks, isStrictMode, concurrentUpdatesByDefaultOverride, identifierPrefix, onRecoverableError);
+          markContainerAsRoot(root2.current, container2);
+          listenToAllSupportedEvents(container2);
           if (mutableSources) {
             for (var i = 0; i < mutableSources.length; i++) {
               var mutableSource = mutableSources[i];
@@ -23199,13 +23198,13 @@ var require_react_dom_development = __commonJS({
         function isValidContainerLegacy(node) {
           return !!(node && (node.nodeType === ELEMENT_NODE || node.nodeType === DOCUMENT_NODE || node.nodeType === DOCUMENT_FRAGMENT_NODE || node.nodeType === COMMENT_NODE && node.nodeValue === " react-mount-point-unstable "));
         }
-        function warnIfReactDOMContainerInDEV(container) {
+        function warnIfReactDOMContainerInDEV(container2) {
           {
-            if (container.nodeType === ELEMENT_NODE && container.tagName && container.tagName.toUpperCase() === "BODY") {
+            if (container2.nodeType === ELEMENT_NODE && container2.tagName && container2.tagName.toUpperCase() === "BODY") {
               error("createRoot(): Creating roots directly with document.body is discouraged, since its children are often manipulated by third-party scripts and browser extensions. This may lead to subtle reconciliation issues. Try using a container element created for your app.");
             }
-            if (isContainerMarkedAsRoot(container)) {
-              if (container._reactRootContainer) {
+            if (isContainerMarkedAsRoot(container2)) {
+              if (container2._reactRootContainer) {
                 error("You are calling ReactDOMClient.createRoot() on a container that was previously passed to ReactDOM.render(). This is not supported.");
               } else {
                 error("You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it.");
@@ -23216,39 +23215,39 @@ var require_react_dom_development = __commonJS({
         var ReactCurrentOwner$3 = ReactSharedInternals.ReactCurrentOwner;
         var topLevelUpdateWarnings;
         {
-          topLevelUpdateWarnings = function(container) {
-            if (container._reactRootContainer && container.nodeType !== COMMENT_NODE) {
-              var hostInstance = findHostInstanceWithNoPortals(container._reactRootContainer.current);
+          topLevelUpdateWarnings = function(container2) {
+            if (container2._reactRootContainer && container2.nodeType !== COMMENT_NODE) {
+              var hostInstance = findHostInstanceWithNoPortals(container2._reactRootContainer.current);
               if (hostInstance) {
-                if (hostInstance.parentNode !== container) {
+                if (hostInstance.parentNode !== container2) {
                   error("render(...): It looks like the React-rendered content of this container was removed without using React. This is not supported and will cause errors. Instead, call ReactDOM.unmountComponentAtNode to empty a container.");
                 }
               }
             }
-            var isRootRenderedBySomeReact = !!container._reactRootContainer;
-            var rootEl = getReactRootElementInContainer(container);
+            var isRootRenderedBySomeReact = !!container2._reactRootContainer;
+            var rootEl = getReactRootElementInContainer(container2);
             var hasNonRootReactChild = !!(rootEl && getInstanceFromNode(rootEl));
             if (hasNonRootReactChild && !isRootRenderedBySomeReact) {
               error("render(...): Replacing React-rendered children with a new root component. If you intended to update the children of this node, you should instead have the existing children update their state and render the new components instead of calling ReactDOM.render.");
             }
-            if (container.nodeType === ELEMENT_NODE && container.tagName && container.tagName.toUpperCase() === "BODY") {
+            if (container2.nodeType === ELEMENT_NODE && container2.tagName && container2.tagName.toUpperCase() === "BODY") {
               error("render(): Rendering components directly into document.body is discouraged, since its children are often manipulated by third-party scripts and browser extensions. This may lead to subtle reconciliation issues. Try rendering into a container element created for your app.");
             }
           };
         }
-        function getReactRootElementInContainer(container) {
-          if (!container) {
+        function getReactRootElementInContainer(container2) {
+          if (!container2) {
             return null;
           }
-          if (container.nodeType === DOCUMENT_NODE) {
-            return container.documentElement;
+          if (container2.nodeType === DOCUMENT_NODE) {
+            return container2.documentElement;
           } else {
-            return container.firstChild;
+            return container2.firstChild;
           }
         }
         function noopOnRecoverableError() {
         }
-        function legacyCreateRootFromDOMContainer(container, initialChildren, parentComponent, callback, isHydrationContainer) {
+        function legacyCreateRootFromDOMContainer(container2, initialChildren, parentComponent, callback, isHydrationContainer) {
           if (isHydrationContainer) {
             if (typeof callback === "function") {
               var originalCallback = callback;
@@ -23260,7 +23259,7 @@ var require_react_dom_development = __commonJS({
             var root2 = createHydrationContainer(
               initialChildren,
               callback,
-              container,
+              container2,
               LegacyRoot,
               null,
               // hydrationCallbacks
@@ -23272,16 +23271,16 @@ var require_react_dom_development = __commonJS({
               // identifierPrefix
               noopOnRecoverableError
             );
-            container._reactRootContainer = root2;
-            markContainerAsRoot(root2.current, container);
-            var rootContainerElement = container.nodeType === COMMENT_NODE ? container.parentNode : container;
+            container2._reactRootContainer = root2;
+            markContainerAsRoot(root2.current, container2);
+            var rootContainerElement = container2.nodeType === COMMENT_NODE ? container2.parentNode : container2;
             listenToAllSupportedEvents(rootContainerElement);
             flushSync();
             return root2;
           } else {
             var rootSibling;
-            while (rootSibling = container.lastChild) {
-              container.removeChild(rootSibling);
+            while (rootSibling = container2.lastChild) {
+              container2.removeChild(rootSibling);
             }
             if (typeof callback === "function") {
               var _originalCallback = callback;
@@ -23291,7 +23290,7 @@ var require_react_dom_development = __commonJS({
               };
             }
             var _root = createContainer(
-              container,
+              container2,
               LegacyRoot,
               null,
               // hydrationCallbacks
@@ -23303,9 +23302,9 @@ var require_react_dom_development = __commonJS({
               // identifierPrefix
               noopOnRecoverableError
             );
-            container._reactRootContainer = _root;
-            markContainerAsRoot(_root.current, container);
-            var _rootContainerElement = container.nodeType === COMMENT_NODE ? container.parentNode : container;
+            container2._reactRootContainer = _root;
+            markContainerAsRoot(_root.current, container2);
+            var _rootContainerElement = container2.nodeType === COMMENT_NODE ? container2.parentNode : container2;
             listenToAllSupportedEvents(_rootContainerElement);
             flushSync(function() {
               updateContainer(initialChildren, _root, parentComponent, callback);
@@ -23320,15 +23319,15 @@ var require_react_dom_development = __commonJS({
             }
           }
         }
-        function legacyRenderSubtreeIntoContainer(parentComponent, children, container, forceHydrate, callback) {
+        function legacyRenderSubtreeIntoContainer(parentComponent, children, container2, forceHydrate, callback) {
           {
-            topLevelUpdateWarnings(container);
+            topLevelUpdateWarnings(container2);
             warnOnInvalidCallback$1(callback === void 0 ? null : callback, "render");
           }
-          var maybeRoot = container._reactRootContainer;
+          var maybeRoot = container2._reactRootContainer;
           var root2;
           if (!maybeRoot) {
-            root2 = legacyCreateRootFromDOMContainer(container, children, parentComponent, callback, forceHydrate);
+            root2 = legacyCreateRootFromDOMContainer(container2, children, parentComponent, callback, forceHydrate);
           } else {
             root2 = maybeRoot;
             if (typeof callback === "function") {
@@ -23368,35 +23367,35 @@ var require_react_dom_development = __commonJS({
             return findHostInstanceWithWarning(componentOrElement, "findDOMNode");
           }
         }
-        function hydrate(element, container, callback) {
+        function hydrate(element, container2, callback) {
           {
             error("ReactDOM.hydrate is no longer supported in React 18. Use hydrateRoot instead. Until you switch to the new API, your app will behave as if it's running React 17. Learn more: https://reactjs.org/link/switch-to-createroot");
           }
-          if (!isValidContainerLegacy(container)) {
+          if (!isValidContainerLegacy(container2)) {
             throw new Error("Target container is not a DOM element.");
           }
           {
-            var isModernRoot = isContainerMarkedAsRoot(container) && container._reactRootContainer === void 0;
+            var isModernRoot = isContainerMarkedAsRoot(container2) && container2._reactRootContainer === void 0;
             if (isModernRoot) {
               error("You are calling ReactDOM.hydrate() on a container that was previously passed to ReactDOMClient.createRoot(). This is not supported. Did you mean to call hydrateRoot(container, element)?");
             }
           }
-          return legacyRenderSubtreeIntoContainer(null, element, container, true, callback);
+          return legacyRenderSubtreeIntoContainer(null, element, container2, true, callback);
         }
-        function render(element, container, callback) {
+        function render(element, container2, callback) {
           {
             error("ReactDOM.render is no longer supported in React 18. Use createRoot instead. Until you switch to the new API, your app will behave as if it's running React 17. Learn more: https://reactjs.org/link/switch-to-createroot");
           }
-          if (!isValidContainerLegacy(container)) {
+          if (!isValidContainerLegacy(container2)) {
             throw new Error("Target container is not a DOM element.");
           }
           {
-            var isModernRoot = isContainerMarkedAsRoot(container) && container._reactRootContainer === void 0;
+            var isModernRoot = isContainerMarkedAsRoot(container2) && container2._reactRootContainer === void 0;
             if (isModernRoot) {
               error("You are calling ReactDOM.render() on a container that was previously passed to ReactDOMClient.createRoot(). This is not supported. Did you mean to call root.render(element)?");
             }
           }
-          return legacyRenderSubtreeIntoContainer(null, element, container, false, callback);
+          return legacyRenderSubtreeIntoContainer(null, element, container2, false, callback);
         }
         function unstable_renderSubtreeIntoContainer(parentComponent, element, containerNode, callback) {
           {
@@ -23411,42 +23410,42 @@ var require_react_dom_development = __commonJS({
           return legacyRenderSubtreeIntoContainer(parentComponent, element, containerNode, false, callback);
         }
         var didWarnAboutUnmountComponentAtNode = false;
-        function unmountComponentAtNode(container) {
+        function unmountComponentAtNode(container2) {
           {
             if (!didWarnAboutUnmountComponentAtNode) {
               didWarnAboutUnmountComponentAtNode = true;
               error("unmountComponentAtNode is deprecated and will be removed in the next major release. Switch to the createRoot API. Learn more: https://reactjs.org/link/switch-to-createroot");
             }
           }
-          if (!isValidContainerLegacy(container)) {
+          if (!isValidContainerLegacy(container2)) {
             throw new Error("unmountComponentAtNode(...): Target container is not a DOM element.");
           }
           {
-            var isModernRoot = isContainerMarkedAsRoot(container) && container._reactRootContainer === void 0;
+            var isModernRoot = isContainerMarkedAsRoot(container2) && container2._reactRootContainer === void 0;
             if (isModernRoot) {
               error("You are calling ReactDOM.unmountComponentAtNode() on a container that was previously passed to ReactDOMClient.createRoot(). This is not supported. Did you mean to call root.unmount()?");
             }
           }
-          if (container._reactRootContainer) {
+          if (container2._reactRootContainer) {
             {
-              var rootEl = getReactRootElementInContainer(container);
+              var rootEl = getReactRootElementInContainer(container2);
               var renderedByDifferentReact = rootEl && !getInstanceFromNode(rootEl);
               if (renderedByDifferentReact) {
                 error("unmountComponentAtNode(): The node you're attempting to unmount was rendered by another copy of React.");
               }
             }
             flushSync(function() {
-              legacyRenderSubtreeIntoContainer(null, null, container, false, function() {
-                container._reactRootContainer = null;
-                unmarkContainerAsRoot(container);
+              legacyRenderSubtreeIntoContainer(null, null, container2, false, function() {
+                container2._reactRootContainer = null;
+                unmarkContainerAsRoot(container2);
               });
             });
             return true;
           } else {
             {
-              var _rootEl = getReactRootElementInContainer(container);
+              var _rootEl = getReactRootElementInContainer(container2);
               var hasNonRootReactChild = !!(_rootEl && getInstanceFromNode(_rootEl));
-              var isContainerReactRoot = container.nodeType === ELEMENT_NODE && isValidContainerLegacy(container.parentNode) && !!container.parentNode._reactRootContainer;
+              var isContainerReactRoot = container2.nodeType === ELEMENT_NODE && isValidContainerLegacy(container2.parentNode) && !!container2.parentNode._reactRootContainer;
               if (hasNonRootReactChild) {
                 error("unmountComponentAtNode(): The node you're attempting to unmount was rendered by React and is not a top-level container. %s", isContainerReactRoot ? "You may have accidentally passed in a React root node instead of its container." : "Instead, have the parent component update its state and rerender in order to remove this component.");
               }
@@ -23468,12 +23467,12 @@ var require_react_dom_development = __commonJS({
         }
         setRestoreImplementation(restoreControlledState$3);
         setBatchingImplementation(batchedUpdates$1, discreteUpdates, flushSync);
-        function createPortal$1(children, container) {
+        function createPortal$1(children, container2) {
           var key = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : null;
-          if (!isValidContainer(container)) {
+          if (!isValidContainer(container2)) {
             throw new Error("Target container is not a DOM element.");
           }
-          return createPortal(children, container, null, key);
+          return createPortal(children, container2, null, key);
         }
         function renderSubtreeIntoContainer(parentComponent, element, containerNode, callback) {
           return unstable_renderSubtreeIntoContainer(parentComponent, element, containerNode, callback);
@@ -23484,21 +23483,21 @@ var require_react_dom_development = __commonJS({
           // This is an array for better minification.
           Events: [getInstanceFromNode, getNodeFromInstance, getFiberCurrentPropsFromNode, enqueueStateRestore, restoreStateIfNeeded, batchedUpdates$1]
         };
-        function createRoot$1(container, options2) {
+        function createRoot$1(container2, options2) {
           {
             if (!Internals.usingClientEntryPoint && true) {
               error('You are importing createRoot from "react-dom" which is not supported. You should instead import it from "react-dom/client".');
             }
           }
-          return createRoot(container, options2);
+          return createRoot(container2, options2);
         }
-        function hydrateRoot$1(container, initialChildren, options2) {
+        function hydrateRoot$1(container2, initialChildren, options2) {
           {
             if (!Internals.usingClientEntryPoint && true) {
               error('You are importing hydrateRoot from "react-dom" which is not supported. You should instead import it from "react-dom/client".');
             }
           }
-          return hydrateRoot(container, initialChildren, options2);
+          return hydrateRoot(container2, initialChildren, options2);
         }
         function flushSync$1(fn) {
           {
@@ -23546,13 +23545,13 @@ var require_react_dom_development = __commonJS({
 
 // node_modules/react-dom/index.js
 var require_react_dom = __commonJS({
-  "node_modules/react-dom/index.js"(exports, module) {
+  "node_modules/react-dom/index.js"(exports, module2) {
     "use strict";
     if (false) {
       checkDCE();
-      module.exports = null;
+      module2.exports = null;
     } else {
-      module.exports = require_react_dom_development();
+      module2.exports = require_react_dom_development();
     }
   }
 });
@@ -23588,2548 +23587,6 @@ var require_client = __commonJS({
   }
 });
 
-// node_modules/howler/dist/howler.js
-var require_howler = __commonJS({
-  "node_modules/howler/dist/howler.js"(exports) {
-    (function() {
-      "use strict";
-      var HowlerGlobal2 = function() {
-        this.init();
-      };
-      HowlerGlobal2.prototype = {
-        /**
-         * Initialize the global Howler object.
-         * @return {Howler}
-         */
-        init: function() {
-          var self = this || Howler3;
-          self._counter = 1e3;
-          self._html5AudioPool = [];
-          self.html5PoolSize = 10;
-          self._codecs = {};
-          self._howls = [];
-          self._muted = false;
-          self._volume = 1;
-          self._canPlayEvent = "canplaythrough";
-          self._navigator = typeof window !== "undefined" && window.navigator ? window.navigator : null;
-          self.masterGain = null;
-          self.noAudio = false;
-          self.usingWebAudio = true;
-          self.autoSuspend = true;
-          self.ctx = null;
-          self.autoUnlock = true;
-          self._setup();
-          return self;
-        },
-        /**
-         * Get/set the global volume for all sounds.
-         * @param  {Float} vol Volume from 0.0 to 1.0.
-         * @return {Howler/Float}     Returns self or current volume.
-         */
-        volume: function(vol) {
-          var self = this || Howler3;
-          vol = parseFloat(vol);
-          if (!self.ctx) {
-            setupAudioContext();
-          }
-          if (typeof vol !== "undefined" && vol >= 0 && vol <= 1) {
-            self._volume = vol;
-            if (self._muted) {
-              return self;
-            }
-            if (self.usingWebAudio) {
-              self.masterGain.gain.setValueAtTime(vol, Howler3.ctx.currentTime);
-            }
-            for (var i = 0; i < self._howls.length; i++) {
-              if (!self._howls[i]._webAudio) {
-                var ids = self._howls[i]._getSoundIds();
-                for (var j = 0; j < ids.length; j++) {
-                  var sound = self._howls[i]._soundById(ids[j]);
-                  if (sound && sound._node) {
-                    sound._node.volume = sound._volume * vol;
-                  }
-                }
-              }
-            }
-            return self;
-          }
-          return self._volume;
-        },
-        /**
-         * Handle muting and unmuting globally.
-         * @param  {Boolean} muted Is muted or not.
-         */
-        mute: function(muted) {
-          var self = this || Howler3;
-          if (!self.ctx) {
-            setupAudioContext();
-          }
-          self._muted = muted;
-          if (self.usingWebAudio) {
-            self.masterGain.gain.setValueAtTime(muted ? 0 : self._volume, Howler3.ctx.currentTime);
-          }
-          for (var i = 0; i < self._howls.length; i++) {
-            if (!self._howls[i]._webAudio) {
-              var ids = self._howls[i]._getSoundIds();
-              for (var j = 0; j < ids.length; j++) {
-                var sound = self._howls[i]._soundById(ids[j]);
-                if (sound && sound._node) {
-                  sound._node.muted = muted ? true : sound._muted;
-                }
-              }
-            }
-          }
-          return self;
-        },
-        /**
-         * Handle stopping all sounds globally.
-         */
-        stop: function() {
-          var self = this || Howler3;
-          for (var i = 0; i < self._howls.length; i++) {
-            self._howls[i].stop();
-          }
-          return self;
-        },
-        /**
-         * Unload and destroy all currently loaded Howl objects.
-         * @return {Howler}
-         */
-        unload: function() {
-          var self = this || Howler3;
-          for (var i = self._howls.length - 1; i >= 0; i--) {
-            self._howls[i].unload();
-          }
-          if (self.usingWebAudio && self.ctx && typeof self.ctx.close !== "undefined") {
-            self.ctx.close();
-            self.ctx = null;
-            setupAudioContext();
-          }
-          return self;
-        },
-        /**
-         * Check for codec support of specific extension.
-         * @param  {String} ext Audio file extention.
-         * @return {Boolean}
-         */
-        codecs: function(ext) {
-          return (this || Howler3)._codecs[ext.replace(/^x-/, "")];
-        },
-        /**
-         * Setup various state values for global tracking.
-         * @return {Howler}
-         */
-        _setup: function() {
-          var self = this || Howler3;
-          self.state = self.ctx ? self.ctx.state || "suspended" : "suspended";
-          self._autoSuspend();
-          if (!self.usingWebAudio) {
-            if (typeof Audio !== "undefined") {
-              try {
-                var test = new Audio();
-                if (typeof test.oncanplaythrough === "undefined") {
-                  self._canPlayEvent = "canplay";
-                }
-              } catch (e) {
-                self.noAudio = true;
-              }
-            } else {
-              self.noAudio = true;
-            }
-          }
-          try {
-            var test = new Audio();
-            if (test.muted) {
-              self.noAudio = true;
-            }
-          } catch (e) {
-          }
-          if (!self.noAudio) {
-            self._setupCodecs();
-          }
-          return self;
-        },
-        /**
-         * Check for browser support for various codecs and cache the results.
-         * @return {Howler}
-         */
-        _setupCodecs: function() {
-          var self = this || Howler3;
-          var audioTest = null;
-          try {
-            audioTest = typeof Audio !== "undefined" ? new Audio() : null;
-          } catch (err) {
-            return self;
-          }
-          if (!audioTest || typeof audioTest.canPlayType !== "function") {
-            return self;
-          }
-          var mpegTest = audioTest.canPlayType("audio/mpeg;").replace(/^no$/, "");
-          var ua = self._navigator ? self._navigator.userAgent : "";
-          var checkOpera = ua.match(/OPR\/(\d+)/g);
-          var isOldOpera = checkOpera && parseInt(checkOpera[0].split("/")[1], 10) < 33;
-          var checkSafari = ua.indexOf("Safari") !== -1 && ua.indexOf("Chrome") === -1;
-          var safariVersion = ua.match(/Version\/(.*?) /);
-          var isOldSafari = checkSafari && safariVersion && parseInt(safariVersion[1], 10) < 15;
-          self._codecs = {
-            mp3: !!(!isOldOpera && (mpegTest || audioTest.canPlayType("audio/mp3;").replace(/^no$/, ""))),
-            mpeg: !!mpegTest,
-            opus: !!audioTest.canPlayType('audio/ogg; codecs="opus"').replace(/^no$/, ""),
-            ogg: !!audioTest.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/, ""),
-            oga: !!audioTest.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/, ""),
-            wav: !!(audioTest.canPlayType('audio/wav; codecs="1"') || audioTest.canPlayType("audio/wav")).replace(/^no$/, ""),
-            aac: !!audioTest.canPlayType("audio/aac;").replace(/^no$/, ""),
-            caf: !!audioTest.canPlayType("audio/x-caf;").replace(/^no$/, ""),
-            m4a: !!(audioTest.canPlayType("audio/x-m4a;") || audioTest.canPlayType("audio/m4a;") || audioTest.canPlayType("audio/aac;")).replace(/^no$/, ""),
-            m4b: !!(audioTest.canPlayType("audio/x-m4b;") || audioTest.canPlayType("audio/m4b;") || audioTest.canPlayType("audio/aac;")).replace(/^no$/, ""),
-            mp4: !!(audioTest.canPlayType("audio/x-mp4;") || audioTest.canPlayType("audio/mp4;") || audioTest.canPlayType("audio/aac;")).replace(/^no$/, ""),
-            weba: !!(!isOldSafari && audioTest.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/, "")),
-            webm: !!(!isOldSafari && audioTest.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/, "")),
-            dolby: !!audioTest.canPlayType('audio/mp4; codecs="ec-3"').replace(/^no$/, ""),
-            flac: !!(audioTest.canPlayType("audio/x-flac;") || audioTest.canPlayType("audio/flac;")).replace(/^no$/, "")
-          };
-          return self;
-        },
-        /**
-         * Some browsers/devices will only allow audio to be played after a user interaction.
-         * Attempt to automatically unlock audio on the first user interaction.
-         * Concept from: http://paulbakaus.com/tutorials/html5/web-audio-on-ios/
-         * @return {Howler}
-         */
-        _unlockAudio: function() {
-          var self = this || Howler3;
-          if (self._audioUnlocked || !self.ctx) {
-            return;
-          }
-          self._audioUnlocked = false;
-          self.autoUnlock = false;
-          if (!self._mobileUnloaded && self.ctx.sampleRate !== 44100) {
-            self._mobileUnloaded = true;
-            self.unload();
-          }
-          self._scratchBuffer = self.ctx.createBuffer(1, 1, 22050);
-          var unlock = function(e) {
-            while (self._html5AudioPool.length < self.html5PoolSize) {
-              try {
-                var audioNode = new Audio();
-                audioNode._unlocked = true;
-                self._releaseHtml5Audio(audioNode);
-              } catch (e2) {
-                self.noAudio = true;
-                break;
-              }
-            }
-            for (var i = 0; i < self._howls.length; i++) {
-              if (!self._howls[i]._webAudio) {
-                var ids = self._howls[i]._getSoundIds();
-                for (var j = 0; j < ids.length; j++) {
-                  var sound = self._howls[i]._soundById(ids[j]);
-                  if (sound && sound._node && !sound._node._unlocked) {
-                    sound._node._unlocked = true;
-                    sound._node.load();
-                  }
-                }
-              }
-            }
-            self._autoResume();
-            var source = self.ctx.createBufferSource();
-            source.buffer = self._scratchBuffer;
-            source.connect(self.ctx.destination);
-            if (typeof source.start === "undefined") {
-              source.noteOn(0);
-            } else {
-              source.start(0);
-            }
-            if (typeof self.ctx.resume === "function") {
-              self.ctx.resume();
-            }
-            source.onended = function() {
-              source.disconnect(0);
-              self._audioUnlocked = true;
-              document.removeEventListener("touchstart", unlock, true);
-              document.removeEventListener("touchend", unlock, true);
-              document.removeEventListener("click", unlock, true);
-              document.removeEventListener("keydown", unlock, true);
-              for (var i2 = 0; i2 < self._howls.length; i2++) {
-                self._howls[i2]._emit("unlock");
-              }
-            };
-          };
-          document.addEventListener("touchstart", unlock, true);
-          document.addEventListener("touchend", unlock, true);
-          document.addEventListener("click", unlock, true);
-          document.addEventListener("keydown", unlock, true);
-          return self;
-        },
-        /**
-         * Get an unlocked HTML5 Audio object from the pool. If none are left,
-         * return a new Audio object and throw a warning.
-         * @return {Audio} HTML5 Audio object.
-         */
-        _obtainHtml5Audio: function() {
-          var self = this || Howler3;
-          if (self._html5AudioPool.length) {
-            return self._html5AudioPool.pop();
-          }
-          var testPlay = new Audio().play();
-          if (testPlay && typeof Promise !== "undefined" && (testPlay instanceof Promise || typeof testPlay.then === "function")) {
-            testPlay.catch(function() {
-              console.warn("HTML5 Audio pool exhausted, returning potentially locked audio object.");
-            });
-          }
-          return new Audio();
-        },
-        /**
-         * Return an activated HTML5 Audio object to the pool.
-         * @return {Howler}
-         */
-        _releaseHtml5Audio: function(audio) {
-          var self = this || Howler3;
-          if (audio._unlocked) {
-            self._html5AudioPool.push(audio);
-          }
-          return self;
-        },
-        /**
-         * Automatically suspend the Web Audio AudioContext after no sound has played for 30 seconds.
-         * This saves processing/energy and fixes various browser-specific bugs with audio getting stuck.
-         * @return {Howler}
-         */
-        _autoSuspend: function() {
-          var self = this;
-          if (!self.autoSuspend || !self.ctx || typeof self.ctx.suspend === "undefined" || !Howler3.usingWebAudio) {
-            return;
-          }
-          for (var i = 0; i < self._howls.length; i++) {
-            if (self._howls[i]._webAudio) {
-              for (var j = 0; j < self._howls[i]._sounds.length; j++) {
-                if (!self._howls[i]._sounds[j]._paused) {
-                  return self;
-                }
-              }
-            }
-          }
-          if (self._suspendTimer) {
-            clearTimeout(self._suspendTimer);
-          }
-          self._suspendTimer = setTimeout(function() {
-            if (!self.autoSuspend) {
-              return;
-            }
-            self._suspendTimer = null;
-            self.state = "suspending";
-            var handleSuspension = function() {
-              self.state = "suspended";
-              if (self._resumeAfterSuspend) {
-                delete self._resumeAfterSuspend;
-                self._autoResume();
-              }
-            };
-            self.ctx.suspend().then(handleSuspension, handleSuspension);
-          }, 3e4);
-          return self;
-        },
-        /**
-         * Automatically resume the Web Audio AudioContext when a new sound is played.
-         * @return {Howler}
-         */
-        _autoResume: function() {
-          var self = this;
-          if (!self.ctx || typeof self.ctx.resume === "undefined" || !Howler3.usingWebAudio) {
-            return;
-          }
-          if (self.state === "running" && self.ctx.state !== "interrupted" && self._suspendTimer) {
-            clearTimeout(self._suspendTimer);
-            self._suspendTimer = null;
-          } else if (self.state === "suspended" || self.state === "running" && self.ctx.state === "interrupted") {
-            self.ctx.resume().then(function() {
-              self.state = "running";
-              for (var i = 0; i < self._howls.length; i++) {
-                self._howls[i]._emit("resume");
-              }
-            });
-            if (self._suspendTimer) {
-              clearTimeout(self._suspendTimer);
-              self._suspendTimer = null;
-            }
-          } else if (self.state === "suspending") {
-            self._resumeAfterSuspend = true;
-          }
-          return self;
-        }
-      };
-      var Howler3 = new HowlerGlobal2();
-      var Howl3 = function(o) {
-        var self = this;
-        if (!o.src || o.src.length === 0) {
-          console.error("An array of source files must be passed with any new Howl.");
-          return;
-        }
-        self.init(o);
-      };
-      Howl3.prototype = {
-        /**
-         * Initialize a new Howl group object.
-         * @param  {Object} o Passed in properties for this group.
-         * @return {Howl}
-         */
-        init: function(o) {
-          var self = this;
-          if (!Howler3.ctx) {
-            setupAudioContext();
-          }
-          self._autoplay = o.autoplay || false;
-          self._format = typeof o.format !== "string" ? o.format : [o.format];
-          self._html5 = o.html5 || false;
-          self._muted = o.mute || false;
-          self._loop = o.loop || false;
-          self._pool = o.pool || 5;
-          self._preload = typeof o.preload === "boolean" || o.preload === "metadata" ? o.preload : true;
-          self._rate = o.rate || 1;
-          self._sprite = o.sprite || {};
-          self._src = typeof o.src !== "string" ? o.src : [o.src];
-          self._volume = o.volume !== void 0 ? o.volume : 1;
-          self._xhr = {
-            method: o.xhr && o.xhr.method ? o.xhr.method : "GET",
-            headers: o.xhr && o.xhr.headers ? o.xhr.headers : null,
-            withCredentials: o.xhr && o.xhr.withCredentials ? o.xhr.withCredentials : false
-          };
-          self._duration = 0;
-          self._state = "unloaded";
-          self._sounds = [];
-          self._endTimers = {};
-          self._queue = [];
-          self._playLock = false;
-          self._onend = o.onend ? [{ fn: o.onend }] : [];
-          self._onfade = o.onfade ? [{ fn: o.onfade }] : [];
-          self._onload = o.onload ? [{ fn: o.onload }] : [];
-          self._onloaderror = o.onloaderror ? [{ fn: o.onloaderror }] : [];
-          self._onplayerror = o.onplayerror ? [{ fn: o.onplayerror }] : [];
-          self._onpause = o.onpause ? [{ fn: o.onpause }] : [];
-          self._onplay = o.onplay ? [{ fn: o.onplay }] : [];
-          self._onstop = o.onstop ? [{ fn: o.onstop }] : [];
-          self._onmute = o.onmute ? [{ fn: o.onmute }] : [];
-          self._onvolume = o.onvolume ? [{ fn: o.onvolume }] : [];
-          self._onrate = o.onrate ? [{ fn: o.onrate }] : [];
-          self._onseek = o.onseek ? [{ fn: o.onseek }] : [];
-          self._onunlock = o.onunlock ? [{ fn: o.onunlock }] : [];
-          self._onresume = [];
-          self._webAudio = Howler3.usingWebAudio && !self._html5;
-          if (typeof Howler3.ctx !== "undefined" && Howler3.ctx && Howler3.autoUnlock) {
-            Howler3._unlockAudio();
-          }
-          Howler3._howls.push(self);
-          if (self._autoplay) {
-            self._queue.push({
-              event: "play",
-              action: function() {
-                self.play();
-              }
-            });
-          }
-          if (self._preload && self._preload !== "none") {
-            self.load();
-          }
-          return self;
-        },
-        /**
-         * Load the audio file.
-         * @return {Howler}
-         */
-        load: function() {
-          var self = this;
-          var url = null;
-          if (Howler3.noAudio) {
-            self._emit("loaderror", null, "No audio support.");
-            return;
-          }
-          if (typeof self._src === "string") {
-            self._src = [self._src];
-          }
-          for (var i = 0; i < self._src.length; i++) {
-            var ext, str;
-            if (self._format && self._format[i]) {
-              ext = self._format[i];
-            } else {
-              str = self._src[i];
-              if (typeof str !== "string") {
-                self._emit("loaderror", null, "Non-string found in selected audio sources - ignoring.");
-                continue;
-              }
-              ext = /^data:audio\/([^;,]+);/i.exec(str);
-              if (!ext) {
-                ext = /\.([^.]+)$/.exec(str.split("?", 1)[0]);
-              }
-              if (ext) {
-                ext = ext[1].toLowerCase();
-              }
-            }
-            if (!ext) {
-              console.warn('No file extension was found. Consider using the "format" property or specify an extension.');
-            }
-            if (ext && Howler3.codecs(ext)) {
-              url = self._src[i];
-              break;
-            }
-          }
-          if (!url) {
-            self._emit("loaderror", null, "No codec support for selected audio sources.");
-            return;
-          }
-          self._src = url;
-          self._state = "loading";
-          if (window.location.protocol === "https:" && url.slice(0, 5) === "http:") {
-            self._html5 = true;
-            self._webAudio = false;
-          }
-          new Sound2(self);
-          if (self._webAudio) {
-            loadBuffer(self);
-          }
-          return self;
-        },
-        /**
-         * Play a sound or resume previous playback.
-         * @param  {String/Number} sprite   Sprite name for sprite playback or sound id to continue previous.
-         * @param  {Boolean} internal Internal Use: true prevents event firing.
-         * @return {Number}          Sound ID.
-         */
-        play: function(sprite, internal) {
-          var self = this;
-          var id = null;
-          if (typeof sprite === "number") {
-            id = sprite;
-            sprite = null;
-          } else if (typeof sprite === "string" && self._state === "loaded" && !self._sprite[sprite]) {
-            return null;
-          } else if (typeof sprite === "undefined") {
-            sprite = "__default";
-            if (!self._playLock) {
-              var num = 0;
-              for (var i = 0; i < self._sounds.length; i++) {
-                if (self._sounds[i]._paused && !self._sounds[i]._ended) {
-                  num++;
-                  id = self._sounds[i]._id;
-                }
-              }
-              if (num === 1) {
-                sprite = null;
-              } else {
-                id = null;
-              }
-            }
-          }
-          var sound = id ? self._soundById(id) : self._inactiveSound();
-          if (!sound) {
-            return null;
-          }
-          if (id && !sprite) {
-            sprite = sound._sprite || "__default";
-          }
-          if (self._state !== "loaded") {
-            sound._sprite = sprite;
-            sound._ended = false;
-            var soundId = sound._id;
-            self._queue.push({
-              event: "play",
-              action: function() {
-                self.play(soundId);
-              }
-            });
-            return soundId;
-          }
-          if (id && !sound._paused) {
-            if (!internal) {
-              self._loadQueue("play");
-            }
-            return sound._id;
-          }
-          if (self._webAudio) {
-            Howler3._autoResume();
-          }
-          var seek = Math.max(0, sound._seek > 0 ? sound._seek : self._sprite[sprite][0] / 1e3);
-          var duration = Math.max(0, (self._sprite[sprite][0] + self._sprite[sprite][1]) / 1e3 - seek);
-          var timeout = duration * 1e3 / Math.abs(sound._rate);
-          var start = self._sprite[sprite][0] / 1e3;
-          var stop = (self._sprite[sprite][0] + self._sprite[sprite][1]) / 1e3;
-          sound._sprite = sprite;
-          sound._ended = false;
-          var setParams = function() {
-            sound._paused = false;
-            sound._seek = seek;
-            sound._start = start;
-            sound._stop = stop;
-            sound._loop = !!(sound._loop || self._sprite[sprite][2]);
-          };
-          if (seek >= stop) {
-            self._ended(sound);
-            return;
-          }
-          var node = sound._node;
-          if (self._webAudio) {
-            var playWebAudio = function() {
-              self._playLock = false;
-              setParams();
-              self._refreshBuffer(sound);
-              var vol = sound._muted || self._muted ? 0 : sound._volume;
-              node.gain.setValueAtTime(vol, Howler3.ctx.currentTime);
-              sound._playStart = Howler3.ctx.currentTime;
-              if (typeof node.bufferSource.start === "undefined") {
-                sound._loop ? node.bufferSource.noteGrainOn(0, seek, 86400) : node.bufferSource.noteGrainOn(0, seek, duration);
-              } else {
-                sound._loop ? node.bufferSource.start(0, seek, 86400) : node.bufferSource.start(0, seek, duration);
-              }
-              if (timeout !== Infinity) {
-                self._endTimers[sound._id] = setTimeout(self._ended.bind(self, sound), timeout);
-              }
-              if (!internal) {
-                setTimeout(function() {
-                  self._emit("play", sound._id);
-                  self._loadQueue();
-                }, 0);
-              }
-            };
-            if (Howler3.state === "running" && Howler3.ctx.state !== "interrupted") {
-              playWebAudio();
-            } else {
-              self._playLock = true;
-              self.once("resume", playWebAudio);
-              self._clearTimer(sound._id);
-            }
-          } else {
-            var playHtml5 = function() {
-              node.currentTime = seek;
-              node.muted = sound._muted || self._muted || Howler3._muted || node.muted;
-              node.volume = sound._volume * Howler3.volume();
-              node.playbackRate = sound._rate;
-              try {
-                var play = node.play();
-                if (play && typeof Promise !== "undefined" && (play instanceof Promise || typeof play.then === "function")) {
-                  self._playLock = true;
-                  setParams();
-                  play.then(function() {
-                    self._playLock = false;
-                    node._unlocked = true;
-                    if (!internal) {
-                      self._emit("play", sound._id);
-                    } else {
-                      self._loadQueue();
-                    }
-                  }).catch(function() {
-                    self._playLock = false;
-                    self._emit("playerror", sound._id, "Playback was unable to start. This is most commonly an issue on mobile devices and Chrome where playback was not within a user interaction.");
-                    sound._ended = true;
-                    sound._paused = true;
-                  });
-                } else if (!internal) {
-                  self._playLock = false;
-                  setParams();
-                  self._emit("play", sound._id);
-                }
-                node.playbackRate = sound._rate;
-                if (node.paused) {
-                  self._emit("playerror", sound._id, "Playback was unable to start. This is most commonly an issue on mobile devices and Chrome where playback was not within a user interaction.");
-                  return;
-                }
-                if (sprite !== "__default" || sound._loop) {
-                  self._endTimers[sound._id] = setTimeout(self._ended.bind(self, sound), timeout);
-                } else {
-                  self._endTimers[sound._id] = function() {
-                    self._ended(sound);
-                    node.removeEventListener("ended", self._endTimers[sound._id], false);
-                  };
-                  node.addEventListener("ended", self._endTimers[sound._id], false);
-                }
-              } catch (err) {
-                self._emit("playerror", sound._id, err);
-              }
-            };
-            if (node.src === "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA") {
-              node.src = self._src;
-              node.load();
-            }
-            var loadedNoReadyState = window && window.ejecta || !node.readyState && Howler3._navigator.isCocoonJS;
-            if (node.readyState >= 3 || loadedNoReadyState) {
-              playHtml5();
-            } else {
-              self._playLock = true;
-              self._state = "loading";
-              var listener = function() {
-                self._state = "loaded";
-                playHtml5();
-                node.removeEventListener(Howler3._canPlayEvent, listener, false);
-              };
-              node.addEventListener(Howler3._canPlayEvent, listener, false);
-              self._clearTimer(sound._id);
-            }
-          }
-          return sound._id;
-        },
-        /**
-         * Pause playback and save current position.
-         * @param  {Number} id The sound ID (empty to pause all in group).
-         * @return {Howl}
-         */
-        pause: function(id) {
-          var self = this;
-          if (self._state !== "loaded" || self._playLock) {
-            self._queue.push({
-              event: "pause",
-              action: function() {
-                self.pause(id);
-              }
-            });
-            return self;
-          }
-          var ids = self._getSoundIds(id);
-          for (var i = 0; i < ids.length; i++) {
-            self._clearTimer(ids[i]);
-            var sound = self._soundById(ids[i]);
-            if (sound && !sound._paused) {
-              sound._seek = self.seek(ids[i]);
-              sound._rateSeek = 0;
-              sound._paused = true;
-              self._stopFade(ids[i]);
-              if (sound._node) {
-                if (self._webAudio) {
-                  if (!sound._node.bufferSource) {
-                    continue;
-                  }
-                  if (typeof sound._node.bufferSource.stop === "undefined") {
-                    sound._node.bufferSource.noteOff(0);
-                  } else {
-                    sound._node.bufferSource.stop(0);
-                  }
-                  self._cleanBuffer(sound._node);
-                } else if (!isNaN(sound._node.duration) || sound._node.duration === Infinity) {
-                  sound._node.pause();
-                }
-              }
-            }
-            if (!arguments[1]) {
-              self._emit("pause", sound ? sound._id : null);
-            }
-          }
-          return self;
-        },
-        /**
-         * Stop playback and reset to start.
-         * @param  {Number} id The sound ID (empty to stop all in group).
-         * @param  {Boolean} internal Internal Use: true prevents event firing.
-         * @return {Howl}
-         */
-        stop: function(id, internal) {
-          var self = this;
-          if (self._state !== "loaded" || self._playLock) {
-            self._queue.push({
-              event: "stop",
-              action: function() {
-                self.stop(id);
-              }
-            });
-            return self;
-          }
-          var ids = self._getSoundIds(id);
-          for (var i = 0; i < ids.length; i++) {
-            self._clearTimer(ids[i]);
-            var sound = self._soundById(ids[i]);
-            if (sound) {
-              sound._seek = sound._start || 0;
-              sound._rateSeek = 0;
-              sound._paused = true;
-              sound._ended = true;
-              self._stopFade(ids[i]);
-              if (sound._node) {
-                if (self._webAudio) {
-                  if (sound._node.bufferSource) {
-                    if (typeof sound._node.bufferSource.stop === "undefined") {
-                      sound._node.bufferSource.noteOff(0);
-                    } else {
-                      sound._node.bufferSource.stop(0);
-                    }
-                    self._cleanBuffer(sound._node);
-                  }
-                } else if (!isNaN(sound._node.duration) || sound._node.duration === Infinity) {
-                  sound._node.currentTime = sound._start || 0;
-                  sound._node.pause();
-                  if (sound._node.duration === Infinity) {
-                    self._clearSound(sound._node);
-                  }
-                }
-              }
-              if (!internal) {
-                self._emit("stop", sound._id);
-              }
-            }
-          }
-          return self;
-        },
-        /**
-         * Mute/unmute a single sound or all sounds in this Howl group.
-         * @param  {Boolean} muted Set to true to mute and false to unmute.
-         * @param  {Number} id    The sound ID to update (omit to mute/unmute all).
-         * @return {Howl}
-         */
-        mute: function(muted, id) {
-          var self = this;
-          if (self._state !== "loaded" || self._playLock) {
-            self._queue.push({
-              event: "mute",
-              action: function() {
-                self.mute(muted, id);
-              }
-            });
-            return self;
-          }
-          if (typeof id === "undefined") {
-            if (typeof muted === "boolean") {
-              self._muted = muted;
-            } else {
-              return self._muted;
-            }
-          }
-          var ids = self._getSoundIds(id);
-          for (var i = 0; i < ids.length; i++) {
-            var sound = self._soundById(ids[i]);
-            if (sound) {
-              sound._muted = muted;
-              if (sound._interval) {
-                self._stopFade(sound._id);
-              }
-              if (self._webAudio && sound._node) {
-                sound._node.gain.setValueAtTime(muted ? 0 : sound._volume, Howler3.ctx.currentTime);
-              } else if (sound._node) {
-                sound._node.muted = Howler3._muted ? true : muted;
-              }
-              self._emit("mute", sound._id);
-            }
-          }
-          return self;
-        },
-        /**
-         * Get/set the volume of this sound or of the Howl group. This method can optionally take 0, 1 or 2 arguments.
-         *   volume() -> Returns the group's volume value.
-         *   volume(id) -> Returns the sound id's current volume.
-         *   volume(vol) -> Sets the volume of all sounds in this Howl group.
-         *   volume(vol, id) -> Sets the volume of passed sound id.
-         * @return {Howl/Number} Returns self or current volume.
-         */
-        volume: function() {
-          var self = this;
-          var args = arguments;
-          var vol, id;
-          if (args.length === 0) {
-            return self._volume;
-          } else if (args.length === 1 || args.length === 2 && typeof args[1] === "undefined") {
-            var ids = self._getSoundIds();
-            var index = ids.indexOf(args[0]);
-            if (index >= 0) {
-              id = parseInt(args[0], 10);
-            } else {
-              vol = parseFloat(args[0]);
-            }
-          } else if (args.length >= 2) {
-            vol = parseFloat(args[0]);
-            id = parseInt(args[1], 10);
-          }
-          var sound;
-          if (typeof vol !== "undefined" && vol >= 0 && vol <= 1) {
-            if (self._state !== "loaded" || self._playLock) {
-              self._queue.push({
-                event: "volume",
-                action: function() {
-                  self.volume.apply(self, args);
-                }
-              });
-              return self;
-            }
-            if (typeof id === "undefined") {
-              self._volume = vol;
-            }
-            id = self._getSoundIds(id);
-            for (var i = 0; i < id.length; i++) {
-              sound = self._soundById(id[i]);
-              if (sound) {
-                sound._volume = vol;
-                if (!args[2]) {
-                  self._stopFade(id[i]);
-                }
-                if (self._webAudio && sound._node && !sound._muted) {
-                  sound._node.gain.setValueAtTime(vol, Howler3.ctx.currentTime);
-                } else if (sound._node && !sound._muted) {
-                  sound._node.volume = vol * Howler3.volume();
-                }
-                self._emit("volume", sound._id);
-              }
-            }
-          } else {
-            sound = id ? self._soundById(id) : self._sounds[0];
-            return sound ? sound._volume : 0;
-          }
-          return self;
-        },
-        /**
-         * Fade a currently playing sound between two volumes (if no id is passed, all sounds will fade).
-         * @param  {Number} from The value to fade from (0.0 to 1.0).
-         * @param  {Number} to   The volume to fade to (0.0 to 1.0).
-         * @param  {Number} len  Time in milliseconds to fade.
-         * @param  {Number} id   The sound id (omit to fade all sounds).
-         * @return {Howl}
-         */
-        fade: function(from, to, len, id) {
-          var self = this;
-          if (self._state !== "loaded" || self._playLock) {
-            self._queue.push({
-              event: "fade",
-              action: function() {
-                self.fade(from, to, len, id);
-              }
-            });
-            return self;
-          }
-          from = Math.min(Math.max(0, parseFloat(from)), 1);
-          to = Math.min(Math.max(0, parseFloat(to)), 1);
-          len = parseFloat(len);
-          self.volume(from, id);
-          var ids = self._getSoundIds(id);
-          for (var i = 0; i < ids.length; i++) {
-            var sound = self._soundById(ids[i]);
-            if (sound) {
-              if (!id) {
-                self._stopFade(ids[i]);
-              }
-              if (self._webAudio && !sound._muted) {
-                var currentTime = Howler3.ctx.currentTime;
-                var end = currentTime + len / 1e3;
-                sound._volume = from;
-                sound._node.gain.setValueAtTime(from, currentTime);
-                sound._node.gain.linearRampToValueAtTime(to, end);
-              }
-              self._startFadeInterval(sound, from, to, len, ids[i], typeof id === "undefined");
-            }
-          }
-          return self;
-        },
-        /**
-         * Starts the internal interval to fade a sound.
-         * @param  {Object} sound Reference to sound to fade.
-         * @param  {Number} from The value to fade from (0.0 to 1.0).
-         * @param  {Number} to   The volume to fade to (0.0 to 1.0).
-         * @param  {Number} len  Time in milliseconds to fade.
-         * @param  {Number} id   The sound id to fade.
-         * @param  {Boolean} isGroup   If true, set the volume on the group.
-         */
-        _startFadeInterval: function(sound, from, to, len, id, isGroup) {
-          var self = this;
-          var vol = from;
-          var diff = to - from;
-          var steps = Math.abs(diff / 0.01);
-          var stepLen = Math.max(4, steps > 0 ? len / steps : len);
-          var lastTick = Date.now();
-          sound._fadeTo = to;
-          sound._interval = setInterval(function() {
-            var tick = (Date.now() - lastTick) / len;
-            lastTick = Date.now();
-            vol += diff * tick;
-            vol = Math.round(vol * 100) / 100;
-            if (diff < 0) {
-              vol = Math.max(to, vol);
-            } else {
-              vol = Math.min(to, vol);
-            }
-            if (self._webAudio) {
-              sound._volume = vol;
-            } else {
-              self.volume(vol, sound._id, true);
-            }
-            if (isGroup) {
-              self._volume = vol;
-            }
-            if (to < from && vol <= to || to > from && vol >= to) {
-              clearInterval(sound._interval);
-              sound._interval = null;
-              sound._fadeTo = null;
-              self.volume(to, sound._id);
-              self._emit("fade", sound._id);
-            }
-          }, stepLen);
-        },
-        /**
-         * Internal method that stops the currently playing fade when
-         * a new fade starts, volume is changed or the sound is stopped.
-         * @param  {Number} id The sound id.
-         * @return {Howl}
-         */
-        _stopFade: function(id) {
-          var self = this;
-          var sound = self._soundById(id);
-          if (sound && sound._interval) {
-            if (self._webAudio) {
-              sound._node.gain.cancelScheduledValues(Howler3.ctx.currentTime);
-            }
-            clearInterval(sound._interval);
-            sound._interval = null;
-            self.volume(sound._fadeTo, id);
-            sound._fadeTo = null;
-            self._emit("fade", id);
-          }
-          return self;
-        },
-        /**
-         * Get/set the loop parameter on a sound. This method can optionally take 0, 1 or 2 arguments.
-         *   loop() -> Returns the group's loop value.
-         *   loop(id) -> Returns the sound id's loop value.
-         *   loop(loop) -> Sets the loop value for all sounds in this Howl group.
-         *   loop(loop, id) -> Sets the loop value of passed sound id.
-         * @return {Howl/Boolean} Returns self or current loop value.
-         */
-        loop: function() {
-          var self = this;
-          var args = arguments;
-          var loop, id, sound;
-          if (args.length === 0) {
-            return self._loop;
-          } else if (args.length === 1) {
-            if (typeof args[0] === "boolean") {
-              loop = args[0];
-              self._loop = loop;
-            } else {
-              sound = self._soundById(parseInt(args[0], 10));
-              return sound ? sound._loop : false;
-            }
-          } else if (args.length === 2) {
-            loop = args[0];
-            id = parseInt(args[1], 10);
-          }
-          var ids = self._getSoundIds(id);
-          for (var i = 0; i < ids.length; i++) {
-            sound = self._soundById(ids[i]);
-            if (sound) {
-              sound._loop = loop;
-              if (self._webAudio && sound._node && sound._node.bufferSource) {
-                sound._node.bufferSource.loop = loop;
-                if (loop) {
-                  sound._node.bufferSource.loopStart = sound._start || 0;
-                  sound._node.bufferSource.loopEnd = sound._stop;
-                  if (self.playing(ids[i])) {
-                    self.pause(ids[i], true);
-                    self.play(ids[i], true);
-                  }
-                }
-              }
-            }
-          }
-          return self;
-        },
-        /**
-         * Get/set the playback rate of a sound. This method can optionally take 0, 1 or 2 arguments.
-         *   rate() -> Returns the first sound node's current playback rate.
-         *   rate(id) -> Returns the sound id's current playback rate.
-         *   rate(rate) -> Sets the playback rate of all sounds in this Howl group.
-         *   rate(rate, id) -> Sets the playback rate of passed sound id.
-         * @return {Howl/Number} Returns self or the current playback rate.
-         */
-        rate: function() {
-          var self = this;
-          var args = arguments;
-          var rate, id;
-          if (args.length === 0) {
-            id = self._sounds[0]._id;
-          } else if (args.length === 1) {
-            var ids = self._getSoundIds();
-            var index = ids.indexOf(args[0]);
-            if (index >= 0) {
-              id = parseInt(args[0], 10);
-            } else {
-              rate = parseFloat(args[0]);
-            }
-          } else if (args.length === 2) {
-            rate = parseFloat(args[0]);
-            id = parseInt(args[1], 10);
-          }
-          var sound;
-          if (typeof rate === "number") {
-            if (self._state !== "loaded" || self._playLock) {
-              self._queue.push({
-                event: "rate",
-                action: function() {
-                  self.rate.apply(self, args);
-                }
-              });
-              return self;
-            }
-            if (typeof id === "undefined") {
-              self._rate = rate;
-            }
-            id = self._getSoundIds(id);
-            for (var i = 0; i < id.length; i++) {
-              sound = self._soundById(id[i]);
-              if (sound) {
-                if (self.playing(id[i])) {
-                  sound._rateSeek = self.seek(id[i]);
-                  sound._playStart = self._webAudio ? Howler3.ctx.currentTime : sound._playStart;
-                }
-                sound._rate = rate;
-                if (self._webAudio && sound._node && sound._node.bufferSource) {
-                  sound._node.bufferSource.playbackRate.setValueAtTime(rate, Howler3.ctx.currentTime);
-                } else if (sound._node) {
-                  sound._node.playbackRate = rate;
-                }
-                var seek = self.seek(id[i]);
-                var duration = (self._sprite[sound._sprite][0] + self._sprite[sound._sprite][1]) / 1e3 - seek;
-                var timeout = duration * 1e3 / Math.abs(sound._rate);
-                if (self._endTimers[id[i]] || !sound._paused) {
-                  self._clearTimer(id[i]);
-                  self._endTimers[id[i]] = setTimeout(self._ended.bind(self, sound), timeout);
-                }
-                self._emit("rate", sound._id);
-              }
-            }
-          } else {
-            sound = self._soundById(id);
-            return sound ? sound._rate : self._rate;
-          }
-          return self;
-        },
-        /**
-         * Get/set the seek position of a sound. This method can optionally take 0, 1 or 2 arguments.
-         *   seek() -> Returns the first sound node's current seek position.
-         *   seek(id) -> Returns the sound id's current seek position.
-         *   seek(seek) -> Sets the seek position of the first sound node.
-         *   seek(seek, id) -> Sets the seek position of passed sound id.
-         * @return {Howl/Number} Returns self or the current seek position.
-         */
-        seek: function() {
-          var self = this;
-          var args = arguments;
-          var seek, id;
-          if (args.length === 0) {
-            if (self._sounds.length) {
-              id = self._sounds[0]._id;
-            }
-          } else if (args.length === 1) {
-            var ids = self._getSoundIds();
-            var index = ids.indexOf(args[0]);
-            if (index >= 0) {
-              id = parseInt(args[0], 10);
-            } else if (self._sounds.length) {
-              id = self._sounds[0]._id;
-              seek = parseFloat(args[0]);
-            }
-          } else if (args.length === 2) {
-            seek = parseFloat(args[0]);
-            id = parseInt(args[1], 10);
-          }
-          if (typeof id === "undefined") {
-            return 0;
-          }
-          if (typeof seek === "number" && (self._state !== "loaded" || self._playLock)) {
-            self._queue.push({
-              event: "seek",
-              action: function() {
-                self.seek.apply(self, args);
-              }
-            });
-            return self;
-          }
-          var sound = self._soundById(id);
-          if (sound) {
-            if (typeof seek === "number" && seek >= 0) {
-              var playing = self.playing(id);
-              if (playing) {
-                self.pause(id, true);
-              }
-              sound._seek = seek;
-              sound._ended = false;
-              self._clearTimer(id);
-              if (!self._webAudio && sound._node && !isNaN(sound._node.duration)) {
-                sound._node.currentTime = seek;
-              }
-              var seekAndEmit = function() {
-                if (playing) {
-                  self.play(id, true);
-                }
-                self._emit("seek", id);
-              };
-              if (playing && !self._webAudio) {
-                var emitSeek = function() {
-                  if (!self._playLock) {
-                    seekAndEmit();
-                  } else {
-                    setTimeout(emitSeek, 0);
-                  }
-                };
-                setTimeout(emitSeek, 0);
-              } else {
-                seekAndEmit();
-              }
-            } else {
-              if (self._webAudio) {
-                var realTime = self.playing(id) ? Howler3.ctx.currentTime - sound._playStart : 0;
-                var rateSeek = sound._rateSeek ? sound._rateSeek - sound._seek : 0;
-                return sound._seek + (rateSeek + realTime * Math.abs(sound._rate));
-              } else {
-                return sound._node.currentTime;
-              }
-            }
-          }
-          return self;
-        },
-        /**
-         * Check if a specific sound is currently playing or not (if id is provided), or check if at least one of the sounds in the group is playing or not.
-         * @param  {Number}  id The sound id to check. If none is passed, the whole sound group is checked.
-         * @return {Boolean} True if playing and false if not.
-         */
-        playing: function(id) {
-          var self = this;
-          if (typeof id === "number") {
-            var sound = self._soundById(id);
-            return sound ? !sound._paused : false;
-          }
-          for (var i = 0; i < self._sounds.length; i++) {
-            if (!self._sounds[i]._paused) {
-              return true;
-            }
-          }
-          return false;
-        },
-        /**
-         * Get the duration of this sound. Passing a sound id will return the sprite duration.
-         * @param  {Number} id The sound id to check. If none is passed, return full source duration.
-         * @return {Number} Audio duration in seconds.
-         */
-        duration: function(id) {
-          var self = this;
-          var duration = self._duration;
-          var sound = self._soundById(id);
-          if (sound) {
-            duration = self._sprite[sound._sprite][1] / 1e3;
-          }
-          return duration;
-        },
-        /**
-         * Returns the current loaded state of this Howl.
-         * @return {String} 'unloaded', 'loading', 'loaded'
-         */
-        state: function() {
-          return this._state;
-        },
-        /**
-         * Unload and destroy the current Howl object.
-         * This will immediately stop all sound instances attached to this group.
-         */
-        unload: function() {
-          var self = this;
-          var sounds = self._sounds;
-          for (var i = 0; i < sounds.length; i++) {
-            if (!sounds[i]._paused) {
-              self.stop(sounds[i]._id);
-            }
-            if (!self._webAudio) {
-              self._clearSound(sounds[i]._node);
-              sounds[i]._node.removeEventListener("error", sounds[i]._errorFn, false);
-              sounds[i]._node.removeEventListener(Howler3._canPlayEvent, sounds[i]._loadFn, false);
-              sounds[i]._node.removeEventListener("ended", sounds[i]._endFn, false);
-              Howler3._releaseHtml5Audio(sounds[i]._node);
-            }
-            delete sounds[i]._node;
-            self._clearTimer(sounds[i]._id);
-          }
-          var index = Howler3._howls.indexOf(self);
-          if (index >= 0) {
-            Howler3._howls.splice(index, 1);
-          }
-          var remCache = true;
-          for (i = 0; i < Howler3._howls.length; i++) {
-            if (Howler3._howls[i]._src === self._src || self._src.indexOf(Howler3._howls[i]._src) >= 0) {
-              remCache = false;
-              break;
-            }
-          }
-          if (cache && remCache) {
-            delete cache[self._src];
-          }
-          Howler3.noAudio = false;
-          self._state = "unloaded";
-          self._sounds = [];
-          self = null;
-          return null;
-        },
-        /**
-         * Listen to a custom event.
-         * @param  {String}   event Event name.
-         * @param  {Function} fn    Listener to call.
-         * @param  {Number}   id    (optional) Only listen to events for this sound.
-         * @param  {Number}   once  (INTERNAL) Marks event to fire only once.
-         * @return {Howl}
-         */
-        on: function(event, fn, id, once) {
-          var self = this;
-          var events = self["_on" + event];
-          if (typeof fn === "function") {
-            events.push(once ? { id, fn, once } : { id, fn });
-          }
-          return self;
-        },
-        /**
-         * Remove a custom event. Call without parameters to remove all events.
-         * @param  {String}   event Event name.
-         * @param  {Function} fn    Listener to remove. Leave empty to remove all.
-         * @param  {Number}   id    (optional) Only remove events for this sound.
-         * @return {Howl}
-         */
-        off: function(event, fn, id) {
-          var self = this;
-          var events = self["_on" + event];
-          var i = 0;
-          if (typeof fn === "number") {
-            id = fn;
-            fn = null;
-          }
-          if (fn || id) {
-            for (i = 0; i < events.length; i++) {
-              var isId = id === events[i].id;
-              if (fn === events[i].fn && isId || !fn && isId) {
-                events.splice(i, 1);
-                break;
-              }
-            }
-          } else if (event) {
-            self["_on" + event] = [];
-          } else {
-            var keys = Object.keys(self);
-            for (i = 0; i < keys.length; i++) {
-              if (keys[i].indexOf("_on") === 0 && Array.isArray(self[keys[i]])) {
-                self[keys[i]] = [];
-              }
-            }
-          }
-          return self;
-        },
-        /**
-         * Listen to a custom event and remove it once fired.
-         * @param  {String}   event Event name.
-         * @param  {Function} fn    Listener to call.
-         * @param  {Number}   id    (optional) Only listen to events for this sound.
-         * @return {Howl}
-         */
-        once: function(event, fn, id) {
-          var self = this;
-          self.on(event, fn, id, 1);
-          return self;
-        },
-        /**
-         * Emit all events of a specific type and pass the sound id.
-         * @param  {String} event Event name.
-         * @param  {Number} id    Sound ID.
-         * @param  {Number} msg   Message to go with event.
-         * @return {Howl}
-         */
-        _emit: function(event, id, msg) {
-          var self = this;
-          var events = self["_on" + event];
-          for (var i = events.length - 1; i >= 0; i--) {
-            if (!events[i].id || events[i].id === id || event === "load") {
-              setTimeout(function(fn) {
-                fn.call(this, id, msg);
-              }.bind(self, events[i].fn), 0);
-              if (events[i].once) {
-                self.off(event, events[i].fn, events[i].id);
-              }
-            }
-          }
-          self._loadQueue(event);
-          return self;
-        },
-        /**
-         * Queue of actions initiated before the sound has loaded.
-         * These will be called in sequence, with the next only firing
-         * after the previous has finished executing (even if async like play).
-         * @return {Howl}
-         */
-        _loadQueue: function(event) {
-          var self = this;
-          if (self._queue.length > 0) {
-            var task = self._queue[0];
-            if (task.event === event) {
-              self._queue.shift();
-              self._loadQueue();
-            }
-            if (!event) {
-              task.action();
-            }
-          }
-          return self;
-        },
-        /**
-         * Fired when playback ends at the end of the duration.
-         * @param  {Sound} sound The sound object to work with.
-         * @return {Howl}
-         */
-        _ended: function(sound) {
-          var self = this;
-          var sprite = sound._sprite;
-          if (!self._webAudio && sound._node && !sound._node.paused && !sound._node.ended && sound._node.currentTime < sound._stop) {
-            setTimeout(self._ended.bind(self, sound), 100);
-            return self;
-          }
-          var loop = !!(sound._loop || self._sprite[sprite][2]);
-          self._emit("end", sound._id);
-          if (!self._webAudio && loop) {
-            self.stop(sound._id, true).play(sound._id);
-          }
-          if (self._webAudio && loop) {
-            self._emit("play", sound._id);
-            sound._seek = sound._start || 0;
-            sound._rateSeek = 0;
-            sound._playStart = Howler3.ctx.currentTime;
-            var timeout = (sound._stop - sound._start) * 1e3 / Math.abs(sound._rate);
-            self._endTimers[sound._id] = setTimeout(self._ended.bind(self, sound), timeout);
-          }
-          if (self._webAudio && !loop) {
-            sound._paused = true;
-            sound._ended = true;
-            sound._seek = sound._start || 0;
-            sound._rateSeek = 0;
-            self._clearTimer(sound._id);
-            self._cleanBuffer(sound._node);
-            Howler3._autoSuspend();
-          }
-          if (!self._webAudio && !loop) {
-            self.stop(sound._id, true);
-          }
-          return self;
-        },
-        /**
-         * Clear the end timer for a sound playback.
-         * @param  {Number} id The sound ID.
-         * @return {Howl}
-         */
-        _clearTimer: function(id) {
-          var self = this;
-          if (self._endTimers[id]) {
-            if (typeof self._endTimers[id] !== "function") {
-              clearTimeout(self._endTimers[id]);
-            } else {
-              var sound = self._soundById(id);
-              if (sound && sound._node) {
-                sound._node.removeEventListener("ended", self._endTimers[id], false);
-              }
-            }
-            delete self._endTimers[id];
-          }
-          return self;
-        },
-        /**
-         * Return the sound identified by this ID, or return null.
-         * @param  {Number} id Sound ID
-         * @return {Object}    Sound object or null.
-         */
-        _soundById: function(id) {
-          var self = this;
-          for (var i = 0; i < self._sounds.length; i++) {
-            if (id === self._sounds[i]._id) {
-              return self._sounds[i];
-            }
-          }
-          return null;
-        },
-        /**
-         * Return an inactive sound from the pool or create a new one.
-         * @return {Sound} Sound playback object.
-         */
-        _inactiveSound: function() {
-          var self = this;
-          self._drain();
-          for (var i = 0; i < self._sounds.length; i++) {
-            if (self._sounds[i]._ended) {
-              return self._sounds[i].reset();
-            }
-          }
-          return new Sound2(self);
-        },
-        /**
-         * Drain excess inactive sounds from the pool.
-         */
-        _drain: function() {
-          var self = this;
-          var limit = self._pool;
-          var cnt = 0;
-          var i = 0;
-          if (self._sounds.length < limit) {
-            return;
-          }
-          for (i = 0; i < self._sounds.length; i++) {
-            if (self._sounds[i]._ended) {
-              cnt++;
-            }
-          }
-          for (i = self._sounds.length - 1; i >= 0; i--) {
-            if (cnt <= limit) {
-              return;
-            }
-            if (self._sounds[i]._ended) {
-              if (self._webAudio && self._sounds[i]._node) {
-                self._sounds[i]._node.disconnect(0);
-              }
-              self._sounds.splice(i, 1);
-              cnt--;
-            }
-          }
-        },
-        /**
-         * Get all ID's from the sounds pool.
-         * @param  {Number} id Only return one ID if one is passed.
-         * @return {Array}    Array of IDs.
-         */
-        _getSoundIds: function(id) {
-          var self = this;
-          if (typeof id === "undefined") {
-            var ids = [];
-            for (var i = 0; i < self._sounds.length; i++) {
-              ids.push(self._sounds[i]._id);
-            }
-            return ids;
-          } else {
-            return [id];
-          }
-        },
-        /**
-         * Load the sound back into the buffer source.
-         * @param  {Sound} sound The sound object to work with.
-         * @return {Howl}
-         */
-        _refreshBuffer: function(sound) {
-          var self = this;
-          sound._node.bufferSource = Howler3.ctx.createBufferSource();
-          sound._node.bufferSource.buffer = cache[self._src];
-          if (sound._panner) {
-            sound._node.bufferSource.connect(sound._panner);
-          } else {
-            sound._node.bufferSource.connect(sound._node);
-          }
-          sound._node.bufferSource.loop = sound._loop;
-          if (sound._loop) {
-            sound._node.bufferSource.loopStart = sound._start || 0;
-            sound._node.bufferSource.loopEnd = sound._stop || 0;
-          }
-          sound._node.bufferSource.playbackRate.setValueAtTime(sound._rate, Howler3.ctx.currentTime);
-          return self;
-        },
-        /**
-         * Prevent memory leaks by cleaning up the buffer source after playback.
-         * @param  {Object} node Sound's audio node containing the buffer source.
-         * @return {Howl}
-         */
-        _cleanBuffer: function(node) {
-          var self = this;
-          var isIOS = Howler3._navigator && Howler3._navigator.vendor.indexOf("Apple") >= 0;
-          if (!node.bufferSource) {
-            return self;
-          }
-          if (Howler3._scratchBuffer && node.bufferSource) {
-            node.bufferSource.onended = null;
-            node.bufferSource.disconnect(0);
-            if (isIOS) {
-              try {
-                node.bufferSource.buffer = Howler3._scratchBuffer;
-              } catch (e) {
-              }
-            }
-          }
-          node.bufferSource = null;
-          return self;
-        },
-        /**
-         * Set the source to a 0-second silence to stop any downloading (except in IE).
-         * @param  {Object} node Audio node to clear.
-         */
-        _clearSound: function(node) {
-          var checkIE = /MSIE |Trident\//.test(Howler3._navigator && Howler3._navigator.userAgent);
-          if (!checkIE) {
-            node.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
-          }
-        }
-      };
-      var Sound2 = function(howl) {
-        this._parent = howl;
-        this.init();
-      };
-      Sound2.prototype = {
-        /**
-         * Initialize a new Sound object.
-         * @return {Sound}
-         */
-        init: function() {
-          var self = this;
-          var parent = self._parent;
-          self._muted = parent._muted;
-          self._loop = parent._loop;
-          self._volume = parent._volume;
-          self._rate = parent._rate;
-          self._seek = 0;
-          self._paused = true;
-          self._ended = true;
-          self._sprite = "__default";
-          self._id = ++Howler3._counter;
-          parent._sounds.push(self);
-          self.create();
-          return self;
-        },
-        /**
-         * Create and setup a new sound object, whether HTML5 Audio or Web Audio.
-         * @return {Sound}
-         */
-        create: function() {
-          var self = this;
-          var parent = self._parent;
-          var volume = Howler3._muted || self._muted || self._parent._muted ? 0 : self._volume;
-          if (parent._webAudio) {
-            self._node = typeof Howler3.ctx.createGain === "undefined" ? Howler3.ctx.createGainNode() : Howler3.ctx.createGain();
-            self._node.gain.setValueAtTime(volume, Howler3.ctx.currentTime);
-            self._node.paused = true;
-            self._node.connect(Howler3.masterGain);
-          } else if (!Howler3.noAudio) {
-            self._node = Howler3._obtainHtml5Audio();
-            self._errorFn = self._errorListener.bind(self);
-            self._node.addEventListener("error", self._errorFn, false);
-            self._loadFn = self._loadListener.bind(self);
-            self._node.addEventListener(Howler3._canPlayEvent, self._loadFn, false);
-            self._endFn = self._endListener.bind(self);
-            self._node.addEventListener("ended", self._endFn, false);
-            self._node.src = parent._src;
-            self._node.preload = parent._preload === true ? "auto" : parent._preload;
-            self._node.volume = volume * Howler3.volume();
-            self._node.load();
-          }
-          return self;
-        },
-        /**
-         * Reset the parameters of this sound to the original state (for recycle).
-         * @return {Sound}
-         */
-        reset: function() {
-          var self = this;
-          var parent = self._parent;
-          self._muted = parent._muted;
-          self._loop = parent._loop;
-          self._volume = parent._volume;
-          self._rate = parent._rate;
-          self._seek = 0;
-          self._rateSeek = 0;
-          self._paused = true;
-          self._ended = true;
-          self._sprite = "__default";
-          self._id = ++Howler3._counter;
-          return self;
-        },
-        /**
-         * HTML5 Audio error listener callback.
-         */
-        _errorListener: function() {
-          var self = this;
-          self._parent._emit("loaderror", self._id, self._node.error ? self._node.error.code : 0);
-          self._node.removeEventListener("error", self._errorFn, false);
-        },
-        /**
-         * HTML5 Audio canplaythrough listener callback.
-         */
-        _loadListener: function() {
-          var self = this;
-          var parent = self._parent;
-          parent._duration = Math.ceil(self._node.duration * 10) / 10;
-          if (Object.keys(parent._sprite).length === 0) {
-            parent._sprite = { __default: [0, parent._duration * 1e3] };
-          }
-          if (parent._state !== "loaded") {
-            parent._state = "loaded";
-            parent._emit("load");
-            parent._loadQueue();
-          }
-          self._node.removeEventListener(Howler3._canPlayEvent, self._loadFn, false);
-        },
-        /**
-         * HTML5 Audio ended listener callback.
-         */
-        _endListener: function() {
-          var self = this;
-          var parent = self._parent;
-          if (parent._duration === Infinity) {
-            parent._duration = Math.ceil(self._node.duration * 10) / 10;
-            if (parent._sprite.__default[1] === Infinity) {
-              parent._sprite.__default[1] = parent._duration * 1e3;
-            }
-            parent._ended(self);
-          }
-          self._node.removeEventListener("ended", self._endFn, false);
-        }
-      };
-      var cache = {};
-      var loadBuffer = function(self) {
-        var url = self._src;
-        if (cache[url]) {
-          self._duration = cache[url].duration;
-          loadSound(self);
-          return;
-        }
-        if (/^data:[^;]+;base64,/.test(url)) {
-          var data = atob(url.split(",")[1]);
-          var dataView = new Uint8Array(data.length);
-          for (var i = 0; i < data.length; ++i) {
-            dataView[i] = data.charCodeAt(i);
-          }
-          decodeAudioData(dataView.buffer, self);
-        } else {
-          var xhr = new XMLHttpRequest();
-          xhr.open(self._xhr.method, url, true);
-          xhr.withCredentials = self._xhr.withCredentials;
-          xhr.responseType = "arraybuffer";
-          if (self._xhr.headers) {
-            Object.keys(self._xhr.headers).forEach(function(key) {
-              xhr.setRequestHeader(key, self._xhr.headers[key]);
-            });
-          }
-          xhr.onload = function() {
-            var code = (xhr.status + "")[0];
-            if (code !== "0" && code !== "2" && code !== "3") {
-              self._emit("loaderror", null, "Failed loading audio file with status: " + xhr.status + ".");
-              return;
-            }
-            decodeAudioData(xhr.response, self);
-          };
-          xhr.onerror = function() {
-            if (self._webAudio) {
-              self._html5 = true;
-              self._webAudio = false;
-              self._sounds = [];
-              delete cache[url];
-              self.load();
-            }
-          };
-          safeXhrSend(xhr);
-        }
-      };
-      var safeXhrSend = function(xhr) {
-        try {
-          xhr.send();
-        } catch (e) {
-          xhr.onerror();
-        }
-      };
-      var decodeAudioData = function(arraybuffer, self) {
-        var error = function() {
-          self._emit("loaderror", null, "Decoding audio data failed.");
-        };
-        var success = function(buffer) {
-          if (buffer && self._sounds.length > 0) {
-            cache[self._src] = buffer;
-            loadSound(self, buffer);
-          } else {
-            error();
-          }
-        };
-        if (typeof Promise !== "undefined" && Howler3.ctx.decodeAudioData.length === 1) {
-          Howler3.ctx.decodeAudioData(arraybuffer).then(success).catch(error);
-        } else {
-          Howler3.ctx.decodeAudioData(arraybuffer, success, error);
-        }
-      };
-      var loadSound = function(self, buffer) {
-        if (buffer && !self._duration) {
-          self._duration = buffer.duration;
-        }
-        if (Object.keys(self._sprite).length === 0) {
-          self._sprite = { __default: [0, self._duration * 1e3] };
-        }
-        if (self._state !== "loaded") {
-          self._state = "loaded";
-          self._emit("load");
-          self._loadQueue();
-        }
-      };
-      var setupAudioContext = function() {
-        if (!Howler3.usingWebAudio) {
-          return;
-        }
-        try {
-          if (typeof AudioContext !== "undefined") {
-            Howler3.ctx = new AudioContext();
-          } else if (typeof webkitAudioContext !== "undefined") {
-            Howler3.ctx = new webkitAudioContext();
-          } else {
-            Howler3.usingWebAudio = false;
-          }
-        } catch (e) {
-          Howler3.usingWebAudio = false;
-        }
-        if (!Howler3.ctx) {
-          Howler3.usingWebAudio = false;
-        }
-        var iOS = /iP(hone|od|ad)/.test(Howler3._navigator && Howler3._navigator.platform);
-        var appVersion = Howler3._navigator && Howler3._navigator.appVersion.match(/OS (\d+)_(\d+)_?(\d+)?/);
-        var version = appVersion ? parseInt(appVersion[1], 10) : null;
-        if (iOS && version && version < 9) {
-          var safari = /safari/.test(Howler3._navigator && Howler3._navigator.userAgent.toLowerCase());
-          if (Howler3._navigator && !safari) {
-            Howler3.usingWebAudio = false;
-          }
-        }
-        if (Howler3.usingWebAudio) {
-          Howler3.masterGain = typeof Howler3.ctx.createGain === "undefined" ? Howler3.ctx.createGainNode() : Howler3.ctx.createGain();
-          Howler3.masterGain.gain.setValueAtTime(Howler3._muted ? 0 : Howler3._volume, Howler3.ctx.currentTime);
-          Howler3.masterGain.connect(Howler3.ctx.destination);
-        }
-        Howler3._setup();
-      };
-      if (typeof define === "function" && define.amd) {
-        define([], function() {
-          return {
-            Howler: Howler3,
-            Howl: Howl3
-          };
-        });
-      }
-      if (typeof exports !== "undefined") {
-        exports.Howler = Howler3;
-        exports.Howl = Howl3;
-      }
-      if (typeof global !== "undefined") {
-        global.HowlerGlobal = HowlerGlobal2;
-        global.Howler = Howler3;
-        global.Howl = Howl3;
-        global.Sound = Sound2;
-      } else if (typeof window !== "undefined") {
-        window.HowlerGlobal = HowlerGlobal2;
-        window.Howler = Howler3;
-        window.Howl = Howl3;
-        window.Sound = Sound2;
-      }
-    })();
-    (function() {
-      "use strict";
-      HowlerGlobal.prototype._pos = [0, 0, 0];
-      HowlerGlobal.prototype._orientation = [0, 0, -1, 0, 1, 0];
-      HowlerGlobal.prototype.stereo = function(pan) {
-        var self = this;
-        if (!self.ctx || !self.ctx.listener) {
-          return self;
-        }
-        for (var i = self._howls.length - 1; i >= 0; i--) {
-          self._howls[i].stereo(pan);
-        }
-        return self;
-      };
-      HowlerGlobal.prototype.pos = function(x, y, z) {
-        var self = this;
-        if (!self.ctx || !self.ctx.listener) {
-          return self;
-        }
-        y = typeof y !== "number" ? self._pos[1] : y;
-        z = typeof z !== "number" ? self._pos[2] : z;
-        if (typeof x === "number") {
-          self._pos = [x, y, z];
-          if (typeof self.ctx.listener.positionX !== "undefined") {
-            self.ctx.listener.positionX.setTargetAtTime(self._pos[0], Howler.ctx.currentTime, 0.1);
-            self.ctx.listener.positionY.setTargetAtTime(self._pos[1], Howler.ctx.currentTime, 0.1);
-            self.ctx.listener.positionZ.setTargetAtTime(self._pos[2], Howler.ctx.currentTime, 0.1);
-          } else {
-            self.ctx.listener.setPosition(self._pos[0], self._pos[1], self._pos[2]);
-          }
-        } else {
-          return self._pos;
-        }
-        return self;
-      };
-      HowlerGlobal.prototype.orientation = function(x, y, z, xUp, yUp, zUp) {
-        var self = this;
-        if (!self.ctx || !self.ctx.listener) {
-          return self;
-        }
-        var or = self._orientation;
-        y = typeof y !== "number" ? or[1] : y;
-        z = typeof z !== "number" ? or[2] : z;
-        xUp = typeof xUp !== "number" ? or[3] : xUp;
-        yUp = typeof yUp !== "number" ? or[4] : yUp;
-        zUp = typeof zUp !== "number" ? or[5] : zUp;
-        if (typeof x === "number") {
-          self._orientation = [x, y, z, xUp, yUp, zUp];
-          if (typeof self.ctx.listener.forwardX !== "undefined") {
-            self.ctx.listener.forwardX.setTargetAtTime(x, Howler.ctx.currentTime, 0.1);
-            self.ctx.listener.forwardY.setTargetAtTime(y, Howler.ctx.currentTime, 0.1);
-            self.ctx.listener.forwardZ.setTargetAtTime(z, Howler.ctx.currentTime, 0.1);
-            self.ctx.listener.upX.setTargetAtTime(xUp, Howler.ctx.currentTime, 0.1);
-            self.ctx.listener.upY.setTargetAtTime(yUp, Howler.ctx.currentTime, 0.1);
-            self.ctx.listener.upZ.setTargetAtTime(zUp, Howler.ctx.currentTime, 0.1);
-          } else {
-            self.ctx.listener.setOrientation(x, y, z, xUp, yUp, zUp);
-          }
-        } else {
-          return or;
-        }
-        return self;
-      };
-      Howl.prototype.init = /* @__PURE__ */ (function(_super) {
-        return function(o) {
-          var self = this;
-          self._orientation = o.orientation || [1, 0, 0];
-          self._stereo = o.stereo || null;
-          self._pos = o.pos || null;
-          self._pannerAttr = {
-            coneInnerAngle: typeof o.coneInnerAngle !== "undefined" ? o.coneInnerAngle : 360,
-            coneOuterAngle: typeof o.coneOuterAngle !== "undefined" ? o.coneOuterAngle : 360,
-            coneOuterGain: typeof o.coneOuterGain !== "undefined" ? o.coneOuterGain : 0,
-            distanceModel: typeof o.distanceModel !== "undefined" ? o.distanceModel : "inverse",
-            maxDistance: typeof o.maxDistance !== "undefined" ? o.maxDistance : 1e4,
-            panningModel: typeof o.panningModel !== "undefined" ? o.panningModel : "HRTF",
-            refDistance: typeof o.refDistance !== "undefined" ? o.refDistance : 1,
-            rolloffFactor: typeof o.rolloffFactor !== "undefined" ? o.rolloffFactor : 1
-          };
-          self._onstereo = o.onstereo ? [{ fn: o.onstereo }] : [];
-          self._onpos = o.onpos ? [{ fn: o.onpos }] : [];
-          self._onorientation = o.onorientation ? [{ fn: o.onorientation }] : [];
-          return _super.call(this, o);
-        };
-      })(Howl.prototype.init);
-      Howl.prototype.stereo = function(pan, id) {
-        var self = this;
-        if (!self._webAudio) {
-          return self;
-        }
-        if (self._state !== "loaded") {
-          self._queue.push({
-            event: "stereo",
-            action: function() {
-              self.stereo(pan, id);
-            }
-          });
-          return self;
-        }
-        var pannerType = typeof Howler.ctx.createStereoPanner === "undefined" ? "spatial" : "stereo";
-        if (typeof id === "undefined") {
-          if (typeof pan === "number") {
-            self._stereo = pan;
-            self._pos = [pan, 0, 0];
-          } else {
-            return self._stereo;
-          }
-        }
-        var ids = self._getSoundIds(id);
-        for (var i = 0; i < ids.length; i++) {
-          var sound = self._soundById(ids[i]);
-          if (sound) {
-            if (typeof pan === "number") {
-              sound._stereo = pan;
-              sound._pos = [pan, 0, 0];
-              if (sound._node) {
-                sound._pannerAttr.panningModel = "equalpower";
-                if (!sound._panner || !sound._panner.pan) {
-                  setupPanner(sound, pannerType);
-                }
-                if (pannerType === "spatial") {
-                  if (typeof sound._panner.positionX !== "undefined") {
-                    sound._panner.positionX.setValueAtTime(pan, Howler.ctx.currentTime);
-                    sound._panner.positionY.setValueAtTime(0, Howler.ctx.currentTime);
-                    sound._panner.positionZ.setValueAtTime(0, Howler.ctx.currentTime);
-                  } else {
-                    sound._panner.setPosition(pan, 0, 0);
-                  }
-                } else {
-                  sound._panner.pan.setValueAtTime(pan, Howler.ctx.currentTime);
-                }
-              }
-              self._emit("stereo", sound._id);
-            } else {
-              return sound._stereo;
-            }
-          }
-        }
-        return self;
-      };
-      Howl.prototype.pos = function(x, y, z, id) {
-        var self = this;
-        if (!self._webAudio) {
-          return self;
-        }
-        if (self._state !== "loaded") {
-          self._queue.push({
-            event: "pos",
-            action: function() {
-              self.pos(x, y, z, id);
-            }
-          });
-          return self;
-        }
-        y = typeof y !== "number" ? 0 : y;
-        z = typeof z !== "number" ? -0.5 : z;
-        if (typeof id === "undefined") {
-          if (typeof x === "number") {
-            self._pos = [x, y, z];
-          } else {
-            return self._pos;
-          }
-        }
-        var ids = self._getSoundIds(id);
-        for (var i = 0; i < ids.length; i++) {
-          var sound = self._soundById(ids[i]);
-          if (sound) {
-            if (typeof x === "number") {
-              sound._pos = [x, y, z];
-              if (sound._node) {
-                if (!sound._panner || sound._panner.pan) {
-                  setupPanner(sound, "spatial");
-                }
-                if (typeof sound._panner.positionX !== "undefined") {
-                  sound._panner.positionX.setValueAtTime(x, Howler.ctx.currentTime);
-                  sound._panner.positionY.setValueAtTime(y, Howler.ctx.currentTime);
-                  sound._panner.positionZ.setValueAtTime(z, Howler.ctx.currentTime);
-                } else {
-                  sound._panner.setPosition(x, y, z);
-                }
-              }
-              self._emit("pos", sound._id);
-            } else {
-              return sound._pos;
-            }
-          }
-        }
-        return self;
-      };
-      Howl.prototype.orientation = function(x, y, z, id) {
-        var self = this;
-        if (!self._webAudio) {
-          return self;
-        }
-        if (self._state !== "loaded") {
-          self._queue.push({
-            event: "orientation",
-            action: function() {
-              self.orientation(x, y, z, id);
-            }
-          });
-          return self;
-        }
-        y = typeof y !== "number" ? self._orientation[1] : y;
-        z = typeof z !== "number" ? self._orientation[2] : z;
-        if (typeof id === "undefined") {
-          if (typeof x === "number") {
-            self._orientation = [x, y, z];
-          } else {
-            return self._orientation;
-          }
-        }
-        var ids = self._getSoundIds(id);
-        for (var i = 0; i < ids.length; i++) {
-          var sound = self._soundById(ids[i]);
-          if (sound) {
-            if (typeof x === "number") {
-              sound._orientation = [x, y, z];
-              if (sound._node) {
-                if (!sound._panner) {
-                  if (!sound._pos) {
-                    sound._pos = self._pos || [0, 0, -0.5];
-                  }
-                  setupPanner(sound, "spatial");
-                }
-                if (typeof sound._panner.orientationX !== "undefined") {
-                  sound._panner.orientationX.setValueAtTime(x, Howler.ctx.currentTime);
-                  sound._panner.orientationY.setValueAtTime(y, Howler.ctx.currentTime);
-                  sound._panner.orientationZ.setValueAtTime(z, Howler.ctx.currentTime);
-                } else {
-                  sound._panner.setOrientation(x, y, z);
-                }
-              }
-              self._emit("orientation", sound._id);
-            } else {
-              return sound._orientation;
-            }
-          }
-        }
-        return self;
-      };
-      Howl.prototype.pannerAttr = function() {
-        var self = this;
-        var args = arguments;
-        var o, id, sound;
-        if (!self._webAudio) {
-          return self;
-        }
-        if (args.length === 0) {
-          return self._pannerAttr;
-        } else if (args.length === 1) {
-          if (typeof args[0] === "object") {
-            o = args[0];
-            if (typeof id === "undefined") {
-              if (!o.pannerAttr) {
-                o.pannerAttr = {
-                  coneInnerAngle: o.coneInnerAngle,
-                  coneOuterAngle: o.coneOuterAngle,
-                  coneOuterGain: o.coneOuterGain,
-                  distanceModel: o.distanceModel,
-                  maxDistance: o.maxDistance,
-                  refDistance: o.refDistance,
-                  rolloffFactor: o.rolloffFactor,
-                  panningModel: o.panningModel
-                };
-              }
-              self._pannerAttr = {
-                coneInnerAngle: typeof o.pannerAttr.coneInnerAngle !== "undefined" ? o.pannerAttr.coneInnerAngle : self._coneInnerAngle,
-                coneOuterAngle: typeof o.pannerAttr.coneOuterAngle !== "undefined" ? o.pannerAttr.coneOuterAngle : self._coneOuterAngle,
-                coneOuterGain: typeof o.pannerAttr.coneOuterGain !== "undefined" ? o.pannerAttr.coneOuterGain : self._coneOuterGain,
-                distanceModel: typeof o.pannerAttr.distanceModel !== "undefined" ? o.pannerAttr.distanceModel : self._distanceModel,
-                maxDistance: typeof o.pannerAttr.maxDistance !== "undefined" ? o.pannerAttr.maxDistance : self._maxDistance,
-                refDistance: typeof o.pannerAttr.refDistance !== "undefined" ? o.pannerAttr.refDistance : self._refDistance,
-                rolloffFactor: typeof o.pannerAttr.rolloffFactor !== "undefined" ? o.pannerAttr.rolloffFactor : self._rolloffFactor,
-                panningModel: typeof o.pannerAttr.panningModel !== "undefined" ? o.pannerAttr.panningModel : self._panningModel
-              };
-            }
-          } else {
-            sound = self._soundById(parseInt(args[0], 10));
-            return sound ? sound._pannerAttr : self._pannerAttr;
-          }
-        } else if (args.length === 2) {
-          o = args[0];
-          id = parseInt(args[1], 10);
-        }
-        var ids = self._getSoundIds(id);
-        for (var i = 0; i < ids.length; i++) {
-          sound = self._soundById(ids[i]);
-          if (sound) {
-            var pa = sound._pannerAttr;
-            pa = {
-              coneInnerAngle: typeof o.coneInnerAngle !== "undefined" ? o.coneInnerAngle : pa.coneInnerAngle,
-              coneOuterAngle: typeof o.coneOuterAngle !== "undefined" ? o.coneOuterAngle : pa.coneOuterAngle,
-              coneOuterGain: typeof o.coneOuterGain !== "undefined" ? o.coneOuterGain : pa.coneOuterGain,
-              distanceModel: typeof o.distanceModel !== "undefined" ? o.distanceModel : pa.distanceModel,
-              maxDistance: typeof o.maxDistance !== "undefined" ? o.maxDistance : pa.maxDistance,
-              refDistance: typeof o.refDistance !== "undefined" ? o.refDistance : pa.refDistance,
-              rolloffFactor: typeof o.rolloffFactor !== "undefined" ? o.rolloffFactor : pa.rolloffFactor,
-              panningModel: typeof o.panningModel !== "undefined" ? o.panningModel : pa.panningModel
-            };
-            var panner = sound._panner;
-            if (!panner) {
-              if (!sound._pos) {
-                sound._pos = self._pos || [0, 0, -0.5];
-              }
-              setupPanner(sound, "spatial");
-              panner = sound._panner;
-            }
-            panner.coneInnerAngle = pa.coneInnerAngle;
-            panner.coneOuterAngle = pa.coneOuterAngle;
-            panner.coneOuterGain = pa.coneOuterGain;
-            panner.distanceModel = pa.distanceModel;
-            panner.maxDistance = pa.maxDistance;
-            panner.refDistance = pa.refDistance;
-            panner.rolloffFactor = pa.rolloffFactor;
-            panner.panningModel = pa.panningModel;
-          }
-        }
-        return self;
-      };
-      Sound.prototype.init = /* @__PURE__ */ (function(_super) {
-        return function() {
-          var self = this;
-          var parent = self._parent;
-          self._orientation = parent._orientation;
-          self._stereo = parent._stereo;
-          self._pos = parent._pos;
-          self._pannerAttr = parent._pannerAttr;
-          _super.call(this);
-          if (self._stereo) {
-            parent.stereo(self._stereo);
-          } else if (self._pos) {
-            parent.pos(self._pos[0], self._pos[1], self._pos[2], self._id);
-          }
-        };
-      })(Sound.prototype.init);
-      Sound.prototype.reset = /* @__PURE__ */ (function(_super) {
-        return function() {
-          var self = this;
-          var parent = self._parent;
-          self._orientation = parent._orientation;
-          self._stereo = parent._stereo;
-          self._pos = parent._pos;
-          self._pannerAttr = parent._pannerAttr;
-          if (self._stereo) {
-            parent.stereo(self._stereo);
-          } else if (self._pos) {
-            parent.pos(self._pos[0], self._pos[1], self._pos[2], self._id);
-          } else if (self._panner) {
-            self._panner.disconnect(0);
-            self._panner = void 0;
-            parent._refreshBuffer(self);
-          }
-          return _super.call(this);
-        };
-      })(Sound.prototype.reset);
-      var setupPanner = function(sound, type) {
-        type = type || "spatial";
-        if (type === "spatial") {
-          sound._panner = Howler.ctx.createPanner();
-          sound._panner.coneInnerAngle = sound._pannerAttr.coneInnerAngle;
-          sound._panner.coneOuterAngle = sound._pannerAttr.coneOuterAngle;
-          sound._panner.coneOuterGain = sound._pannerAttr.coneOuterGain;
-          sound._panner.distanceModel = sound._pannerAttr.distanceModel;
-          sound._panner.maxDistance = sound._pannerAttr.maxDistance;
-          sound._panner.refDistance = sound._pannerAttr.refDistance;
-          sound._panner.rolloffFactor = sound._pannerAttr.rolloffFactor;
-          sound._panner.panningModel = sound._pannerAttr.panningModel;
-          if (typeof sound._panner.positionX !== "undefined") {
-            sound._panner.positionX.setValueAtTime(sound._pos[0], Howler.ctx.currentTime);
-            sound._panner.positionY.setValueAtTime(sound._pos[1], Howler.ctx.currentTime);
-            sound._panner.positionZ.setValueAtTime(sound._pos[2], Howler.ctx.currentTime);
-          } else {
-            sound._panner.setPosition(sound._pos[0], sound._pos[1], sound._pos[2]);
-          }
-          if (typeof sound._panner.orientationX !== "undefined") {
-            sound._panner.orientationX.setValueAtTime(sound._orientation[0], Howler.ctx.currentTime);
-            sound._panner.orientationY.setValueAtTime(sound._orientation[1], Howler.ctx.currentTime);
-            sound._panner.orientationZ.setValueAtTime(sound._orientation[2], Howler.ctx.currentTime);
-          } else {
-            sound._panner.setOrientation(sound._orientation[0], sound._orientation[1], sound._orientation[2]);
-          }
-        } else {
-          sound._panner = Howler.ctx.createStereoPanner();
-          sound._panner.pan.setValueAtTime(sound._stereo, Howler.ctx.currentTime);
-        }
-        sound._panner.connect(sound._node);
-        if (!sound._paused) {
-          sound._parent.pause(sound._id, true).play(sound._id, true);
-        }
-      };
-    })();
-  }
-});
-
-// src/utils/audioManager.ts
-var import_howler, AudioManager, audioManager;
-var init_audioManager = __esm({
-  "src/utils/audioManager.ts"() {
-    "use strict";
-    import_howler = __toESM(require_howler());
-    AudioManager = class {
-      constructor() {
-        this.sounds = /* @__PURE__ */ new Map();
-        this.music = /* @__PURE__ */ new Map();
-        this.activeMusic = null;
-        // AudioContext is reserved for future use
-        // private globalAudioContext: AudioContext | null = null;
-        this.settings = {
-          areSoundsMuted: false,
-          isMusicMuted: false,
-          sfxVolume: 0.7,
-          musicVolume: 0.7,
-          wordVolume: 1
-        };
-      }
-      /**
-       * Load a sound effect
-       * @param key Unique identifier for the sound
-       * @param src Path to the audio file
-       * @param options Sound options
-       */
-      loadSound(key, src, options = {}) {
-        const {
-          loop = false,
-          volume = this.settings.sfxVolume,
-          onend,
-          onerror,
-          preload = true
-        } = options;
-        if (this.sounds.has(key)) {
-          return;
-        }
-        const sound = new import_howler.Howl({
-          src: [src],
-          loop,
-          volume,
-          preload,
-          onload: () => {
-            console.log(`Sound loaded: ${key}`);
-          },
-          onloaderror: (_, error) => {
-            console.error(`Error loading sound ${key}:`, error);
-            if (onerror) onerror(error);
-          },
-          onend: () => {
-            if (onend) onend();
-          },
-          onplayerror: () => {
-            console.error(`Error playing sound: ${key}`);
-            if (onerror) onerror(new Error(`Failed to play sound: ${key}`));
-          }
-        });
-        this.sounds.set(key, { key, sound, path: src });
-      }
-      /**
-       * Check if a sound is loaded
-       * @param key Sound key or path
-       */
-      isSoundLoaded(keyOrPath) {
-        const sound = this.sounds.get(keyOrPath);
-        if (sound) {
-          return sound.sound.state() === "loaded";
-        }
-        for (const [_, snd] of this.sounds) {
-          if (snd.path === keyOrPath) {
-            return snd.sound.state() === "loaded";
-          }
-        }
-        return false;
-      }
-      /**
-       * Get a sound by key
-       * @param key Sound key
-       */
-      getSound(key) {
-        return this.sounds.get(key)?.sound;
-      }
-      /**
-       * Get a music track by key
-       * @param key Music key
-       */
-      getMusic(key) {
-        return this.music.get(key);
-      }
-      /**
-       * Play a sound effect
-       * @param key Sound key or path
-       * @param options Sound options
-       * @returns Sound ID or null if failed
-       */
-      playSound(keyOrPath, options = {}) {
-        if (this.settings.areSoundsMuted) {
-          return null;
-        }
-        const {
-          loop = false,
-          volume = this.settings.sfxVolume,
-          onend,
-          onerror
-        } = options;
-        let sound = this.sounds.get(keyOrPath);
-        if (!sound) {
-          for (const [_, snd] of this.sounds) {
-            if (snd.path === keyOrPath) {
-              sound = snd;
-              break;
-            }
-          }
-          if (!sound) {
-            this.loadSound(keyOrPath, keyOrPath, { ...options, preload: true });
-            console.warn(`Sound not preloaded: ${keyOrPath}, attempting to load...`);
-            return null;
-          }
-        }
-        try {
-          sound.sound.loop(loop);
-          sound.sound.volume(volume);
-          if (onend) {
-            sound.sound.off("end");
-            sound.sound.once("end", onend);
-          }
-          if (onerror) {
-            sound.sound.off("loaderror");
-            sound.sound.once("loaderror", (_, error) => onerror(error));
-          }
-          return sound.sound.play();
-        } catch (error) {
-          console.error(`Error playing sound ${keyOrPath}:`, error);
-          if (onerror) onerror(error);
-          return null;
-        }
-      }
-      // Load a music track
-      loadMusic(key, src, loop = true) {
-        const music = new import_howler.Howl({
-          src: [src],
-          loop,
-          volume: this.settings.musicVolume,
-          onloaderror: (_, error) => {
-            console.error(`Error loading music ${key}:`, error);
-          },
-          onend: () => {
-            if (this.activeMusic?.key === key) {
-              this.activeMusic = null;
-            }
-          }
-        });
-        this.music.set(key, music);
-      }
-      // Play a sound effect
-      playSound(keyOrPath, options = {}) {
-        if (this.settings.areSoundsMuted) {
-          return null;
-        }
-        const {
-          loop = false,
-          volume = this.settings.sfxVolume,
-          onend,
-          onerror
-        } = options;
-        let sound = this.sounds.get(keyOrPath);
-        if (!sound) {
-          for (const [_, snd] of this.sounds) {
-            if (snd.path === keyOrPath) {
-              sound = snd;
-              break;
-            }
-          }
-          if (!sound) {
-            this.loadSound(keyOrPath, keyOrPath, { ...options, preload: true });
-            console.warn(`Sound not preloaded: ${keyOrPath}, attempting to load...`);
-            return null;
-          }
-        }
-        try {
-          sound.sound.loop(loop);
-          sound.sound.volume(volume);
-          if (onend) {
-            sound.sound.off("end");
-            sound.sound.once("end", onend);
-          }
-          if (onerror) {
-            sound.sound.off("loaderror");
-            sound.sound.once("loaderror", (_, error) => onerror(error));
-          }
-          return sound.sound.play();
-        } catch (error) {
-          console.error(`Error playing sound ${keyOrPath}:`, error);
-          return null;
-        }
-      }
-      // Play music
-      playMusic(key, options = {}) {
-        if (this.settings.isMusicMuted) return;
-        const music = this.music.get(key);
-        if (!music) {
-          console.warn(`Music ${key} not found`);
-          return;
-        }
-        this.stopMusic();
-        const volume = options.volume ?? this.settings.musicVolume;
-        if (options.fadeIn) {
-          music.volume(0);
-          music.play();
-          music.fade(0, volume, 1e3);
-        } else {
-          music.volume(volume);
-          music.play();
-        }
-        this.activeMusic = { key, instance: music };
-      }
-      // Stop music
-      stopMusic(fadeOut = false) {
-        if (!this.activeMusic) return;
-        const { instance } = this.activeMusic;
-        if (fadeOut) {
-          instance.fade(instance.volume(), 0, 1e3);
-          setTimeout(() => {
-            instance.stop();
-            this.activeMusic = null;
-          }, 1e3);
-        } else {
-          instance.stop();
-          this.activeMusic = null;
-        }
-      }
-      // Pause music
-      pauseMusic() {
-        if (!this.activeMusic) return;
-        this.activeMusic.instance.pause();
-      }
-      // Resume music
-      resumeMusic() {
-        if (!this.activeMusic) return;
-        this.activeMusic.instance.play();
-      }
-      // Set SFX volume
-      setSfxVolume(volume) {
-        this.settings.sfxVolume = volume;
-        import_howler.Howler.volume(volume);
-      }
-      // Set music volume
-      setMusicVolume(volume) {
-        this.settings.musicVolume = volume;
-        if (this.activeMusic) {
-          this.activeMusic.instance.volume(volume);
-        }
-      }
-      // Toggle mute state
-      toggleMute() {
-        this.settings.areSoundsMuted = !this.settings.areSoundsMuted;
-        import_howler.Howler.mute(this.settings.areSoundsMuted);
-      }
-      // Toggle music state
-      toggleMusic() {
-        this.settings.isMusicMuted = !this.settings.isMusicMuted;
-        if (this.settings.isMusicMuted) {
-          this.pauseMusic();
-        } else if (this.activeMusic) {
-          this.resumeMusic();
-        }
-      }
-      // Save settings to localStorage
-      saveSettings() {
-        try {
-          localStorage.setItem("audioSettings", JSON.stringify(this.settings));
-        } catch (error) {
-          console.error("Error saving audio settings:", error);
-        }
-      }
-      // Load settings from localStorage
-      loadSettings() {
-        try {
-          const savedSettings = localStorage.getItem("audioSettings");
-          if (savedSettings) {
-            const parsedSettings = JSON.parse(savedSettings);
-            this.settings = { ...this.settings, ...parsedSettings };
-            this.setSfxVolume(this.settings.sfxVolume);
-            this.setMusicVolume(this.settings.musicVolume);
-            if (this.settings.areSoundsMuted) {
-              import_howler.Howler.mute(true);
-            }
-          }
-        } catch (error) {
-          console.error("Error loading audio settings:", error);
-        }
-      }
-    };
-    audioManager = new AudioManager();
-    audioManager.loadSettings();
-  }
-});
-
-// src/utils/audio.ts
-var audio_exports = {};
-__export(audio_exports, {
-  audioManager: () => audioManager,
-  default: () => audio_default
-});
-var loadAudioAssets, audio_default;
-var init_audio = __esm({
-  "src/utils/audio.ts"() {
-    "use strict";
-    init_audioManager();
-    loadAudioAssets = () => {
-      try {
-        audioManager.loadSound("ui_click", "/sounds/click.mp3");
-        audioManager.loadSound("correct", "/sounds/correct.mp3");
-        audioManager.loadSound("wrong", "/sounds/wrong.mp3");
-        audioManager.loadSound("letter_correct", "/sounds/letter-correct.mp3");
-        audioManager.loadSound("letter_wrong", "/sounds/letter-wrong.mp3");
-        audioManager.loadMusic("background", "/music/background.mp3");
-        audioManager.loadMusic("menu", "/music/menu.mp3");
-      } catch (error) {
-        console.error("Error loading audio assets:", error);
-      }
-    };
-    if (typeof window !== "undefined") {
-      loadAudioAssets();
-    }
-    audio_default = audioManager;
-  }
-});
-
 // node_modules/react/cjs/react-jsx-runtime.development.js
 var require_react_jsx_runtime_development = __commonJS({
   "node_modules/react/cjs/react-jsx-runtime.development.js"(exports) {
@@ -26137,7 +23594,7 @@ var require_react_jsx_runtime_development = __commonJS({
     if (true) {
       (function() {
         "use strict";
-        var React11 = require_react();
+        var React14 = require_react();
         var REACT_ELEMENT_TYPE = Symbol.for("react.element");
         var REACT_PORTAL_TYPE = Symbol.for("react.portal");
         var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
@@ -26163,7 +23620,7 @@ var require_react_jsx_runtime_development = __commonJS({
           }
           return null;
         }
-        var ReactSharedInternals = React11.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React14.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         function error(format) {
           {
             {
@@ -26391,9 +23848,9 @@ var require_react_jsx_runtime_development = __commonJS({
             return "";
           }
           {
-            var frame = componentFrameCache.get(fn);
-            if (frame !== void 0) {
-              return frame;
+            var frame2 = componentFrameCache.get(fn);
+            if (frame2 !== void 0) {
+              return frame2;
             }
           }
           var control;
@@ -26647,9 +24104,9 @@ var require_react_jsx_runtime_development = __commonJS({
           }
           return config.key !== void 0;
         }
-        function warnIfStringRefCannotBeAutoConverted(config, self) {
+        function warnIfStringRefCannotBeAutoConverted(config, self2) {
           {
-            if (typeof config.ref === "string" && ReactCurrentOwner.current && self && ReactCurrentOwner.current.stateNode !== self) {
+            if (typeof config.ref === "string" && ReactCurrentOwner.current && self2 && ReactCurrentOwner.current.stateNode !== self2) {
               var componentName = getComponentNameFromType(ReactCurrentOwner.current.type);
               if (!didWarnAboutStringRefs[componentName]) {
                 error('Component "%s" contains the string ref "%s". Support for string refs will be removed in a future major release. This case cannot be automatically converted to an arrow function. We ask you to manually fix this case by using useRef() or createRef() instead. Learn more about using refs safely here: https://reactjs.org/link/strict-mode-string-ref', getComponentNameFromType(ReactCurrentOwner.current.type), config.ref);
@@ -26688,7 +24145,7 @@ var require_react_jsx_runtime_development = __commonJS({
             });
           }
         }
-        var ReactElement = function(type, key, ref, self, source, owner, props) {
+        var ReactElement = function(type, key, ref, self2, source, owner, props) {
           var element = {
             // This tag allows us to uniquely identify this as a React Element
             $$typeof: REACT_ELEMENT_TYPE,
@@ -26712,7 +24169,7 @@ var require_react_jsx_runtime_development = __commonJS({
               configurable: false,
               enumerable: false,
               writable: false,
-              value: self
+              value: self2
             });
             Object.defineProperty(element, "_source", {
               configurable: false,
@@ -26727,7 +24184,7 @@ var require_react_jsx_runtime_development = __commonJS({
           }
           return element;
         };
-        function jsxDEV(type, config, maybeKey, source, self) {
+        function jsxDEV(type, config, maybeKey, source, self2) {
           {
             var propName;
             var props = {};
@@ -26747,7 +24204,7 @@ var require_react_jsx_runtime_development = __commonJS({
             }
             if (hasValidRef(config)) {
               ref = config.ref;
-              warnIfStringRefCannotBeAutoConverted(config, self);
+              warnIfStringRefCannotBeAutoConverted(config, self2);
             }
             for (propName in config) {
               if (hasOwnProperty.call(config, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
@@ -26771,7 +24228,7 @@ var require_react_jsx_runtime_development = __commonJS({
                 defineRefPropWarningGetter(props, displayName);
               }
             }
-            return ReactElement(type, key, ref, self, source, ReactCurrentOwner.current, props);
+            return ReactElement(type, key, ref, self2, source, ReactCurrentOwner.current, props);
           }
         }
         var ReactCurrentOwner$1 = ReactSharedInternals.ReactCurrentOwner;
@@ -26931,7 +24388,7 @@ var require_react_jsx_runtime_development = __commonJS({
           }
         }
         var didWarnAboutKeySpread = {};
-        function jsxWithValidation(type, props, key, isStaticChildren, source, self) {
+        function jsxWithValidation(type, props, key, isStaticChildren, source, self2) {
           {
             var validType = isValidElementType(type);
             if (!validType) {
@@ -26958,7 +24415,7 @@ var require_react_jsx_runtime_development = __commonJS({
               }
               error("React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", typeString, info);
             }
-            var element = jsxDEV(type, props, key, source, self);
+            var element = jsxDEV(type, props, key, source, self2);
             if (element == null) {
               return element;
             }
@@ -27013,11 +24470,11 @@ var require_react_jsx_runtime_development = __commonJS({
             return jsxWithValidation(type, props, key, false);
           }
         }
-        var jsx14 = jsxWithValidationDynamic;
-        var jsxs11 = jsxWithValidationStatic;
+        var jsx19 = jsxWithValidationDynamic;
+        var jsxs14 = jsxWithValidationStatic;
         exports.Fragment = REACT_FRAGMENT_TYPE;
-        exports.jsx = jsx14;
-        exports.jsxs = jsxs11;
+        exports.jsx = jsx19;
+        exports.jsxs = jsxs14;
       })();
     }
   }
@@ -27025,556 +24482,895 @@ var require_react_jsx_runtime_development = __commonJS({
 
 // node_modules/react/jsx-runtime.js
 var require_jsx_runtime = __commonJS({
-  "node_modules/react/jsx-runtime.js"(exports, module) {
+  "node_modules/react/jsx-runtime.js"(exports, module2) {
     "use strict";
     if (false) {
-      module.exports = null;
+      module2.exports = null;
     } else {
-      module.exports = require_react_jsx_runtime_development();
+      module2.exports = require_react_jsx_runtime_development();
     }
   }
 });
 
-// src/audio/initAudio.ts
-var initAudio_exports = {};
-__export(initAudio_exports, {
-  default: () => initAudio_default,
-  preloadAudio: () => preloadAudio
+// node_modules/classnames/index.js
+var require_classnames = __commonJS({
+  "node_modules/classnames/index.js"(exports, module2) {
+    (function() {
+      "use strict";
+      var hasOwn = {}.hasOwnProperty;
+      function classNames2() {
+        var classes = "";
+        for (var i = 0; i < arguments.length; i++) {
+          var arg = arguments[i];
+          if (arg) {
+            classes = appendClass(classes, parseValue(arg));
+          }
+        }
+        return classes;
+      }
+      function parseValue(arg) {
+        if (typeof arg === "string" || typeof arg === "number") {
+          return arg;
+        }
+        if (typeof arg !== "object") {
+          return "";
+        }
+        if (Array.isArray(arg)) {
+          return classNames2.apply(null, arg);
+        }
+        if (arg.toString !== Object.prototype.toString && !arg.toString.toString().includes("[native code]")) {
+          return arg.toString();
+        }
+        var classes = "";
+        for (var key in arg) {
+          if (hasOwn.call(arg, key) && arg[key]) {
+            classes = appendClass(classes, key);
+          }
+        }
+        return classes;
+      }
+      function appendClass(value, newClass) {
+        if (!newClass) {
+          return value;
+        }
+        if (value) {
+          return value + " " + newClass;
+        }
+        return value + newClass;
+      }
+      if (typeof module2 !== "undefined" && module2.exports) {
+        classNames2.default = classNames2;
+        module2.exports = classNames2;
+      } else if (typeof define === "function" && typeof define.amd === "object" && define.amd) {
+        define("classnames", [], function() {
+          return classNames2;
+        });
+      } else {
+        window.classNames = classNames2;
+      }
+    })();
+  }
 });
-function loadAudioFiles() {
-  Object.entries(SOUND_EFFECTS).forEach(([key, path]) => {
-    audioManager.loadSound(key, path);
-  });
-  Object.entries(MUSIC_TRACKS).forEach(([key, path]) => {
-    audioManager.loadMusic(key, path);
-  });
-}
-var SOUND_EFFECTS, MUSIC_TRACKS, preloadAudio, initAudio_default;
-var init_initAudio = __esm({
-  "src/audio/initAudio.ts"() {
+
+// node_modules/@emotion/memoize/dist/memoize.browser.cjs.js
+var require_memoize_browser_cjs = __commonJS({
+  "node_modules/@emotion/memoize/dist/memoize.browser.cjs.js"(exports) {
     "use strict";
-    init_audio();
-    SOUND_EFFECTS = {
-      // UI Sounds
-      "ui/click": "/audio/ui/ui_click.mp3",
-      "ui/back": "/audio/ui/ui_back.mp3",
-      "ui/select": "/audio/ui/ui_select.mp3",
-      "ui/next": "/audio/ui/ui_next.mp3",
-      "ui/start": "/audio/ui/ui_start.mp3",
-      "ui/submit": "/audio/ui/ui_submit.mp3",
-      // Feedback Sounds
-      "feedback/correct": "/audio/feedback/correct.mp3",
-      "feedback/wrong": "/audio/feedback/wrong.mp3",
-      "feedback/level_up": "/audio/feedback/level_up.mp3",
-      "feedback/great_job": "/audio/feedback/great_job.mp3",
-      "feedback/try_again": "/audio/feedback/try_again.mp3",
-      "feedback/perfect": "/audio/feedback/perfect.mp3",
-      // Game Sounds
-      "game/page_turn": "/audio/sfx/page_turn.mp3",
-      "game/success": "/audio/sfx/success.mp3"
-    };
-    MUSIC_TRACKS = {
-      "background": "/audio/music/background_music.mp3",
-      "menu": "/audio/music/menu_music.mp3"
-    };
-    preloadAudio = async () => {
-      loadAudioFiles();
-      await Promise.all([
-        ...Object.keys(SOUND_EFFECTS).map(
-          (key) => new Promise((resolve) => {
-            const sound = audioManager.getSound(key);
-            if (sound) {
-              sound.once("load", () => resolve());
-              sound.once("loaderror", () => {
-                console.warn(`Failed to load sound: ${key}`);
-                resolve();
-              });
-            } else {
-              console.warn(`Sound not found: ${key}`);
-              resolve();
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function memoize(fn) {
+      var cache = {};
+      return function(arg) {
+        if (cache[arg] === void 0) cache[arg] = fn(arg);
+        return cache[arg];
+      };
+    }
+    exports.default = memoize;
+  }
+});
+
+// node_modules/@emotion/is-prop-valid/dist/is-prop-valid.browser.cjs.js
+var require_is_prop_valid_browser_cjs = __commonJS({
+  "node_modules/@emotion/is-prop-valid/dist/is-prop-valid.browser.cjs.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function _interopDefault(ex) {
+      return ex && typeof ex === "object" && "default" in ex ? ex["default"] : ex;
+    }
+    var memoize = _interopDefault(require_memoize_browser_cjs());
+    var reactPropsRegex = /^((children|dangerouslySetInnerHTML|key|ref|autoFocus|defaultValue|defaultChecked|innerHTML|suppressContentEditableWarning|suppressHydrationWarning|valueLink|accept|acceptCharset|accessKey|action|allow|allowUserMedia|allowPaymentRequest|allowFullScreen|allowTransparency|alt|async|autoComplete|autoPlay|capture|cellPadding|cellSpacing|challenge|charSet|checked|cite|classID|className|cols|colSpan|content|contentEditable|contextMenu|controls|controlsList|coords|crossOrigin|data|dateTime|decoding|default|defer|dir|disabled|disablePictureInPicture|download|draggable|encType|form|formAction|formEncType|formMethod|formNoValidate|formTarget|frameBorder|headers|height|hidden|high|href|hrefLang|htmlFor|httpEquiv|id|inputMode|integrity|is|keyParams|keyType|kind|label|lang|list|loading|loop|low|marginHeight|marginWidth|max|maxLength|media|mediaGroup|method|min|minLength|multiple|muted|name|nonce|noValidate|open|optimum|pattern|placeholder|playsInline|poster|preload|profile|radioGroup|readOnly|referrerPolicy|rel|required|reversed|role|rows|rowSpan|sandbox|scope|scoped|scrolling|seamless|selected|shape|size|sizes|slot|span|spellCheck|src|srcDoc|srcLang|srcSet|start|step|style|summary|tabIndex|target|title|type|useMap|value|width|wmode|wrap|about|datatype|inlist|prefix|property|resource|typeof|vocab|autoCapitalize|autoCorrect|autoSave|color|inert|itemProp|itemScope|itemType|itemID|itemRef|on|results|security|unselectable|accentHeight|accumulate|additive|alignmentBaseline|allowReorder|alphabetic|amplitude|arabicForm|ascent|attributeName|attributeType|autoReverse|azimuth|baseFrequency|baselineShift|baseProfile|bbox|begin|bias|by|calcMode|capHeight|clip|clipPathUnits|clipPath|clipRule|colorInterpolation|colorInterpolationFilters|colorProfile|colorRendering|contentScriptType|contentStyleType|cursor|cx|cy|d|decelerate|descent|diffuseConstant|direction|display|divisor|dominantBaseline|dur|dx|dy|edgeMode|elevation|enableBackground|end|exponent|externalResourcesRequired|fill|fillOpacity|fillRule|filter|filterRes|filterUnits|floodColor|floodOpacity|focusable|fontFamily|fontSize|fontSizeAdjust|fontStretch|fontStyle|fontVariant|fontWeight|format|from|fr|fx|fy|g1|g2|glyphName|glyphOrientationHorizontal|glyphOrientationVertical|glyphRef|gradientTransform|gradientUnits|hanging|horizAdvX|horizOriginX|ideographic|imageRendering|in|in2|intercept|k|k1|k2|k3|k4|kernelMatrix|kernelUnitLength|kerning|keyPoints|keySplines|keyTimes|lengthAdjust|letterSpacing|lightingColor|limitingConeAngle|local|markerEnd|markerMid|markerStart|markerHeight|markerUnits|markerWidth|mask|maskContentUnits|maskUnits|mathematical|mode|numOctaves|offset|opacity|operator|order|orient|orientation|origin|overflow|overlinePosition|overlineThickness|panose1|paintOrder|pathLength|patternContentUnits|patternTransform|patternUnits|pointerEvents|points|pointsAtX|pointsAtY|pointsAtZ|preserveAlpha|preserveAspectRatio|primitiveUnits|r|radius|refX|refY|renderingIntent|repeatCount|repeatDur|requiredExtensions|requiredFeatures|restart|result|rotate|rx|ry|scale|seed|shapeRendering|slope|spacing|specularConstant|specularExponent|speed|spreadMethod|startOffset|stdDeviation|stemh|stemv|stitchTiles|stopColor|stopOpacity|strikethroughPosition|strikethroughThickness|string|stroke|strokeDasharray|strokeDashoffset|strokeLinecap|strokeLinejoin|strokeMiterlimit|strokeOpacity|strokeWidth|surfaceScale|systemLanguage|tableValues|targetX|targetY|textAnchor|textDecoration|textRendering|textLength|to|transform|u1|u2|underlinePosition|underlineThickness|unicode|unicodeBidi|unicodeRange|unitsPerEm|vAlphabetic|vHanging|vIdeographic|vMathematical|values|vectorEffect|version|vertAdvY|vertOriginX|vertOriginY|viewBox|viewTarget|visibility|widths|wordSpacing|writingMode|x|xHeight|x1|x2|xChannelSelector|xlinkActuate|xlinkArcrole|xlinkHref|xlinkRole|xlinkShow|xlinkTitle|xlinkType|xmlBase|xmlns|xmlnsXlink|xmlLang|xmlSpace|y|y1|y2|yChannelSelector|z|zoomAndPan|for|class|autofocus)|(([Dd][Aa][Tt][Aa]|[Aa][Rr][Ii][Aa]|x)-.*))$/;
+    var index = memoize(
+      function(prop) {
+        return reactPropsRegex.test(prop) || prop.charCodeAt(0) === 111 && prop.charCodeAt(1) === 110 && prop.charCodeAt(2) < 91;
+      }
+      /* Z+1 */
+    );
+    exports.default = index;
+  }
+});
+
+// node_modules/canvas-confetti/dist/confetti.module.mjs
+var confetti_module_exports = {};
+__export(confetti_module_exports, {
+  create: () => create,
+  default: () => confetti_module_default
+});
+var module, confetti_module_default, create;
+var init_confetti_module = __esm({
+  "node_modules/canvas-confetti/dist/confetti.module.mjs"() {
+    module = {};
+    (function main(global, module2, isWorker, workerSize) {
+      var canUseWorker = !!(global.Worker && global.Blob && global.Promise && global.OffscreenCanvas && global.OffscreenCanvasRenderingContext2D && global.HTMLCanvasElement && global.HTMLCanvasElement.prototype.transferControlToOffscreen && global.URL && global.URL.createObjectURL);
+      var canUsePaths = typeof Path2D === "function" && typeof DOMMatrix === "function";
+      var canDrawBitmap = (function() {
+        if (!global.OffscreenCanvas) {
+          return false;
+        }
+        var canvas = new OffscreenCanvas(1, 1);
+        var ctx = canvas.getContext("2d");
+        ctx.fillRect(0, 0, 1, 1);
+        var bitmap = canvas.transferToImageBitmap();
+        try {
+          ctx.createPattern(bitmap, "no-repeat");
+        } catch (e) {
+          return false;
+        }
+        return true;
+      })();
+      function noop2() {
+      }
+      function promise(func) {
+        var ModulePromise = module2.exports.Promise;
+        var Prom = ModulePromise !== void 0 ? ModulePromise : global.Promise;
+        if (typeof Prom === "function") {
+          return new Prom(func);
+        }
+        func(noop2, noop2);
+        return null;
+      }
+      var bitmapMapper = /* @__PURE__ */ (function(skipTransform, map) {
+        return {
+          transform: function(bitmap) {
+            if (skipTransform) {
+              return bitmap;
             }
-          })
-        ),
-        // Preload music tracks
-        ...Object.keys(MUSIC_TRACKS).map(
-          (key) => new Promise((resolve) => {
-            const music = audioManager.getMusic(key);
-            if (music) {
-              music.once("load", () => resolve());
-              music.once("loaderror", () => {
-                console.warn(`Failed to load music: ${key}`);
-                resolve();
-              });
-            } else {
-              console.warn(`Music not found: ${key}`);
-              resolve();
+            if (map.has(bitmap)) {
+              return map.get(bitmap);
             }
-          })
-        )
-      ]);
-      console.log("Audio preloading complete");
-    };
-    initAudio_default = preloadAudio;
+            var canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(bitmap, 0, 0);
+            map.set(bitmap, canvas);
+            return canvas;
+          },
+          clear: function() {
+            map.clear();
+          }
+        };
+      })(canDrawBitmap, /* @__PURE__ */ new Map());
+      var raf = (function() {
+        var TIME = Math.floor(1e3 / 60);
+        var frame2, cancel;
+        var frames = {};
+        var lastFrameTime = 0;
+        if (typeof requestAnimationFrame === "function" && typeof cancelAnimationFrame === "function") {
+          frame2 = function(cb) {
+            var id3 = Math.random();
+            frames[id3] = requestAnimationFrame(function onFrame(time) {
+              if (lastFrameTime === time || lastFrameTime + TIME - 1 < time) {
+                lastFrameTime = time;
+                delete frames[id3];
+                cb();
+              } else {
+                frames[id3] = requestAnimationFrame(onFrame);
+              }
+            });
+            return id3;
+          };
+          cancel = function(id3) {
+            if (frames[id3]) {
+              cancelAnimationFrame(frames[id3]);
+            }
+          };
+        } else {
+          frame2 = function(cb) {
+            return setTimeout(cb, TIME);
+          };
+          cancel = function(timer) {
+            return clearTimeout(timer);
+          };
+        }
+        return { frame: frame2, cancel };
+      })();
+      var getWorker = /* @__PURE__ */ (function() {
+        var worker;
+        var prom;
+        var resolves = {};
+        function decorate(worker2) {
+          function execute(options, callback) {
+            worker2.postMessage({ options: options || {}, callback });
+          }
+          worker2.init = function initWorker(canvas) {
+            var offscreen = canvas.transferControlToOffscreen();
+            worker2.postMessage({ canvas: offscreen }, [offscreen]);
+          };
+          worker2.fire = function fireWorker(options, size, done) {
+            if (prom) {
+              execute(options, null);
+              return prom;
+            }
+            var id3 = Math.random().toString(36).slice(2);
+            prom = promise(function(resolve) {
+              function workerDone(msg) {
+                if (msg.data.callback !== id3) {
+                  return;
+                }
+                delete resolves[id3];
+                worker2.removeEventListener("message", workerDone);
+                prom = null;
+                bitmapMapper.clear();
+                done();
+                resolve();
+              }
+              worker2.addEventListener("message", workerDone);
+              execute(options, id3);
+              resolves[id3] = workerDone.bind(null, { data: { callback: id3 } });
+            });
+            return prom;
+          };
+          worker2.reset = function resetWorker() {
+            worker2.postMessage({ reset: true });
+            for (var id3 in resolves) {
+              resolves[id3]();
+              delete resolves[id3];
+            }
+          };
+        }
+        return function() {
+          if (worker) {
+            return worker;
+          }
+          if (!isWorker && canUseWorker) {
+            var code = [
+              "var CONFETTI, SIZE = {}, module = {};",
+              "(" + main.toString() + ")(this, module, true, SIZE);",
+              "onmessage = function(msg) {",
+              "  if (msg.data.options) {",
+              "    CONFETTI(msg.data.options).then(function () {",
+              "      if (msg.data.callback) {",
+              "        postMessage({ callback: msg.data.callback });",
+              "      }",
+              "    });",
+              "  } else if (msg.data.reset) {",
+              "    CONFETTI && CONFETTI.reset();",
+              "  } else if (msg.data.resize) {",
+              "    SIZE.width = msg.data.resize.width;",
+              "    SIZE.height = msg.data.resize.height;",
+              "  } else if (msg.data.canvas) {",
+              "    SIZE.width = msg.data.canvas.width;",
+              "    SIZE.height = msg.data.canvas.height;",
+              "    CONFETTI = module.exports.create(msg.data.canvas);",
+              "  }",
+              "}"
+            ].join("\n");
+            try {
+              worker = new Worker(URL.createObjectURL(new Blob([code])));
+            } catch (e) {
+              typeof console !== void 0 && typeof console.warn === "function" ? console.warn("\u{1F38A} Could not load worker", e) : null;
+              return null;
+            }
+            decorate(worker);
+          }
+          return worker;
+        };
+      })();
+      var defaults = {
+        particleCount: 50,
+        angle: 90,
+        spread: 45,
+        startVelocity: 45,
+        decay: 0.9,
+        gravity: 1,
+        drift: 0,
+        ticks: 200,
+        x: 0.5,
+        y: 0.5,
+        shapes: ["square", "circle"],
+        zIndex: 100,
+        colors: [
+          "#26ccff",
+          "#a25afd",
+          "#ff5e7e",
+          "#88ff5a",
+          "#fcff42",
+          "#ffa62d",
+          "#ff36ff"
+        ],
+        // probably should be true, but back-compat
+        disableForReducedMotion: false,
+        scalar: 1
+      };
+      function convert(val, transform) {
+        return transform ? transform(val) : val;
+      }
+      function isOk(val) {
+        return !(val === null || val === void 0);
+      }
+      function prop(options, name, transform) {
+        return convert(
+          options && isOk(options[name]) ? options[name] : defaults[name],
+          transform
+        );
+      }
+      function onlyPositiveInt(number2) {
+        return number2 < 0 ? 0 : Math.floor(number2);
+      }
+      function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
+      function toDecimal(str) {
+        return parseInt(str, 16);
+      }
+      function colorsToRgb(colors) {
+        return colors.map(hexToRgb);
+      }
+      function hexToRgb(str) {
+        var val = String(str).replace(/[^0-9a-f]/gi, "");
+        if (val.length < 6) {
+          val = val[0] + val[0] + val[1] + val[1] + val[2] + val[2];
+        }
+        return {
+          r: toDecimal(val.substring(0, 2)),
+          g: toDecimal(val.substring(2, 4)),
+          b: toDecimal(val.substring(4, 6))
+        };
+      }
+      function getOrigin2(options) {
+        var origin = prop(options, "origin", Object);
+        origin.x = prop(origin, "x", Number);
+        origin.y = prop(origin, "y", Number);
+        return origin;
+      }
+      function setCanvasWindowSize(canvas) {
+        canvas.width = document.documentElement.clientWidth;
+        canvas.height = document.documentElement.clientHeight;
+      }
+      function setCanvasRectSize(canvas) {
+        var rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+      }
+      function getCanvas(zIndex) {
+        var canvas = document.createElement("canvas");
+        canvas.style.position = "fixed";
+        canvas.style.top = "0px";
+        canvas.style.left = "0px";
+        canvas.style.pointerEvents = "none";
+        canvas.style.zIndex = zIndex;
+        return canvas;
+      }
+      function ellipse(context, x, y, radiusX, radiusY, rotation, startAngle, endAngle, antiClockwise) {
+        context.save();
+        context.translate(x, y);
+        context.rotate(rotation);
+        context.scale(radiusX, radiusY);
+        context.arc(0, 0, 1, startAngle, endAngle, antiClockwise);
+        context.restore();
+      }
+      function randomPhysics(opts) {
+        var radAngle = opts.angle * (Math.PI / 180);
+        var radSpread = opts.spread * (Math.PI / 180);
+        return {
+          x: opts.x,
+          y: opts.y,
+          wobble: Math.random() * 10,
+          wobbleSpeed: Math.min(0.11, Math.random() * 0.1 + 0.05),
+          velocity: opts.startVelocity * 0.5 + Math.random() * opts.startVelocity,
+          angle2D: -radAngle + (0.5 * radSpread - Math.random() * radSpread),
+          tiltAngle: (Math.random() * (0.75 - 0.25) + 0.25) * Math.PI,
+          color: opts.color,
+          shape: opts.shape,
+          tick: 0,
+          totalTicks: opts.ticks,
+          decay: opts.decay,
+          drift: opts.drift,
+          random: Math.random() + 2,
+          tiltSin: 0,
+          tiltCos: 0,
+          wobbleX: 0,
+          wobbleY: 0,
+          gravity: opts.gravity * 3,
+          ovalScalar: 0.6,
+          scalar: opts.scalar,
+          flat: opts.flat
+        };
+      }
+      function updateFetti(context, fetti) {
+        fetti.x += Math.cos(fetti.angle2D) * fetti.velocity + fetti.drift;
+        fetti.y += Math.sin(fetti.angle2D) * fetti.velocity + fetti.gravity;
+        fetti.velocity *= fetti.decay;
+        if (fetti.flat) {
+          fetti.wobble = 0;
+          fetti.wobbleX = fetti.x + 10 * fetti.scalar;
+          fetti.wobbleY = fetti.y + 10 * fetti.scalar;
+          fetti.tiltSin = 0;
+          fetti.tiltCos = 0;
+          fetti.random = 1;
+        } else {
+          fetti.wobble += fetti.wobbleSpeed;
+          fetti.wobbleX = fetti.x + 10 * fetti.scalar * Math.cos(fetti.wobble);
+          fetti.wobbleY = fetti.y + 10 * fetti.scalar * Math.sin(fetti.wobble);
+          fetti.tiltAngle += 0.1;
+          fetti.tiltSin = Math.sin(fetti.tiltAngle);
+          fetti.tiltCos = Math.cos(fetti.tiltAngle);
+          fetti.random = Math.random() + 2;
+        }
+        var progress2 = fetti.tick++ / fetti.totalTicks;
+        var x1 = fetti.x + fetti.random * fetti.tiltCos;
+        var y1 = fetti.y + fetti.random * fetti.tiltSin;
+        var x2 = fetti.wobbleX + fetti.random * fetti.tiltCos;
+        var y2 = fetti.wobbleY + fetti.random * fetti.tiltSin;
+        context.fillStyle = "rgba(" + fetti.color.r + ", " + fetti.color.g + ", " + fetti.color.b + ", " + (1 - progress2) + ")";
+        context.beginPath();
+        if (canUsePaths && fetti.shape.type === "path" && typeof fetti.shape.path === "string" && Array.isArray(fetti.shape.matrix)) {
+          context.fill(transformPath2D(
+            fetti.shape.path,
+            fetti.shape.matrix,
+            fetti.x,
+            fetti.y,
+            Math.abs(x2 - x1) * 0.1,
+            Math.abs(y2 - y1) * 0.1,
+            Math.PI / 10 * fetti.wobble
+          ));
+        } else if (fetti.shape.type === "bitmap") {
+          var rotation = Math.PI / 10 * fetti.wobble;
+          var scaleX = Math.abs(x2 - x1) * 0.1;
+          var scaleY = Math.abs(y2 - y1) * 0.1;
+          var width = fetti.shape.bitmap.width * fetti.scalar;
+          var height = fetti.shape.bitmap.height * fetti.scalar;
+          var matrix = new DOMMatrix([
+            Math.cos(rotation) * scaleX,
+            Math.sin(rotation) * scaleX,
+            -Math.sin(rotation) * scaleY,
+            Math.cos(rotation) * scaleY,
+            fetti.x,
+            fetti.y
+          ]);
+          matrix.multiplySelf(new DOMMatrix(fetti.shape.matrix));
+          var pattern = context.createPattern(bitmapMapper.transform(fetti.shape.bitmap), "no-repeat");
+          pattern.setTransform(matrix);
+          context.globalAlpha = 1 - progress2;
+          context.fillStyle = pattern;
+          context.fillRect(
+            fetti.x - width / 2,
+            fetti.y - height / 2,
+            width,
+            height
+          );
+          context.globalAlpha = 1;
+        } else if (fetti.shape === "circle") {
+          context.ellipse ? context.ellipse(fetti.x, fetti.y, Math.abs(x2 - x1) * fetti.ovalScalar, Math.abs(y2 - y1) * fetti.ovalScalar, Math.PI / 10 * fetti.wobble, 0, 2 * Math.PI) : ellipse(context, fetti.x, fetti.y, Math.abs(x2 - x1) * fetti.ovalScalar, Math.abs(y2 - y1) * fetti.ovalScalar, Math.PI / 10 * fetti.wobble, 0, 2 * Math.PI);
+        } else if (fetti.shape === "star") {
+          var rot = Math.PI / 2 * 3;
+          var innerRadius = 4 * fetti.scalar;
+          var outerRadius = 8 * fetti.scalar;
+          var x = fetti.x;
+          var y = fetti.y;
+          var spikes = 5;
+          var step = Math.PI / spikes;
+          while (spikes--) {
+            x = fetti.x + Math.cos(rot) * outerRadius;
+            y = fetti.y + Math.sin(rot) * outerRadius;
+            context.lineTo(x, y);
+            rot += step;
+            x = fetti.x + Math.cos(rot) * innerRadius;
+            y = fetti.y + Math.sin(rot) * innerRadius;
+            context.lineTo(x, y);
+            rot += step;
+          }
+        } else {
+          context.moveTo(Math.floor(fetti.x), Math.floor(fetti.y));
+          context.lineTo(Math.floor(fetti.wobbleX), Math.floor(y1));
+          context.lineTo(Math.floor(x2), Math.floor(y2));
+          context.lineTo(Math.floor(x1), Math.floor(fetti.wobbleY));
+        }
+        context.closePath();
+        context.fill();
+        return fetti.tick < fetti.totalTicks;
+      }
+      function animate(canvas, fettis, resizer, size, done) {
+        var animatingFettis = fettis.slice();
+        var context = canvas.getContext("2d");
+        var animationFrame;
+        var destroy;
+        var prom = promise(function(resolve) {
+          function onDone() {
+            animationFrame = destroy = null;
+            context.clearRect(0, 0, size.width, size.height);
+            bitmapMapper.clear();
+            done();
+            resolve();
+          }
+          function update() {
+            if (isWorker && !(size.width === workerSize.width && size.height === workerSize.height)) {
+              size.width = canvas.width = workerSize.width;
+              size.height = canvas.height = workerSize.height;
+            }
+            if (!size.width && !size.height) {
+              resizer(canvas);
+              size.width = canvas.width;
+              size.height = canvas.height;
+            }
+            context.clearRect(0, 0, size.width, size.height);
+            animatingFettis = animatingFettis.filter(function(fetti) {
+              return updateFetti(context, fetti);
+            });
+            if (animatingFettis.length) {
+              animationFrame = raf.frame(update);
+            } else {
+              onDone();
+            }
+          }
+          animationFrame = raf.frame(update);
+          destroy = onDone;
+        });
+        return {
+          addFettis: function(fettis2) {
+            animatingFettis = animatingFettis.concat(fettis2);
+            return prom;
+          },
+          canvas,
+          promise: prom,
+          reset: function() {
+            if (animationFrame) {
+              raf.cancel(animationFrame);
+            }
+            if (destroy) {
+              destroy();
+            }
+          }
+        };
+      }
+      function confettiCannon(canvas, globalOpts) {
+        var isLibCanvas = !canvas;
+        var allowResize = !!prop(globalOpts || {}, "resize");
+        var hasResizeEventRegistered = false;
+        var globalDisableForReducedMotion = prop(globalOpts, "disableForReducedMotion", Boolean);
+        var shouldUseWorker = canUseWorker && !!prop(globalOpts || {}, "useWorker");
+        var worker = shouldUseWorker ? getWorker() : null;
+        var resizer = isLibCanvas ? setCanvasWindowSize : setCanvasRectSize;
+        var initialized = canvas && worker ? !!canvas.__confetti_initialized : false;
+        var preferLessMotion = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion)").matches;
+        var animationObj;
+        function fireLocal(options, size, done) {
+          var particleCount = prop(options, "particleCount", onlyPositiveInt);
+          var angle = prop(options, "angle", Number);
+          var spread = prop(options, "spread", Number);
+          var startVelocity = prop(options, "startVelocity", Number);
+          var decay = prop(options, "decay", Number);
+          var gravity = prop(options, "gravity", Number);
+          var drift = prop(options, "drift", Number);
+          var colors = prop(options, "colors", colorsToRgb);
+          var ticks = prop(options, "ticks", Number);
+          var shapes = prop(options, "shapes");
+          var scalar = prop(options, "scalar");
+          var flat = !!prop(options, "flat");
+          var origin = getOrigin2(options);
+          var temp = particleCount;
+          var fettis = [];
+          var startX = canvas.width * origin.x;
+          var startY = canvas.height * origin.y;
+          while (temp--) {
+            fettis.push(
+              randomPhysics({
+                x: startX,
+                y: startY,
+                angle,
+                spread,
+                startVelocity,
+                color: colors[temp % colors.length],
+                shape: shapes[randomInt(0, shapes.length)],
+                ticks,
+                decay,
+                gravity,
+                drift,
+                scalar,
+                flat
+              })
+            );
+          }
+          if (animationObj) {
+            return animationObj.addFettis(fettis);
+          }
+          animationObj = animate(canvas, fettis, resizer, size, done);
+          return animationObj.promise;
+        }
+        function fire(options) {
+          var disableForReducedMotion = globalDisableForReducedMotion || prop(options, "disableForReducedMotion", Boolean);
+          var zIndex = prop(options, "zIndex", Number);
+          if (disableForReducedMotion && preferLessMotion) {
+            return promise(function(resolve) {
+              resolve();
+            });
+          }
+          if (isLibCanvas && animationObj) {
+            canvas = animationObj.canvas;
+          } else if (isLibCanvas && !canvas) {
+            canvas = getCanvas(zIndex);
+            document.body.appendChild(canvas);
+          }
+          if (allowResize && !initialized) {
+            resizer(canvas);
+          }
+          var size = {
+            width: canvas.width,
+            height: canvas.height
+          };
+          if (worker && !initialized) {
+            worker.init(canvas);
+          }
+          initialized = true;
+          if (worker) {
+            canvas.__confetti_initialized = true;
+          }
+          function onResize() {
+            if (worker) {
+              var obj = {
+                getBoundingClientRect: function() {
+                  if (!isLibCanvas) {
+                    return canvas.getBoundingClientRect();
+                  }
+                }
+              };
+              resizer(obj);
+              worker.postMessage({
+                resize: {
+                  width: obj.width,
+                  height: obj.height
+                }
+              });
+              return;
+            }
+            size.width = size.height = null;
+          }
+          function done() {
+            animationObj = null;
+            if (allowResize) {
+              hasResizeEventRegistered = false;
+              global.removeEventListener("resize", onResize);
+            }
+            if (isLibCanvas && canvas) {
+              if (document.body.contains(canvas)) {
+                document.body.removeChild(canvas);
+              }
+              canvas = null;
+              initialized = false;
+            }
+          }
+          if (allowResize && !hasResizeEventRegistered) {
+            hasResizeEventRegistered = true;
+            global.addEventListener("resize", onResize, false);
+          }
+          if (worker) {
+            return worker.fire(options, size, done);
+          }
+          return fireLocal(options, size, done);
+        }
+        fire.reset = function() {
+          if (worker) {
+            worker.reset();
+          }
+          if (animationObj) {
+            animationObj.reset();
+          }
+        };
+        return fire;
+      }
+      var defaultFire;
+      function getDefaultFire() {
+        if (!defaultFire) {
+          defaultFire = confettiCannon(null, { useWorker: true, resize: true });
+        }
+        return defaultFire;
+      }
+      function transformPath2D(pathString, pathMatrix, x, y, scaleX, scaleY, rotation) {
+        var path2d = new Path2D(pathString);
+        var t1 = new Path2D();
+        t1.addPath(path2d, new DOMMatrix(pathMatrix));
+        var t2 = new Path2D();
+        t2.addPath(t1, new DOMMatrix([
+          Math.cos(rotation) * scaleX,
+          Math.sin(rotation) * scaleX,
+          -Math.sin(rotation) * scaleY,
+          Math.cos(rotation) * scaleY,
+          x,
+          y
+        ]));
+        return t2;
+      }
+      function shapeFromPath(pathData) {
+        if (!canUsePaths) {
+          throw new Error("path confetti are not supported in this browser");
+        }
+        var path, matrix;
+        if (typeof pathData === "string") {
+          path = pathData;
+        } else {
+          path = pathData.path;
+          matrix = pathData.matrix;
+        }
+        var path2d = new Path2D(path);
+        var tempCanvas = document.createElement("canvas");
+        var tempCtx = tempCanvas.getContext("2d");
+        if (!matrix) {
+          var maxSize = 1e3;
+          var minX = maxSize;
+          var minY = maxSize;
+          var maxX = 0;
+          var maxY = 0;
+          var width, height;
+          for (var x = 0; x < maxSize; x += 2) {
+            for (var y = 0; y < maxSize; y += 2) {
+              if (tempCtx.isPointInPath(path2d, x, y, "nonzero")) {
+                minX = Math.min(minX, x);
+                minY = Math.min(minY, y);
+                maxX = Math.max(maxX, x);
+                maxY = Math.max(maxY, y);
+              }
+            }
+          }
+          width = maxX - minX;
+          height = maxY - minY;
+          var maxDesiredSize = 10;
+          var scale2 = Math.min(maxDesiredSize / width, maxDesiredSize / height);
+          matrix = [
+            scale2,
+            0,
+            0,
+            scale2,
+            -Math.round(width / 2 + minX) * scale2,
+            -Math.round(height / 2 + minY) * scale2
+          ];
+        }
+        return {
+          type: "path",
+          path,
+          matrix
+        };
+      }
+      function shapeFromText(textData) {
+        var text, scalar = 1, color2 = "#000000", fontFamily = '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", "EmojiOne Color", "Android Emoji", "Twemoji Mozilla", "system emoji", sans-serif';
+        if (typeof textData === "string") {
+          text = textData;
+        } else {
+          text = textData.text;
+          scalar = "scalar" in textData ? textData.scalar : scalar;
+          fontFamily = "fontFamily" in textData ? textData.fontFamily : fontFamily;
+          color2 = "color" in textData ? textData.color : color2;
+        }
+        var fontSize = 10 * scalar;
+        var font = "" + fontSize + "px " + fontFamily;
+        var canvas = new OffscreenCanvas(fontSize, fontSize);
+        var ctx = canvas.getContext("2d");
+        ctx.font = font;
+        var size = ctx.measureText(text);
+        var width = Math.ceil(size.actualBoundingBoxRight + size.actualBoundingBoxLeft);
+        var height = Math.ceil(size.actualBoundingBoxAscent + size.actualBoundingBoxDescent);
+        var padding = 2;
+        var x = size.actualBoundingBoxLeft + padding;
+        var y = size.actualBoundingBoxAscent + padding;
+        width += padding + padding;
+        height += padding + padding;
+        canvas = new OffscreenCanvas(width, height);
+        ctx = canvas.getContext("2d");
+        ctx.font = font;
+        ctx.fillStyle = color2;
+        ctx.fillText(text, x, y);
+        var scale2 = 1 / scalar;
+        return {
+          type: "bitmap",
+          // TODO these probably need to be transfered for workers
+          bitmap: canvas.transferToImageBitmap(),
+          matrix: [scale2, 0, 0, scale2, -width * scale2 / 2, -height * scale2 / 2]
+        };
+      }
+      module2.exports = function() {
+        return getDefaultFire().apply(this, arguments);
+      };
+      module2.exports.reset = function() {
+        getDefaultFire().reset();
+      };
+      module2.exports.create = confettiCannon;
+      module2.exports.shapeFromPath = shapeFromPath;
+      module2.exports.shapeFromText = shapeFromText;
+    })((function() {
+      if (typeof window !== "undefined") {
+        return window;
+      }
+      if (typeof self !== "undefined") {
+        return self;
+      }
+      return this || {};
+    })(), module, false);
+    confetti_module_default = module.exports;
+    create = module.exports.create;
   }
 });
 
 // src/spelling-bee-game.tsx
-var import_react17 = __toESM(require_react());
+var import_react35 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
-// src/contexts/AudioContext.tsx
-var import_react2 = __toESM(require_react());
-
-// src/hooks/useAudioPlayer.ts
+// src/LeaderboardScreen.tsx
 var import_react = __toESM(require_react());
-init_audio();
-var DEFAULT_VOLUME = 0.7;
-var useAudioPlayer = (initialVolume = DEFAULT_VOLUME) => {
-  const [isMuted, setIsMuted] = (0, import_react.useState)(audioManager.settings.areSoundsMuted);
-  const [isMusicMuted, setIsMusicMuted] = (0, import_react.useState)(audioManager.settings.isMusicMuted);
-  const [volume, setVolume] = (0, import_react.useState)(initialVolume);
-  const [isPlaying, setIsPlaying] = (0, import_react.useState)(false);
-  const [currentTrack, setCurrentTrack] = (0, import_react.useState)(null);
-  const settingsLoaded = (0, import_react.useRef)(false);
-  (0, import_react.useEffect)(() => {
-    if (settingsLoaded.current) return;
-    const loadSettings = () => {
-      try {
-        const { sfxVolume, areSoundsMuted, isMusicMuted: isMusicMuted2 } = audioManager.settings;
-        setVolume(sfxVolume);
-        setIsMuted(areSoundsMuted);
-        setIsMusicMuted(isMusicMuted2);
-        if (isMusicMuted2 && audioManager.activeMusic) {
-          audioManager.stopMusic();
-        }
-      } catch (error) {
-        console.error("Error loading audio settings:", error);
-      } finally {
-        settingsLoaded.current = true;
-      }
-    };
-    loadSettings();
-  }, []);
-  const playSound = (0, import_react.useCallback)((key, options = {}) => {
-    if (isMuted) return null;
-    try {
-      return audioManager.playSound(key, {
-        ...options,
-        volume: volume * (options.volume ?? 1)
-      });
-    } catch (error) {
-      console.error("Error playing sound:", error);
-      return null;
-    }
-  }, [isMuted, volume]);
-  const playMusic = (0, import_react.useCallback)((key, options = {}) => {
-    if (isMusicMuted) {
-      setCurrentTrack(key);
-      setIsPlaying(false);
-      return;
-    }
-    try {
-      audioManager.playMusic(key, {
-        ...options,
-        volume: volume * (options.volume ?? 1)
-      });
-      setCurrentTrack(key);
-      setIsPlaying(true);
-    } catch (error) {
-      console.error("Error playing music:", error);
-      setIsPlaying(false);
-    }
-  }, [isMusicMuted, volume]);
-  const stopMusic = (0, import_react.useCallback)(() => {
-    try {
-      audioManager.stopMusic();
-      setIsPlaying(false);
-      setCurrentTrack(null);
-    } catch (error) {
-      console.error("Error stopping music:", error);
-    }
-  }, []);
-  const toggleMute = (0, import_react.useCallback)(() => {
-    try {
-      const newMuted = !isMuted;
-      setIsMuted(newMuted);
-      audioManager.settings.areSoundsMuted = newMuted;
-      localStorage.setItem("isMuted", String(newMuted));
-      if (!newMuted) {
-        playSound("ui_click");
-      }
-    } catch (error) {
-      console.error("Error toggling mute:", error);
-    }
-  }, [isMuted, playSound]);
-  const toggleMusic = (0, import_react.useCallback)(() => {
-    try {
-      const newMusicMuted = !isMusicMuted;
-      setIsMusicMuted(newMusicMuted);
-      audioManager.settings.isMusicMuted = newMusicMuted;
-      localStorage.setItem("isMusicMuted", String(newMusicMuted));
-      if (newMusicMuted) {
-        stopMusic();
-      } else if (currentTrack) {
-        playMusic(currentTrack, { fadeIn: true });
-      }
-      if (!isMuted) {
-        playSound("ui_click");
-      }
-    } catch (error) {
-      console.error("Error toggling music:", error);
-    }
-  }, [currentTrack, isMusicMuted, isMuted, playMusic, stopMusic, playSound]);
-  const updateVolume = (0, import_react.useCallback)((newVolume) => {
-    try {
-      const clampedVolume = Math.max(0, Math.min(1, newVolume));
-      setVolume(clampedVolume);
-      audioManager.setSfxVolume(clampedVolume);
-      audioManager.setMusicVolume(clampedVolume);
-      audioManager.saveSettings();
-      if (!isMuted) {
-        playSound("ui_click", { volume: 0.3 });
-      }
-    } catch (error) {
-      console.error("Error updating volume:", error);
-    }
-  }, [isMuted, playSound]);
-  (0, import_react.useEffect)(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        if (currentTrack && isPlaying) {
-          const audioElement = document.querySelector("audio");
-          if (audioElement) {
-            audioElement.pause();
-          }
-        }
-      } else if (currentTrack && isPlaying) {
-        const audioElement = document.querySelector("audio");
-        if (audioElement) {
-          audioElement.play().catch((e) => console.error("Error resuming audio:", e));
-        }
-      }
-    };
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [currentTrack, isPlaying]);
-  return {
-    // State
-    isMuted,
-    isMusicMuted,
-    volume,
-    isPlaying,
-    currentTrack,
-    // Actions
-    playSound,
-    playMusic,
-    stopMusic,
-    toggleMute,
-    toggleMusic,
-    setVolume: updateVolume
-  };
-};
 
-// src/contexts/AudioContext.tsx
+// img/avatars/bee.svg
+var bee_default = "./bee-JMGRCQTT.svg";
+
+// src/LeaderboardScreen.tsx
 var import_jsx_runtime = __toESM(require_jsx_runtime());
-var defaultAudioContext = {
-  isMuted: false,
-  isMusicMuted: false,
-  volume: 0.7,
-  isPlaying: false,
-  currentTrack: null,
-  playSound: () => null,
-  playMusic: () => {
-  },
-  stopMusic: () => {
-  },
-  toggleMute: () => {
-  },
-  toggleMusic: () => {
-  },
-  setVolume: () => {
-  }
-};
-var AudioContext2 = (0, import_react2.createContext)(defaultAudioContext);
-var AudioProvider = ({
-  children,
-  initialVolume = 0.7
-}) => {
-  const audio = useAudioPlayer(initialVolume);
-  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AudioContext2.Provider, { value: audio, children });
-};
-var useAudio = () => {
-  const context = (0, import_react2.useContext)(AudioContext2);
-  if (context === void 0) {
-    throw new Error("useAudio must be used within an AudioProvider");
-  }
-  return context;
-};
-
-// src/components/AudioControls.tsx
-var import_react6 = __toESM(require_react());
-
-// node_modules/lucide-react/dist/esm/createLucideIcon.js
-var import_react4 = __toESM(require_react());
-
-// node_modules/lucide-react/dist/esm/shared/src/utils.js
-var toKebabCase = (string) => string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
-var mergeClasses = (...classes) => classes.filter((className, index, array) => {
-  return Boolean(className) && className.trim() !== "" && array.indexOf(className) === index;
-}).join(" ").trim();
-
-// node_modules/lucide-react/dist/esm/Icon.js
-var import_react3 = __toESM(require_react());
-
-// node_modules/lucide-react/dist/esm/defaultAttributes.js
-var defaultAttributes = {
-  xmlns: "http://www.w3.org/2000/svg",
-  width: 24,
-  height: 24,
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: 2,
-  strokeLinecap: "round",
-  strokeLinejoin: "round"
-};
-
-// node_modules/lucide-react/dist/esm/Icon.js
-var Icon = (0, import_react3.forwardRef)(
-  ({
-    color = "currentColor",
-    size = 24,
-    strokeWidth = 2,
-    absoluteStrokeWidth,
-    className = "",
-    children,
-    iconNode,
-    ...rest
-  }, ref) => {
-    return (0, import_react3.createElement)(
-      "svg",
-      {
-        ref,
-        ...defaultAttributes,
-        width: size,
-        height: size,
-        stroke: color,
-        strokeWidth: absoluteStrokeWidth ? Number(strokeWidth) * 24 / Number(size) : strokeWidth,
-        className: mergeClasses("lucide", className),
-        ...rest
-      },
-      [
-        ...iconNode.map(([tag, attrs]) => (0, import_react3.createElement)(tag, attrs)),
-        ...Array.isArray(children) ? children : [children]
-      ]
-    );
-  }
-);
-
-// node_modules/lucide-react/dist/esm/createLucideIcon.js
-var createLucideIcon = (iconName, iconNode) => {
-  const Component = (0, import_react4.forwardRef)(
-    ({ className, ...props }, ref) => (0, import_react4.createElement)(Icon, {
-      ref,
-      iconNode,
-      className: mergeClasses(`lucide-${toKebabCase(iconName)}`, className),
-      ...props
-    })
-  );
-  Component.displayName = `${iconName}`;
-  return Component;
-};
-
-// node_modules/lucide-react/dist/esm/icons/music.js
-var Music = createLucideIcon("Music", [
-  ["path", { d: "M9 18V5l12-2v13", key: "1jmyc2" }],
-  ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }],
-  ["circle", { cx: "18", cy: "16", r: "3", key: "1hluhg" }]
-]);
-
-// node_modules/lucide-react/dist/esm/icons/skip-forward.js
-var SkipForward = createLucideIcon("SkipForward", [
-  ["polygon", { points: "5 4 15 12 5 20 5 4", key: "16p6eg" }],
-  ["line", { x1: "19", x2: "19", y1: "5", y2: "19", key: "futhcm" }]
-]);
-
-// node_modules/lucide-react/dist/esm/icons/users.js
-var Users = createLucideIcon("Users", [
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
-  ["path", { d: "M22 21v-2a4 4 0 0 0-3-3.87", key: "kshegd" }],
-  ["path", { d: "M16 3.13a4 4 0 0 1 0 7.75", key: "1da9ce" }]
-]);
-
-// node_modules/lucide-react/dist/esm/icons/volume-1.js
-var Volume1 = createLucideIcon("Volume1", [
-  [
-    "path",
-    {
-      d: "M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z",
-      key: "uqj9uw"
+var LeaderboardScreen = ({ onBack }) => {
+  const [entries, setEntries] = (0, import_react.useState)([]);
+  const [error, setError] = (0, import_react.useState)("");
+  (0, import_react.useEffect)(() => {
+    const storedData = localStorage.getItem("leaderboard");
+    if (storedData) {
+      const parsedEntries = JSON.parse(storedData);
+      const sorted = parsedEntries.sort((a, b) => b.score - a.score).slice(0, 10);
+      setEntries(sorted);
+    } else {
+      fetch("leaderboard.json").then((res) => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+      }).then((data) => {
+        const sorted = data.sort((a, b) => b.score - a.score).slice(0, 10);
+        setEntries(sorted);
+        setError("");
+      }).catch((err) => {
+        console.error("Could not load default leaderboard", err);
+        setError("Failed to load leaderboard.");
+      });
     }
-  ],
-  ["path", { d: "M16 9a5 5 0 0 1 0 6", key: "1q6k2b" }]
-]);
-
-// node_modules/lucide-react/dist/esm/icons/volume-2.js
-var Volume2 = createLucideIcon("Volume2", [
-  [
-    "path",
-    {
-      d: "M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z",
-      key: "uqj9uw"
+  }, []);
+  (0, import_react.useEffect)(() => {
+    if (localStorage.getItem("teacherMode") === "true") {
+      document.body.classList.add("teacher-mode");
+    } else {
+      document.body.classList.remove("teacher-mode");
     }
-  ],
-  ["path", { d: "M16 9a5 5 0 0 1 0 6", key: "1q6k2b" }],
-  ["path", { d: "M19.364 18.364a9 9 0 0 0 0-12.728", key: "ijwkga" }]
-]);
-
-// node_modules/lucide-react/dist/esm/icons/volume-x.js
-var VolumeX = createLucideIcon("VolumeX", [
-  [
-    "path",
-    {
-      d: "M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z",
-      key: "uqj9uw"
-    }
-  ],
-  ["line", { x1: "22", x2: "16", y1: "9", y2: "15", key: "1ewh16" }],
-  ["line", { x1: "16", x2: "22", y1: "9", y2: "15", key: "5ykzw1" }]
-]);
-
-// src/hooks/useClickAway.ts
-var import_react5 = __toESM(require_react());
-function useClickAway(ref, handler) {
-  (0, import_react5.useEffect)(() => {
-    const listener = (event) => {
-      if (!ref.current || ref.current.contains(event.target)) {
-        return;
-      }
-      handler(event);
-    };
-    document.addEventListener("mousedown", listener);
-    document.addEventListener("touchstart", listener);
-    return () => {
-      document.removeEventListener("mousedown", listener);
-      document.removeEventListener("touchstart", listener);
-    };
-  }, [ref, handler]);
-}
-
-// src/components/AudioControls.tsx
-var import_jsx_runtime2 = __toESM(require_jsx_runtime());
-var AudioControls = () => {
-  const {
-    isMuted,
-    isMusicMuted,
-    volume,
-    currentTrack,
-    toggleMute,
-    toggleMusic,
-    setVolume,
-    playSound
-  } = useAudio();
-  const [isOpen, setIsOpen] = (0, import_react6.useState)(false);
-  const [localVolume, setLocalVolume] = (0, import_react6.useState)(volume);
-  const dropdownRef = (0, import_react6.useRef)(null);
-  useClickAway(dropdownRef, () => {
-    setIsOpen(false);
-  });
-  (0, import_react6.useEffect)(() => {
-    setLocalVolume(volume);
-  }, [volume]);
-  const handleVolumeChange = import_react6.default.useCallback((e) => {
-    const newVolume = parseFloat(e.target.value);
-    setLocalVolume(newVolume);
-    const timer = setTimeout(() => {
-      setVolume(newVolume);
-      if (newVolume > 0 && isMuted) {
-        toggleMute();
-      }
-      if (!isMuted && !isMusicMuted) {
-        playSound("ui_click", { volume: 0.3 });
-      }
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [isMuted, isMusicMuted, setVolume, toggleMute, playSound]);
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-  return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "fixed bottom-4 right-4 z-50", ref: dropdownRef, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "relative", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-      "button",
-      {
-        onClick: toggleDropdown,
-        className: "p-2 bg-white bg-opacity-80 rounded-full shadow-md hover:bg-opacity-100 transition-all",
-        "aria-label": "Audio controls",
-        "aria-expanded": isOpen,
-        "aria-haspopup": "true",
-        children: isMuted ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(VolumeX, { size: 24 }) : volume > 0.5 ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Volume2, { size: 24 }) : volume > 0 ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Volume1, { size: 24 }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(VolumeX, { size: 24 })
-      }
-    ),
-    isOpen && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "absolute bottom-full right-0 mb-2 w-64 bg-white rounded-lg shadow-lg p-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex items-center justify-between mb-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("label", { htmlFor: "volume", className: "text-sm font-medium text-gray-700", children: "Volume" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-          "button",
+  }, []);
+  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center font-body", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-6xl font-bold mb-8 text-yellow-300 uppercase font-sans", children: "\u{1F3C5} Leaderboard" }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md scorecard", children: error ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-xl text-red-300", children: error }) : entries.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-xl", children: "No scores yet." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ol", { className: "text-xl space-y-2", children: entries.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "flex justify-between items-center py-1", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "flex items-center font-bold", children: [
+        index < 3 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "mr-2", children: ["\u{1F947}", "\u{1F948}", "\u{1F949}"][index] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          "img",
           {
-            onClick: () => {
-              toggleMute();
-              playSound("ui_click", { volume: 0.3 });
-            },
-            className: "p-1 rounded-full hover:bg-gray-100",
-            "aria-label": isMuted ? "Unmute sound" : "Mute sound",
-            children: isMuted ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(VolumeX, { size: 18 }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Volume2, { size: 18 })
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex items-center gap-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(VolumeX, { size: 16, className: "text-gray-500" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-          "input",
-          {
-            id: "volume",
-            type: "range",
-            min: "0",
-            max: "1",
-            step: "0.01",
-            value: localVolume,
-            onChange: handleVolumeChange,
-            className: "flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500",
-            "aria-valuemin": 0,
-            "aria-valuemax": 1,
-            "aria-valuenow": localVolume,
-            "aria-valuetext": `${Math.round(localVolume * 100)}%`
+            src: entry.avatar || bee_default,
+            alt: `${entry.name}'s avatar`,
+            className: "w-6 h-6 rounded-full mr-2"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Volume2, { size: 16, className: "text-gray-500" })
+        index + 1,
+        ". ",
+        entry.name
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "mt-4 pt-4 border-t border-gray-200", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
-        "button",
-        {
-          onClick: () => {
-            toggleMusic();
-            playSound("ui_click", { volume: 0.3 });
-          },
-          className: "flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 w-full p-2 rounded hover:bg-gray-100",
-          "aria-label": isMusicMuted ? "Enable music" : "Disable music",
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Music, { size: 16, className: isMusicMuted ? "text-red-500" : "text-green-500" }),
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { children: isMusicMuted ? "Music Off" : "Music On" }),
-            currentTrack && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "ml-auto text-xs text-gray-500 truncate max-w-[120px]", children: currentTrack })
-          ]
-        }
-      ) })
-    ] })
-  ] }) });
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-yellow-300", children: entry.score })
+    ] }, index)) }) }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+      "button",
+      {
+        onClick: onBack,
+        className: "mt-8 bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-xl text-2xl font-bold block mx-auto",
+        children: "Back"
+      }
+    )
+  ] });
 };
+var LeaderboardScreen_default = LeaderboardScreen;
 
 // src/SetupScreen.tsx
-var import_react9 = __toESM(require_react());
+var import_react3 = __toESM(require_react());
 
 // node_modules/uuid/dist/esm-browser/stringify.js
 var byteToHex = [];
@@ -27628,27 +25424,23 @@ function v4(options, buf, offset) {
 }
 var v4_default = v4;
 
-// src/img/avatars/bee.svg
-var bee_default = "./bee-JMGRCQTT.svg";
-
-// src/img/avatars/book.svg
-var book_default = "./book-6U2LI7OV.svg";
-
-// src/img/avatars/trophy.svg
-var trophy_default = "./trophy-3YRZKM4U.svg";
+// src/utils/parseWordList.ts
+function parseWordList(content) {
+  return [];
+}
 
 // src/components/TeamForm.tsx
-var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+var import_jsx_runtime2 = __toESM(require_jsx_runtime());
 var TeamForm = ({
   teams,
   avatars: avatars2,
   addTeam,
   removeTeam,
   updateTeamName
-}) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
-  teams.map((team, index) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("img", { src: team.avatar || avatars2[0], alt: "avatar", className: "w-8 h-8 rounded-full" }),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+}) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_jsx_runtime2.Fragment, { children: [
+  teams.map((team, index) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("img", { src: team.avatar || avatars2[0], alt: "avatar", className: "w-8 h-8 rounded-full" }),
+    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
       "input",
       {
         type: "text",
@@ -27658,7 +25450,7 @@ var TeamForm = ({
         className: "flex-grow p-2 rounded-md bg-white/20 text-white"
       }
     ),
-    teams.length > 1 && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+    teams.length > 1 && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
       "button",
       {
         onClick: () => removeTeam(index),
@@ -27667,141 +25459,12 @@ var TeamForm = ({
       }
     )
   ] }, index)),
-  /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: addTeam, className: "mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded", children: "Add Team" })
+  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { onClick: addTeam, className: "mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded", children: "Add Team" })
 ] });
 var TeamForm_default = TeamForm;
 
-// src/components/StudentRoster.tsx
-var import_react7 = __toESM(require_react());
-var import_jsx_runtime4 = __toESM(require_jsx_runtime());
-var StudentRoster = ({
-  students = [],
-  // Default to empty array
-  avatars: avatars2,
-  addParticipant,
-  removeStudent,
-  updateStudentName,
-  createParticipant,
-  initialDifficulty,
-  teams = [],
-  onAssignTeam
-}) => {
-  const [studentName, setStudentName] = (0, import_react7.useState)("");
-  const [bulkStudentText, setBulkStudentText] = (0, import_react7.useState)("");
-  const [bulkStudentError, setBulkStudentError] = (0, import_react7.useState)("");
-  const addStudent = () => {
-    if (studentName.trim()) {
-      addParticipant(createParticipant(studentName, initialDifficulty));
-      setStudentName("");
-    }
-  };
-  const parseStudentNames = (text) => text.split(/\r?\n/).flatMap((line) => line.split(",")).map((name) => name.trim()).filter((name) => name !== "");
-  const addBulkStudents = () => {
-    const names = parseStudentNames(bulkStudentText);
-    const existing = new Set(students.map((s) => s.name));
-    const uniqueNames = Array.from(new Set(names)).filter((name) => !existing.has(name));
-    if (uniqueNames.length === 0) {
-      setBulkStudentError("No new unique names detected.");
-      return;
-    }
-    uniqueNames.forEach((name) => addParticipant(createParticipant(name, initialDifficulty)));
-    setBulkStudentText("");
-    setBulkStudentError("");
-  };
-  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "student-roster", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h3", { children: "Participants" }),
-    (students || []).map((student, index) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "participant-item", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        "img",
-        {
-          src: student.avatar || avatars2[0],
-          alt: "avatar",
-          className: "w-8 h-8 rounded-full"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        "input",
-        {
-          type: "text",
-          value: student.name,
-          onChange: (e) => updateStudentName(index, e.target.value),
-          placeholder: "Student name",
-          className: "flex-grow p-2 rounded-md bg-white/20 text-white"
-        }
-      ),
-      teams.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
-        "select",
-        {
-          value: student.team || "",
-          onChange: (e) => onAssignTeam && onAssignTeam(index, e.target.value),
-          className: "p-2 rounded-md bg-white/20 text-white",
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: "", children: "No Team" }),
-            teams.map((t, i) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: t.name, children: t.name }, i))
-          ]
-        }
-      ),
-      students.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        "button",
-        {
-          onClick: () => removeStudent(index),
-          className: "px-2 py-1 bg-red-500 hover:bg-red-600 rounded",
-          children: "Remove"
-        }
-      )
-    ] }) }, index)),
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex gap-4 mb-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        "input",
-        {
-          type: "text",
-          value: studentName,
-          onChange: (e) => setStudentName(e.target.value),
-          className: "flex-grow p-2 rounded-md bg-white/20 text-white",
-          placeholder: "Student name"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        "button",
-        {
-          onClick: addStudent,
-          className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold",
-          children: "Add"
-        }
-      )
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mb-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        "textarea",
-        {
-          value: bulkStudentText,
-          onChange: (e) => setBulkStudentText(e.target.value),
-          className: "w-full p-2 rounded-md bg-white/20 text-white mb-2",
-          placeholder: "Paste names, one per line or separated by commas",
-          rows: 4
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        "button",
-        {
-          onClick: addBulkStudents,
-          className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold",
-          children: "Add Names"
-        }
-      ),
-      bulkStudentError && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "text-red-300 mt-2", children: bulkStudentError })
-    ] })
-  ] });
-};
-var StudentRoster_default = StudentRoster;
-
-// src/utils/parseWordList.ts
-function parseWordList(content) {
-  return [];
-}
-
 // src/components/WordListPrompt.tsx
-var import_react8 = __toESM(require_react());
+var import_react2 = __toESM(require_react());
 
 // constants/promptPresets.ts
 var promptPresets = {
@@ -27823,7 +25486,7 @@ var promptPresets = {
 };
 
 // src/components/WordListPrompt.tsx
-var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+var import_jsx_runtime3 = __toESM(require_jsx_runtime());
 var tabLabels = {
   currentEvents: "Current Events",
   books: "Books",
@@ -27831,8 +25494,8 @@ var tabLabels = {
   custom: "Saved"
 };
 var WordListPrompt = ({ value, onChange }) => {
-  const [activeTab, setActiveTab] = (0, import_react8.useState)("currentEvents");
-  const [customPrompts, setCustomPrompts] = (0, import_react8.useState)(() => {
+  const [activeTab, setActiveTab] = (0, import_react2.useState)("currentEvents");
+  const [customPrompts, setCustomPrompts] = (0, import_react2.useState)(() => {
     try {
       return JSON.parse(localStorage.getItem("customPrompts") || "[]");
     } catch {
@@ -27851,8 +25514,8 @@ var WordListPrompt = ({ value, onChange }) => {
     setCustomPrompts(updated);
     localStorage.setItem("customPrompts", JSON.stringify(updated));
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex-1", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "flex gap-2 mb-2", children: tabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex-1", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "flex gap-2 mb-2", children: tabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
       "button",
       {
         onClick: () => setActiveTab(tab),
@@ -27861,7 +25524,7 @@ var WordListPrompt = ({ value, onChange }) => {
       },
       tab
     )) }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "flex flex-wrap gap-2 mb-2", children: categories[activeTab].map((prompt) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "flex flex-wrap gap-2 mb-2", children: categories[activeTab].map((prompt) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
       "button",
       {
         onClick: () => handleSelectPrompt(prompt),
@@ -27870,8 +25533,8 @@ var WordListPrompt = ({ value, onChange }) => {
       },
       prompt
     )) }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex gap-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex gap-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
         "input",
         {
           type: "text",
@@ -27881,7 +25544,7 @@ var WordListPrompt = ({ value, onChange }) => {
           placeholder: "Topic (optional)"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
         "button",
         {
           onClick: handleSavePrompt,
@@ -27895,107 +25558,172 @@ var WordListPrompt = ({ value, onChange }) => {
 var WordListPrompt_default = WordListPrompt;
 
 // src/SetupScreen.tsx
-var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+var import_jsx_runtime4 = __toESM(require_jsx_runtime());
 var musicStyles = ["Funk", "Country", "Deep Bass", "Rock", "Jazz", "Classical"];
+var beeImg = "/img/bee.svg";
+var bookImg = "/img/book.svg";
+var trophyImg = "../img/trophy.svg";
+var availableAvatars = [beeImg, bookImg, trophyImg];
 var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
-  const availableAvatars = [bee_default, book_default, trophy_default];
-  const getRandomAvatar = () => availableAvatars[Math.floor(Math.random() * availableAvatars.length)];
-  const [gameMode, setGameMode] = (0, import_react9.useState)("team");
-  const [startingLives, setStartingLives] = (0, import_react9.useState)(10);
-  const [options, setOptions] = (0, import_react9.useState)({
+  const [gameMode, setGameMode] = (0, import_react3.useState)("team");
+  const [startingLives, setStartingLives] = (0, import_react3.useState)(10);
+  const [optionsState, setOptionsState] = (0, import_react3.useState)({
     gameMode: "individual",
     audioEnabled: true,
     soundEffectsEnabled: true,
-    wordSource: "curriculum",
-    timerDuration: 60,
-    skipPenaltyType: "points",
-    skipPenaltyValue: 5,
-    progressionSpeed: 1,
-    musicStyle: "default",
-    musicVolume: 0.8,
-    initialDifficulty: 1,
     soundEnabled: true,
     effectsEnabled: true,
+    musicStyle: "default",
+    musicVolume: 0.5,
+    initialDifficulty: 1,
+    progressionSpeed: 1,
+    wordSource: "curriculum",
+    skipPenaltyType: "points",
+    skipPenaltyValue: 0,
+    timerDuration: 60,
     teacherMode: false,
     theme: "light",
-    musicEnabled: true
+    musicEnabled: true,
+    startingLives: 3
   });
-  const createParticipant = (name, difficulty) => ({
-    id: v4_default(),
-    name,
-    avatar: availableAvatars[Math.floor(Math.random() * availableAvatars.length)],
-    score: 0,
-    lives: options.initialDifficulty,
-    teamId: null,
-    points: 0,
-    difficultyLevel: difficulty,
-    streak: 0,
-    attempted: 0,
-    correct: 0,
-    incorrect: 0,
-    wordsAttempted: 0,
-    wordsCorrect: 0
-  });
-  const createTeam = () => ({
-    id: v4_default(),
-    name: `Team ${teams.length + 1}`,
-    students: []
-  });
-  const [participants, setParticipants] = (0, import_react9.useState)([]);
-  const [teams, setTeams] = (0, import_react9.useState)([]);
-  const handleAddParticipant = (name) => {
-    const newParticipant = createParticipant(name, options.initialDifficulty);
-    setParticipants([...participants, newParticipant]);
+  const createParticipant = (name, teamId, avatar = availableAvatars[Math.floor(Math.random() * availableAvatars.length)]) => {
+    return {
+      id: v4_default(),
+      name,
+      teamId: teamId ?? null,
+      avatar,
+      score: 0,
+      lives: optionsState.initialDifficulty,
+      difficultyLevel: 1,
+      points: 0,
+      streak: 0,
+      attempted: 0,
+      correct: 0,
+      incorrect: 0,
+      wordsAttempted: 0,
+      wordsCorrect: 0
+    };
+  };
+  const createTeam = (name, avatar = availableAvatars[Math.floor(Math.random() * availableAvatars.length)]) => {
+    return {
+      id: v4_default(),
+      name,
+      participants: [],
+      teamId: v4_default(),
+      avatar,
+      score: 0,
+      lives: startingLives,
+      difficulty: "easy",
+      wordsAttempted: 0,
+      wordsCorrect: 0,
+      streak: 0,
+      skipsRemaining: 3,
+      askFriendRemaining: 2,
+      achievements: [],
+      points: 0,
+      difficultyLevel: 0,
+      attempted: 0,
+      correct: 0,
+      students: []
+    };
+  };
+  const [participants, setParticipants] = (0, import_react3.useState)([]);
+  const [teams, setTeams] = (0, import_react3.useState)([
+    {
+      id: v4_default(),
+      name: "",
+      participants: [],
+      teamId: v4_default(),
+      avatar: availableAvatars[Math.floor(Math.random() * availableAvatars.length)],
+      score: 0,
+      lives: startingLives,
+      difficulty: "easy",
+      wordsAttempted: 0,
+      wordsCorrect: 0,
+      streak: 0,
+      skipsRemaining: 3,
+      askFriendRemaining: 2,
+      achievements: [],
+      points: 0,
+      difficultyLevel: 0,
+      attempted: 0,
+      correct: 0,
+      students: []
+    }
+  ]);
+  const handleAddParticipant = (name, teamId) => {
+    if (name.trim() === "") return null;
+    const newParticipant = createParticipant(name, teamId);
+    setParticipants((prev) => [...prev, newParticipant]);
+    return newParticipant;
+  };
+  const removeTeamByIndex = (index) => {
+    setTeams((prev) => prev.filter((_, i) => i !== index));
+  };
+  const updateTeamNameByIndex = (index, name) => {
+    setTeams((prev) => {
+      const newTeams = [...prev];
+      newTeams[index] = { ...newTeams[index], name };
+      return newTeams;
+    });
+  };
+  const addBulkStudents = (students) => {
+    setParticipants((prev) => [...prev, ...students]);
+  };
+  const updateStudentName = (id3, name) => {
+    setParticipants(
+      (prev) => prev.map((p) => p.id === id3 ? { ...p, name } : p)
+    );
+  };
+  const addParticipantToRoster = (participant) => {
+    setParticipants((prev) => [...prev, participant]);
   };
   const addTeam = (team) => {
     setTeams([...teams, team]);
   };
-  const removeTeam = (id) => {
-    setTeams(teams.filter((t) => t.id !== id));
+  const removeTeam = (id3) => {
+    setTeams(teams.filter((t) => t.id !== id3));
   };
-  const updateTeam = (id, updates) => {
-    setTeams(teams.map((t) => t.id === id ? { ...t, ...updates } : t));
+  const updateTeam = (id3, updates) => {
+    setTeams(teams.map((t) => t.id === id3 ? { ...t, ...updates } : t));
   };
-  const [timerDuration, setTimerDuration] = (0, import_react9.useState)(30);
-  const [customWordListText, setCustomWordListText] = (0, import_react9.useState)("");
-  const [parsedCustomWords, setParsedCustomWords] = (0, import_react9.useState)([]);
-  const [missedWordsCollection, setMissedWordsCollection] = (0, import_react9.useState)({});
-  const [includeMissedWords, setIncludeMissedWords] = (0, import_react9.useState)(false);
-  const [error, setError] = (0, import_react9.useState)("");
+  const [timerDuration, setTimerDuration] = (0, import_react3.useState)(30);
+  const [customWordListText, setCustomWordListText] = (0, import_react3.useState)("");
+  const [parsedCustomWords, setParsedCustomWords] = (0, import_react3.useState)([]);
+  const [missedWordsCollection, setMissedWordsCollection] = (0, import_react3.useState)({});
+  const [includeMissedWords, setIncludeMissedWords] = (0, import_react3.useState)(false);
+  const [error, setError] = (0, import_react3.useState)("");
   const bundledWordLists = [
     { label: "Example JSON", file: "example.json" },
     { label: "Example CSV", file: "example.csv" },
     { label: "Example TSV", file: "example.tsv" }
   ];
-  const [selectedBundledList, setSelectedBundledList] = (0, import_react9.useState)("");
-  const [studentName, setStudentName] = (0, import_react9.useState)("");
-  const [bulkStudentText, setBulkStudentText] = (0, import_react9.useState)("");
-  const [bulkStudentError, setBulkStudentError] = (0, import_react9.useState)("");
-  const [randomTeamCount, setRandomTeamCount] = (0, import_react9.useState)(0);
-  const [randomTeamSize, setRandomTeamSize] = (0, import_react9.useState)(0);
-  const [randomizeError, setRandomizeError] = (0, import_react9.useState)("");
-  const [skipPenaltyType, setSkipPenaltyType] = (0, import_react9.useState)("lives");
-  const [skipPenaltyValue, setSkipPenaltyValue] = (0, import_react9.useState)(1);
-  const [soundEnabled, setSoundEnabled] = (0, import_react9.useState)(() => localStorage.getItem("soundEnabled") !== "false");
-  const [effectsEnabled, setEffectsEnabled] = (0, import_react9.useState)(true);
-  const [musicStyle, setMusicStyle] = (0, import_react9.useState)(() => localStorage.getItem("musicStyle") ?? "Funk");
-  const [musicVolume, setMusicVolume] = (0, import_react9.useState)(() => parseFloat(localStorage.getItem("musicVolume") ?? "1"));
-  const [initialDifficulty, setInitialDifficulty] = (0, import_react9.useState)(0);
-  const [progressionSpeed, setProgressionSpeed] = (0, import_react9.useState)(1);
-  const [theme, setTheme] = (0, import_react9.useState)("light");
-  const [teacherMode, setTeacherMode] = (0, import_react9.useState)(() => localStorage.getItem("teacherMode") === "true");
-  const [aiGrade, setAiGrade] = (0, import_react9.useState)(5);
-  const [aiTopic, setAiTopic] = (0, import_react9.useState)("");
-  const [aiCount, setAiCount] = (0, import_react9.useState)(10);
-  const [aiLoading, setAiLoading] = (0, import_react9.useState)(false);
-  const [aiError, setAiError] = (0, import_react9.useState)("");
-  const [voices, setVoices] = (0, import_react9.useState)([]);
-  const [selectedVoice, setSelectedVoice] = (0, import_react9.useState)(() => localStorage.getItem("selectedVoice") ?? "");
+  const [selectedBundledList, setSelectedBundledList] = (0, import_react3.useState)("");
+  const [studentName, setStudentName] = (0, import_react3.useState)("");
+  const [bulkStudentText, setBulkStudentText] = (0, import_react3.useState)("");
+  const [randomTeamCount, setRandomTeamCount] = (0, import_react3.useState)(0);
+  const [randomTeamSize, setRandomTeamSize] = (0, import_react3.useState)(0);
+  const [randomizeError, setRandomizeError] = (0, import_react3.useState)("");
+  const [skipPenaltyType, setSkipPenaltyType] = (0, import_react3.useState)("lives");
+  const [skipPenaltyValue, setSkipPenaltyValue] = (0, import_react3.useState)(1);
+  const [soundEnabled, setSoundEnabled] = (0, import_react3.useState)(() => localStorage.getItem("soundEnabled") !== "false");
+  const [musicStyle, setMusicStyle] = (0, import_react3.useState)(() => localStorage.getItem("musicStyle") ?? "Funk");
+  const [musicVolume, setMusicVolume] = (0, import_react3.useState)(() => parseFloat(localStorage.getItem("musicVolume") ?? "1"));
+  const [initialDifficulty, setInitialDifficulty] = (0, import_react3.useState)(0);
+  const [progressionSpeed, setProgressionSpeed] = (0, import_react3.useState)(1);
+  const [theme, setTheme] = (0, import_react3.useState)("light");
+  const [teacherMode, setTeacherMode] = (0, import_react3.useState)(() => localStorage.getItem("teacherMode") === "true");
+  const [aiGrade, setAiGrade] = (0, import_react3.useState)(5);
+  const [aiTopic, setAiTopic] = (0, import_react3.useState)("");
+  const [aiCount, setAiCount] = (0, import_react3.useState)(10);
+  const [aiLoading, setAiLoading] = (0, import_react3.useState)(false);
+  const [aiError, setAiError] = (0, import_react3.useState)("");
+  const [selectedVoice, setSelectedVoice] = (0, import_react3.useState)(() => localStorage.getItem("selectedVoice") ?? "");
   const applyTheme = (t) => {
     document.body.classList.remove("theme-light", "theme-dark", "theme-honeycomb");
     document.body.classList.add(`theme-${t}`);
   };
-  (0, import_react9.useEffect)(() => {
+  (0, import_react3.useEffect)(() => {
     if (teacherMode) {
       document.body.classList.add("teacher-mode");
     } else {
@@ -28007,18 +25735,21 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
       console.error("Failed to save teacherMode to localStorage", error2);
     }
   }, [teacherMode]);
-  (0, import_react9.useEffect)(() => {
+  (0, import_react3.useEffect)(() => {
     setStartingLives(gameMode === "team" ? 10 : 5);
   }, [gameMode]);
-  (0, import_react9.useEffect)(() => {
+  (0, import_react3.useEffect)(() => {
+    setOptionsState((o) => ({ ...o, gameMode }));
+  }, [gameMode]);
+  (0, import_react3.useEffect)(() => {
     const savedTeams = localStorage.getItem("teams");
     if (savedTeams) try {
-      setTeams(JSON.parse(savedTeams).map((t) => ({ ...t, avatar: t.avatar || getRandomAvatar() })));
+      setTeams(JSON.parse(savedTeams).map((t) => ({ ...t, avatar: t.avatar || availableAvatars[Math.floor(Math.random() * availableAvatars.length)] })));
     } catch {
     }
     const savedStudents = localStorage.getItem("students");
     if (savedStudents) try {
-      setParticipants(JSON.parse(savedStudents).map((s) => ({ ...s, avatar: s.avatar || getRandomAvatar() })));
+      setParticipants(JSON.parse(savedStudents).map((s) => ({ ...s, avatar: s.avatar || availableAvatars[Math.floor(Math.random() * availableAvatars.length)] })));
     } catch {
     }
     const savedTheme = localStorage.getItem("theme");
@@ -28029,28 +25760,28 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
       applyTheme(theme);
     }
   }, []);
-  (0, import_react9.useEffect)(() => {
+  (0, import_react3.useEffect)(() => {
     try {
       localStorage.setItem("soundEnabled", String(soundEnabled));
     } catch (error2) {
       console.error("Failed to save soundEnabled to localStorage", error2);
     }
   }, [soundEnabled]);
-  (0, import_react9.useEffect)(() => {
+  (0, import_react3.useEffect)(() => {
     try {
       localStorage.setItem("musicStyle", musicStyle);
     } catch (error2) {
       console.error("Failed to save musicStyle to localStorage", error2);
     }
   }, [musicStyle]);
-  (0, import_react9.useEffect)(() => {
+  (0, import_react3.useEffect)(() => {
     try {
       localStorage.setItem("musicVolume", String(musicVolume));
     } catch (error2) {
       console.error("Failed to save musicVolume to localStorage", error2);
     }
   }, [musicVolume]);
-  (0, import_react9.useEffect)(() => {
+  (0, import_react3.useEffect)(() => {
     if (selectedVoice) {
       try {
         localStorage.setItem("selectedVoice", selectedVoice);
@@ -28065,19 +25796,10 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
       }
     }
   }, [selectedVoice]);
-  (0, import_react9.useEffect)(() => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    const loadVoices = () => setVoices(window.speechSynthesis.getVoices());
-    loadVoices();
-    window.speechSynthesis.addEventListener("voiceschanged", loadVoices);
-    return () => window.speechSynthesis.removeEventListener("voiceschanged", loadVoices);
-  }, []);
   const updateTeams = () => {
-    const updatedTeams = (teams || []).map((team) => ({
+    const updatedTeams = teams.map((team) => ({
       ...team,
-      students: (team.students || []).map(
-        (studentId) => participants.find((p) => p.id === studentId) || createParticipant("Unknown", 1)
-      )
+      participants: team.participants.map((p) => typeof p === "string" ? p : p.id)
     }));
     setTeams(updatedTeams);
   };
@@ -28089,7 +25811,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
       console.error("Failed to save students to localStorage", error2);
     }
   };
-  (0, import_react9.useEffect)(() => {
+  (0, import_react3.useEffect)(() => {
     if (gameMode === "team") {
       updateTeams();
     } else {
@@ -28111,24 +25833,15 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
     setParticipants([]);
   };
   const addStudent = () => {
-    if (studentName.trim()) {
-      const newStudent = createParticipant(studentName, options.initialDifficulty);
-      setParticipants([...participants, newStudent]);
+    if (studentName?.trim()) {
+      const newStudent = createParticipant(studentName);
+      setParticipants((prev) => [...prev, newStudent]);
       setStudentName("");
     }
   };
-  const updateStudentName = (index, name) => {
-    const updatedStudents = [...participants];
-    updatedStudents[index].name = name;
-    setParticipants(updatedStudents);
-  };
   const removeStudent = (index) => {
-    const updatedStudents = [...participants];
-    updatedStudents.splice(index, 1);
-    setParticipants(updatedStudents);
+    setParticipants((prev) => prev.filter((_, i) => i !== index));
   };
-  const setTeamsParticipants = (teams2) => setTeams(teams2);
-  const setStudentsParticipants = (students) => setParticipants(students);
   const randomizeTeams = () => {
     if (participants.length < 2) {
       setRandomizeError("Add at least two students to create teams.");
@@ -28155,7 +25868,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
     });
     const newTeams = groups.filter((group) => group.length > 0).map((group, index) => {
       const teamName = `Team ${index + 1}: ${group.map((s) => s.name).join(", ")}`;
-      const participant = createParticipant(teamName, options.initialDifficulty);
+      const participant = createParticipant(teamName);
       participant.avatar = teams[index]?.avatar || participant.avatar;
       return participant;
     });
@@ -28182,6 +25895,18 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
       reader.readAsText(file);
     }
   };
+  const getCircularReplacer = () => {
+    const seen = /* @__PURE__ */ new WeakSet();
+    return (_key, value) => {
+      if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+          return;
+        }
+        seen.add(value);
+      }
+      return value;
+    };
+  };
   const generateAIWords = async () => {
     setAiLoading(true);
     setAiError("");
@@ -28202,7 +25927,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
       setAiLoading(false);
     }
   };
-  (0, import_react9.useEffect)(() => {
+  (0, import_react3.useEffect)(() => {
     if (selectedBundledList) {
       fetch(`wordlists/${selectedBundledList}`).then((res) => {
         if (!res.ok) throw new Error("Network response was not ok");
@@ -28216,18 +25941,18 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
       });
     }
   }, [selectedBundledList]);
-  (0, import_react9.useEffect)(() => {
+  (0, import_react3.useEffect)(() => {
     if (customWordListText) {
       parseCustomWordList(customWordListText);
     }
   }, [customWordListText]);
-  (0, import_react9.useEffect)(() => {
+  (0, import_react3.useEffect)(() => {
     const stored = JSON.parse(localStorage.getItem("missedWordsCollection") || "{}");
     setMissedWordsCollection(stored);
   }, []);
   const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
   const handleStart = async (isSessionChallenge = false) => {
-    if (!options) return;
+    if (!optionsState) return;
     let challengeWords = [];
     if (isSessionChallenge) {
       try {
@@ -28248,16 +25973,16 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
         setError("Please add at least two teams with names.");
         return;
       }
-      finalParticipants = trimmedTeams.map((t) => ({ ...t, difficultyLevel: options.initialDifficulty }));
+      finalParticipants = trimmedTeams.map((t) => ({ ...t, difficultyLevel: optionsState.initialDifficulty }));
     } else {
       const trimmedStudents = participants.filter((student) => student.name && student.name.trim() !== "");
       if (trimmedStudents.length < 1 && isSessionChallenge) {
-        finalParticipants = [createParticipant("Player 1", options.initialDifficulty)];
+        finalParticipants = [createParticipant("Player 1", void 0)];
       } else if (trimmedStudents.length < 2 && !isSessionChallenge) {
         setError("Please add at least two students for a custom game.");
         return;
       } else {
-        finalParticipants = trimmedStudents.map((s) => ({ ...s, difficultyLevel: options.initialDifficulty }));
+        finalParticipants = trimmedStudents.map((s) => ({ ...s, difficultyLevel: optionsState.initialDifficulty }));
       }
     }
     setError("");
@@ -28266,86 +25991,44 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
       const extraWords = Object.values(missedWordsCollection).flat();
       finalWords = [...finalWords, ...extraWords];
     }
-    onAddCustomWords(finalWords);
     const config = {
-      participants: finalParticipants,
-      gameMode,
-      timerDuration,
-      skipPenaltyType: options.skipPenaltyType,
-      skipPenaltyValue: options.skipPenaltyValue,
-      soundEnabled: options.soundEnabled,
-      effectsEnabled: options.effectsEnabled,
-      difficultyLevel: options.initialDifficulty,
-      progressionSpeed: options.progressionSpeed,
-      musicStyle: options.musicStyle,
-      musicVolume: options.musicVolume,
-      wordDatabase: {
-        easy: finalWords.filter((w) => w.difficulty === "easy"),
-        medium: finalWords.filter((w) => w.difficulty === "medium"),
-        tricky: finalWords.filter((w) => w.difficulty === "tricky")
+      teams: gameMode === "team" ? teams : [],
+      participants: gameMode === "individual" ? participants : [],
+      options: {
+        audioEnabled: optionsState.audioEnabled,
+        soundEffectsEnabled: optionsState.soundEffectsEnabled,
+        wordSource: optionsState.wordSource,
+        timerDuration: optionsState.timerDuration,
+        startingLives
       }
     };
     onStartGame(config);
   };
-  const getCircularReplacer = () => {
-    const seen = /* @__PURE__ */ new WeakSet();
-    return (key, value) => {
-      if (typeof value === "object" && value !== null) {
-        if (seen.has(value)) {
-          return;
-        }
-        seen.add(value);
-      }
-      return value;
-    };
-  };
   const handleOptionChange = (option, value) => {
-    setOptions((prev) => ({
+    setOptionsState((prev) => ({
       ...prev,
       [option]: value
     }));
   };
-  const addBulkStudents = (students) => {
-    setParticipants([...participants, ...students]);
-  };
-  const handleTeamSelect = (team) => {
-    setAllParticipants((prev) => [...prev, team]);
-  };
-  const handleTeamRemove = (id) => {
-    setTeams(teams.filter((t) => t.id !== id));
-  };
-  const handleTeamRename = (id, name) => {
-    setTeams(teams.map((t) => t.id === id ? { ...t, name } : t));
-  };
-  const handleParticipantRemove = (index) => {
-    setParticipants((prev) => prev.filter((_, i) => i !== index));
-  };
-  const handleParticipantEdit = (index, name) => {
-    setParticipants((prev) => prev.map((p, i) => i === index ? { ...p, name } : p));
-  };
-  const [allParticipants, setAllParticipants] = (0, import_react9.useState)([
-    ...participants,
-    ...teams
-  ]);
-  const [activeTab, setActiveTab] = (0, import_react9.useState)("setup");
-  return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "min-h-screen p-4 md:p-8 text-white font-body bg-gradient-to-b from-blue-900 to-purple-900", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "max-w-7xl mx-auto", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "text-center mb-8 md:mb-12", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex flex-col items-center mb-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "mb-2", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+  const [activeTab, setActiveTab] = (0, import_react3.useState)("setup");
+  return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "min-h-screen p-4 md:p-8 text-white font-body bg-gradient-to-b from-blue-900 to-purple-900", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "max-w-7xl mx-auto", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "text-center mb-8 md:mb-12", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex flex-col items-center mb-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "mb-2", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
           "img",
           {
-            src: `${process.env.PUBLIC_URL || ""}/icons/icon.svg`,
+            src: "/icons/icon.svg",
             alt: "Bee mascot",
             className: "w-16 h-16 md:w-20 md:h-20 mx-auto",
-            onError: (e) => e.currentTarget.src = `${process.env.PUBLIC_URL || ""}/img/bee.svg`
+            onError: (e) => e.currentTarget.src = "/img/bee.svg"
           }
         ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h1", { className: "text-3xl md:text-5xl font-bold text-yellow-300 uppercase font-sans tracking-wide", children: "Spelling Bee Championship" })
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h1", { className: "text-3xl md:text-5xl font-bold text-yellow-300 uppercase font-sans tracking-wide", children: "Spelling Bee Championship" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-lg md:text-xl text-blue-100 max-w-2xl mx-auto", children: "Get ready to spell your way to victory!" })
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "text-lg md:text-xl text-blue-100 max-w-2xl mx-auto", children: "Get ready to spell your way to victory!" })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex mb-6 border-b border-blue-400", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex mb-6 border-b border-blue-400", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         "button",
         {
           className: `px-4 py-2 font-medium ${activeTab === "setup" ? "text-yellow-300 border-b-2 border-yellow-300" : "text-blue-200"}`,
@@ -28353,7 +26036,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
           children: "Game Setup"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         "button",
         {
           className: `px-4 py-2 font-medium ${activeTab === "settings" ? "text-yellow-300 border-b-2 border-yellow-300" : "text-blue-200"}`,
@@ -28361,7 +26044,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
           children: "Settings"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         "button",
         {
           className: `px-4 py-2 font-medium ${activeTab === "words" ? "text-yellow-300 border-b-2 border-yellow-300" : "text-blue-200"}`,
@@ -28370,12 +26053,12 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
         }
       )
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 shadow-lg", children: [
-      activeTab === "setup" && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mb-8", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-xl font-bold mb-4 uppercase font-sans", children: "Select Game Mode" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex flex-wrap justify-center gap-4", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 shadow-lg", children: [
+      activeTab === "setup" && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mb-8", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "text-xl font-bold mb-4 uppercase font-sans", children: "Select Game Mode" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex flex-wrap justify-center gap-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
               "button",
               {
                 onClick: () => setGameMode("team"),
@@ -28383,7 +26066,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
                 children: "Team Mode"
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
               "button",
               {
                 onClick: () => setGameMode("individual"),
@@ -28393,113 +26076,109 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
             )
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mb-8", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-xl font-bold mb-4 uppercase font-sans", children: gameMode === "team" ? "Teams" : "Students" }),
-          gameMode === "team" ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mb-8", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "text-xl font-bold mb-4 uppercase font-sans", children: gameMode === "team" ? "Teams" : "Students" }),
+          gameMode === "team" ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
             TeamForm_default,
             {
               teams,
               avatars: availableAvatars,
-              addTeam: (team) => addTeam(team),
-              removeTeam: (id) => removeTeam(id),
-              updateTeamName: (id, name) => updateTeam(id, { name })
+              addTeam: () => addTeam(createTeam("")),
+              removeTeam: removeTeamByIndex,
+              updateTeamName: updateTeamNameByIndex
             }
-          ) : /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex gap-4 mb-4", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "text", value: studentName, onChange: (e) => setStudentName(e.target.value), className: "flex-grow p-2 rounded-md bg-white/20 text-white", placeholder: "Student name" }),
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: addStudent, className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold", children: "Add" })
+          ) : /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex gap-4 mb-4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "text", value: studentName, onChange: (e) => setStudentName(e.target.value), className: "flex-grow p-2 rounded-md bg-white/20 text-white", placeholder: "Student name" }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: addStudent, className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold", children: "Add" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mb-4", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("textarea", { value: bulkStudentText, onChange: (e) => setBulkStudentText(e.target.value), className: "w-full p-2 rounded-md bg-white/20 text-white mb-2", placeholder: "Paste names, one per line or separated by commas", rows: 4 }),
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => addBulkStudents(bulkStudentText.split("\n").map((name) => createParticipant(name, options.initialDifficulty))), className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold", children: "Add Names" }),
-              bulkStudentError && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-red-300 mt-2", children: bulkStudentError })
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mb-4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("textarea", { value: bulkStudentText, onChange: (e) => setBulkStudentText(e.target.value), className: "w-full p-2 rounded-md bg-white/20 text-white mb-2", placeholder: "Paste names, one per line or separated by commas", rows: 4 }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: () => addBulkStudents(bulkStudentText.split("\n").map((name) => createParticipant(name, void 0))), className: "bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold", children: "Add Names" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mb-4", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h3", { className: "text-xl font-bold mb-2", children: "Randomize Teams" }),
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex flex-wrap items-center gap-2 mb-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "number", min: 1, value: randomTeamCount || "", onChange: (e) => {
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mb-4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h3", { className: "text-xl font-bold mb-2", children: "Randomize Teams" }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex flex-wrap items-center gap-2 mb-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "number", min: 1, value: randomTeamCount || "", onChange: (e) => {
                   setRandomTeamCount(Number(e.target.value));
                   setRandomTeamSize(0);
                 }, placeholder: "Number of teams", className: "p-2 rounded-md bg-white/20 text-white flex-grow" }),
-                /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: "or" }),
-                /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "number", min: 1, value: randomTeamSize || "", onChange: (e) => {
+                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "or" }),
+                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "number", min: 1, value: randomTeamSize || "", onChange: (e) => {
                   setRandomTeamSize(Number(e.target.value));
                   setRandomTeamCount(0);
                 }, placeholder: "Team size", className: "p-2 rounded-md bg-white/20 text-white flex-grow" }),
-                /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: randomizeTeams, className: "bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded", children: "Randomize" })
+                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: randomizeTeams, className: "bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded", children: "Randomize" })
               ] }),
-              randomizeError && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-red-300", children: randomizeError })
+              randomizeError && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "text-red-300", children: randomizeError })
             ] }),
-            participants.map((student, index) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("img", { src: student.avatar || availableAvatars[0], alt: "avatar", className: "w-8 h-8 rounded-full" }),
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "text", value: student.name, onChange: (e) => updateStudentName(index, e.target.value), placeholder: "Student name", className: "flex-grow p-2 rounded-md bg-white/20 text-white" }),
-              index > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => removeStudent(index), className: "px-2 py-1 bg-red-500 hover:bg-red-600 rounded", children: "Remove" })
-            ] }, index)),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-              StudentRoster_default,
-              {
-                participants: participants || [],
-                avatars: availableAvatars,
-                onAdd: createParticipant,
-                onRemove: handleParticipantRemove,
-                onEdit: handleParticipantEdit,
-                onAddBulk: addBulkStudents,
-                initialDifficulty: options.initialDifficulty
-              }
-            )
+            participants.map((student) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex items-center gap-2 mb-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("img", { src: student.avatar || availableAvatars[0], alt: "avatar", className: "w-8 h-8 rounded-full" }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+                "input",
+                {
+                  type: "text",
+                  value: student.name,
+                  onChange: (e) => updateStudentName(student.id, e.target.value),
+                  placeholder: "Student name",
+                  className: "flex-grow p-2 rounded-md bg-white/20 text-white"
+                }
+              ),
+              participants.length > 1 && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+                "button",
+                {
+                  onClick: () => removeStudent(participants.findIndex((s) => s.id === student.id)),
+                  className: "px-2 py-1 bg-red-500 hover:bg-red-600 rounded",
+                  children: "Remove"
+                }
+              )
+            ] }, student.id))
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: clearRoster, className: "mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded", children: "Clear Saved Roster" })
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: clearRoster, className: "mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded", children: "Clear Saved Roster" })
         ] })
       ] }),
-      activeTab === "settings" && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-sans", children: "Skip Penalty \u23ED\uFE0F" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex gap-4", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("select", { value: options.skipPenaltyType, onChange: (e) => handleOptionChange("skipPenaltyType", e.target.value), className: "p-2 rounded-md bg-white/20 text-white", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "lives", children: "Lives" }),
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "points", children: "Points" })
+      activeTab === "settings" && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-sans", children: "Skip Penalty \u23ED\uFE0F" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex gap-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("select", { value: optionsState.skipPenaltyType, onChange: (e) => handleOptionChange("skipPenaltyType", e.target.value), className: "p-2 rounded-md bg-white/20 text-white", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: "lives", children: "Lives" }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: "points", children: "Points" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "number", min: 0, value: options.skipPenaltyValue, onChange: (e) => handleOptionChange("skipPenaltyValue", Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-24" })
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "number", min: 0, value: optionsState.skipPenaltyValue, onChange: (e) => handleOptionChange("skipPenaltyValue", Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-24" })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-sans", children: "Difficulty Settings \u{1F39A}\uFE0F" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex gap-4", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { className: "block mb-2", children: "Initial Difficulty" }),
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("select", { value: options.initialDifficulty, onChange: (e) => handleOptionChange("initialDifficulty", Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: 0, children: "Easy" }),
-                /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: 1, children: "Medium" }),
-                /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: 2, children: "Tricky" })
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-sans", children: "Difficulty Settings \u{1F39A}\uFE0F" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex gap-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { className: "block mb-2", children: "Initial Difficulty" }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("select", { value: optionsState.initialDifficulty, onChange: (e) => handleOptionChange("initialDifficulty", Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: 0, children: "Easy" }),
+                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: 1, children: "Medium" }),
+                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: 2, children: "Tricky" })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { className: "block mb-2", children: "Progression Speed" }),
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "number", min: 1, value: options.progressionSpeed, onChange: (e) => handleOptionChange("progressionSpeed", Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-24" })
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { className: "block mb-2", children: "Progression Speed" }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "number", min: 1, value: optionsState.progressionSpeed, onChange: (e) => handleOptionChange("progressionSpeed", Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-24" })
             ] })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-sans", children: "Audio & Effects \u{1F50A}\u2728" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { className: "flex items-center space-x-3 mb-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "checkbox", checked: options.soundEnabled, onChange: (e) => handleOptionChange("soundEnabled", e.target.checked) }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: "Enable Sound" })
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-sans", children: "Audio & Effects \u{1F50A}\u2728" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("label", { className: "flex items-center space-x-3 mb-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "checkbox", checked: optionsState.soundEnabled, onChange: (e) => handleOptionChange("soundEnabled", e.target.checked) }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Enable Sound" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { className: "flex items-center space-x-3", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "checkbox", checked: options.effectsEnabled, onChange: (e) => handleOptionChange("effectsEnabled", e.target.checked) }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: "Enable Visual Effects" })
-          ] }),
-          voices.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mt-4", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { className: "block mb-2", children: "Voice" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("select", { value: selectedVoice, onChange: (e) => setSelectedVoice(e.target.value), className: "p-2 rounded-md bg-white/20 text-white", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "", children: "Default" }),
-              voices.map((v) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: v.voiceURI, children: `${v.name} (${v.lang})` }, v.voiceURI))
-            ] })
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("label", { className: "flex items-center space-x-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "checkbox", checked: optionsState.effectsEnabled, onChange: (e) => handleOptionChange("effectsEnabled", e.target.checked) }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Enable Visual Effects" })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-sans", children: "Theme \u{1F3A8}" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("select", { value: theme, onChange: (e) => {
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-sans", children: "Theme \u{1F3A8}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("select", { value: theme, onChange: (e) => {
             const t = e.target.value;
             setTheme(t);
             try {
@@ -28509,118 +26188,164 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
             }
             applyTheme(t);
           }, className: "p-2 rounded-md bg-white/20 text-white", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "light", children: "Light" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "dark", children: "Dark" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "honeycomb", children: "Honeycomb" })
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: "light", children: "Light" }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: "dark", children: "Dark" }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: "honeycomb", children: "Honeycomb" })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-sans", children: "Teacher Mode \u{1F469}\u200D\u{1F3EB}" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { className: "flex items-center gap-2 text-white", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "checkbox", checked: teacherMode, onChange: (e) => setTeacherMode(e.target.checked) }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: "Enable larger fonts and spacing" })
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-sans", children: "Teacher Mode \u{1F469}\u200D\u{1F3EB}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("label", { className: "flex items-center gap-2 text-white", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "checkbox", checked: teacherMode, onChange: (e) => setTeacherMode(e.target.checked) }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Enable larger fonts and spacing" })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-sans", children: "Music \u{1F3B5}" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mb-4", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { className: "block mb-2", children: "Style" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("select", { value: options.musicStyle, onChange: (e) => handleOptionChange("musicStyle", e.target.value), className: "p-2 rounded-md bg-white/20 text-white", children: musicStyles.map((style) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: style, children: style }, style)) })
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "text-2xl font-bold mb-4 uppercase font-sans", children: "Music \u{1F3B5}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mb-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { className: "block mb-2", children: "Style" }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("select", { value: optionsState.musicStyle, onChange: (e) => handleOptionChange("musicStyle", e.target.value), className: "p-2 rounded-md bg-white/20 text-white", children: musicStyles.map((style) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: style, children: style }, style)) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { className: "block mb-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("label", { className: "block mb-2", children: [
               "Volume: ",
-              Math.round(options.musicVolume * 100),
+              Math.round(optionsState.musicVolume * 100),
               "%"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "range", min: 0, max: 1, step: 0.01, value: options.musicVolume, onChange: (e) => handleOptionChange("musicVolume", parseFloat(e.target.value)), className: "w-full" })
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "range", min: 0, max: 1, step: 0.01, value: optionsState.musicVolume, onChange: (e) => handleOptionChange("musicVolume", parseFloat(e.target.value)), className: "w-full" })
           ] })
         ] })
       ] }),
-      activeTab === "words" && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-xl font-bold mb-4 uppercase font-sans", children: "Word List" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mb-6", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { htmlFor: "bundled-list", className: "block text-lg font-medium mb-2", children: "Choose Bundled Word List" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("select", { id: "bundled-list", value: selectedBundledList, onChange: (e) => setSelectedBundledList(e.target.value), className: "w-full p-2 rounded-md bg-white/20 text-white", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "", children: "-- Select a list --" }),
-            bundledWordLists.map((list) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: list.file, children: list.label }, list.file))
+      activeTab === "words" && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "text-xl font-bold mb-4 uppercase font-sans", children: "Word List" }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mb-6", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { htmlFor: "bundled-list", className: "block text-lg font-medium mb-2", children: "Choose Bundled Word List" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("select", { id: "bundled-list", value: selectedBundledList, onChange: (e) => setSelectedBundledList(e.target.value), className: "w-full p-2 rounded-md bg-white/20 text-white", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: "", children: "-- Select a list --" }),
+            bundledWordLists.map((list) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: list.file, children: list.label }, list.file))
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { htmlFor: "file-upload", className: "block text-lg font-medium mb-2", children: "Upload File" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-sm text-gray-300 mb-2", children: "Upload a JSON or TSV file." }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { id: "file-upload", type: "file", accept: ".json,.tsv,.txt,.csv", onChange: handleFileChange, className: "block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-300 file:text-black hover:file:bg-yellow-400" })
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { htmlFor: "file-upload", className: "block text-lg font-medium mb-2", children: "Upload File" }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "text-sm text-gray-300 mb-2", children: "Upload a JSON or TSV file." }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { id: "file-upload", type: "file", accept: ".json,.tsv,.txt,.csv", onChange: handleFileChange, className: "block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-300 file:text-black hover:file:bg-yellow-400" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { htmlFor: "paste-area", className: "block text-lg font-medium mb-2", children: "Or Paste Spreadsheet Data" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-sm text-gray-300 mb-2", children: "Paste data from Excel or Google Sheets (tab-separated)." }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("textarea", { id: "paste-area", rows: 4, value: customWordListText, onChange: (e) => setCustomWordListText(e.target.value), className: "w-full p-2 rounded-md bg-white/20 text-white", placeholder: "Paste your tab-separated values here..." })
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { htmlFor: "paste-area", className: "block text-lg font-medium mb-2", children: "Or Paste Spreadsheet Data" }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "text-sm text-gray-300 mb-2", children: "Paste data from Excel or Google Sheets (tab-separated)." }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("textarea", { id: "paste-area", rows: 4, value: customWordListText, onChange: (e) => setCustomWordListText(e.target.value), className: "w-full p-2 rounded-md bg-white/20 text-white", placeholder: "Paste your tab-separated values here..." })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mt-6", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex flex-col md:flex-row gap-2 mb-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "number", min: 1, value: aiGrade, onChange: (e) => setAiGrade(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-full md:w-24", placeholder: "Grade" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "number", min: 1, value: aiCount, onChange: (e) => setAiCount(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-full md:w-24", placeholder: "# Words" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: generateAIWords, disabled: aiLoading, className: "bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto", children: aiLoading ? "Generating..." : "Generate with AI" })
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mt-6", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex flex-col md:flex-row gap-2 mb-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "number", min: 1, value: aiGrade, onChange: (e) => setAiGrade(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-full md:w-24", placeholder: "Grade" }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "number", min: 1, value: aiCount, onChange: (e) => setAiCount(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-full md:w-24", placeholder: "# Words" }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: generateAIWords, disabled: aiLoading, className: "bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto", children: aiLoading ? "Generating..." : "Generate with AI" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(WordListPrompt_default, { value: aiTopic, onChange: setAiTopic }),
-          aiError && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-red-300 mt-2", children: aiError })
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(WordListPrompt_default, { value: aiTopic, onChange: setAiTopic }),
+          aiError && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "text-red-300 mt-2", children: aiError })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "mt-4 text-sm text-gray-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("p", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("strong", { children: "Format:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "mt-4 text-sm text-gray-300", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("strong", { children: "Format:" }),
             " The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`."
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "mt-2", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("a", { href: "wordlists/example.csv", download: true, className: "inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded", children: "Download Template" }) })
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+            "a",
+            {
+              href: "wordlists/example.csv",
+              download: true,
+              className: "inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mt-2",
+              children: "Download Template"
+            }
+          )
         ] })
       ] })
     ] }),
-    missedWordCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "bg-white/10 p-4 rounded-lg mb-8", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { className: "flex items-center space-x-3", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("input", { type: "checkbox", checked: includeMissedWords, onChange: (e) => setIncludeMissedWords(e.target.checked) }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("span", { children: [
+    missedWordCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "bg-white/10 p-4 rounded-lg mb-8", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("label", { className: "flex items-center space-x-3", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "checkbox", checked: includeMissedWords, onChange: (e) => setIncludeMissedWords(e.target.checked) }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("span", { children: [
         "Include ",
         missedWordCount,
         " missed words from previous sessions"
       ] })
     ] }) }),
-    error && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "text-red-300 text-center mb-4", children: error }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "flex flex-col md:flex-row gap-4 mt-8", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => handleStart(false), className: "w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold", children: "Start Custom Game" }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => handleStart(true), className: "w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold", children: "Start Session Challenge" })
+    error && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "text-red-300 text-center mb-4", children: error }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex flex-col md:flex-row gap-4 mt-8", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: () => handleStart(false), className: "w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold", children: "Start Custom Game" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: () => handleStart(true), className: "w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold", children: "Start Session Challenge" })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "mt-4 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: onViewAchievements, className: "bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold", children: "View Achievements" }) })
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "mt-4 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: onViewAchievements, className: "bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold", children: "View Achievements" }) })
   ] }) });
 };
 var SetupScreen_default = SetupScreen;
 
 // src/GameScreen.tsx
-var import_react16 = __toESM(require_react());
+var import_react25 = __toESM(require_react());
 
-// src/types.ts
-var defaultAchievements = [
-  {
-    id: "ten-words",
-    name: "Novice Speller",
-    description: "Get 10 words correct",
-    icon: "\u{1F423}",
-    threshold: 10
-  },
-  {
-    id: "fifty-words",
-    name: "Word Wizard",
-    description: "Get 50 words correct",
-    icon: "\u{1F9D9}",
-    threshold: 50
-  },
-  {
-    id: "hundred-words",
-    name: "Master Speller",
-    description: "Get 100 words correct",
-    icon: "\u{1F3C6}",
-    threshold: 100
+// src/contexts/HelpSystemContext.tsx
+var import_react4 = __toESM(require_react());
+var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+var HelpSystemContext = (0, import_react4.createContext)(void 0);
+var HelpSystemProvider = ({ children }) => {
+  const [usedHelpItems, setUsedHelpItems] = (0, import_react4.useState)(/* @__PURE__ */ new Set());
+  const revealLetter = (0, import_react4.useCallback)((word, revealedIndices) => {
+    const hiddenIndices = [];
+    for (let i = 0; i < word.length; i++) {
+      if (!revealedIndices.has(i)) {
+        hiddenIndices.push(i);
+      }
+    }
+    if (hiddenIndices.length === 0) return null;
+    const randomIndex = hiddenIndices[Math.floor(Math.random() * hiddenIndices.length)];
+    return {
+      letter: word[randomIndex],
+      index: randomIndex
+    };
+  }, []);
+  const getDefinition = (0, import_react4.useCallback)(async (word) => {
+    try {
+      return `The definition of "${word}" would appear here.`;
+    } catch (error) {
+      console.error("Error fetching definition:", error);
+      return "Could not fetch definition. Please try again later.";
+    }
+  }, []);
+  const addTime = (0, import_react4.useCallback)((seconds) => {
+    window.dispatchEvent(new CustomEvent("addTime", { detail: { seconds } }));
+  }, []);
+  const skipWord = (0, import_react4.useCallback)(() => {
+    window.dispatchEvent(new CustomEvent("skipWord"));
+  }, []);
+  const isHelpUsed = (0, import_react4.useCallback)((helpId) => {
+    return usedHelpItems.has(helpId);
+  }, [usedHelpItems]);
+  const setHelpUsed = (0, import_react4.useCallback)((helpId) => {
+    setUsedHelpItems((prev) => /* @__PURE__ */ new Set([...prev, helpId]));
+  }, []);
+  return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    HelpSystemContext.Provider,
+    {
+      value: {
+        revealLetter,
+        getDefinition,
+        addTime,
+        skipWord,
+        isHelpUsed,
+        setHelpUsed
+      },
+      children
+    }
+  );
+};
+var useHelpSystem = () => {
+  const context = (0, import_react4.useContext)(HelpSystemContext);
+  if (!context) {
+    throw new Error("useHelpSystem must be used within a HelpSystemProvider");
   }
-];
+  return context;
+};
 
 // audio/correct.mp3
 var correct_default = "./correct-CDLB3FN7.mp3";
@@ -28628,59 +26353,61 @@ var correct_default = "./correct-CDLB3FN7.mp3";
 // audio/wrong.mp3
 var wrong_default = "./wrong-6QW3YAUM.mp3";
 
-// audio/timeout.mp3
-var timeout_default = "./timeout-D7RUQ2LC.mp3";
-
 // audio/letter-correct.mp3
 var letter_correct_default = "./letter-correct-TNM22ZIU.mp3";
 
 // audio/letter-wrong.mp3
 var letter_wrong_default = "./letter-wrong-R6BJ3H3U.mp3";
 
-// audio/shop.mp3
-var shop_default = "./shop-VORVBPWL.mp3";
-
-// audio/lose-life.mp3
-var lose_life_default = "./lose-life-IZ47IOLH.mp3";
-
-// src/utils/confetti.ts
-import confetti from "canvas-confetti";
-function launchConfetti() {
-  confetti({
-    particleCount: 100,
-    spread: 70,
-    origin: { y: 0.6 }
-  });
-}
-
-// src/utils/tts.ts
-var speak = (text, options = {}) => {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-    return;
-  }
-  const utterance = new SpeechSynthesisUtterance(text);
-  const { voice, rate, pitch } = options;
-  if (voice) {
-    utterance.voice = voice;
-  } else {
-    const savedVoice = localStorage.getItem("selectedVoice");
-    if (savedVoice) {
-      const voices = window.speechSynthesis.getVoices();
-      const matched = voices.find((v) => v.voiceURI === savedVoice || v.name === savedVoice);
-      if (matched) utterance.voice = matched;
-    }
-  }
-  if (rate) utterance.rate = rate;
-  if (pitch) utterance.pitch = pitch;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utterance);
+// src/components/CircularTimer.tsx
+var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+var CircularTimer = ({ timeLeft, total }) => {
+  const radius = 50;
+  const stroke = 4;
+  const normalizedRadius = radius - stroke * 2;
+  const circumference = normalizedRadius * 2 * Math.PI;
+  const progress2 = timeLeft / total;
+  const strokeDashoffset = circumference - progress2 * circumference;
+  const isEnding = timeLeft <= Math.max(10, total * 0.1);
+  return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "relative w-24 h-24", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("svg", { height: radius * 2, width: radius * 2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        "circle",
+        {
+          stroke: "#e5e7eb",
+          fill: "transparent",
+          strokeWidth: stroke,
+          r: normalizedRadius,
+          cx: radius,
+          cy: radius
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        "circle",
+        {
+          strokeLinecap: "round",
+          stroke: "#f59e0b",
+          fill: "transparent",
+          strokeWidth: stroke,
+          strokeDasharray: `${circumference} ${circumference}`,
+          style: { strokeDashoffset },
+          r: normalizedRadius,
+          cx: radius,
+          cy: radius,
+          className: `transition-all duration-1000 ease-linear ${isEnding ? "animate-pulse stroke-red-500" : "stroke-yellow-300"}`
+        }
+      )
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "absolute inset-0 flex items-center justify-center text-2xl font-bold", children: timeLeft })
+  ] });
 };
+var CircularTimer_default = CircularTimer;
 
 // src/utils/useSound.ts
-var import_react10 = __toESM(require_react());
+var import_react5 = __toESM(require_react());
 var useSound = (src, enabled = true) => {
-  const audioRef = (0, import_react10.useRef)(null);
-  (0, import_react10.useEffect)(() => {
+  const audioRef = (0, import_react5.useRef)(null);
+  (0, import_react5.useEffect)(() => {
     const audio = new Audio(src);
     audio.load();
     audioRef.current = audio;
@@ -28689,7 +26416,7 @@ var useSound = (src, enabled = true) => {
       audioRef.current = null;
     };
   }, [src]);
-  const play = (0, import_react10.useCallback)(() => {
+  const play = (0, import_react5.useCallback)(() => {
     if (!enabled || !audioRef.current) return;
     audioRef.current.currentTime = 0;
     const playPromise = audioRef.current.play();
@@ -28703,86 +26430,6 @@ var useSound = (src, enabled = true) => {
 };
 var useSound_default = useSound;
 
-// src/utils/useTimer.ts
-var import_react11 = __toESM(require_react());
-var useTimer = (duration, onExpire) => {
-  const [timeLeft, setTimeLeft] = (0, import_react11.useState)(duration);
-  const [isPaused, setIsPaused] = (0, import_react11.useState)(false);
-  const intervalRef = (0, import_react11.useRef)(null);
-  const clear = () => clearInterval(intervalRef.current);
-  const tick = (0, import_react11.useCallback)(() => {
-    setTimeLeft((prev) => {
-      if (prev <= 1) {
-        clear();
-        onExpire();
-        return 0;
-      }
-      return prev - 1;
-    });
-  }, [onExpire]);
-  const start = (0, import_react11.useCallback)(() => {
-    clear();
-    setTimeLeft(duration);
-    intervalRef.current = setInterval(tick, 1e3);
-    setIsPaused(false);
-  }, [duration, tick]);
-  const pause = (0, import_react11.useCallback)(() => {
-    clear();
-    setIsPaused(true);
-  }, []);
-  const resume = (0, import_react11.useCallback)(() => {
-    if (!isPaused) return;
-    intervalRef.current = setInterval(tick, 1e3);
-    setIsPaused(false);
-  }, [isPaused, tick]);
-  const reset = (0, import_react11.useCallback)(() => setTimeLeft(duration), [duration]);
-  const stop = (0, import_react11.useCallback)(() => {
-    clear();
-  }, []);
-  (0, import_react11.useEffect)(() => () => clear(), []);
-  return { timeLeft, start, pause, resume, reset, stop, isPaused };
-};
-var useTimer_default = useTimer;
-
-// src/utils/useWordSelection.ts
-var import_react12 = __toESM(require_react());
-var difficultyOrder = ["easy", "medium", "tricky", "review"];
-var shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
-var useWordSelection = (db) => {
-  const [wordQueues, setWordQueues] = (0, import_react12.useState)({
-    easy: shuffleArray(db.easy),
-    medium: shuffleArray(db.medium),
-    tricky: shuffleArray(db.tricky),
-    review: []
-  });
-  const [currentWord, setCurrentWord] = (0, import_react12.useState)(null);
-  const [currentDifficulty, setCurrentDifficulty] = (0, import_react12.useState)("easy");
-  const selectNextWord = (0, import_react12.useCallback)(
-    (level) => {
-      let index = Math.min(level, difficultyOrder.length - 1);
-      let nextWord = null;
-      let nextDifficulty = difficultyOrder[index];
-      while (index < difficultyOrder.length) {
-        const diff = difficultyOrder[index];
-        const queue = wordQueues[diff];
-        if (queue.length > 0) {
-          nextWord = queue[0];
-          setWordQueues((prev) => ({ ...prev, [diff]: prev[diff].slice(1) }));
-          nextDifficulty = diff;
-          break;
-        }
-        index++;
-      }
-      setCurrentDifficulty(nextDifficulty);
-      setCurrentWord(nextWord);
-      return nextWord;
-    },
-    [wordQueues]
-  );
-  return { wordQueues, setWordQueues, currentWord, currentDifficulty, selectNextWord, setCurrentWord };
-};
-var useWordSelection_default = useWordSelection;
-
 // src/components/OnScreenKeyboard.tsx
 var import_jsx_runtime7 = __toESM(require_jsx_runtime());
 var letters = Array.from(
@@ -28794,26 +26441,46 @@ var OnScreenKeyboard = ({
   onBackspace,
   onSubmit,
   soundEnabled,
-  usedLetters
+  usedLetters,
+  currentWord
 }) => {
   const playKey = useSound_default(letter_correct_default, soundEnabled);
   return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex flex-wrap justify-center gap-2 mt-4", children: [
     letters.map((letter) => {
       const lower = letter.toLowerCase();
-      const isUsed = usedLetters.has(lower);
-      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-        "button",
-        {
-          onClick: () => {
-            playKey();
-            onLetter(lower);
+      const isUsed = usedLetters?.has(lower) ?? false;
+      const isDisabled = false;
+      if (currentWord) {
+        const targetLetter = currentWord[letters.indexOf(letter)].toLowerCase();
+        const isHighlighted = lower === targetLetter;
+        return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+          "button",
+          {
+            onClick: () => {
+              playKey();
+              onLetter(lower);
+            },
+            disabled: isUsed || isDisabled,
+            className: `px-4 py-2 rounded-lg font-bold transition-transform active:scale-95 ${isUsed ? "bg-gray-300 text-gray-500" : isDisabled ? "bg-gray-500 text-gray-700" : isHighlighted ? "bg-blue-300 text-black" : "bg-yellow-300 text-black"}`,
+            children: letter
           },
-          disabled: isUsed,
-          className: `px-4 py-2 rounded-lg font-bold transition-transform active:scale-95 ${isUsed ? "bg-gray-300 text-gray-500" : "bg-yellow-300 text-black"}`,
-          children: letter
-        },
-        letter
-      );
+          letter
+        );
+      } else {
+        return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+          "button",
+          {
+            onClick: () => {
+              playKey();
+              onLetter(lower);
+            },
+            disabled: isUsed || isDisabled,
+            className: `px-4 py-2 rounded-lg font-bold transition-transform active:scale-95 ${isUsed ? "bg-gray-300 text-gray-500" : isDisabled ? "bg-gray-500 text-gray-700" : "bg-yellow-300 text-black"}`,
+            children: letter
+          },
+          letter
+        );
+      }
     }),
     /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
       "button",
@@ -28844,7 +26511,32 @@ var OnScreenKeyboard = ({
 var OnScreenKeyboard_default = OnScreenKeyboard;
 
 // src/components/HintPanel.tsx
-var import_react13 = __toESM(require_react());
+var import_react6 = __toESM(require_react());
+
+// src/utils/tts.ts
+var speak = (text, options = {}) => {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+    return;
+  }
+  const utterance = new SpeechSynthesisUtterance(text);
+  const { voice, rate, pitch } = options;
+  if (voice) {
+    utterance.voice = voice;
+  } else {
+    const savedVoice = localStorage.getItem("selectedVoice");
+    if (savedVoice) {
+      const voices = window.speechSynthesis.getVoices();
+      const matched = voices.find((v) => v.voiceURI === savedVoice || v.name === savedVoice);
+      if (matched) utterance.voice = matched;
+    }
+  }
+  if (rate) utterance.rate = rate;
+  if (pitch) utterance.pitch = pitch;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+};
+
+// src/components/HintPanel.tsx
 var import_jsx_runtime8 = __toESM(require_jsx_runtime());
 var HintPanel = ({
   word,
@@ -28856,15 +26548,15 @@ var HintPanel = ({
   onHintUsed,
   onExtraAttempt
 }) => {
-  const [showHint, setShowHint] = (0, import_react13.useState)(false);
-  const [showDefinition, setShowDefinition] = (0, import_react13.useState)(false);
-  const [showOrigin, setShowOrigin] = (0, import_react13.useState)(false);
-  const [showSentence, setShowSentence] = (0, import_react13.useState)(false);
-  const [showPrefix, setShowPrefix] = (0, import_react13.useState)(false);
-  const [showSuffix, setShowSuffix] = (0, import_react13.useState)(false);
-  const [revealedLetters, setRevealedLetters] = (0, import_react13.useState)([]);
-  const [revealedSyllables, setRevealedSyllables] = (0, import_react13.useState)([]);
-  (0, import_react13.useEffect)(() => {
+  const [showHint, setShowHint] = (0, import_react6.useState)(false);
+  const [showDefinition, setShowDefinition] = (0, import_react6.useState)(false);
+  const [showOrigin, setShowOrigin] = (0, import_react6.useState)(false);
+  const [showSentence, setShowSentence] = (0, import_react6.useState)(false);
+  const [showPrefix, setShowPrefix] = (0, import_react6.useState)(false);
+  const [showSuffix, setShowSuffix] = (0, import_react6.useState)(false);
+  const [revealedLetters, setRevealedLetters] = (0, import_react6.useState)([]);
+  const [revealedSyllables, setRevealedSyllables] = (0, import_react6.useState)([]);
+  (0, import_react6.useEffect)(() => {
     setRevealedLetters(Array(word.word.length).fill(false));
     setRevealedSyllables(Array(word.syllables.length).fill(false));
     setShowHint(false);
@@ -28874,7 +26566,7 @@ var HintPanel = ({
     setShowPrefix(false);
     setShowSuffix(false);
   }, [word]);
-  (0, import_react13.useEffect)(() => {
+  (0, import_react6.useEffect)(() => {
     if (!showWord) {
       setRevealedSyllables(Array(word.syllables.length).fill(false));
     }
@@ -29092,6 +26784,7764 @@ var HintPanel = ({
 };
 var HintPanel_default = HintPanel;
 
+// src/components/BeeProgress.tsx
+var import_classnames = __toESM(require_classnames());
+
+// node_modules/framer-motion/dist/es/motion/index.mjs
+var React6 = __toESM(require_react(), 1);
+var import_react17 = __toESM(require_react(), 1);
+
+// node_modules/framer-motion/dist/es/context/MotionConfigContext.mjs
+var import_react7 = __toESM(require_react(), 1);
+var MotionConfigContext = (0, import_react7.createContext)({
+  transformPagePoint: (p) => p,
+  isStatic: false,
+  reducedMotion: "never"
+});
+
+// node_modules/framer-motion/dist/es/context/MotionContext/index.mjs
+var import_react8 = __toESM(require_react(), 1);
+var MotionContext = (0, import_react8.createContext)({});
+
+// node_modules/framer-motion/dist/es/motion/utils/use-visual-element.mjs
+var import_react12 = __toESM(require_react(), 1);
+
+// node_modules/framer-motion/dist/es/context/PresenceContext.mjs
+var import_react9 = __toESM(require_react(), 1);
+var PresenceContext = (0, import_react9.createContext)(null);
+
+// node_modules/framer-motion/dist/es/utils/use-isomorphic-effect.mjs
+var import_react10 = __toESM(require_react(), 1);
+
+// node_modules/framer-motion/dist/es/utils/is-browser.mjs
+var isBrowser = typeof document !== "undefined";
+
+// node_modules/framer-motion/dist/es/utils/use-isomorphic-effect.mjs
+var useIsomorphicLayoutEffect = isBrowser ? import_react10.useLayoutEffect : import_react10.useEffect;
+
+// node_modules/framer-motion/dist/es/context/LazyContext.mjs
+var import_react11 = __toESM(require_react(), 1);
+var LazyContext = (0, import_react11.createContext)({ strict: false });
+
+// node_modules/framer-motion/dist/es/render/dom/utils/camel-to-dash.mjs
+var camelToDash = (str) => str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+
+// node_modules/framer-motion/dist/es/animation/optimized-appear/data-id.mjs
+var optimizedAppearDataId = "framerAppearId";
+var optimizedAppearDataAttribute = "data-" + camelToDash(optimizedAppearDataId);
+
+// node_modules/framer-motion/dist/es/motion/utils/use-visual-element.mjs
+function useVisualElement(Component, visualState, props, createVisualElement) {
+  const { visualElement: parent } = (0, import_react12.useContext)(MotionContext);
+  const lazyContext = (0, import_react12.useContext)(LazyContext);
+  const presenceContext = (0, import_react12.useContext)(PresenceContext);
+  const reducedMotionConfig = (0, import_react12.useContext)(MotionConfigContext).reducedMotion;
+  const visualElementRef = (0, import_react12.useRef)();
+  createVisualElement = createVisualElement || lazyContext.renderer;
+  if (!visualElementRef.current && createVisualElement) {
+    visualElementRef.current = createVisualElement(Component, {
+      visualState,
+      parent,
+      props,
+      presenceContext,
+      blockInitialAnimation: presenceContext ? presenceContext.initial === false : false,
+      reducedMotionConfig
+    });
+  }
+  const visualElement = visualElementRef.current;
+  (0, import_react12.useInsertionEffect)(() => {
+    visualElement && visualElement.update(props, presenceContext);
+  });
+  const wantsHandoff = (0, import_react12.useRef)(Boolean(props[optimizedAppearDataAttribute] && !window.HandoffComplete));
+  useIsomorphicLayoutEffect(() => {
+    if (!visualElement)
+      return;
+    visualElement.render();
+    if (wantsHandoff.current && visualElement.animationState) {
+      visualElement.animationState.animateChanges();
+    }
+  });
+  (0, import_react12.useEffect)(() => {
+    if (!visualElement)
+      return;
+    visualElement.updateFeatures();
+    if (!wantsHandoff.current && visualElement.animationState) {
+      visualElement.animationState.animateChanges();
+    }
+    if (wantsHandoff.current) {
+      wantsHandoff.current = false;
+      window.HandoffComplete = true;
+    }
+  });
+  return visualElement;
+}
+
+// node_modules/framer-motion/dist/es/motion/utils/use-motion-ref.mjs
+var import_react13 = __toESM(require_react(), 1);
+
+// node_modules/framer-motion/dist/es/utils/is-ref-object.mjs
+function isRefObject(ref) {
+  return ref && typeof ref === "object" && Object.prototype.hasOwnProperty.call(ref, "current");
+}
+
+// node_modules/framer-motion/dist/es/motion/utils/use-motion-ref.mjs
+function useMotionRef(visualState, visualElement, externalRef) {
+  return (0, import_react13.useCallback)(
+    (instance) => {
+      instance && visualState.mount && visualState.mount(instance);
+      if (visualElement) {
+        instance ? visualElement.mount(instance) : visualElement.unmount();
+      }
+      if (externalRef) {
+        if (typeof externalRef === "function") {
+          externalRef(instance);
+        } else if (isRefObject(externalRef)) {
+          externalRef.current = instance;
+        }
+      }
+    },
+    /**
+     * Only pass a new ref callback to React if we've received a visual element
+     * factory. Otherwise we'll be mounting/remounting every time externalRef
+     * or other dependencies change.
+     */
+    [visualElement]
+  );
+}
+
+// node_modules/framer-motion/dist/es/context/MotionContext/create.mjs
+var import_react14 = __toESM(require_react(), 1);
+
+// node_modules/framer-motion/dist/es/render/utils/is-variant-label.mjs
+function isVariantLabel(v) {
+  return typeof v === "string" || Array.isArray(v);
+}
+
+// node_modules/framer-motion/dist/es/animation/utils/is-animation-controls.mjs
+function isAnimationControls(v) {
+  return v !== null && typeof v === "object" && typeof v.start === "function";
+}
+
+// node_modules/framer-motion/dist/es/render/utils/variant-props.mjs
+var variantPriorityOrder = [
+  "animate",
+  "whileInView",
+  "whileFocus",
+  "whileHover",
+  "whileTap",
+  "whileDrag",
+  "exit"
+];
+var variantProps = ["initial", ...variantPriorityOrder];
+
+// node_modules/framer-motion/dist/es/render/utils/is-controlling-variants.mjs
+function isControllingVariants(props) {
+  return isAnimationControls(props.animate) || variantProps.some((name) => isVariantLabel(props[name]));
+}
+function isVariantNode(props) {
+  return Boolean(isControllingVariants(props) || props.variants);
+}
+
+// node_modules/framer-motion/dist/es/context/MotionContext/utils.mjs
+function getCurrentTreeVariants(props, context) {
+  if (isControllingVariants(props)) {
+    const { initial, animate } = props;
+    return {
+      initial: initial === false || isVariantLabel(initial) ? initial : void 0,
+      animate: isVariantLabel(animate) ? animate : void 0
+    };
+  }
+  return props.inherit !== false ? context : {};
+}
+
+// node_modules/framer-motion/dist/es/context/MotionContext/create.mjs
+function useCreateMotionContext(props) {
+  const { initial, animate } = getCurrentTreeVariants(props, (0, import_react14.useContext)(MotionContext));
+  return (0, import_react14.useMemo)(() => ({ initial, animate }), [variantLabelsAsDependency(initial), variantLabelsAsDependency(animate)]);
+}
+function variantLabelsAsDependency(prop) {
+  return Array.isArray(prop) ? prop.join(" ") : prop;
+}
+
+// node_modules/framer-motion/dist/es/motion/features/definitions.mjs
+var featureProps = {
+  animation: [
+    "animate",
+    "variants",
+    "whileHover",
+    "whileTap",
+    "exit",
+    "whileInView",
+    "whileFocus",
+    "whileDrag"
+  ],
+  exit: ["exit"],
+  drag: ["drag", "dragControls"],
+  focus: ["whileFocus"],
+  hover: ["whileHover", "onHoverStart", "onHoverEnd"],
+  tap: ["whileTap", "onTap", "onTapStart", "onTapCancel"],
+  pan: ["onPan", "onPanStart", "onPanSessionStart", "onPanEnd"],
+  inView: ["whileInView", "onViewportEnter", "onViewportLeave"],
+  layout: ["layout", "layoutId"]
+};
+var featureDefinitions = {};
+for (const key in featureProps) {
+  featureDefinitions[key] = {
+    isEnabled: (props) => featureProps[key].some((name) => !!props[name])
+  };
+}
+
+// node_modules/framer-motion/dist/es/motion/features/load-features.mjs
+function loadFeatures(features) {
+  for (const key in features) {
+    featureDefinitions[key] = {
+      ...featureDefinitions[key],
+      ...features[key]
+    };
+  }
+}
+
+// node_modules/framer-motion/dist/es/context/LayoutGroupContext.mjs
+var import_react15 = __toESM(require_react(), 1);
+var LayoutGroupContext = (0, import_react15.createContext)({});
+
+// node_modules/framer-motion/dist/es/context/SwitchLayoutGroupContext.mjs
+var import_react16 = __toESM(require_react(), 1);
+var SwitchLayoutGroupContext = (0, import_react16.createContext)({});
+
+// node_modules/framer-motion/dist/es/motion/utils/symbol.mjs
+var motionComponentSymbol = Symbol.for("motionComponentSymbol");
+
+// node_modules/framer-motion/dist/es/motion/index.mjs
+function createMotionComponent({ preloadedFeatures: preloadedFeatures2, createVisualElement, useRender, useVisualState, Component }) {
+  preloadedFeatures2 && loadFeatures(preloadedFeatures2);
+  function MotionComponent(props, externalRef) {
+    let MeasureLayout2;
+    const configAndProps = {
+      ...(0, import_react17.useContext)(MotionConfigContext),
+      ...props,
+      layoutId: useLayoutId(props)
+    };
+    const { isStatic } = configAndProps;
+    const context = useCreateMotionContext(props);
+    const visualState = useVisualState(props, isStatic);
+    if (!isStatic && isBrowser) {
+      context.visualElement = useVisualElement(Component, visualState, configAndProps, createVisualElement);
+      const initialLayoutGroupConfig = (0, import_react17.useContext)(SwitchLayoutGroupContext);
+      const isStrict = (0, import_react17.useContext)(LazyContext).strict;
+      if (context.visualElement) {
+        MeasureLayout2 = context.visualElement.loadFeatures(
+          // Note: Pass the full new combined props to correctly re-render dynamic feature components.
+          configAndProps,
+          isStrict,
+          preloadedFeatures2,
+          initialLayoutGroupConfig
+        );
+      }
+    }
+    return React6.createElement(
+      MotionContext.Provider,
+      { value: context },
+      MeasureLayout2 && context.visualElement ? React6.createElement(MeasureLayout2, { visualElement: context.visualElement, ...configAndProps }) : null,
+      useRender(Component, props, useMotionRef(visualState, context.visualElement, externalRef), visualState, isStatic, context.visualElement)
+    );
+  }
+  const ForwardRefComponent = (0, import_react17.forwardRef)(MotionComponent);
+  ForwardRefComponent[motionComponentSymbol] = Component;
+  return ForwardRefComponent;
+}
+function useLayoutId({ layoutId }) {
+  const layoutGroupId = (0, import_react17.useContext)(LayoutGroupContext).id;
+  return layoutGroupId && layoutId !== void 0 ? layoutGroupId + "-" + layoutId : layoutId;
+}
+
+// node_modules/framer-motion/dist/es/render/dom/motion-proxy.mjs
+function createMotionProxy(createConfig) {
+  function custom(Component, customMotionComponentConfig = {}) {
+    return createMotionComponent(createConfig(Component, customMotionComponentConfig));
+  }
+  if (typeof Proxy === "undefined") {
+    return custom;
+  }
+  const componentCache = /* @__PURE__ */ new Map();
+  return new Proxy(custom, {
+    /**
+     * Called when `motion` is referenced with a prop: `motion.div`, `motion.input` etc.
+     * The prop name is passed through as `key` and we can use that to generate a `motion`
+     * DOM component with that name.
+     */
+    get: (_target, key) => {
+      if (!componentCache.has(key)) {
+        componentCache.set(key, custom(key));
+      }
+      return componentCache.get(key);
+    }
+  });
+}
+
+// node_modules/framer-motion/dist/es/render/svg/lowercase-elements.mjs
+var lowercaseSVGElements = [
+  "animate",
+  "circle",
+  "defs",
+  "desc",
+  "ellipse",
+  "g",
+  "image",
+  "line",
+  "filter",
+  "marker",
+  "mask",
+  "metadata",
+  "path",
+  "pattern",
+  "polygon",
+  "polyline",
+  "rect",
+  "stop",
+  "switch",
+  "symbol",
+  "svg",
+  "text",
+  "tspan",
+  "use",
+  "view"
+];
+
+// node_modules/framer-motion/dist/es/render/dom/utils/is-svg-component.mjs
+function isSVGComponent(Component) {
+  if (
+    /**
+     * If it's not a string, it's a custom React component. Currently we only support
+     * HTML custom React components.
+     */
+    typeof Component !== "string" || /**
+     * If it contains a dash, the element is a custom HTML webcomponent.
+     */
+    Component.includes("-")
+  ) {
+    return false;
+  } else if (
+    /**
+     * If it's in our list of lowercase SVG tags, it's an SVG component
+     */
+    lowercaseSVGElements.indexOf(Component) > -1 || /**
+     * If it contains a capital letter, it's an SVG component
+     */
+    /[A-Z]/.test(Component)
+  ) {
+    return true;
+  }
+  return false;
+}
+
+// node_modules/framer-motion/dist/es/render/dom/use-render.mjs
+var import_react20 = __toESM(require_react(), 1);
+
+// node_modules/framer-motion/dist/es/render/html/use-props.mjs
+var import_react18 = __toESM(require_react(), 1);
+
+// node_modules/framer-motion/dist/es/projection/styles/scale-correction.mjs
+var scaleCorrectors = {};
+function addScaleCorrector(correctors) {
+  Object.assign(scaleCorrectors, correctors);
+}
+
+// node_modules/framer-motion/dist/es/render/html/utils/transform.mjs
+var transformPropOrder = [
+  "transformPerspective",
+  "x",
+  "y",
+  "z",
+  "translateX",
+  "translateY",
+  "translateZ",
+  "scale",
+  "scaleX",
+  "scaleY",
+  "rotate",
+  "rotateX",
+  "rotateY",
+  "rotateZ",
+  "skew",
+  "skewX",
+  "skewY"
+];
+var transformProps = new Set(transformPropOrder);
+
+// node_modules/framer-motion/dist/es/motion/utils/is-forced-motion-value.mjs
+function isForcedMotionValue(key, { layout: layout2, layoutId }) {
+  return transformProps.has(key) || key.startsWith("origin") || (layout2 || layoutId !== void 0) && (!!scaleCorrectors[key] || key === "opacity");
+}
+
+// node_modules/framer-motion/dist/es/value/utils/is-motion-value.mjs
+var isMotionValue = (value) => Boolean(value && value.getVelocity);
+
+// node_modules/framer-motion/dist/es/render/html/utils/build-transform.mjs
+var translateAlias = {
+  x: "translateX",
+  y: "translateY",
+  z: "translateZ",
+  transformPerspective: "perspective"
+};
+var numTransforms = transformPropOrder.length;
+function buildTransform(transform, { enableHardwareAcceleration = true, allowTransformNone = true }, transformIsDefault, transformTemplate) {
+  let transformString = "";
+  for (let i = 0; i < numTransforms; i++) {
+    const key = transformPropOrder[i];
+    if (transform[key] !== void 0) {
+      const transformName = translateAlias[key] || key;
+      transformString += `${transformName}(${transform[key]}) `;
+    }
+  }
+  if (enableHardwareAcceleration && !transform.z) {
+    transformString += "translateZ(0)";
+  }
+  transformString = transformString.trim();
+  if (transformTemplate) {
+    transformString = transformTemplate(transform, transformIsDefault ? "" : transformString);
+  } else if (allowTransformNone && transformIsDefault) {
+    transformString = "none";
+  }
+  return transformString;
+}
+
+// node_modules/framer-motion/dist/es/render/dom/utils/is-css-variable.mjs
+var checkStringStartsWith = (token) => (key) => typeof key === "string" && key.startsWith(token);
+var isCSSVariableName = checkStringStartsWith("--");
+var isCSSVariableToken = checkStringStartsWith("var(--");
+var cssVariableRegex = /var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\)/g;
+
+// node_modules/framer-motion/dist/es/render/dom/value-types/get-as-type.mjs
+var getValueAsType = (value, type) => {
+  return type && typeof value === "number" ? type.transform(value) : value;
+};
+
+// node_modules/framer-motion/dist/es/utils/clamp.mjs
+var clamp = (min, max, v) => Math.min(Math.max(v, min), max);
+
+// node_modules/framer-motion/dist/es/value/types/numbers/index.mjs
+var number = {
+  test: (v) => typeof v === "number",
+  parse: parseFloat,
+  transform: (v) => v
+};
+var alpha = {
+  ...number,
+  transform: (v) => clamp(0, 1, v)
+};
+var scale = {
+  ...number,
+  default: 1
+};
+
+// node_modules/framer-motion/dist/es/value/types/utils.mjs
+var sanitize = (v) => Math.round(v * 1e5) / 1e5;
+var floatRegex = /(-)?([\d]*\.?[\d])+/g;
+var colorRegex = /(#[0-9a-f]{3,8}|(rgb|hsl)a?\((-?[\d\.]+%?[,\s]+){2}(-?[\d\.]+%?)\s*[\,\/]?\s*[\d\.]*%?\))/gi;
+var singleColorRegex = /^(#[0-9a-f]{3,8}|(rgb|hsl)a?\((-?[\d\.]+%?[,\s]+){2}(-?[\d\.]+%?)\s*[\,\/]?\s*[\d\.]*%?\))$/i;
+function isString(v) {
+  return typeof v === "string";
+}
+
+// node_modules/framer-motion/dist/es/value/types/numbers/units.mjs
+var createUnitType = (unit) => ({
+  test: (v) => isString(v) && v.endsWith(unit) && v.split(" ").length === 1,
+  parse: parseFloat,
+  transform: (v) => `${v}${unit}`
+});
+var degrees = createUnitType("deg");
+var percent = createUnitType("%");
+var px = createUnitType("px");
+var vh = createUnitType("vh");
+var vw = createUnitType("vw");
+var progressPercentage = {
+  ...percent,
+  parse: (v) => percent.parse(v) / 100,
+  transform: (v) => percent.transform(v * 100)
+};
+
+// node_modules/framer-motion/dist/es/render/dom/value-types/type-int.mjs
+var int = {
+  ...number,
+  transform: Math.round
+};
+
+// node_modules/framer-motion/dist/es/render/dom/value-types/number.mjs
+var numberValueTypes = {
+  // Border props
+  borderWidth: px,
+  borderTopWidth: px,
+  borderRightWidth: px,
+  borderBottomWidth: px,
+  borderLeftWidth: px,
+  borderRadius: px,
+  radius: px,
+  borderTopLeftRadius: px,
+  borderTopRightRadius: px,
+  borderBottomRightRadius: px,
+  borderBottomLeftRadius: px,
+  // Positioning props
+  width: px,
+  maxWidth: px,
+  height: px,
+  maxHeight: px,
+  size: px,
+  top: px,
+  right: px,
+  bottom: px,
+  left: px,
+  // Spacing props
+  padding: px,
+  paddingTop: px,
+  paddingRight: px,
+  paddingBottom: px,
+  paddingLeft: px,
+  margin: px,
+  marginTop: px,
+  marginRight: px,
+  marginBottom: px,
+  marginLeft: px,
+  // Transform props
+  rotate: degrees,
+  rotateX: degrees,
+  rotateY: degrees,
+  rotateZ: degrees,
+  scale,
+  scaleX: scale,
+  scaleY: scale,
+  scaleZ: scale,
+  skew: degrees,
+  skewX: degrees,
+  skewY: degrees,
+  distance: px,
+  translateX: px,
+  translateY: px,
+  translateZ: px,
+  x: px,
+  y: px,
+  z: px,
+  perspective: px,
+  transformPerspective: px,
+  opacity: alpha,
+  originX: progressPercentage,
+  originY: progressPercentage,
+  originZ: px,
+  // Misc
+  zIndex: int,
+  // SVG
+  fillOpacity: alpha,
+  strokeOpacity: alpha,
+  numOctaves: int
+};
+
+// node_modules/framer-motion/dist/es/render/html/utils/build-styles.mjs
+function buildHTMLStyles(state, latestValues, options, transformTemplate) {
+  const { style, vars, transform, transformOrigin } = state;
+  let hasTransform2 = false;
+  let hasTransformOrigin = false;
+  let transformIsNone = true;
+  for (const key in latestValues) {
+    const value = latestValues[key];
+    if (isCSSVariableName(key)) {
+      vars[key] = value;
+      continue;
+    }
+    const valueType = numberValueTypes[key];
+    const valueAsType = getValueAsType(value, valueType);
+    if (transformProps.has(key)) {
+      hasTransform2 = true;
+      transform[key] = valueAsType;
+      if (!transformIsNone)
+        continue;
+      if (value !== (valueType.default || 0))
+        transformIsNone = false;
+    } else if (key.startsWith("origin")) {
+      hasTransformOrigin = true;
+      transformOrigin[key] = valueAsType;
+    } else {
+      style[key] = valueAsType;
+    }
+  }
+  if (!latestValues.transform) {
+    if (hasTransform2 || transformTemplate) {
+      style.transform = buildTransform(state.transform, options, transformIsNone, transformTemplate);
+    } else if (style.transform) {
+      style.transform = "none";
+    }
+  }
+  if (hasTransformOrigin) {
+    const { originX = "50%", originY = "50%", originZ = 0 } = transformOrigin;
+    style.transformOrigin = `${originX} ${originY} ${originZ}`;
+  }
+}
+
+// node_modules/framer-motion/dist/es/render/html/utils/create-render-state.mjs
+var createHtmlRenderState = () => ({
+  style: {},
+  transform: {},
+  transformOrigin: {},
+  vars: {}
+});
+
+// node_modules/framer-motion/dist/es/render/html/use-props.mjs
+function copyRawValuesOnly(target, source, props) {
+  for (const key in source) {
+    if (!isMotionValue(source[key]) && !isForcedMotionValue(key, props)) {
+      target[key] = source[key];
+    }
+  }
+}
+function useInitialMotionValues({ transformTemplate }, visualState, isStatic) {
+  return (0, import_react18.useMemo)(() => {
+    const state = createHtmlRenderState();
+    buildHTMLStyles(state, visualState, { enableHardwareAcceleration: !isStatic }, transformTemplate);
+    return Object.assign({}, state.vars, state.style);
+  }, [visualState]);
+}
+function useStyle(props, visualState, isStatic) {
+  const styleProp = props.style || {};
+  const style = {};
+  copyRawValuesOnly(style, styleProp, props);
+  Object.assign(style, useInitialMotionValues(props, visualState, isStatic));
+  return props.transformValues ? props.transformValues(style) : style;
+}
+function useHTMLProps(props, visualState, isStatic) {
+  const htmlProps = {};
+  const style = useStyle(props, visualState, isStatic);
+  if (props.drag && props.dragListener !== false) {
+    htmlProps.draggable = false;
+    style.userSelect = style.WebkitUserSelect = style.WebkitTouchCallout = "none";
+    style.touchAction = props.drag === true ? "none" : `pan-${props.drag === "x" ? "y" : "x"}`;
+  }
+  if (props.tabIndex === void 0 && (props.onTap || props.onTapStart || props.whileTap)) {
+    htmlProps.tabIndex = 0;
+  }
+  htmlProps.style = style;
+  return htmlProps;
+}
+
+// node_modules/framer-motion/dist/es/motion/utils/valid-prop.mjs
+var validMotionProps = /* @__PURE__ */ new Set([
+  "animate",
+  "exit",
+  "variants",
+  "initial",
+  "style",
+  "values",
+  "variants",
+  "transition",
+  "transformTemplate",
+  "transformValues",
+  "custom",
+  "inherit",
+  "onBeforeLayoutMeasure",
+  "onAnimationStart",
+  "onAnimationComplete",
+  "onUpdate",
+  "onDragStart",
+  "onDrag",
+  "onDragEnd",
+  "onMeasureDragConstraints",
+  "onDirectionLock",
+  "onDragTransitionEnd",
+  "_dragX",
+  "_dragY",
+  "onHoverStart",
+  "onHoverEnd",
+  "onViewportEnter",
+  "onViewportLeave",
+  "globalTapTarget",
+  "ignoreStrict",
+  "viewport"
+]);
+function isValidMotionProp(key) {
+  return key.startsWith("while") || key.startsWith("drag") && key !== "draggable" || key.startsWith("layout") || key.startsWith("onTap") || key.startsWith("onPan") || key.startsWith("onLayout") || validMotionProps.has(key);
+}
+
+// node_modules/framer-motion/dist/es/render/dom/utils/filter-props.mjs
+var shouldForward = (key) => !isValidMotionProp(key);
+function loadExternalIsValidProp(isValidProp) {
+  if (!isValidProp)
+    return;
+  shouldForward = (key) => key.startsWith("on") ? !isValidMotionProp(key) : isValidProp(key);
+}
+try {
+  loadExternalIsValidProp(require_is_prop_valid_browser_cjs().default);
+} catch (_a) {
+}
+function filterProps(props, isDom, forwardMotionProps) {
+  const filteredProps = {};
+  for (const key in props) {
+    if (key === "values" && typeof props.values === "object")
+      continue;
+    if (shouldForward(key) || forwardMotionProps === true && isValidMotionProp(key) || !isDom && !isValidMotionProp(key) || // If trying to use native HTML drag events, forward drag listeners
+    props["draggable"] && key.startsWith("onDrag")) {
+      filteredProps[key] = props[key];
+    }
+  }
+  return filteredProps;
+}
+
+// node_modules/framer-motion/dist/es/render/svg/use-props.mjs
+var import_react19 = __toESM(require_react(), 1);
+
+// node_modules/framer-motion/dist/es/render/svg/utils/transform-origin.mjs
+function calcOrigin(origin, offset, size) {
+  return typeof origin === "string" ? origin : px.transform(offset + size * origin);
+}
+function calcSVGTransformOrigin(dimensions, originX, originY) {
+  const pxOriginX = calcOrigin(originX, dimensions.x, dimensions.width);
+  const pxOriginY = calcOrigin(originY, dimensions.y, dimensions.height);
+  return `${pxOriginX} ${pxOriginY}`;
+}
+
+// node_modules/framer-motion/dist/es/render/svg/utils/path.mjs
+var dashKeys = {
+  offset: "stroke-dashoffset",
+  array: "stroke-dasharray"
+};
+var camelKeys = {
+  offset: "strokeDashoffset",
+  array: "strokeDasharray"
+};
+function buildSVGPath(attrs, length, spacing = 1, offset = 0, useDashCase = true) {
+  attrs.pathLength = 1;
+  const keys = useDashCase ? dashKeys : camelKeys;
+  attrs[keys.offset] = px.transform(-offset);
+  const pathLength = px.transform(length);
+  const pathSpacing = px.transform(spacing);
+  attrs[keys.array] = `${pathLength} ${pathSpacing}`;
+}
+
+// node_modules/framer-motion/dist/es/render/svg/utils/build-attrs.mjs
+function buildSVGAttrs(state, {
+  attrX,
+  attrY,
+  attrScale,
+  originX,
+  originY,
+  pathLength,
+  pathSpacing = 1,
+  pathOffset = 0,
+  // This is object creation, which we try to avoid per-frame.
+  ...latest
+}, options, isSVGTag2, transformTemplate) {
+  buildHTMLStyles(state, latest, options, transformTemplate);
+  if (isSVGTag2) {
+    if (state.style.viewBox) {
+      state.attrs.viewBox = state.style.viewBox;
+    }
+    return;
+  }
+  state.attrs = state.style;
+  state.style = {};
+  const { attrs, style, dimensions } = state;
+  if (attrs.transform) {
+    if (dimensions)
+      style.transform = attrs.transform;
+    delete attrs.transform;
+  }
+  if (dimensions && (originX !== void 0 || originY !== void 0 || style.transform)) {
+    style.transformOrigin = calcSVGTransformOrigin(dimensions, originX !== void 0 ? originX : 0.5, originY !== void 0 ? originY : 0.5);
+  }
+  if (attrX !== void 0)
+    attrs.x = attrX;
+  if (attrY !== void 0)
+    attrs.y = attrY;
+  if (attrScale !== void 0)
+    attrs.scale = attrScale;
+  if (pathLength !== void 0) {
+    buildSVGPath(attrs, pathLength, pathSpacing, pathOffset, false);
+  }
+}
+
+// node_modules/framer-motion/dist/es/render/svg/utils/create-render-state.mjs
+var createSvgRenderState = () => ({
+  ...createHtmlRenderState(),
+  attrs: {}
+});
+
+// node_modules/framer-motion/dist/es/render/svg/utils/is-svg-tag.mjs
+var isSVGTag = (tag) => typeof tag === "string" && tag.toLowerCase() === "svg";
+
+// node_modules/framer-motion/dist/es/render/svg/use-props.mjs
+function useSVGProps(props, visualState, _isStatic, Component) {
+  const visualProps = (0, import_react19.useMemo)(() => {
+    const state = createSvgRenderState();
+    buildSVGAttrs(state, visualState, { enableHardwareAcceleration: false }, isSVGTag(Component), props.transformTemplate);
+    return {
+      ...state.attrs,
+      style: { ...state.style }
+    };
+  }, [visualState]);
+  if (props.style) {
+    const rawStyles = {};
+    copyRawValuesOnly(rawStyles, props.style, props);
+    visualProps.style = { ...rawStyles, ...visualProps.style };
+  }
+  return visualProps;
+}
+
+// node_modules/framer-motion/dist/es/render/dom/use-render.mjs
+function createUseRender(forwardMotionProps = false) {
+  const useRender = (Component, props, ref, { latestValues }, isStatic) => {
+    const useVisualProps = isSVGComponent(Component) ? useSVGProps : useHTMLProps;
+    const visualProps = useVisualProps(props, latestValues, isStatic, Component);
+    const filteredProps = filterProps(props, typeof Component === "string", forwardMotionProps);
+    const elementProps = {
+      ...filteredProps,
+      ...visualProps,
+      ref
+    };
+    const { children } = props;
+    const renderedChildren = (0, import_react20.useMemo)(() => isMotionValue(children) ? children.get() : children, [children]);
+    return (0, import_react20.createElement)(Component, {
+      ...elementProps,
+      children: renderedChildren
+    });
+  };
+  return useRender;
+}
+
+// node_modules/framer-motion/dist/es/render/html/utils/render.mjs
+function renderHTML(element, { style, vars }, styleProp, projection) {
+  Object.assign(element.style, style, projection && projection.getProjectionStyles(styleProp));
+  for (const key in vars) {
+    element.style.setProperty(key, vars[key]);
+  }
+}
+
+// node_modules/framer-motion/dist/es/render/svg/utils/camel-case-attrs.mjs
+var camelCaseAttributes = /* @__PURE__ */ new Set([
+  "baseFrequency",
+  "diffuseConstant",
+  "kernelMatrix",
+  "kernelUnitLength",
+  "keySplines",
+  "keyTimes",
+  "limitingConeAngle",
+  "markerHeight",
+  "markerWidth",
+  "numOctaves",
+  "targetX",
+  "targetY",
+  "surfaceScale",
+  "specularConstant",
+  "specularExponent",
+  "stdDeviation",
+  "tableValues",
+  "viewBox",
+  "gradientTransform",
+  "pathLength",
+  "startOffset",
+  "textLength",
+  "lengthAdjust"
+]);
+
+// node_modules/framer-motion/dist/es/render/svg/utils/render.mjs
+function renderSVG(element, renderState, _styleProp, projection) {
+  renderHTML(element, renderState, void 0, projection);
+  for (const key in renderState.attrs) {
+    element.setAttribute(!camelCaseAttributes.has(key) ? camelToDash(key) : key, renderState.attrs[key]);
+  }
+}
+
+// node_modules/framer-motion/dist/es/render/html/utils/scrape-motion-values.mjs
+function scrapeMotionValuesFromProps(props, prevProps) {
+  const { style } = props;
+  const newValues = {};
+  for (const key in style) {
+    if (isMotionValue(style[key]) || prevProps.style && isMotionValue(prevProps.style[key]) || isForcedMotionValue(key, props)) {
+      newValues[key] = style[key];
+    }
+  }
+  return newValues;
+}
+
+// node_modules/framer-motion/dist/es/render/svg/utils/scrape-motion-values.mjs
+function scrapeMotionValuesFromProps2(props, prevProps) {
+  const newValues = scrapeMotionValuesFromProps(props, prevProps);
+  for (const key in props) {
+    if (isMotionValue(props[key]) || isMotionValue(prevProps[key])) {
+      const targetKey = transformPropOrder.indexOf(key) !== -1 ? "attr" + key.charAt(0).toUpperCase() + key.substring(1) : key;
+      newValues[targetKey] = props[key];
+    }
+  }
+  return newValues;
+}
+
+// node_modules/framer-motion/dist/es/motion/utils/use-visual-state.mjs
+var import_react22 = __toESM(require_react(), 1);
+
+// node_modules/framer-motion/dist/es/render/utils/resolve-variants.mjs
+function resolveVariantFromProps(props, definition, custom, currentValues = {}, currentVelocity = {}) {
+  if (typeof definition === "function") {
+    definition = definition(custom !== void 0 ? custom : props.custom, currentValues, currentVelocity);
+  }
+  if (typeof definition === "string") {
+    definition = props.variants && props.variants[definition];
+  }
+  if (typeof definition === "function") {
+    definition = definition(custom !== void 0 ? custom : props.custom, currentValues, currentVelocity);
+  }
+  return definition;
+}
+
+// node_modules/framer-motion/dist/es/utils/use-constant.mjs
+var import_react21 = __toESM(require_react(), 1);
+function useConstant(init) {
+  const ref = (0, import_react21.useRef)(null);
+  if (ref.current === null) {
+    ref.current = init();
+  }
+  return ref.current;
+}
+
+// node_modules/framer-motion/dist/es/animation/utils/is-keyframes-target.mjs
+var isKeyframesTarget = (v) => {
+  return Array.isArray(v);
+};
+
+// node_modules/framer-motion/dist/es/utils/resolve-value.mjs
+var isCustomValue = (v) => {
+  return Boolean(v && typeof v === "object" && v.mix && v.toValue);
+};
+var resolveFinalValueInKeyframes = (v) => {
+  return isKeyframesTarget(v) ? v[v.length - 1] || 0 : v;
+};
+
+// node_modules/framer-motion/dist/es/value/utils/resolve-motion-value.mjs
+function resolveMotionValue(value) {
+  const unwrappedValue = isMotionValue(value) ? value.get() : value;
+  return isCustomValue(unwrappedValue) ? unwrappedValue.toValue() : unwrappedValue;
+}
+
+// node_modules/framer-motion/dist/es/motion/utils/use-visual-state.mjs
+function makeState({ scrapeMotionValuesFromProps: scrapeMotionValuesFromProps3, createRenderState, onMount }, props, context, presenceContext) {
+  const state = {
+    latestValues: makeLatestValues(props, context, presenceContext, scrapeMotionValuesFromProps3),
+    renderState: createRenderState()
+  };
+  if (onMount) {
+    state.mount = (instance) => onMount(props, instance, state);
+  }
+  return state;
+}
+var makeUseVisualState = (config) => (props, isStatic) => {
+  const context = (0, import_react22.useContext)(MotionContext);
+  const presenceContext = (0, import_react22.useContext)(PresenceContext);
+  const make = () => makeState(config, props, context, presenceContext);
+  return isStatic ? make() : useConstant(make);
+};
+function makeLatestValues(props, context, presenceContext, scrapeMotionValues) {
+  const values = {};
+  const motionValues = scrapeMotionValues(props, {});
+  for (const key in motionValues) {
+    values[key] = resolveMotionValue(motionValues[key]);
+  }
+  let { initial, animate } = props;
+  const isControllingVariants$1 = isControllingVariants(props);
+  const isVariantNode$1 = isVariantNode(props);
+  if (context && isVariantNode$1 && !isControllingVariants$1 && props.inherit !== false) {
+    if (initial === void 0)
+      initial = context.initial;
+    if (animate === void 0)
+      animate = context.animate;
+  }
+  let isInitialAnimationBlocked = presenceContext ? presenceContext.initial === false : false;
+  isInitialAnimationBlocked = isInitialAnimationBlocked || initial === false;
+  const variantToSet = isInitialAnimationBlocked ? animate : initial;
+  if (variantToSet && typeof variantToSet !== "boolean" && !isAnimationControls(variantToSet)) {
+    const list = Array.isArray(variantToSet) ? variantToSet : [variantToSet];
+    list.forEach((definition) => {
+      const resolved = resolveVariantFromProps(props, definition);
+      if (!resolved)
+        return;
+      const { transitionEnd, transition, ...target } = resolved;
+      for (const key in target) {
+        let valueTarget = target[key];
+        if (Array.isArray(valueTarget)) {
+          const index = isInitialAnimationBlocked ? valueTarget.length - 1 : 0;
+          valueTarget = valueTarget[index];
+        }
+        if (valueTarget !== null) {
+          values[key] = valueTarget;
+        }
+      }
+      for (const key in transitionEnd)
+        values[key] = transitionEnd[key];
+    });
+  }
+  return values;
+}
+
+// node_modules/framer-motion/dist/es/utils/noop.mjs
+var noop = (any) => any;
+
+// node_modules/framer-motion/dist/es/frameloop/render-step.mjs
+var Queue = class {
+  constructor() {
+    this.order = [];
+    this.scheduled = /* @__PURE__ */ new Set();
+  }
+  add(process2) {
+    if (!this.scheduled.has(process2)) {
+      this.scheduled.add(process2);
+      this.order.push(process2);
+      return true;
+    }
+  }
+  remove(process2) {
+    const index = this.order.indexOf(process2);
+    if (index !== -1) {
+      this.order.splice(index, 1);
+      this.scheduled.delete(process2);
+    }
+  }
+  clear() {
+    this.order.length = 0;
+    this.scheduled.clear();
+  }
+};
+function createRenderStep(runNextFrame) {
+  let thisFrame = new Queue();
+  let nextFrame = new Queue();
+  let numToRun = 0;
+  let isProcessing = false;
+  let flushNextFrame = false;
+  const toKeepAlive = /* @__PURE__ */ new WeakSet();
+  const step = {
+    /**
+     * Schedule a process to run on the next frame.
+     */
+    schedule: (callback, keepAlive = false, immediate = false) => {
+      const addToCurrentFrame = immediate && isProcessing;
+      const queue = addToCurrentFrame ? thisFrame : nextFrame;
+      if (keepAlive)
+        toKeepAlive.add(callback);
+      if (queue.add(callback) && addToCurrentFrame && isProcessing) {
+        numToRun = thisFrame.order.length;
+      }
+      return callback;
+    },
+    /**
+     * Cancel the provided callback from running on the next frame.
+     */
+    cancel: (callback) => {
+      nextFrame.remove(callback);
+      toKeepAlive.delete(callback);
+    },
+    /**
+     * Execute all schedule callbacks.
+     */
+    process: (frameData2) => {
+      if (isProcessing) {
+        flushNextFrame = true;
+        return;
+      }
+      isProcessing = true;
+      [thisFrame, nextFrame] = [nextFrame, thisFrame];
+      nextFrame.clear();
+      numToRun = thisFrame.order.length;
+      if (numToRun) {
+        for (let i = 0; i < numToRun; i++) {
+          const callback = thisFrame.order[i];
+          callback(frameData2);
+          if (toKeepAlive.has(callback)) {
+            step.schedule(callback);
+            runNextFrame();
+          }
+        }
+      }
+      isProcessing = false;
+      if (flushNextFrame) {
+        flushNextFrame = false;
+        step.process(frameData2);
+      }
+    }
+  };
+  return step;
+}
+
+// node_modules/framer-motion/dist/es/frameloop/batcher.mjs
+var stepsOrder = [
+  "prepare",
+  "read",
+  "update",
+  "preRender",
+  "render",
+  "postRender"
+];
+var maxElapsed = 40;
+function createRenderBatcher(scheduleNextBatch, allowKeepAlive) {
+  let runNextFrame = false;
+  let useDefaultElapsed = true;
+  const state = {
+    delta: 0,
+    timestamp: 0,
+    isProcessing: false
+  };
+  const steps2 = stepsOrder.reduce((acc, key) => {
+    acc[key] = createRenderStep(() => runNextFrame = true);
+    return acc;
+  }, {});
+  const processStep = (stepId) => steps2[stepId].process(state);
+  const processBatch = () => {
+    const timestamp = performance.now();
+    runNextFrame = false;
+    state.delta = useDefaultElapsed ? 1e3 / 60 : Math.max(Math.min(timestamp - state.timestamp, maxElapsed), 1);
+    state.timestamp = timestamp;
+    state.isProcessing = true;
+    stepsOrder.forEach(processStep);
+    state.isProcessing = false;
+    if (runNextFrame && allowKeepAlive) {
+      useDefaultElapsed = false;
+      scheduleNextBatch(processBatch);
+    }
+  };
+  const wake = () => {
+    runNextFrame = true;
+    useDefaultElapsed = true;
+    if (!state.isProcessing) {
+      scheduleNextBatch(processBatch);
+    }
+  };
+  const schedule = stepsOrder.reduce((acc, key) => {
+    const step = steps2[key];
+    acc[key] = (process2, keepAlive = false, immediate = false) => {
+      if (!runNextFrame)
+        wake();
+      return step.schedule(process2, keepAlive, immediate);
+    };
+    return acc;
+  }, {});
+  const cancel = (process2) => stepsOrder.forEach((key) => steps2[key].cancel(process2));
+  return { schedule, cancel, state, steps: steps2 };
+}
+
+// node_modules/framer-motion/dist/es/frameloop/frame.mjs
+var { schedule: frame, cancel: cancelFrame, state: frameData, steps } = createRenderBatcher(typeof requestAnimationFrame !== "undefined" ? requestAnimationFrame : noop, true);
+
+// node_modules/framer-motion/dist/es/render/svg/config-motion.mjs
+var svgMotionConfig = {
+  useVisualState: makeUseVisualState({
+    scrapeMotionValuesFromProps: scrapeMotionValuesFromProps2,
+    createRenderState: createSvgRenderState,
+    onMount: (props, instance, { renderState, latestValues }) => {
+      frame.read(() => {
+        try {
+          renderState.dimensions = typeof instance.getBBox === "function" ? instance.getBBox() : instance.getBoundingClientRect();
+        } catch (e) {
+          renderState.dimensions = {
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0
+          };
+        }
+      });
+      frame.render(() => {
+        buildSVGAttrs(renderState, latestValues, { enableHardwareAcceleration: false }, isSVGTag(instance.tagName), props.transformTemplate);
+        renderSVG(instance, renderState);
+      });
+    }
+  })
+};
+
+// node_modules/framer-motion/dist/es/render/html/config-motion.mjs
+var htmlMotionConfig = {
+  useVisualState: makeUseVisualState({
+    scrapeMotionValuesFromProps,
+    createRenderState: createHtmlRenderState
+  })
+};
+
+// node_modules/framer-motion/dist/es/render/dom/utils/create-config.mjs
+function createDomMotionConfig(Component, { forwardMotionProps = false }, preloadedFeatures2, createVisualElement) {
+  const baseConfig = isSVGComponent(Component) ? svgMotionConfig : htmlMotionConfig;
+  return {
+    ...baseConfig,
+    preloadedFeatures: preloadedFeatures2,
+    useRender: createUseRender(forwardMotionProps),
+    createVisualElement,
+    Component
+  };
+}
+
+// node_modules/framer-motion/dist/es/events/add-dom-event.mjs
+function addDomEvent(target, eventName, handler, options = { passive: true }) {
+  target.addEventListener(eventName, handler, options);
+  return () => target.removeEventListener(eventName, handler);
+}
+
+// node_modules/framer-motion/dist/es/events/utils/is-primary-pointer.mjs
+var isPrimaryPointer = (event) => {
+  if (event.pointerType === "mouse") {
+    return typeof event.button !== "number" || event.button <= 0;
+  } else {
+    return event.isPrimary !== false;
+  }
+};
+
+// node_modules/framer-motion/dist/es/events/event-info.mjs
+function extractEventInfo(event, pointType = "page") {
+  return {
+    point: {
+      x: event[pointType + "X"],
+      y: event[pointType + "Y"]
+    }
+  };
+}
+var addPointerInfo = (handler) => {
+  return (event) => isPrimaryPointer(event) && handler(event, extractEventInfo(event));
+};
+
+// node_modules/framer-motion/dist/es/events/add-pointer-event.mjs
+function addPointerEvent(target, eventName, handler, options) {
+  return addDomEvent(target, eventName, addPointerInfo(handler), options);
+}
+
+// node_modules/framer-motion/dist/es/utils/pipe.mjs
+var combineFunctions = (a, b) => (v) => b(a(v));
+var pipe = (...transformers) => transformers.reduce(combineFunctions);
+
+// node_modules/framer-motion/dist/es/gestures/drag/utils/lock.mjs
+function createLock(name) {
+  let lock = null;
+  return () => {
+    const openLock = () => {
+      lock = null;
+    };
+    if (lock === null) {
+      lock = name;
+      return openLock;
+    }
+    return false;
+  };
+}
+var globalHorizontalLock = createLock("dragHorizontal");
+var globalVerticalLock = createLock("dragVertical");
+function getGlobalLock(drag2) {
+  let lock = false;
+  if (drag2 === "y") {
+    lock = globalVerticalLock();
+  } else if (drag2 === "x") {
+    lock = globalHorizontalLock();
+  } else {
+    const openHorizontal = globalHorizontalLock();
+    const openVertical = globalVerticalLock();
+    if (openHorizontal && openVertical) {
+      lock = () => {
+        openHorizontal();
+        openVertical();
+      };
+    } else {
+      if (openHorizontal)
+        openHorizontal();
+      if (openVertical)
+        openVertical();
+    }
+  }
+  return lock;
+}
+function isDragActive() {
+  const openGestureLock = getGlobalLock(true);
+  if (!openGestureLock)
+    return true;
+  openGestureLock();
+  return false;
+}
+
+// node_modules/framer-motion/dist/es/motion/features/Feature.mjs
+var Feature = class {
+  constructor(node) {
+    this.isMounted = false;
+    this.node = node;
+  }
+  update() {
+  }
+};
+
+// node_modules/framer-motion/dist/es/gestures/hover.mjs
+function addHoverEvent(node, isActive) {
+  const eventName = "pointer" + (isActive ? "enter" : "leave");
+  const callbackName = "onHover" + (isActive ? "Start" : "End");
+  const handleEvent = (event, info) => {
+    if (event.pointerType === "touch" || isDragActive())
+      return;
+    const props = node.getProps();
+    if (node.animationState && props.whileHover) {
+      node.animationState.setActive("whileHover", isActive);
+    }
+    if (props[callbackName]) {
+      frame.update(() => props[callbackName](event, info));
+    }
+  };
+  return addPointerEvent(node.current, eventName, handleEvent, {
+    passive: !node.getProps()[callbackName]
+  });
+}
+var HoverGesture = class extends Feature {
+  mount() {
+    this.unmount = pipe(addHoverEvent(this.node, true), addHoverEvent(this.node, false));
+  }
+  unmount() {
+  }
+};
+
+// node_modules/framer-motion/dist/es/gestures/focus.mjs
+var FocusGesture = class extends Feature {
+  constructor() {
+    super(...arguments);
+    this.isActive = false;
+  }
+  onFocus() {
+    let isFocusVisible = false;
+    try {
+      isFocusVisible = this.node.current.matches(":focus-visible");
+    } catch (e) {
+      isFocusVisible = true;
+    }
+    if (!isFocusVisible || !this.node.animationState)
+      return;
+    this.node.animationState.setActive("whileFocus", true);
+    this.isActive = true;
+  }
+  onBlur() {
+    if (!this.isActive || !this.node.animationState)
+      return;
+    this.node.animationState.setActive("whileFocus", false);
+    this.isActive = false;
+  }
+  mount() {
+    this.unmount = pipe(addDomEvent(this.node.current, "focus", () => this.onFocus()), addDomEvent(this.node.current, "blur", () => this.onBlur()));
+  }
+  unmount() {
+  }
+};
+
+// node_modules/framer-motion/dist/es/gestures/utils/is-node-or-child.mjs
+var isNodeOrChild = (parent, child) => {
+  if (!child) {
+    return false;
+  } else if (parent === child) {
+    return true;
+  } else {
+    return isNodeOrChild(parent, child.parentElement);
+  }
+};
+
+// node_modules/framer-motion/dist/es/gestures/press.mjs
+function fireSyntheticPointerEvent(name, handler) {
+  if (!handler)
+    return;
+  const syntheticPointerEvent = new PointerEvent("pointer" + name);
+  handler(syntheticPointerEvent, extractEventInfo(syntheticPointerEvent));
+}
+var PressGesture = class extends Feature {
+  constructor() {
+    super(...arguments);
+    this.removeStartListeners = noop;
+    this.removeEndListeners = noop;
+    this.removeAccessibleListeners = noop;
+    this.startPointerPress = (startEvent, startInfo) => {
+      if (this.isPressing)
+        return;
+      this.removeEndListeners();
+      const props = this.node.getProps();
+      const endPointerPress = (endEvent, endInfo) => {
+        if (!this.checkPressEnd())
+          return;
+        const { onTap, onTapCancel, globalTapTarget } = this.node.getProps();
+        frame.update(() => {
+          !globalTapTarget && !isNodeOrChild(this.node.current, endEvent.target) ? onTapCancel && onTapCancel(endEvent, endInfo) : onTap && onTap(endEvent, endInfo);
+        });
+      };
+      const removePointerUpListener = addPointerEvent(window, "pointerup", endPointerPress, { passive: !(props.onTap || props["onPointerUp"]) });
+      const removePointerCancelListener = addPointerEvent(window, "pointercancel", (cancelEvent, cancelInfo) => this.cancelPress(cancelEvent, cancelInfo), { passive: !(props.onTapCancel || props["onPointerCancel"]) });
+      this.removeEndListeners = pipe(removePointerUpListener, removePointerCancelListener);
+      this.startPress(startEvent, startInfo);
+    };
+    this.startAccessiblePress = () => {
+      const handleKeydown = (keydownEvent) => {
+        if (keydownEvent.key !== "Enter" || this.isPressing)
+          return;
+        const handleKeyup = (keyupEvent) => {
+          if (keyupEvent.key !== "Enter" || !this.checkPressEnd())
+            return;
+          fireSyntheticPointerEvent("up", (event, info) => {
+            const { onTap } = this.node.getProps();
+            if (onTap) {
+              frame.update(() => onTap(event, info));
+            }
+          });
+        };
+        this.removeEndListeners();
+        this.removeEndListeners = addDomEvent(this.node.current, "keyup", handleKeyup);
+        fireSyntheticPointerEvent("down", (event, info) => {
+          this.startPress(event, info);
+        });
+      };
+      const removeKeydownListener = addDomEvent(this.node.current, "keydown", handleKeydown);
+      const handleBlur = () => {
+        if (!this.isPressing)
+          return;
+        fireSyntheticPointerEvent("cancel", (cancelEvent, cancelInfo) => this.cancelPress(cancelEvent, cancelInfo));
+      };
+      const removeBlurListener = addDomEvent(this.node.current, "blur", handleBlur);
+      this.removeAccessibleListeners = pipe(removeKeydownListener, removeBlurListener);
+    };
+  }
+  startPress(event, info) {
+    this.isPressing = true;
+    const { onTapStart, whileTap } = this.node.getProps();
+    if (whileTap && this.node.animationState) {
+      this.node.animationState.setActive("whileTap", true);
+    }
+    if (onTapStart) {
+      frame.update(() => onTapStart(event, info));
+    }
+  }
+  checkPressEnd() {
+    this.removeEndListeners();
+    this.isPressing = false;
+    const props = this.node.getProps();
+    if (props.whileTap && this.node.animationState) {
+      this.node.animationState.setActive("whileTap", false);
+    }
+    return !isDragActive();
+  }
+  cancelPress(event, info) {
+    if (!this.checkPressEnd())
+      return;
+    const { onTapCancel } = this.node.getProps();
+    if (onTapCancel) {
+      frame.update(() => onTapCancel(event, info));
+    }
+  }
+  mount() {
+    const props = this.node.getProps();
+    const removePointerListener = addPointerEvent(props.globalTapTarget ? window : this.node.current, "pointerdown", this.startPointerPress, { passive: !(props.onTapStart || props["onPointerStart"]) });
+    const removeFocusListener = addDomEvent(this.node.current, "focus", this.startAccessiblePress);
+    this.removeStartListeners = pipe(removePointerListener, removeFocusListener);
+  }
+  unmount() {
+    this.removeStartListeners();
+    this.removeEndListeners();
+    this.removeAccessibleListeners();
+  }
+};
+
+// node_modules/framer-motion/dist/es/motion/features/viewport/observers.mjs
+var observerCallbacks = /* @__PURE__ */ new WeakMap();
+var observers = /* @__PURE__ */ new WeakMap();
+var fireObserverCallback = (entry) => {
+  const callback = observerCallbacks.get(entry.target);
+  callback && callback(entry);
+};
+var fireAllObserverCallbacks = (entries) => {
+  entries.forEach(fireObserverCallback);
+};
+function initIntersectionObserver({ root, ...options }) {
+  const lookupRoot = root || document;
+  if (!observers.has(lookupRoot)) {
+    observers.set(lookupRoot, {});
+  }
+  const rootObservers = observers.get(lookupRoot);
+  const key = JSON.stringify(options);
+  if (!rootObservers[key]) {
+    rootObservers[key] = new IntersectionObserver(fireAllObserverCallbacks, { root, ...options });
+  }
+  return rootObservers[key];
+}
+function observeIntersection(element, options, callback) {
+  const rootInteresectionObserver = initIntersectionObserver(options);
+  observerCallbacks.set(element, callback);
+  rootInteresectionObserver.observe(element);
+  return () => {
+    observerCallbacks.delete(element);
+    rootInteresectionObserver.unobserve(element);
+  };
+}
+
+// node_modules/framer-motion/dist/es/motion/features/viewport/index.mjs
+var thresholdNames = {
+  some: 0,
+  all: 1
+};
+var InViewFeature = class extends Feature {
+  constructor() {
+    super(...arguments);
+    this.hasEnteredView = false;
+    this.isInView = false;
+  }
+  startObserver() {
+    this.unmount();
+    const { viewport = {} } = this.node.getProps();
+    const { root, margin: rootMargin, amount = "some", once } = viewport;
+    const options = {
+      root: root ? root.current : void 0,
+      rootMargin,
+      threshold: typeof amount === "number" ? amount : thresholdNames[amount]
+    };
+    const onIntersectionUpdate = (entry) => {
+      const { isIntersecting } = entry;
+      if (this.isInView === isIntersecting)
+        return;
+      this.isInView = isIntersecting;
+      if (once && !isIntersecting && this.hasEnteredView) {
+        return;
+      } else if (isIntersecting) {
+        this.hasEnteredView = true;
+      }
+      if (this.node.animationState) {
+        this.node.animationState.setActive("whileInView", isIntersecting);
+      }
+      const { onViewportEnter, onViewportLeave } = this.node.getProps();
+      const callback = isIntersecting ? onViewportEnter : onViewportLeave;
+      callback && callback(entry);
+    };
+    return observeIntersection(this.node.current, options, onIntersectionUpdate);
+  }
+  mount() {
+    this.startObserver();
+  }
+  update() {
+    if (typeof IntersectionObserver === "undefined")
+      return;
+    const { props, prevProps } = this.node;
+    const hasOptionsChanged = ["amount", "margin", "root"].some(hasViewportOptionChanged(props, prevProps));
+    if (hasOptionsChanged) {
+      this.startObserver();
+    }
+  }
+  unmount() {
+  }
+};
+function hasViewportOptionChanged({ viewport = {} }, { viewport: prevViewport = {} } = {}) {
+  return (name) => viewport[name] !== prevViewport[name];
+}
+
+// node_modules/framer-motion/dist/es/motion/features/gestures.mjs
+var gestureAnimations = {
+  inView: {
+    Feature: InViewFeature
+  },
+  tap: {
+    Feature: PressGesture
+  },
+  focus: {
+    Feature: FocusGesture
+  },
+  hover: {
+    Feature: HoverGesture
+  }
+};
+
+// node_modules/framer-motion/dist/es/utils/shallow-compare.mjs
+function shallowCompare(next, prev) {
+  if (!Array.isArray(prev))
+    return false;
+  const prevLength = prev.length;
+  if (prevLength !== next.length)
+    return false;
+  for (let i = 0; i < prevLength; i++) {
+    if (prev[i] !== next[i])
+      return false;
+  }
+  return true;
+}
+
+// node_modules/framer-motion/dist/es/render/utils/resolve-dynamic-variants.mjs
+function getCurrent(visualElement) {
+  const current = {};
+  visualElement.values.forEach((value, key) => current[key] = value.get());
+  return current;
+}
+function getVelocity(visualElement) {
+  const velocity = {};
+  visualElement.values.forEach((value, key) => velocity[key] = value.getVelocity());
+  return velocity;
+}
+function resolveVariant(visualElement, definition, custom) {
+  const props = visualElement.getProps();
+  return resolveVariantFromProps(props, definition, custom !== void 0 ? custom : props.custom, getCurrent(visualElement), getVelocity(visualElement));
+}
+
+// node_modules/framer-motion/dist/es/utils/errors.mjs
+var warning = noop;
+var invariant = noop;
+if (true) {
+  warning = (check, message) => {
+    if (!check && typeof console !== "undefined") {
+      console.warn(message);
+    }
+  };
+  invariant = (check, message) => {
+    if (!check) {
+      throw new Error(message);
+    }
+  };
+}
+
+// node_modules/framer-motion/dist/es/utils/time-conversion.mjs
+var secondsToMilliseconds = (seconds) => seconds * 1e3;
+var millisecondsToSeconds = (milliseconds) => milliseconds / 1e3;
+
+// node_modules/framer-motion/dist/es/utils/use-instant-transition-state.mjs
+var instantAnimationState = {
+  current: false
+};
+
+// node_modules/framer-motion/dist/es/easing/utils/is-bezier-definition.mjs
+var isBezierDefinition = (easing) => Array.isArray(easing) && typeof easing[0] === "number";
+
+// node_modules/framer-motion/dist/es/animation/animators/waapi/easing.mjs
+function isWaapiSupportedEasing(easing) {
+  return Boolean(!easing || typeof easing === "string" && supportedWaapiEasing[easing] || isBezierDefinition(easing) || Array.isArray(easing) && easing.every(isWaapiSupportedEasing));
+}
+var cubicBezierAsString = ([a, b, c, d]) => `cubic-bezier(${a}, ${b}, ${c}, ${d})`;
+var supportedWaapiEasing = {
+  linear: "linear",
+  ease: "ease",
+  easeIn: "ease-in",
+  easeOut: "ease-out",
+  easeInOut: "ease-in-out",
+  circIn: cubicBezierAsString([0, 0.65, 0.55, 1]),
+  circOut: cubicBezierAsString([0.55, 0, 1, 0.45]),
+  backIn: cubicBezierAsString([0.31, 0.01, 0.66, -0.59]),
+  backOut: cubicBezierAsString([0.33, 1.53, 0.69, 0.99])
+};
+function mapEasingToNativeEasing(easing) {
+  if (!easing)
+    return void 0;
+  return isBezierDefinition(easing) ? cubicBezierAsString(easing) : Array.isArray(easing) ? easing.map(mapEasingToNativeEasing) : supportedWaapiEasing[easing];
+}
+
+// node_modules/framer-motion/dist/es/animation/animators/waapi/index.mjs
+function animateStyle(element, valueName, keyframes2, { delay: delay2 = 0, duration, repeat = 0, repeatType = "loop", ease: ease2, times } = {}) {
+  const keyframeOptions = { [valueName]: keyframes2 };
+  if (times)
+    keyframeOptions.offset = times;
+  const easing = mapEasingToNativeEasing(ease2);
+  if (Array.isArray(easing))
+    keyframeOptions.easing = easing;
+  return element.animate(keyframeOptions, {
+    delay: delay2,
+    duration,
+    easing: !Array.isArray(easing) ? easing : "linear",
+    fill: "both",
+    iterations: repeat + 1,
+    direction: repeatType === "reverse" ? "alternate" : "normal"
+  });
+}
+
+// node_modules/framer-motion/dist/es/animation/animators/waapi/utils/get-final-keyframe.mjs
+function getFinalKeyframe(keyframes2, { repeat, repeatType = "loop" }) {
+  const index = repeat && repeatType !== "loop" && repeat % 2 === 1 ? 0 : keyframes2.length - 1;
+  return keyframes2[index];
+}
+
+// node_modules/framer-motion/dist/es/easing/cubic-bezier.mjs
+var calcBezier = (t, a1, a2) => (((1 - 3 * a2 + 3 * a1) * t + (3 * a2 - 6 * a1)) * t + 3 * a1) * t;
+var subdivisionPrecision = 1e-7;
+var subdivisionMaxIterations = 12;
+function binarySubdivide(x, lowerBound, upperBound, mX1, mX2) {
+  let currentX;
+  let currentT;
+  let i = 0;
+  do {
+    currentT = lowerBound + (upperBound - lowerBound) / 2;
+    currentX = calcBezier(currentT, mX1, mX2) - x;
+    if (currentX > 0) {
+      upperBound = currentT;
+    } else {
+      lowerBound = currentT;
+    }
+  } while (Math.abs(currentX) > subdivisionPrecision && ++i < subdivisionMaxIterations);
+  return currentT;
+}
+function cubicBezier(mX1, mY1, mX2, mY2) {
+  if (mX1 === mY1 && mX2 === mY2)
+    return noop;
+  const getTForX = (aX) => binarySubdivide(aX, 0, 1, mX1, mX2);
+  return (t) => t === 0 || t === 1 ? t : calcBezier(getTForX(t), mY1, mY2);
+}
+
+// node_modules/framer-motion/dist/es/easing/ease.mjs
+var easeIn = cubicBezier(0.42, 0, 1, 1);
+var easeOut = cubicBezier(0, 0, 0.58, 1);
+var easeInOut = cubicBezier(0.42, 0, 0.58, 1);
+
+// node_modules/framer-motion/dist/es/easing/utils/is-easing-array.mjs
+var isEasingArray = (ease2) => {
+  return Array.isArray(ease2) && typeof ease2[0] !== "number";
+};
+
+// node_modules/framer-motion/dist/es/easing/modifiers/mirror.mjs
+var mirrorEasing = (easing) => (p) => p <= 0.5 ? easing(2 * p) / 2 : (2 - easing(2 * (1 - p))) / 2;
+
+// node_modules/framer-motion/dist/es/easing/modifiers/reverse.mjs
+var reverseEasing = (easing) => (p) => 1 - easing(1 - p);
+
+// node_modules/framer-motion/dist/es/easing/circ.mjs
+var circIn = (p) => 1 - Math.sin(Math.acos(p));
+var circOut = reverseEasing(circIn);
+var circInOut = mirrorEasing(circIn);
+
+// node_modules/framer-motion/dist/es/easing/back.mjs
+var backOut = cubicBezier(0.33, 1.53, 0.69, 0.99);
+var backIn = reverseEasing(backOut);
+var backInOut = mirrorEasing(backIn);
+
+// node_modules/framer-motion/dist/es/easing/anticipate.mjs
+var anticipate = (p) => (p *= 2) < 1 ? 0.5 * backIn(p) : 0.5 * (2 - Math.pow(2, -10 * (p - 1)));
+
+// node_modules/framer-motion/dist/es/easing/utils/map.mjs
+var easingLookup = {
+  linear: noop,
+  easeIn,
+  easeInOut,
+  easeOut,
+  circIn,
+  circInOut,
+  circOut,
+  backIn,
+  backInOut,
+  backOut,
+  anticipate
+};
+var easingDefinitionToFunction = (definition) => {
+  if (Array.isArray(definition)) {
+    invariant(definition.length === 4, `Cubic bezier arrays must contain four numerical values.`);
+    const [x1, y1, x2, y2] = definition;
+    return cubicBezier(x1, y1, x2, y2);
+  } else if (typeof definition === "string") {
+    invariant(easingLookup[definition] !== void 0, `Invalid easing type '${definition}'`);
+    return easingLookup[definition];
+  }
+  return definition;
+};
+
+// node_modules/framer-motion/dist/es/value/types/color/utils.mjs
+var isColorString = (type, testProp) => (v) => {
+  return Boolean(isString(v) && singleColorRegex.test(v) && v.startsWith(type) || testProp && Object.prototype.hasOwnProperty.call(v, testProp));
+};
+var splitColor = (aName, bName, cName) => (v) => {
+  if (!isString(v))
+    return v;
+  const [a, b, c, alpha2] = v.match(floatRegex);
+  return {
+    [aName]: parseFloat(a),
+    [bName]: parseFloat(b),
+    [cName]: parseFloat(c),
+    alpha: alpha2 !== void 0 ? parseFloat(alpha2) : 1
+  };
+};
+
+// node_modules/framer-motion/dist/es/value/types/color/rgba.mjs
+var clampRgbUnit = (v) => clamp(0, 255, v);
+var rgbUnit = {
+  ...number,
+  transform: (v) => Math.round(clampRgbUnit(v))
+};
+var rgba = {
+  test: isColorString("rgb", "red"),
+  parse: splitColor("red", "green", "blue"),
+  transform: ({ red, green, blue, alpha: alpha$1 = 1 }) => "rgba(" + rgbUnit.transform(red) + ", " + rgbUnit.transform(green) + ", " + rgbUnit.transform(blue) + ", " + sanitize(alpha.transform(alpha$1)) + ")"
+};
+
+// node_modules/framer-motion/dist/es/value/types/color/hex.mjs
+function parseHex(v) {
+  let r = "";
+  let g = "";
+  let b = "";
+  let a = "";
+  if (v.length > 5) {
+    r = v.substring(1, 3);
+    g = v.substring(3, 5);
+    b = v.substring(5, 7);
+    a = v.substring(7, 9);
+  } else {
+    r = v.substring(1, 2);
+    g = v.substring(2, 3);
+    b = v.substring(3, 4);
+    a = v.substring(4, 5);
+    r += r;
+    g += g;
+    b += b;
+    a += a;
+  }
+  return {
+    red: parseInt(r, 16),
+    green: parseInt(g, 16),
+    blue: parseInt(b, 16),
+    alpha: a ? parseInt(a, 16) / 255 : 1
+  };
+}
+var hex = {
+  test: isColorString("#"),
+  parse: parseHex,
+  transform: rgba.transform
+};
+
+// node_modules/framer-motion/dist/es/value/types/color/hsla.mjs
+var hsla = {
+  test: isColorString("hsl", "hue"),
+  parse: splitColor("hue", "saturation", "lightness"),
+  transform: ({ hue, saturation, lightness, alpha: alpha$1 = 1 }) => {
+    return "hsla(" + Math.round(hue) + ", " + percent.transform(sanitize(saturation)) + ", " + percent.transform(sanitize(lightness)) + ", " + sanitize(alpha.transform(alpha$1)) + ")";
+  }
+};
+
+// node_modules/framer-motion/dist/es/value/types/color/index.mjs
+var color = {
+  test: (v) => rgba.test(v) || hex.test(v) || hsla.test(v),
+  parse: (v) => {
+    if (rgba.test(v)) {
+      return rgba.parse(v);
+    } else if (hsla.test(v)) {
+      return hsla.parse(v);
+    } else {
+      return hex.parse(v);
+    }
+  },
+  transform: (v) => {
+    return isString(v) ? v : v.hasOwnProperty("red") ? rgba.transform(v) : hsla.transform(v);
+  }
+};
+
+// node_modules/framer-motion/dist/es/utils/mix.mjs
+var mix = (from, to, progress2) => -progress2 * from + progress2 * to + from;
+
+// node_modules/framer-motion/dist/es/utils/hsla-to-rgba.mjs
+function hueToRgb(p, q, t) {
+  if (t < 0)
+    t += 1;
+  if (t > 1)
+    t -= 1;
+  if (t < 1 / 6)
+    return p + (q - p) * 6 * t;
+  if (t < 1 / 2)
+    return q;
+  if (t < 2 / 3)
+    return p + (q - p) * (2 / 3 - t) * 6;
+  return p;
+}
+function hslaToRgba({ hue, saturation, lightness, alpha: alpha2 }) {
+  hue /= 360;
+  saturation /= 100;
+  lightness /= 100;
+  let red = 0;
+  let green = 0;
+  let blue = 0;
+  if (!saturation) {
+    red = green = blue = lightness;
+  } else {
+    const q = lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
+    const p = 2 * lightness - q;
+    red = hueToRgb(p, q, hue + 1 / 3);
+    green = hueToRgb(p, q, hue);
+    blue = hueToRgb(p, q, hue - 1 / 3);
+  }
+  return {
+    red: Math.round(red * 255),
+    green: Math.round(green * 255),
+    blue: Math.round(blue * 255),
+    alpha: alpha2
+  };
+}
+
+// node_modules/framer-motion/dist/es/utils/mix-color.mjs
+var mixLinearColor = (from, to, v) => {
+  const fromExpo = from * from;
+  return Math.sqrt(Math.max(0, v * (to * to - fromExpo) + fromExpo));
+};
+var colorTypes = [hex, rgba, hsla];
+var getColorType = (v) => colorTypes.find((type) => type.test(v));
+function asRGBA(color2) {
+  const type = getColorType(color2);
+  invariant(Boolean(type), `'${color2}' is not an animatable color. Use the equivalent color code instead.`);
+  let model = type.parse(color2);
+  if (type === hsla) {
+    model = hslaToRgba(model);
+  }
+  return model;
+}
+var mixColor = (from, to) => {
+  const fromRGBA = asRGBA(from);
+  const toRGBA = asRGBA(to);
+  const blended = { ...fromRGBA };
+  return (v) => {
+    blended.red = mixLinearColor(fromRGBA.red, toRGBA.red, v);
+    blended.green = mixLinearColor(fromRGBA.green, toRGBA.green, v);
+    blended.blue = mixLinearColor(fromRGBA.blue, toRGBA.blue, v);
+    blended.alpha = mix(fromRGBA.alpha, toRGBA.alpha, v);
+    return rgba.transform(blended);
+  };
+};
+
+// node_modules/framer-motion/dist/es/value/types/complex/index.mjs
+function test(v) {
+  var _a, _b;
+  return isNaN(v) && isString(v) && (((_a = v.match(floatRegex)) === null || _a === void 0 ? void 0 : _a.length) || 0) + (((_b = v.match(colorRegex)) === null || _b === void 0 ? void 0 : _b.length) || 0) > 0;
+}
+var cssVarTokeniser = {
+  regex: cssVariableRegex,
+  countKey: "Vars",
+  token: "${v}",
+  parse: noop
+};
+var colorTokeniser = {
+  regex: colorRegex,
+  countKey: "Colors",
+  token: "${c}",
+  parse: color.parse
+};
+var numberTokeniser = {
+  regex: floatRegex,
+  countKey: "Numbers",
+  token: "${n}",
+  parse: number.parse
+};
+function tokenise(info, { regex, countKey, token, parse }) {
+  const matches = info.tokenised.match(regex);
+  if (!matches)
+    return;
+  info["num" + countKey] = matches.length;
+  info.tokenised = info.tokenised.replace(regex, token);
+  info.values.push(...matches.map(parse));
+}
+function analyseComplexValue(value) {
+  const originalValue = value.toString();
+  const info = {
+    value: originalValue,
+    tokenised: originalValue,
+    values: [],
+    numVars: 0,
+    numColors: 0,
+    numNumbers: 0
+  };
+  if (info.value.includes("var(--"))
+    tokenise(info, cssVarTokeniser);
+  tokenise(info, colorTokeniser);
+  tokenise(info, numberTokeniser);
+  return info;
+}
+function parseComplexValue(v) {
+  return analyseComplexValue(v).values;
+}
+function createTransformer(source) {
+  const { values, numColors, numVars, tokenised } = analyseComplexValue(source);
+  const numValues = values.length;
+  return (v) => {
+    let output = tokenised;
+    for (let i = 0; i < numValues; i++) {
+      if (i < numVars) {
+        output = output.replace(cssVarTokeniser.token, v[i]);
+      } else if (i < numVars + numColors) {
+        output = output.replace(colorTokeniser.token, color.transform(v[i]));
+      } else {
+        output = output.replace(numberTokeniser.token, sanitize(v[i]));
+      }
+    }
+    return output;
+  };
+}
+var convertNumbersToZero = (v) => typeof v === "number" ? 0 : v;
+function getAnimatableNone(v) {
+  const parsed = parseComplexValue(v);
+  const transformer = createTransformer(v);
+  return transformer(parsed.map(convertNumbersToZero));
+}
+var complex = {
+  test,
+  parse: parseComplexValue,
+  createTransformer,
+  getAnimatableNone
+};
+
+// node_modules/framer-motion/dist/es/utils/mix-complex.mjs
+var mixImmediate = (origin, target) => (p) => `${p > 0 ? target : origin}`;
+function getMixer(origin, target) {
+  if (typeof origin === "number") {
+    return (v) => mix(origin, target, v);
+  } else if (color.test(origin)) {
+    return mixColor(origin, target);
+  } else {
+    return origin.startsWith("var(") ? mixImmediate(origin, target) : mixComplex(origin, target);
+  }
+}
+var mixArray = (from, to) => {
+  const output = [...from];
+  const numValues = output.length;
+  const blendValue = from.map((fromThis, i) => getMixer(fromThis, to[i]));
+  return (v) => {
+    for (let i = 0; i < numValues; i++) {
+      output[i] = blendValue[i](v);
+    }
+    return output;
+  };
+};
+var mixObject = (origin, target) => {
+  const output = { ...origin, ...target };
+  const blendValue = {};
+  for (const key in output) {
+    if (origin[key] !== void 0 && target[key] !== void 0) {
+      blendValue[key] = getMixer(origin[key], target[key]);
+    }
+  }
+  return (v) => {
+    for (const key in blendValue) {
+      output[key] = blendValue[key](v);
+    }
+    return output;
+  };
+};
+var mixComplex = (origin, target) => {
+  const template = complex.createTransformer(target);
+  const originStats = analyseComplexValue(origin);
+  const targetStats = analyseComplexValue(target);
+  const canInterpolate = originStats.numVars === targetStats.numVars && originStats.numColors === targetStats.numColors && originStats.numNumbers >= targetStats.numNumbers;
+  if (canInterpolate) {
+    return pipe(mixArray(originStats.values, targetStats.values), template);
+  } else {
+    warning(true, `Complex values '${origin}' and '${target}' too different to mix. Ensure all colors are of the same type, and that each contains the same quantity of number and color values. Falling back to instant transition.`);
+    return mixImmediate(origin, target);
+  }
+};
+
+// node_modules/framer-motion/dist/es/utils/progress.mjs
+var progress = (from, to, value) => {
+  const toFromDifference = to - from;
+  return toFromDifference === 0 ? 1 : (value - from) / toFromDifference;
+};
+
+// node_modules/framer-motion/dist/es/utils/interpolate.mjs
+var mixNumber = (from, to) => (p) => mix(from, to, p);
+function detectMixerFactory(v) {
+  if (typeof v === "number") {
+    return mixNumber;
+  } else if (typeof v === "string") {
+    return color.test(v) ? mixColor : mixComplex;
+  } else if (Array.isArray(v)) {
+    return mixArray;
+  } else if (typeof v === "object") {
+    return mixObject;
+  }
+  return mixNumber;
+}
+function createMixers(output, ease2, customMixer) {
+  const mixers = [];
+  const mixerFactory = customMixer || detectMixerFactory(output[0]);
+  const numMixers = output.length - 1;
+  for (let i = 0; i < numMixers; i++) {
+    let mixer = mixerFactory(output[i], output[i + 1]);
+    if (ease2) {
+      const easingFunction = Array.isArray(ease2) ? ease2[i] || noop : ease2;
+      mixer = pipe(easingFunction, mixer);
+    }
+    mixers.push(mixer);
+  }
+  return mixers;
+}
+function interpolate(input, output, { clamp: isClamp = true, ease: ease2, mixer } = {}) {
+  const inputLength = input.length;
+  invariant(inputLength === output.length, "Both input and output ranges must be the same length");
+  if (inputLength === 1)
+    return () => output[0];
+  if (input[0] > input[inputLength - 1]) {
+    input = [...input].reverse();
+    output = [...output].reverse();
+  }
+  const mixers = createMixers(output, ease2, mixer);
+  const numMixers = mixers.length;
+  const interpolator = (v) => {
+    let i = 0;
+    if (numMixers > 1) {
+      for (; i < input.length - 2; i++) {
+        if (v < input[i + 1])
+          break;
+      }
+    }
+    const progressInRange = progress(input[i], input[i + 1], v);
+    return mixers[i](progressInRange);
+  };
+  return isClamp ? (v) => interpolator(clamp(input[0], input[inputLength - 1], v)) : interpolator;
+}
+
+// node_modules/framer-motion/dist/es/utils/offsets/fill.mjs
+function fillOffset(offset, remaining) {
+  const min = offset[offset.length - 1];
+  for (let i = 1; i <= remaining; i++) {
+    const offsetProgress = progress(0, remaining, i);
+    offset.push(mix(min, 1, offsetProgress));
+  }
+}
+
+// node_modules/framer-motion/dist/es/utils/offsets/default.mjs
+function defaultOffset(arr) {
+  const offset = [0];
+  fillOffset(offset, arr.length - 1);
+  return offset;
+}
+
+// node_modules/framer-motion/dist/es/utils/offsets/time.mjs
+function convertOffsetToTimes(offset, duration) {
+  return offset.map((o) => o * duration);
+}
+
+// node_modules/framer-motion/dist/es/animation/generators/keyframes.mjs
+function defaultEasing(values, easing) {
+  return values.map(() => easing || easeInOut).splice(0, values.length - 1);
+}
+function keyframes({ duration = 300, keyframes: keyframeValues, times, ease: ease2 = "easeInOut" }) {
+  const easingFunctions = isEasingArray(ease2) ? ease2.map(easingDefinitionToFunction) : easingDefinitionToFunction(ease2);
+  const state = {
+    done: false,
+    value: keyframeValues[0]
+  };
+  const absoluteTimes = convertOffsetToTimes(
+    // Only use the provided offsets if they're the correct length
+    // TODO Maybe we should warn here if there's a length mismatch
+    times && times.length === keyframeValues.length ? times : defaultOffset(keyframeValues),
+    duration
+  );
+  const mapTimeToKeyframe = interpolate(absoluteTimes, keyframeValues, {
+    ease: Array.isArray(easingFunctions) ? easingFunctions : defaultEasing(keyframeValues, easingFunctions)
+  });
+  return {
+    calculatedDuration: duration,
+    next: (t) => {
+      state.value = mapTimeToKeyframe(t);
+      state.done = t >= duration;
+      return state;
+    }
+  };
+}
+
+// node_modules/framer-motion/dist/es/utils/velocity-per-second.mjs
+function velocityPerSecond(velocity, frameDuration) {
+  return frameDuration ? velocity * (1e3 / frameDuration) : 0;
+}
+
+// node_modules/framer-motion/dist/es/animation/generators/utils/velocity.mjs
+var velocitySampleDuration = 5;
+function calcGeneratorVelocity(resolveValue, t, current) {
+  const prevT = Math.max(t - velocitySampleDuration, 0);
+  return velocityPerSecond(current - resolveValue(prevT), t - prevT);
+}
+
+// node_modules/framer-motion/dist/es/animation/generators/spring/find.mjs
+var safeMin = 1e-3;
+var minDuration = 0.01;
+var maxDuration = 10;
+var minDamping = 0.05;
+var maxDamping = 1;
+function findSpring({ duration = 800, bounce = 0.25, velocity = 0, mass = 1 }) {
+  let envelope;
+  let derivative;
+  warning(duration <= secondsToMilliseconds(maxDuration), "Spring duration must be 10 seconds or less");
+  let dampingRatio = 1 - bounce;
+  dampingRatio = clamp(minDamping, maxDamping, dampingRatio);
+  duration = clamp(minDuration, maxDuration, millisecondsToSeconds(duration));
+  if (dampingRatio < 1) {
+    envelope = (undampedFreq2) => {
+      const exponentialDecay = undampedFreq2 * dampingRatio;
+      const delta = exponentialDecay * duration;
+      const a = exponentialDecay - velocity;
+      const b = calcAngularFreq(undampedFreq2, dampingRatio);
+      const c = Math.exp(-delta);
+      return safeMin - a / b * c;
+    };
+    derivative = (undampedFreq2) => {
+      const exponentialDecay = undampedFreq2 * dampingRatio;
+      const delta = exponentialDecay * duration;
+      const d = delta * velocity + velocity;
+      const e = Math.pow(dampingRatio, 2) * Math.pow(undampedFreq2, 2) * duration;
+      const f = Math.exp(-delta);
+      const g = calcAngularFreq(Math.pow(undampedFreq2, 2), dampingRatio);
+      const factor = -envelope(undampedFreq2) + safeMin > 0 ? -1 : 1;
+      return factor * ((d - e) * f) / g;
+    };
+  } else {
+    envelope = (undampedFreq2) => {
+      const a = Math.exp(-undampedFreq2 * duration);
+      const b = (undampedFreq2 - velocity) * duration + 1;
+      return -safeMin + a * b;
+    };
+    derivative = (undampedFreq2) => {
+      const a = Math.exp(-undampedFreq2 * duration);
+      const b = (velocity - undampedFreq2) * (duration * duration);
+      return a * b;
+    };
+  }
+  const initialGuess = 5 / duration;
+  const undampedFreq = approximateRoot(envelope, derivative, initialGuess);
+  duration = secondsToMilliseconds(duration);
+  if (isNaN(undampedFreq)) {
+    return {
+      stiffness: 100,
+      damping: 10,
+      duration
+    };
+  } else {
+    const stiffness = Math.pow(undampedFreq, 2) * mass;
+    return {
+      stiffness,
+      damping: dampingRatio * 2 * Math.sqrt(mass * stiffness),
+      duration
+    };
+  }
+}
+var rootIterations = 12;
+function approximateRoot(envelope, derivative, initialGuess) {
+  let result = initialGuess;
+  for (let i = 1; i < rootIterations; i++) {
+    result = result - envelope(result) / derivative(result);
+  }
+  return result;
+}
+function calcAngularFreq(undampedFreq, dampingRatio) {
+  return undampedFreq * Math.sqrt(1 - dampingRatio * dampingRatio);
+}
+
+// node_modules/framer-motion/dist/es/animation/generators/spring/index.mjs
+var durationKeys = ["duration", "bounce"];
+var physicsKeys = ["stiffness", "damping", "mass"];
+function isSpringType(options, keys) {
+  return keys.some((key) => options[key] !== void 0);
+}
+function getSpringOptions(options) {
+  let springOptions = {
+    velocity: 0,
+    stiffness: 100,
+    damping: 10,
+    mass: 1,
+    isResolvedFromDuration: false,
+    ...options
+  };
+  if (!isSpringType(options, physicsKeys) && isSpringType(options, durationKeys)) {
+    const derived = findSpring(options);
+    springOptions = {
+      ...springOptions,
+      ...derived,
+      mass: 1
+    };
+    springOptions.isResolvedFromDuration = true;
+  }
+  return springOptions;
+}
+function spring({ keyframes: keyframes2, restDelta, restSpeed, ...options }) {
+  const origin = keyframes2[0];
+  const target = keyframes2[keyframes2.length - 1];
+  const state = { done: false, value: origin };
+  const { stiffness, damping, mass, duration, velocity, isResolvedFromDuration } = getSpringOptions({
+    ...options,
+    velocity: -millisecondsToSeconds(options.velocity || 0)
+  });
+  const initialVelocity = velocity || 0;
+  const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass));
+  const initialDelta = target - origin;
+  const undampedAngularFreq = millisecondsToSeconds(Math.sqrt(stiffness / mass));
+  const isGranularScale = Math.abs(initialDelta) < 5;
+  restSpeed || (restSpeed = isGranularScale ? 0.01 : 2);
+  restDelta || (restDelta = isGranularScale ? 5e-3 : 0.5);
+  let resolveSpring;
+  if (dampingRatio < 1) {
+    const angularFreq = calcAngularFreq(undampedAngularFreq, dampingRatio);
+    resolveSpring = (t) => {
+      const envelope = Math.exp(-dampingRatio * undampedAngularFreq * t);
+      return target - envelope * ((initialVelocity + dampingRatio * undampedAngularFreq * initialDelta) / angularFreq * Math.sin(angularFreq * t) + initialDelta * Math.cos(angularFreq * t));
+    };
+  } else if (dampingRatio === 1) {
+    resolveSpring = (t) => target - Math.exp(-undampedAngularFreq * t) * (initialDelta + (initialVelocity + undampedAngularFreq * initialDelta) * t);
+  } else {
+    const dampedAngularFreq = undampedAngularFreq * Math.sqrt(dampingRatio * dampingRatio - 1);
+    resolveSpring = (t) => {
+      const envelope = Math.exp(-dampingRatio * undampedAngularFreq * t);
+      const freqForT = Math.min(dampedAngularFreq * t, 300);
+      return target - envelope * ((initialVelocity + dampingRatio * undampedAngularFreq * initialDelta) * Math.sinh(freqForT) + dampedAngularFreq * initialDelta * Math.cosh(freqForT)) / dampedAngularFreq;
+    };
+  }
+  return {
+    calculatedDuration: isResolvedFromDuration ? duration || null : null,
+    next: (t) => {
+      const current = resolveSpring(t);
+      if (!isResolvedFromDuration) {
+        let currentVelocity = initialVelocity;
+        if (t !== 0) {
+          if (dampingRatio < 1) {
+            currentVelocity = calcGeneratorVelocity(resolveSpring, t, current);
+          } else {
+            currentVelocity = 0;
+          }
+        }
+        const isBelowVelocityThreshold = Math.abs(currentVelocity) <= restSpeed;
+        const isBelowDisplacementThreshold = Math.abs(target - current) <= restDelta;
+        state.done = isBelowVelocityThreshold && isBelowDisplacementThreshold;
+      } else {
+        state.done = t >= duration;
+      }
+      state.value = state.done ? target : current;
+      return state;
+    }
+  };
+}
+
+// node_modules/framer-motion/dist/es/animation/generators/inertia.mjs
+function inertia({ keyframes: keyframes2, velocity = 0, power = 0.8, timeConstant = 325, bounceDamping = 10, bounceStiffness = 500, modifyTarget, min, max, restDelta = 0.5, restSpeed }) {
+  const origin = keyframes2[0];
+  const state = {
+    done: false,
+    value: origin
+  };
+  const isOutOfBounds = (v) => min !== void 0 && v < min || max !== void 0 && v > max;
+  const nearestBoundary = (v) => {
+    if (min === void 0)
+      return max;
+    if (max === void 0)
+      return min;
+    return Math.abs(min - v) < Math.abs(max - v) ? min : max;
+  };
+  let amplitude = power * velocity;
+  const ideal = origin + amplitude;
+  const target = modifyTarget === void 0 ? ideal : modifyTarget(ideal);
+  if (target !== ideal)
+    amplitude = target - origin;
+  const calcDelta = (t) => -amplitude * Math.exp(-t / timeConstant);
+  const calcLatest = (t) => target + calcDelta(t);
+  const applyFriction = (t) => {
+    const delta = calcDelta(t);
+    const latest = calcLatest(t);
+    state.done = Math.abs(delta) <= restDelta;
+    state.value = state.done ? target : latest;
+  };
+  let timeReachedBoundary;
+  let spring$1;
+  const checkCatchBoundary = (t) => {
+    if (!isOutOfBounds(state.value))
+      return;
+    timeReachedBoundary = t;
+    spring$1 = spring({
+      keyframes: [state.value, nearestBoundary(state.value)],
+      velocity: calcGeneratorVelocity(calcLatest, t, state.value),
+      damping: bounceDamping,
+      stiffness: bounceStiffness,
+      restDelta,
+      restSpeed
+    });
+  };
+  checkCatchBoundary(0);
+  return {
+    calculatedDuration: null,
+    next: (t) => {
+      let hasUpdatedFrame = false;
+      if (!spring$1 && timeReachedBoundary === void 0) {
+        hasUpdatedFrame = true;
+        applyFriction(t);
+        checkCatchBoundary(t);
+      }
+      if (timeReachedBoundary !== void 0 && t > timeReachedBoundary) {
+        return spring$1.next(t - timeReachedBoundary);
+      } else {
+        !hasUpdatedFrame && applyFriction(t);
+        return state;
+      }
+    }
+  };
+}
+
+// node_modules/framer-motion/dist/es/animation/animators/js/driver-frameloop.mjs
+var frameloopDriver = (update) => {
+  const passTimestamp = ({ timestamp }) => update(timestamp);
+  return {
+    start: () => frame.update(passTimestamp, true),
+    stop: () => cancelFrame(passTimestamp),
+    /**
+     * If we're processing this frame we can use the
+     * framelocked timestamp to keep things in sync.
+     */
+    now: () => frameData.isProcessing ? frameData.timestamp : performance.now()
+  };
+};
+
+// node_modules/framer-motion/dist/es/animation/generators/utils/calc-duration.mjs
+var maxGeneratorDuration = 2e4;
+function calcGeneratorDuration(generator) {
+  let duration = 0;
+  const timeStep = 50;
+  let state = generator.next(duration);
+  while (!state.done && duration < maxGeneratorDuration) {
+    duration += timeStep;
+    state = generator.next(duration);
+  }
+  return duration >= maxGeneratorDuration ? Infinity : duration;
+}
+
+// node_modules/framer-motion/dist/es/animation/animators/js/index.mjs
+var types = {
+  decay: inertia,
+  inertia,
+  tween: keyframes,
+  keyframes,
+  spring
+};
+function animateValue({ autoplay = true, delay: delay2 = 0, driver = frameloopDriver, keyframes: keyframes$1, type = "keyframes", repeat = 0, repeatDelay = 0, repeatType = "loop", onPlay, onStop, onComplete, onUpdate, ...options }) {
+  let speed = 1;
+  let hasStopped = false;
+  let resolveFinishedPromise;
+  let currentFinishedPromise;
+  const updateFinishedPromise = () => {
+    currentFinishedPromise = new Promise((resolve) => {
+      resolveFinishedPromise = resolve;
+    });
+  };
+  updateFinishedPromise();
+  let animationDriver;
+  const generatorFactory = types[type] || keyframes;
+  let mapNumbersToKeyframes;
+  if (generatorFactory !== keyframes && typeof keyframes$1[0] !== "number") {
+    if (true) {
+      invariant(keyframes$1.length === 2, `Only two keyframes currently supported with spring and inertia animations. Trying to animate ${keyframes$1}`);
+    }
+    mapNumbersToKeyframes = interpolate([0, 100], keyframes$1, {
+      clamp: false
+    });
+    keyframes$1 = [0, 100];
+  }
+  const generator = generatorFactory({ ...options, keyframes: keyframes$1 });
+  let mirroredGenerator;
+  if (repeatType === "mirror") {
+    mirroredGenerator = generatorFactory({
+      ...options,
+      keyframes: [...keyframes$1].reverse(),
+      velocity: -(options.velocity || 0)
+    });
+  }
+  let playState = "idle";
+  let holdTime = null;
+  let startTime = null;
+  let cancelTime = null;
+  if (generator.calculatedDuration === null && repeat) {
+    generator.calculatedDuration = calcGeneratorDuration(generator);
+  }
+  const { calculatedDuration } = generator;
+  let resolvedDuration = Infinity;
+  let totalDuration = Infinity;
+  if (calculatedDuration !== null) {
+    resolvedDuration = calculatedDuration + repeatDelay;
+    totalDuration = resolvedDuration * (repeat + 1) - repeatDelay;
+  }
+  let currentTime = 0;
+  const tick = (timestamp) => {
+    if (startTime === null)
+      return;
+    if (speed > 0)
+      startTime = Math.min(startTime, timestamp);
+    if (speed < 0)
+      startTime = Math.min(timestamp - totalDuration / speed, startTime);
+    if (holdTime !== null) {
+      currentTime = holdTime;
+    } else {
+      currentTime = Math.round(timestamp - startTime) * speed;
+    }
+    const timeWithoutDelay = currentTime - delay2 * (speed >= 0 ? 1 : -1);
+    const isInDelayPhase = speed >= 0 ? timeWithoutDelay < 0 : timeWithoutDelay > totalDuration;
+    currentTime = Math.max(timeWithoutDelay, 0);
+    if (playState === "finished" && holdTime === null) {
+      currentTime = totalDuration;
+    }
+    let elapsed = currentTime;
+    let frameGenerator = generator;
+    if (repeat) {
+      const progress2 = Math.min(currentTime, totalDuration) / resolvedDuration;
+      let currentIteration = Math.floor(progress2);
+      let iterationProgress = progress2 % 1;
+      if (!iterationProgress && progress2 >= 1) {
+        iterationProgress = 1;
+      }
+      iterationProgress === 1 && currentIteration--;
+      currentIteration = Math.min(currentIteration, repeat + 1);
+      const isOddIteration = Boolean(currentIteration % 2);
+      if (isOddIteration) {
+        if (repeatType === "reverse") {
+          iterationProgress = 1 - iterationProgress;
+          if (repeatDelay) {
+            iterationProgress -= repeatDelay / resolvedDuration;
+          }
+        } else if (repeatType === "mirror") {
+          frameGenerator = mirroredGenerator;
+        }
+      }
+      elapsed = clamp(0, 1, iterationProgress) * resolvedDuration;
+    }
+    const state = isInDelayPhase ? { done: false, value: keyframes$1[0] } : frameGenerator.next(elapsed);
+    if (mapNumbersToKeyframes) {
+      state.value = mapNumbersToKeyframes(state.value);
+    }
+    let { done } = state;
+    if (!isInDelayPhase && calculatedDuration !== null) {
+      done = speed >= 0 ? currentTime >= totalDuration : currentTime <= 0;
+    }
+    const isAnimationFinished = holdTime === null && (playState === "finished" || playState === "running" && done);
+    if (onUpdate) {
+      onUpdate(state.value);
+    }
+    if (isAnimationFinished) {
+      finish();
+    }
+    return state;
+  };
+  const stopAnimationDriver = () => {
+    animationDriver && animationDriver.stop();
+    animationDriver = void 0;
+  };
+  const cancel = () => {
+    playState = "idle";
+    stopAnimationDriver();
+    resolveFinishedPromise();
+    updateFinishedPromise();
+    startTime = cancelTime = null;
+  };
+  const finish = () => {
+    playState = "finished";
+    onComplete && onComplete();
+    stopAnimationDriver();
+    resolveFinishedPromise();
+  };
+  const play = () => {
+    if (hasStopped)
+      return;
+    if (!animationDriver)
+      animationDriver = driver(tick);
+    const now = animationDriver.now();
+    onPlay && onPlay();
+    if (holdTime !== null) {
+      startTime = now - holdTime;
+    } else if (!startTime || playState === "finished") {
+      startTime = now;
+    }
+    if (playState === "finished") {
+      updateFinishedPromise();
+    }
+    cancelTime = startTime;
+    holdTime = null;
+    playState = "running";
+    animationDriver.start();
+  };
+  if (autoplay) {
+    play();
+  }
+  const controls = {
+    then(resolve, reject) {
+      return currentFinishedPromise.then(resolve, reject);
+    },
+    get time() {
+      return millisecondsToSeconds(currentTime);
+    },
+    set time(newTime) {
+      newTime = secondsToMilliseconds(newTime);
+      currentTime = newTime;
+      if (holdTime !== null || !animationDriver || speed === 0) {
+        holdTime = newTime;
+      } else {
+        startTime = animationDriver.now() - newTime / speed;
+      }
+    },
+    get duration() {
+      const duration = generator.calculatedDuration === null ? calcGeneratorDuration(generator) : generator.calculatedDuration;
+      return millisecondsToSeconds(duration);
+    },
+    get speed() {
+      return speed;
+    },
+    set speed(newSpeed) {
+      if (newSpeed === speed || !animationDriver)
+        return;
+      speed = newSpeed;
+      controls.time = millisecondsToSeconds(currentTime);
+    },
+    get state() {
+      return playState;
+    },
+    play,
+    pause: () => {
+      playState = "paused";
+      holdTime = currentTime;
+    },
+    stop: () => {
+      hasStopped = true;
+      if (playState === "idle")
+        return;
+      playState = "idle";
+      onStop && onStop();
+      cancel();
+    },
+    cancel: () => {
+      if (cancelTime !== null)
+        tick(cancelTime);
+      cancel();
+    },
+    complete: () => {
+      playState = "finished";
+    },
+    sample: (elapsed) => {
+      startTime = 0;
+      return tick(elapsed);
+    }
+  };
+  return controls;
+}
+
+// node_modules/framer-motion/dist/es/utils/memo.mjs
+function memo(callback) {
+  let result;
+  return () => {
+    if (result === void 0)
+      result = callback();
+    return result;
+  };
+}
+
+// node_modules/framer-motion/dist/es/animation/animators/waapi/create-accelerated-animation.mjs
+var supportsWaapi = memo(() => Object.hasOwnProperty.call(Element.prototype, "animate"));
+var acceleratedValues = /* @__PURE__ */ new Set([
+  "opacity",
+  "clipPath",
+  "filter",
+  "transform",
+  "backgroundColor"
+]);
+var sampleDelta = 10;
+var maxDuration2 = 2e4;
+var requiresPregeneratedKeyframes = (valueName, options) => options.type === "spring" || valueName === "backgroundColor" || !isWaapiSupportedEasing(options.ease);
+function createAcceleratedAnimation(value, valueName, { onUpdate, onComplete, ...options }) {
+  const canAccelerateAnimation = supportsWaapi() && acceleratedValues.has(valueName) && !options.repeatDelay && options.repeatType !== "mirror" && options.damping !== 0 && options.type !== "inertia";
+  if (!canAccelerateAnimation)
+    return false;
+  let hasStopped = false;
+  let resolveFinishedPromise;
+  let currentFinishedPromise;
+  let pendingCancel = false;
+  const updateFinishedPromise = () => {
+    currentFinishedPromise = new Promise((resolve) => {
+      resolveFinishedPromise = resolve;
+    });
+  };
+  updateFinishedPromise();
+  let { keyframes: keyframes2, duration = 300, ease: ease2, times } = options;
+  if (requiresPregeneratedKeyframes(valueName, options)) {
+    const sampleAnimation = animateValue({
+      ...options,
+      repeat: 0,
+      delay: 0
+    });
+    let state = { done: false, value: keyframes2[0] };
+    const pregeneratedKeyframes = [];
+    let t = 0;
+    while (!state.done && t < maxDuration2) {
+      state = sampleAnimation.sample(t);
+      pregeneratedKeyframes.push(state.value);
+      t += sampleDelta;
+    }
+    times = void 0;
+    keyframes2 = pregeneratedKeyframes;
+    duration = t - sampleDelta;
+    ease2 = "linear";
+  }
+  const animation = animateStyle(value.owner.current, valueName, keyframes2, {
+    ...options,
+    duration,
+    /**
+     * This function is currently not called if ease is provided
+     * as a function so the cast is safe.
+     *
+     * However it would be possible for a future refinement to port
+     * in easing pregeneration from Motion One for browsers that
+     * support the upcoming `linear()` easing function.
+     */
+    ease: ease2,
+    times
+  });
+  const cancelAnimation = () => {
+    pendingCancel = false;
+    animation.cancel();
+  };
+  const safeCancel = () => {
+    pendingCancel = true;
+    frame.update(cancelAnimation);
+    resolveFinishedPromise();
+    updateFinishedPromise();
+  };
+  animation.onfinish = () => {
+    if (pendingCancel)
+      return;
+    value.set(getFinalKeyframe(keyframes2, options));
+    onComplete && onComplete();
+    safeCancel();
+  };
+  const controls = {
+    then(resolve, reject) {
+      return currentFinishedPromise.then(resolve, reject);
+    },
+    attachTimeline(timeline) {
+      animation.timeline = timeline;
+      animation.onfinish = null;
+      return noop;
+    },
+    get time() {
+      return millisecondsToSeconds(animation.currentTime || 0);
+    },
+    set time(newTime) {
+      animation.currentTime = secondsToMilliseconds(newTime);
+    },
+    get speed() {
+      return animation.playbackRate;
+    },
+    set speed(newSpeed) {
+      animation.playbackRate = newSpeed;
+    },
+    get duration() {
+      return millisecondsToSeconds(duration);
+    },
+    play: () => {
+      if (hasStopped)
+        return;
+      animation.play();
+      cancelFrame(cancelAnimation);
+    },
+    pause: () => animation.pause(),
+    stop: () => {
+      hasStopped = true;
+      if (animation.playState === "idle")
+        return;
+      const { currentTime } = animation;
+      if (currentTime) {
+        const sampleAnimation = animateValue({
+          ...options,
+          autoplay: false
+        });
+        value.setWithVelocity(sampleAnimation.sample(currentTime - sampleDelta).value, sampleAnimation.sample(currentTime).value, sampleDelta);
+      }
+      safeCancel();
+    },
+    complete: () => {
+      if (pendingCancel)
+        return;
+      animation.finish();
+    },
+    cancel: safeCancel
+  };
+  return controls;
+}
+
+// node_modules/framer-motion/dist/es/animation/animators/instant.mjs
+function createInstantAnimation({ keyframes: keyframes2, delay: delay2, onUpdate, onComplete }) {
+  const setValue = () => {
+    onUpdate && onUpdate(keyframes2[keyframes2.length - 1]);
+    onComplete && onComplete();
+    return {
+      time: 0,
+      speed: 1,
+      duration: 0,
+      play: noop,
+      pause: noop,
+      stop: noop,
+      then: (resolve) => {
+        resolve();
+        return Promise.resolve();
+      },
+      cancel: noop,
+      complete: noop
+    };
+  };
+  return delay2 ? animateValue({
+    keyframes: [0, 1],
+    duration: 0,
+    delay: delay2,
+    onComplete: setValue
+  }) : setValue();
+}
+
+// node_modules/framer-motion/dist/es/animation/utils/default-transitions.mjs
+var underDampedSpring = {
+  type: "spring",
+  stiffness: 500,
+  damping: 25,
+  restSpeed: 10
+};
+var criticallyDampedSpring = (target) => ({
+  type: "spring",
+  stiffness: 550,
+  damping: target === 0 ? 2 * Math.sqrt(550) : 30,
+  restSpeed: 10
+});
+var keyframesTransition = {
+  type: "keyframes",
+  duration: 0.8
+};
+var ease = {
+  type: "keyframes",
+  ease: [0.25, 0.1, 0.35, 1],
+  duration: 0.3
+};
+var getDefaultTransition = (valueKey, { keyframes: keyframes2 }) => {
+  if (keyframes2.length > 2) {
+    return keyframesTransition;
+  } else if (transformProps.has(valueKey)) {
+    return valueKey.startsWith("scale") ? criticallyDampedSpring(keyframes2[1]) : underDampedSpring;
+  }
+  return ease;
+};
+
+// node_modules/framer-motion/dist/es/animation/utils/is-animatable.mjs
+var isAnimatable = (key, value) => {
+  if (key === "zIndex")
+    return false;
+  if (typeof value === "number" || Array.isArray(value))
+    return true;
+  if (typeof value === "string" && // It's animatable if we have a string
+  (complex.test(value) || value === "0") && // And it contains numbers and/or colors
+  !value.startsWith("url(")) {
+    return true;
+  }
+  return false;
+};
+
+// node_modules/framer-motion/dist/es/value/types/complex/filter.mjs
+var maxDefaults = /* @__PURE__ */ new Set(["brightness", "contrast", "saturate", "opacity"]);
+function applyDefaultFilter(v) {
+  const [name, value] = v.slice(0, -1).split("(");
+  if (name === "drop-shadow")
+    return v;
+  const [number2] = value.match(floatRegex) || [];
+  if (!number2)
+    return v;
+  const unit = value.replace(number2, "");
+  let defaultValue = maxDefaults.has(name) ? 1 : 0;
+  if (number2 !== value)
+    defaultValue *= 100;
+  return name + "(" + defaultValue + unit + ")";
+}
+var functionRegex = /([a-z-]*)\(.*?\)/g;
+var filter = {
+  ...complex,
+  getAnimatableNone: (v) => {
+    const functions = v.match(functionRegex);
+    return functions ? functions.map(applyDefaultFilter).join(" ") : v;
+  }
+};
+
+// node_modules/framer-motion/dist/es/render/dom/value-types/defaults.mjs
+var defaultValueTypes = {
+  ...numberValueTypes,
+  // Color props
+  color,
+  backgroundColor: color,
+  outlineColor: color,
+  fill: color,
+  stroke: color,
+  // Border props
+  borderColor: color,
+  borderTopColor: color,
+  borderRightColor: color,
+  borderBottomColor: color,
+  borderLeftColor: color,
+  filter,
+  WebkitFilter: filter
+};
+var getDefaultValueType = (key) => defaultValueTypes[key];
+
+// node_modules/framer-motion/dist/es/render/dom/value-types/animatable-none.mjs
+function getAnimatableNone2(key, value) {
+  let defaultValueType = getDefaultValueType(key);
+  if (defaultValueType !== filter)
+    defaultValueType = complex;
+  return defaultValueType.getAnimatableNone ? defaultValueType.getAnimatableNone(value) : void 0;
+}
+
+// node_modules/framer-motion/dist/es/utils/is-zero-value-string.mjs
+var isZeroValueString = (v) => /^0[^.\s]+$/.test(v);
+
+// node_modules/framer-motion/dist/es/animation/utils/is-none.mjs
+function isNone(value) {
+  if (typeof value === "number") {
+    return value === 0;
+  } else if (value !== null) {
+    return value === "none" || value === "0" || isZeroValueString(value);
+  }
+}
+
+// node_modules/framer-motion/dist/es/animation/utils/keyframes.mjs
+function getKeyframes(value, valueName, target, transition) {
+  const isTargetAnimatable = isAnimatable(valueName, target);
+  let keyframes2;
+  if (Array.isArray(target)) {
+    keyframes2 = [...target];
+  } else {
+    keyframes2 = [null, target];
+  }
+  const defaultOrigin = transition.from !== void 0 ? transition.from : value.get();
+  let animatableTemplateValue = void 0;
+  const noneKeyframeIndexes = [];
+  for (let i = 0; i < keyframes2.length; i++) {
+    if (keyframes2[i] === null) {
+      keyframes2[i] = i === 0 ? defaultOrigin : keyframes2[i - 1];
+    }
+    if (isNone(keyframes2[i])) {
+      noneKeyframeIndexes.push(i);
+    }
+    if (typeof keyframes2[i] === "string" && keyframes2[i] !== "none" && keyframes2[i] !== "0") {
+      animatableTemplateValue = keyframes2[i];
+    }
+  }
+  if (isTargetAnimatable && noneKeyframeIndexes.length && animatableTemplateValue) {
+    for (let i = 0; i < noneKeyframeIndexes.length; i++) {
+      const index = noneKeyframeIndexes[i];
+      keyframes2[index] = getAnimatableNone2(valueName, animatableTemplateValue);
+    }
+  }
+  return keyframes2;
+}
+
+// node_modules/framer-motion/dist/es/animation/utils/transitions.mjs
+function isTransitionDefined({ when, delay: _delay, delayChildren, staggerChildren, staggerDirection, repeat, repeatType, repeatDelay, from, elapsed, ...transition }) {
+  return !!Object.keys(transition).length;
+}
+function getValueTransition(transition, key) {
+  return transition[key] || transition["default"] || transition;
+}
+
+// node_modules/framer-motion/dist/es/utils/GlobalConfig.mjs
+var MotionGlobalConfig = {
+  skipAnimations: false
+};
+
+// node_modules/framer-motion/dist/es/animation/interfaces/motion-value.mjs
+var animateMotionValue = (valueName, value, target, transition = {}) => {
+  return (onComplete) => {
+    const valueTransition = getValueTransition(transition, valueName) || {};
+    const delay2 = valueTransition.delay || transition.delay || 0;
+    let { elapsed = 0 } = transition;
+    elapsed = elapsed - secondsToMilliseconds(delay2);
+    const keyframes2 = getKeyframes(value, valueName, target, valueTransition);
+    const originKeyframe = keyframes2[0];
+    const targetKeyframe = keyframes2[keyframes2.length - 1];
+    const isOriginAnimatable = isAnimatable(valueName, originKeyframe);
+    const isTargetAnimatable = isAnimatable(valueName, targetKeyframe);
+    warning(isOriginAnimatable === isTargetAnimatable, `You are trying to animate ${valueName} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`);
+    let options = {
+      keyframes: keyframes2,
+      velocity: value.getVelocity(),
+      ease: "easeOut",
+      ...valueTransition,
+      delay: -elapsed,
+      onUpdate: (v) => {
+        value.set(v);
+        valueTransition.onUpdate && valueTransition.onUpdate(v);
+      },
+      onComplete: () => {
+        onComplete();
+        valueTransition.onComplete && valueTransition.onComplete();
+      }
+    };
+    if (!isTransitionDefined(valueTransition)) {
+      options = {
+        ...options,
+        ...getDefaultTransition(valueName, options)
+      };
+    }
+    if (options.duration) {
+      options.duration = secondsToMilliseconds(options.duration);
+    }
+    if (options.repeatDelay) {
+      options.repeatDelay = secondsToMilliseconds(options.repeatDelay);
+    }
+    if (!isOriginAnimatable || !isTargetAnimatable || instantAnimationState.current || valueTransition.type === false || MotionGlobalConfig.skipAnimations) {
+      return createInstantAnimation(instantAnimationState.current ? { ...options, delay: 0 } : options);
+    }
+    if (
+      /**
+       * If this is a handoff animation, the optimised animation will be running via
+       * WAAPI. Therefore, this animation must be JS to ensure it runs "under" the
+       * optimised animation.
+       */
+      !transition.isHandoff && value.owner && value.owner.current instanceof HTMLElement && /**
+       * If we're outputting values to onUpdate then we can't use WAAPI as there's
+       * no way to read the value from WAAPI every frame.
+       */
+      !value.owner.getProps().onUpdate
+    ) {
+      const acceleratedAnimation = createAcceleratedAnimation(value, valueName, options);
+      if (acceleratedAnimation)
+        return acceleratedAnimation;
+    }
+    return animateValue(options);
+  };
+};
+
+// node_modules/framer-motion/dist/es/value/use-will-change/is.mjs
+function isWillChangeMotionValue(value) {
+  return Boolean(isMotionValue(value) && value.add);
+}
+
+// node_modules/framer-motion/dist/es/utils/is-numerical-string.mjs
+var isNumericalString = (v) => /^\-?\d*\.?\d+$/.test(v);
+
+// node_modules/framer-motion/dist/es/utils/array.mjs
+function addUniqueItem(arr, item) {
+  if (arr.indexOf(item) === -1)
+    arr.push(item);
+}
+function removeItem(arr, item) {
+  const index = arr.indexOf(item);
+  if (index > -1)
+    arr.splice(index, 1);
+}
+
+// node_modules/framer-motion/dist/es/utils/subscription-manager.mjs
+var SubscriptionManager = class {
+  constructor() {
+    this.subscriptions = [];
+  }
+  add(handler) {
+    addUniqueItem(this.subscriptions, handler);
+    return () => removeItem(this.subscriptions, handler);
+  }
+  notify(a, b, c) {
+    const numSubscriptions = this.subscriptions.length;
+    if (!numSubscriptions)
+      return;
+    if (numSubscriptions === 1) {
+      this.subscriptions[0](a, b, c);
+    } else {
+      for (let i = 0; i < numSubscriptions; i++) {
+        const handler = this.subscriptions[i];
+        handler && handler(a, b, c);
+      }
+    }
+  }
+  getSize() {
+    return this.subscriptions.length;
+  }
+  clear() {
+    this.subscriptions.length = 0;
+  }
+};
+
+// node_modules/framer-motion/dist/es/utils/warn-once.mjs
+var warned = /* @__PURE__ */ new Set();
+function warnOnce(condition, message, element) {
+  if (condition || warned.has(message))
+    return;
+  console.warn(message);
+  if (element)
+    console.warn(element);
+  warned.add(message);
+}
+
+// node_modules/framer-motion/dist/es/value/index.mjs
+var isFloat = (value) => {
+  return !isNaN(parseFloat(value));
+};
+var collectMotionValues = {
+  current: void 0
+};
+var MotionValue = class {
+  /**
+   * @param init - The initiating value
+   * @param config - Optional configuration options
+   *
+   * -  `transformer`: A function to transform incoming values with.
+   *
+   * @internal
+   */
+  constructor(init, options = {}) {
+    this.version = "10.18.0";
+    this.timeDelta = 0;
+    this.lastUpdated = 0;
+    this.canTrackVelocity = false;
+    this.events = {};
+    this.updateAndNotify = (v, render = true) => {
+      this.prev = this.current;
+      this.current = v;
+      const { delta, timestamp } = frameData;
+      if (this.lastUpdated !== timestamp) {
+        this.timeDelta = delta;
+        this.lastUpdated = timestamp;
+        frame.postRender(this.scheduleVelocityCheck);
+      }
+      if (this.prev !== this.current && this.events.change) {
+        this.events.change.notify(this.current);
+      }
+      if (this.events.velocityChange) {
+        this.events.velocityChange.notify(this.getVelocity());
+      }
+      if (render && this.events.renderRequest) {
+        this.events.renderRequest.notify(this.current);
+      }
+    };
+    this.scheduleVelocityCheck = () => frame.postRender(this.velocityCheck);
+    this.velocityCheck = ({ timestamp }) => {
+      if (timestamp !== this.lastUpdated) {
+        this.prev = this.current;
+        if (this.events.velocityChange) {
+          this.events.velocityChange.notify(this.getVelocity());
+        }
+      }
+    };
+    this.hasAnimated = false;
+    this.prev = this.current = init;
+    this.canTrackVelocity = isFloat(this.current);
+    this.owner = options.owner;
+  }
+  /**
+   * Adds a function that will be notified when the `MotionValue` is updated.
+   *
+   * It returns a function that, when called, will cancel the subscription.
+   *
+   * When calling `onChange` inside a React component, it should be wrapped with the
+   * `useEffect` hook. As it returns an unsubscribe function, this should be returned
+   * from the `useEffect` function to ensure you don't add duplicate subscribers..
+   *
+   * ```jsx
+   * export const MyComponent = () => {
+   *   const x = useMotionValue(0)
+   *   const y = useMotionValue(0)
+   *   const opacity = useMotionValue(1)
+   *
+   *   useEffect(() => {
+   *     function updateOpacity() {
+   *       const maxXY = Math.max(x.get(), y.get())
+   *       const newOpacity = transform(maxXY, [0, 100], [1, 0])
+   *       opacity.set(newOpacity)
+   *     }
+   *
+   *     const unsubscribeX = x.on("change", updateOpacity)
+   *     const unsubscribeY = y.on("change", updateOpacity)
+   *
+   *     return () => {
+   *       unsubscribeX()
+   *       unsubscribeY()
+   *     }
+   *   }, [])
+   *
+   *   return <motion.div style={{ x }} />
+   * }
+   * ```
+   *
+   * @param subscriber - A function that receives the latest value.
+   * @returns A function that, when called, will cancel this subscription.
+   *
+   * @deprecated
+   */
+  onChange(subscription) {
+    if (true) {
+      warnOnce(false, `value.onChange(callback) is deprecated. Switch to value.on("change", callback).`);
+    }
+    return this.on("change", subscription);
+  }
+  on(eventName, callback) {
+    if (!this.events[eventName]) {
+      this.events[eventName] = new SubscriptionManager();
+    }
+    const unsubscribe = this.events[eventName].add(callback);
+    if (eventName === "change") {
+      return () => {
+        unsubscribe();
+        frame.read(() => {
+          if (!this.events.change.getSize()) {
+            this.stop();
+          }
+        });
+      };
+    }
+    return unsubscribe;
+  }
+  clearListeners() {
+    for (const eventManagers in this.events) {
+      this.events[eventManagers].clear();
+    }
+  }
+  /**
+   * Attaches a passive effect to the `MotionValue`.
+   *
+   * @internal
+   */
+  attach(passiveEffect, stopPassiveEffect) {
+    this.passiveEffect = passiveEffect;
+    this.stopPassiveEffect = stopPassiveEffect;
+  }
+  /**
+   * Sets the state of the `MotionValue`.
+   *
+   * @remarks
+   *
+   * ```jsx
+   * const x = useMotionValue(0)
+   * x.set(10)
+   * ```
+   *
+   * @param latest - Latest value to set.
+   * @param render - Whether to notify render subscribers. Defaults to `true`
+   *
+   * @public
+   */
+  set(v, render = true) {
+    if (!render || !this.passiveEffect) {
+      this.updateAndNotify(v, render);
+    } else {
+      this.passiveEffect(v, this.updateAndNotify);
+    }
+  }
+  setWithVelocity(prev, current, delta) {
+    this.set(current);
+    this.prev = prev;
+    this.timeDelta = delta;
+  }
+  /**
+   * Set the state of the `MotionValue`, stopping any active animations,
+   * effects, and resets velocity to `0`.
+   */
+  jump(v) {
+    this.updateAndNotify(v);
+    this.prev = v;
+    this.stop();
+    if (this.stopPassiveEffect)
+      this.stopPassiveEffect();
+  }
+  /**
+   * Returns the latest state of `MotionValue`
+   *
+   * @returns - The latest state of `MotionValue`
+   *
+   * @public
+   */
+  get() {
+    if (collectMotionValues.current) {
+      collectMotionValues.current.push(this);
+    }
+    return this.current;
+  }
+  /**
+   * @public
+   */
+  getPrevious() {
+    return this.prev;
+  }
+  /**
+   * Returns the latest velocity of `MotionValue`
+   *
+   * @returns - The latest velocity of `MotionValue`. Returns `0` if the state is non-numerical.
+   *
+   * @public
+   */
+  getVelocity() {
+    return this.canTrackVelocity ? (
+      // These casts could be avoided if parseFloat would be typed better
+      velocityPerSecond(parseFloat(this.current) - parseFloat(this.prev), this.timeDelta)
+    ) : 0;
+  }
+  /**
+   * Registers a new animation to control this `MotionValue`. Only one
+   * animation can drive a `MotionValue` at one time.
+   *
+   * ```jsx
+   * value.start()
+   * ```
+   *
+   * @param animation - A function that starts the provided animation
+   *
+   * @internal
+   */
+  start(startAnimation) {
+    this.stop();
+    return new Promise((resolve) => {
+      this.hasAnimated = true;
+      this.animation = startAnimation(resolve);
+      if (this.events.animationStart) {
+        this.events.animationStart.notify();
+      }
+    }).then(() => {
+      if (this.events.animationComplete) {
+        this.events.animationComplete.notify();
+      }
+      this.clearAnimation();
+    });
+  }
+  /**
+   * Stop the currently active animation.
+   *
+   * @public
+   */
+  stop() {
+    if (this.animation) {
+      this.animation.stop();
+      if (this.events.animationCancel) {
+        this.events.animationCancel.notify();
+      }
+    }
+    this.clearAnimation();
+  }
+  /**
+   * Returns `true` if this value is currently animating.
+   *
+   * @public
+   */
+  isAnimating() {
+    return !!this.animation;
+  }
+  clearAnimation() {
+    delete this.animation;
+  }
+  /**
+   * Destroy and clean up subscribers to this `MotionValue`.
+   *
+   * The `MotionValue` hooks like `useMotionValue` and `useTransform` automatically
+   * handle the lifecycle of the returned `MotionValue`, so this method is only necessary if you've manually
+   * created a `MotionValue` via the `motionValue` function.
+   *
+   * @public
+   */
+  destroy() {
+    this.clearListeners();
+    this.stop();
+    if (this.stopPassiveEffect) {
+      this.stopPassiveEffect();
+    }
+  }
+};
+function motionValue(init, options) {
+  return new MotionValue(init, options);
+}
+
+// node_modules/framer-motion/dist/es/render/dom/value-types/test.mjs
+var testValueType = (v) => (type) => type.test(v);
+
+// node_modules/framer-motion/dist/es/render/dom/value-types/type-auto.mjs
+var auto = {
+  test: (v) => v === "auto",
+  parse: (v) => v
+};
+
+// node_modules/framer-motion/dist/es/render/dom/value-types/dimensions.mjs
+var dimensionValueTypes = [number, px, percent, degrees, vw, vh, auto];
+var findDimensionValueType = (v) => dimensionValueTypes.find(testValueType(v));
+
+// node_modules/framer-motion/dist/es/render/dom/value-types/find.mjs
+var valueTypes = [...dimensionValueTypes, color, complex];
+var findValueType = (v) => valueTypes.find(testValueType(v));
+
+// node_modules/framer-motion/dist/es/render/utils/setters.mjs
+function setMotionValue(visualElement, key, value) {
+  if (visualElement.hasValue(key)) {
+    visualElement.getValue(key).set(value);
+  } else {
+    visualElement.addValue(key, motionValue(value));
+  }
+}
+function setTarget(visualElement, definition) {
+  const resolved = resolveVariant(visualElement, definition);
+  let { transitionEnd = {}, transition = {}, ...target } = resolved ? visualElement.makeTargetAnimatable(resolved, false) : {};
+  target = { ...target, ...transitionEnd };
+  for (const key in target) {
+    const value = resolveFinalValueInKeyframes(target[key]);
+    setMotionValue(visualElement, key, value);
+  }
+}
+function checkTargetForNewValues(visualElement, target, origin) {
+  var _a, _b;
+  const newValueKeys = Object.keys(target).filter((key) => !visualElement.hasValue(key));
+  const numNewValues = newValueKeys.length;
+  if (!numNewValues)
+    return;
+  for (let i = 0; i < numNewValues; i++) {
+    const key = newValueKeys[i];
+    const targetValue = target[key];
+    let value = null;
+    if (Array.isArray(targetValue)) {
+      value = targetValue[0];
+    }
+    if (value === null) {
+      value = (_b = (_a = origin[key]) !== null && _a !== void 0 ? _a : visualElement.readValue(key)) !== null && _b !== void 0 ? _b : target[key];
+    }
+    if (value === void 0 || value === null)
+      continue;
+    if (typeof value === "string" && (isNumericalString(value) || isZeroValueString(value))) {
+      value = parseFloat(value);
+    } else if (!findValueType(value) && complex.test(targetValue)) {
+      value = getAnimatableNone2(key, targetValue);
+    }
+    visualElement.addValue(key, motionValue(value, { owner: visualElement }));
+    if (origin[key] === void 0) {
+      origin[key] = value;
+    }
+    if (value !== null)
+      visualElement.setBaseTarget(key, value);
+  }
+}
+function getOriginFromTransition(key, transition) {
+  if (!transition)
+    return;
+  const valueTransition = transition[key] || transition["default"] || transition;
+  return valueTransition.from;
+}
+function getOrigin(target, transition, visualElement) {
+  const origin = {};
+  for (const key in target) {
+    const transitionOrigin = getOriginFromTransition(key, transition);
+    if (transitionOrigin !== void 0) {
+      origin[key] = transitionOrigin;
+    } else {
+      const value = visualElement.getValue(key);
+      if (value) {
+        origin[key] = value.get();
+      }
+    }
+  }
+  return origin;
+}
+
+// node_modules/framer-motion/dist/es/animation/interfaces/visual-element-target.mjs
+function shouldBlockAnimation({ protectedKeys, needsAnimating }, key) {
+  const shouldBlock = protectedKeys.hasOwnProperty(key) && needsAnimating[key] !== true;
+  needsAnimating[key] = false;
+  return shouldBlock;
+}
+function hasKeyframesChanged(value, target) {
+  const current = value.get();
+  if (Array.isArray(target)) {
+    for (let i = 0; i < target.length; i++) {
+      if (target[i] !== current)
+        return true;
+    }
+  } else {
+    return current !== target;
+  }
+}
+function animateTarget(visualElement, definition, { delay: delay2 = 0, transitionOverride, type } = {}) {
+  let { transition = visualElement.getDefaultTransition(), transitionEnd, ...target } = visualElement.makeTargetAnimatable(definition);
+  const willChange = visualElement.getValue("willChange");
+  if (transitionOverride)
+    transition = transitionOverride;
+  const animations2 = [];
+  const animationTypeState = type && visualElement.animationState && visualElement.animationState.getState()[type];
+  for (const key in target) {
+    const value = visualElement.getValue(key);
+    const valueTarget = target[key];
+    if (!value || valueTarget === void 0 || animationTypeState && shouldBlockAnimation(animationTypeState, key)) {
+      continue;
+    }
+    const valueTransition = {
+      delay: delay2,
+      elapsed: 0,
+      ...getValueTransition(transition || {}, key)
+    };
+    if (window.HandoffAppearAnimations) {
+      const appearId = visualElement.getProps()[optimizedAppearDataAttribute];
+      if (appearId) {
+        const elapsed = window.HandoffAppearAnimations(appearId, key, value, frame);
+        if (elapsed !== null) {
+          valueTransition.elapsed = elapsed;
+          valueTransition.isHandoff = true;
+        }
+      }
+    }
+    let canSkip = !valueTransition.isHandoff && !hasKeyframesChanged(value, valueTarget);
+    if (valueTransition.type === "spring" && (value.getVelocity() || valueTransition.velocity)) {
+      canSkip = false;
+    }
+    if (value.animation) {
+      canSkip = false;
+    }
+    if (canSkip)
+      continue;
+    value.start(animateMotionValue(key, value, valueTarget, visualElement.shouldReduceMotion && transformProps.has(key) ? { type: false } : valueTransition));
+    const animation = value.animation;
+    if (isWillChangeMotionValue(willChange)) {
+      willChange.add(key);
+      animation.then(() => willChange.remove(key));
+    }
+    animations2.push(animation);
+  }
+  if (transitionEnd) {
+    Promise.all(animations2).then(() => {
+      transitionEnd && setTarget(visualElement, transitionEnd);
+    });
+  }
+  return animations2;
+}
+
+// node_modules/framer-motion/dist/es/animation/interfaces/visual-element-variant.mjs
+function animateVariant(visualElement, variant, options = {}) {
+  const resolved = resolveVariant(visualElement, variant, options.custom);
+  let { transition = visualElement.getDefaultTransition() || {} } = resolved || {};
+  if (options.transitionOverride) {
+    transition = options.transitionOverride;
+  }
+  const getAnimation = resolved ? () => Promise.all(animateTarget(visualElement, resolved, options)) : () => Promise.resolve();
+  const getChildAnimations = visualElement.variantChildren && visualElement.variantChildren.size ? (forwardDelay = 0) => {
+    const { delayChildren = 0, staggerChildren, staggerDirection } = transition;
+    return animateChildren(visualElement, variant, delayChildren + forwardDelay, staggerChildren, staggerDirection, options);
+  } : () => Promise.resolve();
+  const { when } = transition;
+  if (when) {
+    const [first, last] = when === "beforeChildren" ? [getAnimation, getChildAnimations] : [getChildAnimations, getAnimation];
+    return first().then(() => last());
+  } else {
+    return Promise.all([getAnimation(), getChildAnimations(options.delay)]);
+  }
+}
+function animateChildren(visualElement, variant, delayChildren = 0, staggerChildren = 0, staggerDirection = 1, options) {
+  const animations2 = [];
+  const maxStaggerDuration = (visualElement.variantChildren.size - 1) * staggerChildren;
+  const generateStaggerDuration = staggerDirection === 1 ? (i = 0) => i * staggerChildren : (i = 0) => maxStaggerDuration - i * staggerChildren;
+  Array.from(visualElement.variantChildren).sort(sortByTreeOrder).forEach((child, i) => {
+    child.notify("AnimationStart", variant);
+    animations2.push(animateVariant(child, variant, {
+      ...options,
+      delay: delayChildren + generateStaggerDuration(i)
+    }).then(() => child.notify("AnimationComplete", variant)));
+  });
+  return Promise.all(animations2);
+}
+function sortByTreeOrder(a, b) {
+  return a.sortNodePosition(b);
+}
+
+// node_modules/framer-motion/dist/es/animation/interfaces/visual-element.mjs
+function animateVisualElement(visualElement, definition, options = {}) {
+  visualElement.notify("AnimationStart", definition);
+  let animation;
+  if (Array.isArray(definition)) {
+    const animations2 = definition.map((variant) => animateVariant(visualElement, variant, options));
+    animation = Promise.all(animations2);
+  } else if (typeof definition === "string") {
+    animation = animateVariant(visualElement, definition, options);
+  } else {
+    const resolvedDefinition = typeof definition === "function" ? resolveVariant(visualElement, definition, options.custom) : definition;
+    animation = Promise.all(animateTarget(visualElement, resolvedDefinition, options));
+  }
+  return animation.then(() => visualElement.notify("AnimationComplete", definition));
+}
+
+// node_modules/framer-motion/dist/es/render/utils/animation-state.mjs
+var reversePriorityOrder = [...variantPriorityOrder].reverse();
+var numAnimationTypes = variantPriorityOrder.length;
+function animateList(visualElement) {
+  return (animations2) => Promise.all(animations2.map(({ animation, options }) => animateVisualElement(visualElement, animation, options)));
+}
+function createAnimationState(visualElement) {
+  let animate = animateList(visualElement);
+  const state = createState();
+  let isInitialRender = true;
+  const buildResolvedTypeValues = (acc, definition) => {
+    const resolved = resolveVariant(visualElement, definition);
+    if (resolved) {
+      const { transition, transitionEnd, ...target } = resolved;
+      acc = { ...acc, ...target, ...transitionEnd };
+    }
+    return acc;
+  };
+  function setAnimateFunction(makeAnimator) {
+    animate = makeAnimator(visualElement);
+  }
+  function animateChanges(options, changedActiveType) {
+    const props = visualElement.getProps();
+    const context = visualElement.getVariantContext(true) || {};
+    const animations2 = [];
+    const removedKeys = /* @__PURE__ */ new Set();
+    let encounteredKeys = {};
+    let removedVariantIndex = Infinity;
+    for (let i = 0; i < numAnimationTypes; i++) {
+      const type = reversePriorityOrder[i];
+      const typeState = state[type];
+      const prop = props[type] !== void 0 ? props[type] : context[type];
+      const propIsVariant = isVariantLabel(prop);
+      const activeDelta = type === changedActiveType ? typeState.isActive : null;
+      if (activeDelta === false)
+        removedVariantIndex = i;
+      let isInherited = prop === context[type] && prop !== props[type] && propIsVariant;
+      if (isInherited && isInitialRender && visualElement.manuallyAnimateOnMount) {
+        isInherited = false;
+      }
+      typeState.protectedKeys = { ...encounteredKeys };
+      if (
+        // If it isn't active and hasn't *just* been set as inactive
+        !typeState.isActive && activeDelta === null || // If we didn't and don't have any defined prop for this animation type
+        !prop && !typeState.prevProp || // Or if the prop doesn't define an animation
+        isAnimationControls(prop) || typeof prop === "boolean"
+      ) {
+        continue;
+      }
+      const variantDidChange = checkVariantsDidChange(typeState.prevProp, prop);
+      let shouldAnimateType = variantDidChange || // If we're making this variant active, we want to always make it active
+      type === changedActiveType && typeState.isActive && !isInherited && propIsVariant || // If we removed a higher-priority variant (i is in reverse order)
+      i > removedVariantIndex && propIsVariant;
+      let handledRemovedValues = false;
+      const definitionList = Array.isArray(prop) ? prop : [prop];
+      let resolvedValues = definitionList.reduce(buildResolvedTypeValues, {});
+      if (activeDelta === false)
+        resolvedValues = {};
+      const { prevResolvedValues = {} } = typeState;
+      const allKeys = {
+        ...prevResolvedValues,
+        ...resolvedValues
+      };
+      const markToAnimate = (key) => {
+        shouldAnimateType = true;
+        if (removedKeys.has(key)) {
+          handledRemovedValues = true;
+          removedKeys.delete(key);
+        }
+        typeState.needsAnimating[key] = true;
+      };
+      for (const key in allKeys) {
+        const next = resolvedValues[key];
+        const prev = prevResolvedValues[key];
+        if (encounteredKeys.hasOwnProperty(key))
+          continue;
+        let valueHasChanged = false;
+        if (isKeyframesTarget(next) && isKeyframesTarget(prev)) {
+          valueHasChanged = !shallowCompare(next, prev);
+        } else {
+          valueHasChanged = next !== prev;
+        }
+        if (valueHasChanged) {
+          if (next !== void 0) {
+            markToAnimate(key);
+          } else {
+            removedKeys.add(key);
+          }
+        } else if (next !== void 0 && removedKeys.has(key)) {
+          markToAnimate(key);
+        } else {
+          typeState.protectedKeys[key] = true;
+        }
+      }
+      typeState.prevProp = prop;
+      typeState.prevResolvedValues = resolvedValues;
+      if (typeState.isActive) {
+        encounteredKeys = { ...encounteredKeys, ...resolvedValues };
+      }
+      if (isInitialRender && visualElement.blockInitialAnimation) {
+        shouldAnimateType = false;
+      }
+      if (shouldAnimateType && (!isInherited || handledRemovedValues)) {
+        animations2.push(...definitionList.map((animation) => ({
+          animation,
+          options: { type, ...options }
+        })));
+      }
+    }
+    if (removedKeys.size) {
+      const fallbackAnimation = {};
+      removedKeys.forEach((key) => {
+        const fallbackTarget = visualElement.getBaseTarget(key);
+        if (fallbackTarget !== void 0) {
+          fallbackAnimation[key] = fallbackTarget;
+        }
+      });
+      animations2.push({ animation: fallbackAnimation });
+    }
+    let shouldAnimate = Boolean(animations2.length);
+    if (isInitialRender && (props.initial === false || props.initial === props.animate) && !visualElement.manuallyAnimateOnMount) {
+      shouldAnimate = false;
+    }
+    isInitialRender = false;
+    return shouldAnimate ? animate(animations2) : Promise.resolve();
+  }
+  function setActive(type, isActive, options) {
+    var _a;
+    if (state[type].isActive === isActive)
+      return Promise.resolve();
+    (_a = visualElement.variantChildren) === null || _a === void 0 ? void 0 : _a.forEach((child) => {
+      var _a2;
+      return (_a2 = child.animationState) === null || _a2 === void 0 ? void 0 : _a2.setActive(type, isActive);
+    });
+    state[type].isActive = isActive;
+    const animations2 = animateChanges(options, type);
+    for (const key in state) {
+      state[key].protectedKeys = {};
+    }
+    return animations2;
+  }
+  return {
+    animateChanges,
+    setActive,
+    setAnimateFunction,
+    getState: () => state
+  };
+}
+function checkVariantsDidChange(prev, next) {
+  if (typeof next === "string") {
+    return next !== prev;
+  } else if (Array.isArray(next)) {
+    return !shallowCompare(next, prev);
+  }
+  return false;
+}
+function createTypeState(isActive = false) {
+  return {
+    isActive,
+    protectedKeys: {},
+    needsAnimating: {},
+    prevResolvedValues: {}
+  };
+}
+function createState() {
+  return {
+    animate: createTypeState(true),
+    whileInView: createTypeState(),
+    whileHover: createTypeState(),
+    whileTap: createTypeState(),
+    whileDrag: createTypeState(),
+    whileFocus: createTypeState(),
+    exit: createTypeState()
+  };
+}
+
+// node_modules/framer-motion/dist/es/motion/features/animation/index.mjs
+var AnimationFeature = class extends Feature {
+  /**
+   * We dynamically generate the AnimationState manager as it contains a reference
+   * to the underlying animation library. We only want to load that if we load this,
+   * so people can optionally code split it out using the `m` component.
+   */
+  constructor(node) {
+    super(node);
+    node.animationState || (node.animationState = createAnimationState(node));
+  }
+  updateAnimationControlsSubscription() {
+    const { animate } = this.node.getProps();
+    this.unmount();
+    if (isAnimationControls(animate)) {
+      this.unmount = animate.subscribe(this.node);
+    }
+  }
+  /**
+   * Subscribe any provided AnimationControls to the component's VisualElement
+   */
+  mount() {
+    this.updateAnimationControlsSubscription();
+  }
+  update() {
+    const { animate } = this.node.getProps();
+    const { animate: prevAnimate } = this.node.prevProps || {};
+    if (animate !== prevAnimate) {
+      this.updateAnimationControlsSubscription();
+    }
+  }
+  unmount() {
+  }
+};
+
+// node_modules/framer-motion/dist/es/motion/features/animation/exit.mjs
+var id = 0;
+var ExitAnimationFeature = class extends Feature {
+  constructor() {
+    super(...arguments);
+    this.id = id++;
+  }
+  update() {
+    if (!this.node.presenceContext)
+      return;
+    const { isPresent, onExitComplete, custom } = this.node.presenceContext;
+    const { isPresent: prevIsPresent } = this.node.prevPresenceContext || {};
+    if (!this.node.animationState || isPresent === prevIsPresent) {
+      return;
+    }
+    const exitAnimation = this.node.animationState.setActive("exit", !isPresent, { custom: custom !== null && custom !== void 0 ? custom : this.node.getProps().custom });
+    if (onExitComplete && !isPresent) {
+      exitAnimation.then(() => onExitComplete(this.id));
+    }
+  }
+  mount() {
+    const { register } = this.node.presenceContext || {};
+    if (register) {
+      this.unmount = register(this.id);
+    }
+  }
+  unmount() {
+  }
+};
+
+// node_modules/framer-motion/dist/es/motion/features/animations.mjs
+var animations = {
+  animation: {
+    Feature: AnimationFeature
+  },
+  exit: {
+    Feature: ExitAnimationFeature
+  }
+};
+
+// node_modules/framer-motion/dist/es/utils/distance.mjs
+var distance = (a, b) => Math.abs(a - b);
+function distance2D(a, b) {
+  const xDelta = distance(a.x, b.x);
+  const yDelta = distance(a.y, b.y);
+  return Math.sqrt(xDelta ** 2 + yDelta ** 2);
+}
+
+// node_modules/framer-motion/dist/es/gestures/pan/PanSession.mjs
+var PanSession = class {
+  constructor(event, handlers, { transformPagePoint, contextWindow, dragSnapToOrigin = false } = {}) {
+    this.startEvent = null;
+    this.lastMoveEvent = null;
+    this.lastMoveEventInfo = null;
+    this.handlers = {};
+    this.contextWindow = window;
+    this.updatePoint = () => {
+      if (!(this.lastMoveEvent && this.lastMoveEventInfo))
+        return;
+      const info2 = getPanInfo(this.lastMoveEventInfo, this.history);
+      const isPanStarted = this.startEvent !== null;
+      const isDistancePastThreshold = distance2D(info2.offset, { x: 0, y: 0 }) >= 3;
+      if (!isPanStarted && !isDistancePastThreshold)
+        return;
+      const { point: point2 } = info2;
+      const { timestamp: timestamp2 } = frameData;
+      this.history.push({ ...point2, timestamp: timestamp2 });
+      const { onStart, onMove } = this.handlers;
+      if (!isPanStarted) {
+        onStart && onStart(this.lastMoveEvent, info2);
+        this.startEvent = this.lastMoveEvent;
+      }
+      onMove && onMove(this.lastMoveEvent, info2);
+    };
+    this.handlePointerMove = (event2, info2) => {
+      this.lastMoveEvent = event2;
+      this.lastMoveEventInfo = transformPoint(info2, this.transformPagePoint);
+      frame.update(this.updatePoint, true);
+    };
+    this.handlePointerUp = (event2, info2) => {
+      this.end();
+      const { onEnd, onSessionEnd, resumeAnimation } = this.handlers;
+      if (this.dragSnapToOrigin)
+        resumeAnimation && resumeAnimation();
+      if (!(this.lastMoveEvent && this.lastMoveEventInfo))
+        return;
+      const panInfo = getPanInfo(event2.type === "pointercancel" ? this.lastMoveEventInfo : transformPoint(info2, this.transformPagePoint), this.history);
+      if (this.startEvent && onEnd) {
+        onEnd(event2, panInfo);
+      }
+      onSessionEnd && onSessionEnd(event2, panInfo);
+    };
+    if (!isPrimaryPointer(event))
+      return;
+    this.dragSnapToOrigin = dragSnapToOrigin;
+    this.handlers = handlers;
+    this.transformPagePoint = transformPagePoint;
+    this.contextWindow = contextWindow || window;
+    const info = extractEventInfo(event);
+    const initialInfo = transformPoint(info, this.transformPagePoint);
+    const { point } = initialInfo;
+    const { timestamp } = frameData;
+    this.history = [{ ...point, timestamp }];
+    const { onSessionStart } = handlers;
+    onSessionStart && onSessionStart(event, getPanInfo(initialInfo, this.history));
+    this.removeListeners = pipe(addPointerEvent(this.contextWindow, "pointermove", this.handlePointerMove), addPointerEvent(this.contextWindow, "pointerup", this.handlePointerUp), addPointerEvent(this.contextWindow, "pointercancel", this.handlePointerUp));
+  }
+  updateHandlers(handlers) {
+    this.handlers = handlers;
+  }
+  end() {
+    this.removeListeners && this.removeListeners();
+    cancelFrame(this.updatePoint);
+  }
+};
+function transformPoint(info, transformPagePoint) {
+  return transformPagePoint ? { point: transformPagePoint(info.point) } : info;
+}
+function subtractPoint(a, b) {
+  return { x: a.x - b.x, y: a.y - b.y };
+}
+function getPanInfo({ point }, history) {
+  return {
+    point,
+    delta: subtractPoint(point, lastDevicePoint(history)),
+    offset: subtractPoint(point, startDevicePoint(history)),
+    velocity: getVelocity2(history, 0.1)
+  };
+}
+function startDevicePoint(history) {
+  return history[0];
+}
+function lastDevicePoint(history) {
+  return history[history.length - 1];
+}
+function getVelocity2(history, timeDelta) {
+  if (history.length < 2) {
+    return { x: 0, y: 0 };
+  }
+  let i = history.length - 1;
+  let timestampedPoint = null;
+  const lastPoint = lastDevicePoint(history);
+  while (i >= 0) {
+    timestampedPoint = history[i];
+    if (lastPoint.timestamp - timestampedPoint.timestamp > secondsToMilliseconds(timeDelta)) {
+      break;
+    }
+    i--;
+  }
+  if (!timestampedPoint) {
+    return { x: 0, y: 0 };
+  }
+  const time = millisecondsToSeconds(lastPoint.timestamp - timestampedPoint.timestamp);
+  if (time === 0) {
+    return { x: 0, y: 0 };
+  }
+  const currentVelocity = {
+    x: (lastPoint.x - timestampedPoint.x) / time,
+    y: (lastPoint.y - timestampedPoint.y) / time
+  };
+  if (currentVelocity.x === Infinity) {
+    currentVelocity.x = 0;
+  }
+  if (currentVelocity.y === Infinity) {
+    currentVelocity.y = 0;
+  }
+  return currentVelocity;
+}
+
+// node_modules/framer-motion/dist/es/projection/geometry/delta-calc.mjs
+function calcLength(axis) {
+  return axis.max - axis.min;
+}
+function isNear(value, target = 0, maxDistance = 0.01) {
+  return Math.abs(value - target) <= maxDistance;
+}
+function calcAxisDelta(delta, source, target, origin = 0.5) {
+  delta.origin = origin;
+  delta.originPoint = mix(source.min, source.max, delta.origin);
+  delta.scale = calcLength(target) / calcLength(source);
+  if (isNear(delta.scale, 1, 1e-4) || isNaN(delta.scale))
+    delta.scale = 1;
+  delta.translate = mix(target.min, target.max, delta.origin) - delta.originPoint;
+  if (isNear(delta.translate) || isNaN(delta.translate))
+    delta.translate = 0;
+}
+function calcBoxDelta(delta, source, target, origin) {
+  calcAxisDelta(delta.x, source.x, target.x, origin ? origin.originX : void 0);
+  calcAxisDelta(delta.y, source.y, target.y, origin ? origin.originY : void 0);
+}
+function calcRelativeAxis(target, relative, parent) {
+  target.min = parent.min + relative.min;
+  target.max = target.min + calcLength(relative);
+}
+function calcRelativeBox(target, relative, parent) {
+  calcRelativeAxis(target.x, relative.x, parent.x);
+  calcRelativeAxis(target.y, relative.y, parent.y);
+}
+function calcRelativeAxisPosition(target, layout2, parent) {
+  target.min = layout2.min - parent.min;
+  target.max = target.min + calcLength(layout2);
+}
+function calcRelativePosition(target, layout2, parent) {
+  calcRelativeAxisPosition(target.x, layout2.x, parent.x);
+  calcRelativeAxisPosition(target.y, layout2.y, parent.y);
+}
+
+// node_modules/framer-motion/dist/es/gestures/drag/utils/constraints.mjs
+function applyConstraints(point, { min, max }, elastic) {
+  if (min !== void 0 && point < min) {
+    point = elastic ? mix(min, point, elastic.min) : Math.max(point, min);
+  } else if (max !== void 0 && point > max) {
+    point = elastic ? mix(max, point, elastic.max) : Math.min(point, max);
+  }
+  return point;
+}
+function calcRelativeAxisConstraints(axis, min, max) {
+  return {
+    min: min !== void 0 ? axis.min + min : void 0,
+    max: max !== void 0 ? axis.max + max - (axis.max - axis.min) : void 0
+  };
+}
+function calcRelativeConstraints(layoutBox, { top, left, bottom, right }) {
+  return {
+    x: calcRelativeAxisConstraints(layoutBox.x, left, right),
+    y: calcRelativeAxisConstraints(layoutBox.y, top, bottom)
+  };
+}
+function calcViewportAxisConstraints(layoutAxis, constraintsAxis) {
+  let min = constraintsAxis.min - layoutAxis.min;
+  let max = constraintsAxis.max - layoutAxis.max;
+  if (constraintsAxis.max - constraintsAxis.min < layoutAxis.max - layoutAxis.min) {
+    [min, max] = [max, min];
+  }
+  return { min, max };
+}
+function calcViewportConstraints(layoutBox, constraintsBox) {
+  return {
+    x: calcViewportAxisConstraints(layoutBox.x, constraintsBox.x),
+    y: calcViewportAxisConstraints(layoutBox.y, constraintsBox.y)
+  };
+}
+function calcOrigin2(source, target) {
+  let origin = 0.5;
+  const sourceLength = calcLength(source);
+  const targetLength = calcLength(target);
+  if (targetLength > sourceLength) {
+    origin = progress(target.min, target.max - sourceLength, source.min);
+  } else if (sourceLength > targetLength) {
+    origin = progress(source.min, source.max - targetLength, target.min);
+  }
+  return clamp(0, 1, origin);
+}
+function rebaseAxisConstraints(layout2, constraints) {
+  const relativeConstraints = {};
+  if (constraints.min !== void 0) {
+    relativeConstraints.min = constraints.min - layout2.min;
+  }
+  if (constraints.max !== void 0) {
+    relativeConstraints.max = constraints.max - layout2.min;
+  }
+  return relativeConstraints;
+}
+var defaultElastic = 0.35;
+function resolveDragElastic(dragElastic = defaultElastic) {
+  if (dragElastic === false) {
+    dragElastic = 0;
+  } else if (dragElastic === true) {
+    dragElastic = defaultElastic;
+  }
+  return {
+    x: resolveAxisElastic(dragElastic, "left", "right"),
+    y: resolveAxisElastic(dragElastic, "top", "bottom")
+  };
+}
+function resolveAxisElastic(dragElastic, minLabel, maxLabel) {
+  return {
+    min: resolvePointElastic(dragElastic, minLabel),
+    max: resolvePointElastic(dragElastic, maxLabel)
+  };
+}
+function resolvePointElastic(dragElastic, label) {
+  return typeof dragElastic === "number" ? dragElastic : dragElastic[label] || 0;
+}
+
+// node_modules/framer-motion/dist/es/projection/geometry/models.mjs
+var createAxisDelta = () => ({
+  translate: 0,
+  scale: 1,
+  origin: 0,
+  originPoint: 0
+});
+var createDelta = () => ({
+  x: createAxisDelta(),
+  y: createAxisDelta()
+});
+var createAxis = () => ({ min: 0, max: 0 });
+var createBox = () => ({
+  x: createAxis(),
+  y: createAxis()
+});
+
+// node_modules/framer-motion/dist/es/projection/utils/each-axis.mjs
+function eachAxis(callback) {
+  return [callback("x"), callback("y")];
+}
+
+// node_modules/framer-motion/dist/es/projection/geometry/conversion.mjs
+function convertBoundingBoxToBox({ top, left, right, bottom }) {
+  return {
+    x: { min: left, max: right },
+    y: { min: top, max: bottom }
+  };
+}
+function convertBoxToBoundingBox({ x, y }) {
+  return { top: y.min, right: x.max, bottom: y.max, left: x.min };
+}
+function transformBoxPoints(point, transformPoint2) {
+  if (!transformPoint2)
+    return point;
+  const topLeft = transformPoint2({ x: point.left, y: point.top });
+  const bottomRight = transformPoint2({ x: point.right, y: point.bottom });
+  return {
+    top: topLeft.y,
+    left: topLeft.x,
+    bottom: bottomRight.y,
+    right: bottomRight.x
+  };
+}
+
+// node_modules/framer-motion/dist/es/projection/utils/has-transform.mjs
+function isIdentityScale(scale2) {
+  return scale2 === void 0 || scale2 === 1;
+}
+function hasScale({ scale: scale2, scaleX, scaleY }) {
+  return !isIdentityScale(scale2) || !isIdentityScale(scaleX) || !isIdentityScale(scaleY);
+}
+function hasTransform(values) {
+  return hasScale(values) || has2DTranslate(values) || values.z || values.rotate || values.rotateX || values.rotateY;
+}
+function has2DTranslate(values) {
+  return is2DTranslate(values.x) || is2DTranslate(values.y);
+}
+function is2DTranslate(value) {
+  return value && value !== "0%";
+}
+
+// node_modules/framer-motion/dist/es/projection/geometry/delta-apply.mjs
+function scalePoint(point, scale2, originPoint) {
+  const distanceFromOrigin = point - originPoint;
+  const scaled = scale2 * distanceFromOrigin;
+  return originPoint + scaled;
+}
+function applyPointDelta(point, translate, scale2, originPoint, boxScale) {
+  if (boxScale !== void 0) {
+    point = scalePoint(point, boxScale, originPoint);
+  }
+  return scalePoint(point, scale2, originPoint) + translate;
+}
+function applyAxisDelta(axis, translate = 0, scale2 = 1, originPoint, boxScale) {
+  axis.min = applyPointDelta(axis.min, translate, scale2, originPoint, boxScale);
+  axis.max = applyPointDelta(axis.max, translate, scale2, originPoint, boxScale);
+}
+function applyBoxDelta(box, { x, y }) {
+  applyAxisDelta(box.x, x.translate, x.scale, x.originPoint);
+  applyAxisDelta(box.y, y.translate, y.scale, y.originPoint);
+}
+function applyTreeDeltas(box, treeScale, treePath, isSharedTransition = false) {
+  const treeLength = treePath.length;
+  if (!treeLength)
+    return;
+  treeScale.x = treeScale.y = 1;
+  let node;
+  let delta;
+  for (let i = 0; i < treeLength; i++) {
+    node = treePath[i];
+    delta = node.projectionDelta;
+    const instance = node.instance;
+    if (instance && instance.style && instance.style.display === "contents") {
+      continue;
+    }
+    if (isSharedTransition && node.options.layoutScroll && node.scroll && node !== node.root) {
+      transformBox(box, {
+        x: -node.scroll.offset.x,
+        y: -node.scroll.offset.y
+      });
+    }
+    if (delta) {
+      treeScale.x *= delta.x.scale;
+      treeScale.y *= delta.y.scale;
+      applyBoxDelta(box, delta);
+    }
+    if (isSharedTransition && hasTransform(node.latestValues)) {
+      transformBox(box, node.latestValues);
+    }
+  }
+  treeScale.x = snapToDefault(treeScale.x);
+  treeScale.y = snapToDefault(treeScale.y);
+}
+function snapToDefault(scale2) {
+  if (Number.isInteger(scale2))
+    return scale2;
+  return scale2 > 1.0000000000001 || scale2 < 0.999999999999 ? scale2 : 1;
+}
+function translateAxis(axis, distance2) {
+  axis.min = axis.min + distance2;
+  axis.max = axis.max + distance2;
+}
+function transformAxis(axis, transforms, [key, scaleKey, originKey]) {
+  const axisOrigin = transforms[originKey] !== void 0 ? transforms[originKey] : 0.5;
+  const originPoint = mix(axis.min, axis.max, axisOrigin);
+  applyAxisDelta(axis, transforms[key], transforms[scaleKey], originPoint, transforms.scale);
+}
+var xKeys = ["x", "scaleX", "originX"];
+var yKeys = ["y", "scaleY", "originY"];
+function transformBox(box, transform) {
+  transformAxis(box.x, transform, xKeys);
+  transformAxis(box.y, transform, yKeys);
+}
+
+// node_modules/framer-motion/dist/es/projection/utils/measure.mjs
+function measureViewportBox(instance, transformPoint2) {
+  return convertBoundingBoxToBox(transformBoxPoints(instance.getBoundingClientRect(), transformPoint2));
+}
+function measurePageBox(element, rootProjectionNode2, transformPagePoint) {
+  const viewportBox = measureViewportBox(element, transformPagePoint);
+  const { scroll } = rootProjectionNode2;
+  if (scroll) {
+    translateAxis(viewportBox.x, scroll.offset.x);
+    translateAxis(viewportBox.y, scroll.offset.y);
+  }
+  return viewportBox;
+}
+
+// node_modules/framer-motion/dist/es/utils/get-context-window.mjs
+var getContextWindow = ({ current }) => {
+  return current ? current.ownerDocument.defaultView : null;
+};
+
+// node_modules/framer-motion/dist/es/gestures/drag/VisualElementDragControls.mjs
+var elementDragControls = /* @__PURE__ */ new WeakMap();
+var VisualElementDragControls = class {
+  constructor(visualElement) {
+    this.openGlobalLock = null;
+    this.isDragging = false;
+    this.currentDirection = null;
+    this.originPoint = { x: 0, y: 0 };
+    this.constraints = false;
+    this.hasMutatedConstraints = false;
+    this.elastic = createBox();
+    this.visualElement = visualElement;
+  }
+  start(originEvent, { snapToCursor = false } = {}) {
+    const { presenceContext } = this.visualElement;
+    if (presenceContext && presenceContext.isPresent === false)
+      return;
+    const onSessionStart = (event) => {
+      const { dragSnapToOrigin: dragSnapToOrigin2 } = this.getProps();
+      dragSnapToOrigin2 ? this.pauseAnimation() : this.stopAnimation();
+      if (snapToCursor) {
+        this.snapToCursor(extractEventInfo(event, "page").point);
+      }
+    };
+    const onStart = (event, info) => {
+      const { drag: drag2, dragPropagation, onDragStart } = this.getProps();
+      if (drag2 && !dragPropagation) {
+        if (this.openGlobalLock)
+          this.openGlobalLock();
+        this.openGlobalLock = getGlobalLock(drag2);
+        if (!this.openGlobalLock)
+          return;
+      }
+      this.isDragging = true;
+      this.currentDirection = null;
+      this.resolveConstraints();
+      if (this.visualElement.projection) {
+        this.visualElement.projection.isAnimationBlocked = true;
+        this.visualElement.projection.target = void 0;
+      }
+      eachAxis((axis) => {
+        let current = this.getAxisMotionValue(axis).get() || 0;
+        if (percent.test(current)) {
+          const { projection } = this.visualElement;
+          if (projection && projection.layout) {
+            const measuredAxis = projection.layout.layoutBox[axis];
+            if (measuredAxis) {
+              const length = calcLength(measuredAxis);
+              current = length * (parseFloat(current) / 100);
+            }
+          }
+        }
+        this.originPoint[axis] = current;
+      });
+      if (onDragStart) {
+        frame.update(() => onDragStart(event, info), false, true);
+      }
+      const { animationState } = this.visualElement;
+      animationState && animationState.setActive("whileDrag", true);
+    };
+    const onMove = (event, info) => {
+      const { dragPropagation, dragDirectionLock, onDirectionLock, onDrag } = this.getProps();
+      if (!dragPropagation && !this.openGlobalLock)
+        return;
+      const { offset } = info;
+      if (dragDirectionLock && this.currentDirection === null) {
+        this.currentDirection = getCurrentDirection(offset);
+        if (this.currentDirection !== null) {
+          onDirectionLock && onDirectionLock(this.currentDirection);
+        }
+        return;
+      }
+      this.updateAxis("x", info.point, offset);
+      this.updateAxis("y", info.point, offset);
+      this.visualElement.render();
+      onDrag && onDrag(event, info);
+    };
+    const onSessionEnd = (event, info) => this.stop(event, info);
+    const resumeAnimation = () => eachAxis((axis) => {
+      var _a;
+      return this.getAnimationState(axis) === "paused" && ((_a = this.getAxisMotionValue(axis).animation) === null || _a === void 0 ? void 0 : _a.play());
+    });
+    const { dragSnapToOrigin } = this.getProps();
+    this.panSession = new PanSession(originEvent, {
+      onSessionStart,
+      onStart,
+      onMove,
+      onSessionEnd,
+      resumeAnimation
+    }, {
+      transformPagePoint: this.visualElement.getTransformPagePoint(),
+      dragSnapToOrigin,
+      contextWindow: getContextWindow(this.visualElement)
+    });
+  }
+  stop(event, info) {
+    const isDragging = this.isDragging;
+    this.cancel();
+    if (!isDragging)
+      return;
+    const { velocity } = info;
+    this.startAnimation(velocity);
+    const { onDragEnd } = this.getProps();
+    if (onDragEnd) {
+      frame.update(() => onDragEnd(event, info));
+    }
+  }
+  cancel() {
+    this.isDragging = false;
+    const { projection, animationState } = this.visualElement;
+    if (projection) {
+      projection.isAnimationBlocked = false;
+    }
+    this.panSession && this.panSession.end();
+    this.panSession = void 0;
+    const { dragPropagation } = this.getProps();
+    if (!dragPropagation && this.openGlobalLock) {
+      this.openGlobalLock();
+      this.openGlobalLock = null;
+    }
+    animationState && animationState.setActive("whileDrag", false);
+  }
+  updateAxis(axis, _point, offset) {
+    const { drag: drag2 } = this.getProps();
+    if (!offset || !shouldDrag(axis, drag2, this.currentDirection))
+      return;
+    const axisValue = this.getAxisMotionValue(axis);
+    let next = this.originPoint[axis] + offset[axis];
+    if (this.constraints && this.constraints[axis]) {
+      next = applyConstraints(next, this.constraints[axis], this.elastic[axis]);
+    }
+    axisValue.set(next);
+  }
+  resolveConstraints() {
+    var _a;
+    const { dragConstraints, dragElastic } = this.getProps();
+    const layout2 = this.visualElement.projection && !this.visualElement.projection.layout ? this.visualElement.projection.measure(false) : (_a = this.visualElement.projection) === null || _a === void 0 ? void 0 : _a.layout;
+    const prevConstraints = this.constraints;
+    if (dragConstraints && isRefObject(dragConstraints)) {
+      if (!this.constraints) {
+        this.constraints = this.resolveRefConstraints();
+      }
+    } else {
+      if (dragConstraints && layout2) {
+        this.constraints = calcRelativeConstraints(layout2.layoutBox, dragConstraints);
+      } else {
+        this.constraints = false;
+      }
+    }
+    this.elastic = resolveDragElastic(dragElastic);
+    if (prevConstraints !== this.constraints && layout2 && this.constraints && !this.hasMutatedConstraints) {
+      eachAxis((axis) => {
+        if (this.getAxisMotionValue(axis)) {
+          this.constraints[axis] = rebaseAxisConstraints(layout2.layoutBox[axis], this.constraints[axis]);
+        }
+      });
+    }
+  }
+  resolveRefConstraints() {
+    const { dragConstraints: constraints, onMeasureDragConstraints } = this.getProps();
+    if (!constraints || !isRefObject(constraints))
+      return false;
+    const constraintsElement = constraints.current;
+    invariant(constraintsElement !== null, "If `dragConstraints` is set as a React ref, that ref must be passed to another component's `ref` prop.");
+    const { projection } = this.visualElement;
+    if (!projection || !projection.layout)
+      return false;
+    const constraintsBox = measurePageBox(constraintsElement, projection.root, this.visualElement.getTransformPagePoint());
+    let measuredConstraints = calcViewportConstraints(projection.layout.layoutBox, constraintsBox);
+    if (onMeasureDragConstraints) {
+      const userConstraints = onMeasureDragConstraints(convertBoxToBoundingBox(measuredConstraints));
+      this.hasMutatedConstraints = !!userConstraints;
+      if (userConstraints) {
+        measuredConstraints = convertBoundingBoxToBox(userConstraints);
+      }
+    }
+    return measuredConstraints;
+  }
+  startAnimation(velocity) {
+    const { drag: drag2, dragMomentum, dragElastic, dragTransition, dragSnapToOrigin, onDragTransitionEnd } = this.getProps();
+    const constraints = this.constraints || {};
+    const momentumAnimations = eachAxis((axis) => {
+      if (!shouldDrag(axis, drag2, this.currentDirection)) {
+        return;
+      }
+      let transition = constraints && constraints[axis] || {};
+      if (dragSnapToOrigin)
+        transition = { min: 0, max: 0 };
+      const bounceStiffness = dragElastic ? 200 : 1e6;
+      const bounceDamping = dragElastic ? 40 : 1e7;
+      const inertia2 = {
+        type: "inertia",
+        velocity: dragMomentum ? velocity[axis] : 0,
+        bounceStiffness,
+        bounceDamping,
+        timeConstant: 750,
+        restDelta: 1,
+        restSpeed: 10,
+        ...dragTransition,
+        ...transition
+      };
+      return this.startAxisValueAnimation(axis, inertia2);
+    });
+    return Promise.all(momentumAnimations).then(onDragTransitionEnd);
+  }
+  startAxisValueAnimation(axis, transition) {
+    const axisValue = this.getAxisMotionValue(axis);
+    return axisValue.start(animateMotionValue(axis, axisValue, 0, transition));
+  }
+  stopAnimation() {
+    eachAxis((axis) => this.getAxisMotionValue(axis).stop());
+  }
+  pauseAnimation() {
+    eachAxis((axis) => {
+      var _a;
+      return (_a = this.getAxisMotionValue(axis).animation) === null || _a === void 0 ? void 0 : _a.pause();
+    });
+  }
+  getAnimationState(axis) {
+    var _a;
+    return (_a = this.getAxisMotionValue(axis).animation) === null || _a === void 0 ? void 0 : _a.state;
+  }
+  /**
+   * Drag works differently depending on which props are provided.
+   *
+   * - If _dragX and _dragY are provided, we output the gesture delta directly to those motion values.
+   * - Otherwise, we apply the delta to the x/y motion values.
+   */
+  getAxisMotionValue(axis) {
+    const dragKey = "_drag" + axis.toUpperCase();
+    const props = this.visualElement.getProps();
+    const externalMotionValue = props[dragKey];
+    return externalMotionValue ? externalMotionValue : this.visualElement.getValue(axis, (props.initial ? props.initial[axis] : void 0) || 0);
+  }
+  snapToCursor(point) {
+    eachAxis((axis) => {
+      const { drag: drag2 } = this.getProps();
+      if (!shouldDrag(axis, drag2, this.currentDirection))
+        return;
+      const { projection } = this.visualElement;
+      const axisValue = this.getAxisMotionValue(axis);
+      if (projection && projection.layout) {
+        const { min, max } = projection.layout.layoutBox[axis];
+        axisValue.set(point[axis] - mix(min, max, 0.5));
+      }
+    });
+  }
+  /**
+   * When the viewport resizes we want to check if the measured constraints
+   * have changed and, if so, reposition the element within those new constraints
+   * relative to where it was before the resize.
+   */
+  scalePositionWithinConstraints() {
+    if (!this.visualElement.current)
+      return;
+    const { drag: drag2, dragConstraints } = this.getProps();
+    const { projection } = this.visualElement;
+    if (!isRefObject(dragConstraints) || !projection || !this.constraints)
+      return;
+    this.stopAnimation();
+    const boxProgress = { x: 0, y: 0 };
+    eachAxis((axis) => {
+      const axisValue = this.getAxisMotionValue(axis);
+      if (axisValue) {
+        const latest = axisValue.get();
+        boxProgress[axis] = calcOrigin2({ min: latest, max: latest }, this.constraints[axis]);
+      }
+    });
+    const { transformTemplate } = this.visualElement.getProps();
+    this.visualElement.current.style.transform = transformTemplate ? transformTemplate({}, "") : "none";
+    projection.root && projection.root.updateScroll();
+    projection.updateLayout();
+    this.resolveConstraints();
+    eachAxis((axis) => {
+      if (!shouldDrag(axis, drag2, null))
+        return;
+      const axisValue = this.getAxisMotionValue(axis);
+      const { min, max } = this.constraints[axis];
+      axisValue.set(mix(min, max, boxProgress[axis]));
+    });
+  }
+  addListeners() {
+    if (!this.visualElement.current)
+      return;
+    elementDragControls.set(this.visualElement, this);
+    const element = this.visualElement.current;
+    const stopPointerListener = addPointerEvent(element, "pointerdown", (event) => {
+      const { drag: drag2, dragListener = true } = this.getProps();
+      drag2 && dragListener && this.start(event);
+    });
+    const measureDragConstraints = () => {
+      const { dragConstraints } = this.getProps();
+      if (isRefObject(dragConstraints)) {
+        this.constraints = this.resolveRefConstraints();
+      }
+    };
+    const { projection } = this.visualElement;
+    const stopMeasureLayoutListener = projection.addEventListener("measure", measureDragConstraints);
+    if (projection && !projection.layout) {
+      projection.root && projection.root.updateScroll();
+      projection.updateLayout();
+    }
+    measureDragConstraints();
+    const stopResizeListener = addDomEvent(window, "resize", () => this.scalePositionWithinConstraints());
+    const stopLayoutUpdateListener = projection.addEventListener("didUpdate", (({ delta, hasLayoutChanged }) => {
+      if (this.isDragging && hasLayoutChanged) {
+        eachAxis((axis) => {
+          const motionValue2 = this.getAxisMotionValue(axis);
+          if (!motionValue2)
+            return;
+          this.originPoint[axis] += delta[axis].translate;
+          motionValue2.set(motionValue2.get() + delta[axis].translate);
+        });
+        this.visualElement.render();
+      }
+    }));
+    return () => {
+      stopResizeListener();
+      stopPointerListener();
+      stopMeasureLayoutListener();
+      stopLayoutUpdateListener && stopLayoutUpdateListener();
+    };
+  }
+  getProps() {
+    const props = this.visualElement.getProps();
+    const { drag: drag2 = false, dragDirectionLock = false, dragPropagation = false, dragConstraints = false, dragElastic = defaultElastic, dragMomentum = true } = props;
+    return {
+      ...props,
+      drag: drag2,
+      dragDirectionLock,
+      dragPropagation,
+      dragConstraints,
+      dragElastic,
+      dragMomentum
+    };
+  }
+};
+function shouldDrag(direction, drag2, currentDirection) {
+  return (drag2 === true || drag2 === direction) && (currentDirection === null || currentDirection === direction);
+}
+function getCurrentDirection(offset, lockThreshold = 10) {
+  let direction = null;
+  if (Math.abs(offset.y) > lockThreshold) {
+    direction = "y";
+  } else if (Math.abs(offset.x) > lockThreshold) {
+    direction = "x";
+  }
+  return direction;
+}
+
+// node_modules/framer-motion/dist/es/gestures/drag/index.mjs
+var DragGesture = class extends Feature {
+  constructor(node) {
+    super(node);
+    this.removeGroupControls = noop;
+    this.removeListeners = noop;
+    this.controls = new VisualElementDragControls(node);
+  }
+  mount() {
+    const { dragControls } = this.node.getProps();
+    if (dragControls) {
+      this.removeGroupControls = dragControls.subscribe(this.controls);
+    }
+    this.removeListeners = this.controls.addListeners() || noop;
+  }
+  unmount() {
+    this.removeGroupControls();
+    this.removeListeners();
+  }
+};
+
+// node_modules/framer-motion/dist/es/gestures/pan/index.mjs
+var asyncHandler = (handler) => (event, info) => {
+  if (handler) {
+    frame.update(() => handler(event, info));
+  }
+};
+var PanGesture = class extends Feature {
+  constructor() {
+    super(...arguments);
+    this.removePointerDownListener = noop;
+  }
+  onPointerDown(pointerDownEvent) {
+    this.session = new PanSession(pointerDownEvent, this.createPanHandlers(), {
+      transformPagePoint: this.node.getTransformPagePoint(),
+      contextWindow: getContextWindow(this.node)
+    });
+  }
+  createPanHandlers() {
+    const { onPanSessionStart, onPanStart, onPan, onPanEnd } = this.node.getProps();
+    return {
+      onSessionStart: asyncHandler(onPanSessionStart),
+      onStart: asyncHandler(onPanStart),
+      onMove: onPan,
+      onEnd: (event, info) => {
+        delete this.session;
+        if (onPanEnd) {
+          frame.update(() => onPanEnd(event, info));
+        }
+      }
+    };
+  }
+  mount() {
+    this.removePointerDownListener = addPointerEvent(this.node.current, "pointerdown", (event) => this.onPointerDown(event));
+  }
+  update() {
+    this.session && this.session.updateHandlers(this.createPanHandlers());
+  }
+  unmount() {
+    this.removePointerDownListener();
+    this.session && this.session.end();
+  }
+};
+
+// node_modules/framer-motion/dist/es/motion/features/layout/MeasureLayout.mjs
+var import_react24 = __toESM(require_react(), 1);
+
+// node_modules/framer-motion/dist/es/components/AnimatePresence/use-presence.mjs
+var import_react23 = __toESM(require_react(), 1);
+function usePresence() {
+  const context = (0, import_react23.useContext)(PresenceContext);
+  if (context === null)
+    return [true, null];
+  const { isPresent, onExitComplete, register } = context;
+  const id3 = (0, import_react23.useId)();
+  (0, import_react23.useEffect)(() => register(id3), []);
+  const safeToRemove = () => onExitComplete && onExitComplete(id3);
+  return !isPresent && onExitComplete ? [false, safeToRemove] : [true];
+}
+
+// node_modules/framer-motion/dist/es/projection/node/state.mjs
+var globalProjectionState = {
+  /**
+   * Global flag as to whether the tree has animated since the last time
+   * we resized the window
+   */
+  hasAnimatedSinceResize: true,
+  /**
+   * We set this to true once, on the first update. Any nodes added to the tree beyond that
+   * update will be given a `data-projection-id` attribute.
+   */
+  hasEverUpdated: false
+};
+
+// node_modules/framer-motion/dist/es/projection/styles/scale-border-radius.mjs
+function pixelsToPercent(pixels, axis) {
+  if (axis.max === axis.min)
+    return 0;
+  return pixels / (axis.max - axis.min) * 100;
+}
+var correctBorderRadius = {
+  correct: (latest, node) => {
+    if (!node.target)
+      return latest;
+    if (typeof latest === "string") {
+      if (px.test(latest)) {
+        latest = parseFloat(latest);
+      } else {
+        return latest;
+      }
+    }
+    const x = pixelsToPercent(latest, node.target.x);
+    const y = pixelsToPercent(latest, node.target.y);
+    return `${x}% ${y}%`;
+  }
+};
+
+// node_modules/framer-motion/dist/es/projection/styles/scale-box-shadow.mjs
+var correctBoxShadow = {
+  correct: (latest, { treeScale, projectionDelta }) => {
+    const original = latest;
+    const shadow = complex.parse(latest);
+    if (shadow.length > 5)
+      return original;
+    const template = complex.createTransformer(latest);
+    const offset = typeof shadow[0] !== "number" ? 1 : 0;
+    const xScale = projectionDelta.x.scale * treeScale.x;
+    const yScale = projectionDelta.y.scale * treeScale.y;
+    shadow[0 + offset] /= xScale;
+    shadow[1 + offset] /= yScale;
+    const averageScale = mix(xScale, yScale, 0.5);
+    if (typeof shadow[2 + offset] === "number")
+      shadow[2 + offset] /= averageScale;
+    if (typeof shadow[3 + offset] === "number")
+      shadow[3 + offset] /= averageScale;
+    return template(shadow);
+  }
+};
+
+// node_modules/framer-motion/dist/es/motion/features/layout/MeasureLayout.mjs
+var MeasureLayoutWithContext = class extends import_react24.default.Component {
+  /**
+   * This only mounts projection nodes for components that
+   * need measuring, we might want to do it for all components
+   * in order to incorporate transforms
+   */
+  componentDidMount() {
+    const { visualElement, layoutGroup, switchLayoutGroup, layoutId } = this.props;
+    const { projection } = visualElement;
+    addScaleCorrector(defaultScaleCorrectors);
+    if (projection) {
+      if (layoutGroup.group)
+        layoutGroup.group.add(projection);
+      if (switchLayoutGroup && switchLayoutGroup.register && layoutId) {
+        switchLayoutGroup.register(projection);
+      }
+      projection.root.didUpdate();
+      projection.addEventListener("animationComplete", () => {
+        this.safeToRemove();
+      });
+      projection.setOptions({
+        ...projection.options,
+        onExitComplete: () => this.safeToRemove()
+      });
+    }
+    globalProjectionState.hasEverUpdated = true;
+  }
+  getSnapshotBeforeUpdate(prevProps) {
+    const { layoutDependency, visualElement, drag: drag2, isPresent } = this.props;
+    const projection = visualElement.projection;
+    if (!projection)
+      return null;
+    projection.isPresent = isPresent;
+    if (drag2 || prevProps.layoutDependency !== layoutDependency || layoutDependency === void 0) {
+      projection.willUpdate();
+    } else {
+      this.safeToRemove();
+    }
+    if (prevProps.isPresent !== isPresent) {
+      if (isPresent) {
+        projection.promote();
+      } else if (!projection.relegate()) {
+        frame.postRender(() => {
+          const stack = projection.getStack();
+          if (!stack || !stack.members.length) {
+            this.safeToRemove();
+          }
+        });
+      }
+    }
+    return null;
+  }
+  componentDidUpdate() {
+    const { projection } = this.props.visualElement;
+    if (projection) {
+      projection.root.didUpdate();
+      queueMicrotask(() => {
+        if (!projection.currentAnimation && projection.isLead()) {
+          this.safeToRemove();
+        }
+      });
+    }
+  }
+  componentWillUnmount() {
+    const { visualElement, layoutGroup, switchLayoutGroup: promoteContext } = this.props;
+    const { projection } = visualElement;
+    if (projection) {
+      projection.scheduleCheckAfterUnmount();
+      if (layoutGroup && layoutGroup.group)
+        layoutGroup.group.remove(projection);
+      if (promoteContext && promoteContext.deregister)
+        promoteContext.deregister(projection);
+    }
+  }
+  safeToRemove() {
+    const { safeToRemove } = this.props;
+    safeToRemove && safeToRemove();
+  }
+  render() {
+    return null;
+  }
+};
+function MeasureLayout(props) {
+  const [isPresent, safeToRemove] = usePresence();
+  const layoutGroup = (0, import_react24.useContext)(LayoutGroupContext);
+  return import_react24.default.createElement(MeasureLayoutWithContext, { ...props, layoutGroup, switchLayoutGroup: (0, import_react24.useContext)(SwitchLayoutGroupContext), isPresent, safeToRemove });
+}
+var defaultScaleCorrectors = {
+  borderRadius: {
+    ...correctBorderRadius,
+    applyTo: [
+      "borderTopLeftRadius",
+      "borderTopRightRadius",
+      "borderBottomLeftRadius",
+      "borderBottomRightRadius"
+    ]
+  },
+  borderTopLeftRadius: correctBorderRadius,
+  borderTopRightRadius: correctBorderRadius,
+  borderBottomLeftRadius: correctBorderRadius,
+  borderBottomRightRadius: correctBorderRadius,
+  boxShadow: correctBoxShadow
+};
+
+// node_modules/framer-motion/dist/es/projection/animation/mix-values.mjs
+var borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"];
+var numBorders = borders.length;
+var asNumber = (value) => typeof value === "string" ? parseFloat(value) : value;
+var isPx = (value) => typeof value === "number" || px.test(value);
+function mixValues(target, follow, lead, progress2, shouldCrossfadeOpacity, isOnlyMember) {
+  if (shouldCrossfadeOpacity) {
+    target.opacity = mix(
+      0,
+      // TODO Reinstate this if only child
+      lead.opacity !== void 0 ? lead.opacity : 1,
+      easeCrossfadeIn(progress2)
+    );
+    target.opacityExit = mix(follow.opacity !== void 0 ? follow.opacity : 1, 0, easeCrossfadeOut(progress2));
+  } else if (isOnlyMember) {
+    target.opacity = mix(follow.opacity !== void 0 ? follow.opacity : 1, lead.opacity !== void 0 ? lead.opacity : 1, progress2);
+  }
+  for (let i = 0; i < numBorders; i++) {
+    const borderLabel = `border${borders[i]}Radius`;
+    let followRadius = getRadius(follow, borderLabel);
+    let leadRadius = getRadius(lead, borderLabel);
+    if (followRadius === void 0 && leadRadius === void 0)
+      continue;
+    followRadius || (followRadius = 0);
+    leadRadius || (leadRadius = 0);
+    const canMix = followRadius === 0 || leadRadius === 0 || isPx(followRadius) === isPx(leadRadius);
+    if (canMix) {
+      target[borderLabel] = Math.max(mix(asNumber(followRadius), asNumber(leadRadius), progress2), 0);
+      if (percent.test(leadRadius) || percent.test(followRadius)) {
+        target[borderLabel] += "%";
+      }
+    } else {
+      target[borderLabel] = leadRadius;
+    }
+  }
+  if (follow.rotate || lead.rotate) {
+    target.rotate = mix(follow.rotate || 0, lead.rotate || 0, progress2);
+  }
+}
+function getRadius(values, radiusName) {
+  return values[radiusName] !== void 0 ? values[radiusName] : values.borderRadius;
+}
+var easeCrossfadeIn = compress(0, 0.5, circOut);
+var easeCrossfadeOut = compress(0.5, 0.95, noop);
+function compress(min, max, easing) {
+  return (p) => {
+    if (p < min)
+      return 0;
+    if (p > max)
+      return 1;
+    return easing(progress(min, max, p));
+  };
+}
+
+// node_modules/framer-motion/dist/es/projection/geometry/copy.mjs
+function copyAxisInto(axis, originAxis) {
+  axis.min = originAxis.min;
+  axis.max = originAxis.max;
+}
+function copyBoxInto(box, originBox) {
+  copyAxisInto(box.x, originBox.x);
+  copyAxisInto(box.y, originBox.y);
+}
+
+// node_modules/framer-motion/dist/es/projection/geometry/delta-remove.mjs
+function removePointDelta(point, translate, scale2, originPoint, boxScale) {
+  point -= translate;
+  point = scalePoint(point, 1 / scale2, originPoint);
+  if (boxScale !== void 0) {
+    point = scalePoint(point, 1 / boxScale, originPoint);
+  }
+  return point;
+}
+function removeAxisDelta(axis, translate = 0, scale2 = 1, origin = 0.5, boxScale, originAxis = axis, sourceAxis = axis) {
+  if (percent.test(translate)) {
+    translate = parseFloat(translate);
+    const relativeProgress = mix(sourceAxis.min, sourceAxis.max, translate / 100);
+    translate = relativeProgress - sourceAxis.min;
+  }
+  if (typeof translate !== "number")
+    return;
+  let originPoint = mix(originAxis.min, originAxis.max, origin);
+  if (axis === originAxis)
+    originPoint -= translate;
+  axis.min = removePointDelta(axis.min, translate, scale2, originPoint, boxScale);
+  axis.max = removePointDelta(axis.max, translate, scale2, originPoint, boxScale);
+}
+function removeAxisTransforms(axis, transforms, [key, scaleKey, originKey], origin, sourceAxis) {
+  removeAxisDelta(axis, transforms[key], transforms[scaleKey], transforms[originKey], transforms.scale, origin, sourceAxis);
+}
+var xKeys2 = ["x", "scaleX", "originX"];
+var yKeys2 = ["y", "scaleY", "originY"];
+function removeBoxTransforms(box, transforms, originBox, sourceBox) {
+  removeAxisTransforms(box.x, transforms, xKeys2, originBox ? originBox.x : void 0, sourceBox ? sourceBox.x : void 0);
+  removeAxisTransforms(box.y, transforms, yKeys2, originBox ? originBox.y : void 0, sourceBox ? sourceBox.y : void 0);
+}
+
+// node_modules/framer-motion/dist/es/projection/geometry/utils.mjs
+function isAxisDeltaZero(delta) {
+  return delta.translate === 0 && delta.scale === 1;
+}
+function isDeltaZero(delta) {
+  return isAxisDeltaZero(delta.x) && isAxisDeltaZero(delta.y);
+}
+function boxEquals(a, b) {
+  return a.x.min === b.x.min && a.x.max === b.x.max && a.y.min === b.y.min && a.y.max === b.y.max;
+}
+function boxEqualsRounded(a, b) {
+  return Math.round(a.x.min) === Math.round(b.x.min) && Math.round(a.x.max) === Math.round(b.x.max) && Math.round(a.y.min) === Math.round(b.y.min) && Math.round(a.y.max) === Math.round(b.y.max);
+}
+function aspectRatio(box) {
+  return calcLength(box.x) / calcLength(box.y);
+}
+
+// node_modules/framer-motion/dist/es/projection/shared/stack.mjs
+var NodeStack = class {
+  constructor() {
+    this.members = [];
+  }
+  add(node) {
+    addUniqueItem(this.members, node);
+    node.scheduleRender();
+  }
+  remove(node) {
+    removeItem(this.members, node);
+    if (node === this.prevLead) {
+      this.prevLead = void 0;
+    }
+    if (node === this.lead) {
+      const prevLead = this.members[this.members.length - 1];
+      if (prevLead) {
+        this.promote(prevLead);
+      }
+    }
+  }
+  relegate(node) {
+    const indexOfNode = this.members.findIndex((member) => node === member);
+    if (indexOfNode === 0)
+      return false;
+    let prevLead;
+    for (let i = indexOfNode; i >= 0; i--) {
+      const member = this.members[i];
+      if (member.isPresent !== false) {
+        prevLead = member;
+        break;
+      }
+    }
+    if (prevLead) {
+      this.promote(prevLead);
+      return true;
+    } else {
+      return false;
+    }
+  }
+  promote(node, preserveFollowOpacity) {
+    const prevLead = this.lead;
+    if (node === prevLead)
+      return;
+    this.prevLead = prevLead;
+    this.lead = node;
+    node.show();
+    if (prevLead) {
+      prevLead.instance && prevLead.scheduleRender();
+      node.scheduleRender();
+      node.resumeFrom = prevLead;
+      if (preserveFollowOpacity) {
+        node.resumeFrom.preserveOpacity = true;
+      }
+      if (prevLead.snapshot) {
+        node.snapshot = prevLead.snapshot;
+        node.snapshot.latestValues = prevLead.animationValues || prevLead.latestValues;
+      }
+      if (node.root && node.root.isUpdating) {
+        node.isLayoutDirty = true;
+      }
+      const { crossfade } = node.options;
+      if (crossfade === false) {
+        prevLead.hide();
+      }
+    }
+  }
+  exitAnimationComplete() {
+    this.members.forEach((node) => {
+      const { options, resumingFrom } = node;
+      options.onExitComplete && options.onExitComplete();
+      if (resumingFrom) {
+        resumingFrom.options.onExitComplete && resumingFrom.options.onExitComplete();
+      }
+    });
+  }
+  scheduleRender() {
+    this.members.forEach((node) => {
+      node.instance && node.scheduleRender(false);
+    });
+  }
+  /**
+   * Clear any leads that have been removed this render to prevent them from being
+   * used in future animations and to prevent memory leaks
+   */
+  removeLeadSnapshot() {
+    if (this.lead && this.lead.snapshot) {
+      this.lead.snapshot = void 0;
+    }
+  }
+};
+
+// node_modules/framer-motion/dist/es/projection/styles/transform.mjs
+function buildProjectionTransform(delta, treeScale, latestTransform) {
+  let transform = "";
+  const xTranslate = delta.x.translate / treeScale.x;
+  const yTranslate = delta.y.translate / treeScale.y;
+  if (xTranslate || yTranslate) {
+    transform = `translate3d(${xTranslate}px, ${yTranslate}px, 0) `;
+  }
+  if (treeScale.x !== 1 || treeScale.y !== 1) {
+    transform += `scale(${1 / treeScale.x}, ${1 / treeScale.y}) `;
+  }
+  if (latestTransform) {
+    const { rotate, rotateX, rotateY } = latestTransform;
+    if (rotate)
+      transform += `rotate(${rotate}deg) `;
+    if (rotateX)
+      transform += `rotateX(${rotateX}deg) `;
+    if (rotateY)
+      transform += `rotateY(${rotateY}deg) `;
+  }
+  const elementScaleX = delta.x.scale * treeScale.x;
+  const elementScaleY = delta.y.scale * treeScale.y;
+  if (elementScaleX !== 1 || elementScaleY !== 1) {
+    transform += `scale(${elementScaleX}, ${elementScaleY})`;
+  }
+  return transform || "none";
+}
+
+// node_modules/framer-motion/dist/es/render/utils/compare-by-depth.mjs
+var compareByDepth = (a, b) => a.depth - b.depth;
+
+// node_modules/framer-motion/dist/es/render/utils/flat-tree.mjs
+var FlatTree = class {
+  constructor() {
+    this.children = [];
+    this.isDirty = false;
+  }
+  add(child) {
+    addUniqueItem(this.children, child);
+    this.isDirty = true;
+  }
+  remove(child) {
+    removeItem(this.children, child);
+    this.isDirty = true;
+  }
+  forEach(callback) {
+    this.isDirty && this.children.sort(compareByDepth);
+    this.isDirty = false;
+    this.children.forEach(callback);
+  }
+};
+
+// node_modules/framer-motion/dist/es/utils/delay.mjs
+function delay(callback, timeout) {
+  const start = performance.now();
+  const checkElapsed = ({ timestamp }) => {
+    const elapsed = timestamp - start;
+    if (elapsed >= timeout) {
+      cancelFrame(checkElapsed);
+      callback(elapsed - timeout);
+    }
+  };
+  frame.read(checkElapsed, true);
+  return () => cancelFrame(checkElapsed);
+}
+
+// node_modules/framer-motion/dist/es/debug/record.mjs
+function record(data) {
+  if (window.MotionDebug) {
+    window.MotionDebug.record(data);
+  }
+}
+
+// node_modules/framer-motion/dist/es/render/dom/utils/is-svg-element.mjs
+function isSVGElement(element) {
+  return element instanceof SVGElement && element.tagName !== "svg";
+}
+
+// node_modules/framer-motion/dist/es/animation/interfaces/single-value.mjs
+function animateSingleValue(value, keyframes2, options) {
+  const motionValue$1 = isMotionValue(value) ? value : motionValue(value);
+  motionValue$1.start(animateMotionValue("", motionValue$1, keyframes2, options));
+  return motionValue$1.animation;
+}
+
+// node_modules/framer-motion/dist/es/projection/node/create-projection-node.mjs
+var transformAxes = ["", "X", "Y", "Z"];
+var hiddenVisibility = { visibility: "hidden" };
+var animationTarget = 1e3;
+var id2 = 0;
+var projectionFrameData = {
+  type: "projectionFrame",
+  totalNodes: 0,
+  resolvedTargetDeltas: 0,
+  recalculatedProjection: 0
+};
+function createProjectionNode({ attachResizeListener, defaultParent, measureScroll, checkIsScrollRoot, resetTransform }) {
+  return class ProjectionNode {
+    constructor(latestValues = {}, parent = defaultParent === null || defaultParent === void 0 ? void 0 : defaultParent()) {
+      this.id = id2++;
+      this.animationId = 0;
+      this.children = /* @__PURE__ */ new Set();
+      this.options = {};
+      this.isTreeAnimating = false;
+      this.isAnimationBlocked = false;
+      this.isLayoutDirty = false;
+      this.isProjectionDirty = false;
+      this.isSharedProjectionDirty = false;
+      this.isTransformDirty = false;
+      this.updateManuallyBlocked = false;
+      this.updateBlockedByResize = false;
+      this.isUpdating = false;
+      this.isSVG = false;
+      this.needsReset = false;
+      this.shouldResetTransform = false;
+      this.treeScale = { x: 1, y: 1 };
+      this.eventHandlers = /* @__PURE__ */ new Map();
+      this.hasTreeAnimated = false;
+      this.updateScheduled = false;
+      this.projectionUpdateScheduled = false;
+      this.checkUpdateFailed = () => {
+        if (this.isUpdating) {
+          this.isUpdating = false;
+          this.clearAllSnapshots();
+        }
+      };
+      this.updateProjection = () => {
+        this.projectionUpdateScheduled = false;
+        projectionFrameData.totalNodes = projectionFrameData.resolvedTargetDeltas = projectionFrameData.recalculatedProjection = 0;
+        this.nodes.forEach(propagateDirtyNodes);
+        this.nodes.forEach(resolveTargetDelta);
+        this.nodes.forEach(calcProjection);
+        this.nodes.forEach(cleanDirtyNodes);
+        record(projectionFrameData);
+      };
+      this.hasProjected = false;
+      this.isVisible = true;
+      this.animationProgress = 0;
+      this.sharedNodes = /* @__PURE__ */ new Map();
+      this.latestValues = latestValues;
+      this.root = parent ? parent.root || parent : this;
+      this.path = parent ? [...parent.path, parent] : [];
+      this.parent = parent;
+      this.depth = parent ? parent.depth + 1 : 0;
+      for (let i = 0; i < this.path.length; i++) {
+        this.path[i].shouldResetTransform = true;
+      }
+      if (this.root === this)
+        this.nodes = new FlatTree();
+    }
+    addEventListener(name, handler) {
+      if (!this.eventHandlers.has(name)) {
+        this.eventHandlers.set(name, new SubscriptionManager());
+      }
+      return this.eventHandlers.get(name).add(handler);
+    }
+    notifyListeners(name, ...args) {
+      const subscriptionManager = this.eventHandlers.get(name);
+      subscriptionManager && subscriptionManager.notify(...args);
+    }
+    hasListeners(name) {
+      return this.eventHandlers.has(name);
+    }
+    /**
+     * Lifecycles
+     */
+    mount(instance, isLayoutDirty = this.root.hasTreeAnimated) {
+      if (this.instance)
+        return;
+      this.isSVG = isSVGElement(instance);
+      this.instance = instance;
+      const { layoutId, layout: layout2, visualElement } = this.options;
+      if (visualElement && !visualElement.current) {
+        visualElement.mount(instance);
+      }
+      this.root.nodes.add(this);
+      this.parent && this.parent.children.add(this);
+      if (isLayoutDirty && (layout2 || layoutId)) {
+        this.isLayoutDirty = true;
+      }
+      if (attachResizeListener) {
+        let cancelDelay;
+        const resizeUnblockUpdate = () => this.root.updateBlockedByResize = false;
+        attachResizeListener(instance, () => {
+          this.root.updateBlockedByResize = true;
+          cancelDelay && cancelDelay();
+          cancelDelay = delay(resizeUnblockUpdate, 250);
+          if (globalProjectionState.hasAnimatedSinceResize) {
+            globalProjectionState.hasAnimatedSinceResize = false;
+            this.nodes.forEach(finishAnimation);
+          }
+        });
+      }
+      if (layoutId) {
+        this.root.registerSharedNode(layoutId, this);
+      }
+      if (this.options.animate !== false && visualElement && (layoutId || layout2)) {
+        this.addEventListener("didUpdate", ({ delta, hasLayoutChanged, hasRelativeTargetChanged, layout: newLayout }) => {
+          if (this.isTreeAnimationBlocked()) {
+            this.target = void 0;
+            this.relativeTarget = void 0;
+            return;
+          }
+          const layoutTransition = this.options.transition || visualElement.getDefaultTransition() || defaultLayoutTransition;
+          const { onLayoutAnimationStart, onLayoutAnimationComplete } = visualElement.getProps();
+          const targetChanged = !this.targetLayout || !boxEqualsRounded(this.targetLayout, newLayout) || hasRelativeTargetChanged;
+          const hasOnlyRelativeTargetChanged = !hasLayoutChanged && hasRelativeTargetChanged;
+          if (this.options.layoutRoot || this.resumeFrom && this.resumeFrom.instance || hasOnlyRelativeTargetChanged || hasLayoutChanged && (targetChanged || !this.currentAnimation)) {
+            if (this.resumeFrom) {
+              this.resumingFrom = this.resumeFrom;
+              this.resumingFrom.resumingFrom = void 0;
+            }
+            this.setAnimationOrigin(delta, hasOnlyRelativeTargetChanged);
+            const animationOptions = {
+              ...getValueTransition(layoutTransition, "layout"),
+              onPlay: onLayoutAnimationStart,
+              onComplete: onLayoutAnimationComplete
+            };
+            if (visualElement.shouldReduceMotion || this.options.layoutRoot) {
+              animationOptions.delay = 0;
+              animationOptions.type = false;
+            }
+            this.startAnimation(animationOptions);
+          } else {
+            if (!hasLayoutChanged) {
+              finishAnimation(this);
+            }
+            if (this.isLead() && this.options.onExitComplete) {
+              this.options.onExitComplete();
+            }
+          }
+          this.targetLayout = newLayout;
+        });
+      }
+    }
+    unmount() {
+      this.options.layoutId && this.willUpdate();
+      this.root.nodes.remove(this);
+      const stack = this.getStack();
+      stack && stack.remove(this);
+      this.parent && this.parent.children.delete(this);
+      this.instance = void 0;
+      cancelFrame(this.updateProjection);
+    }
+    // only on the root
+    blockUpdate() {
+      this.updateManuallyBlocked = true;
+    }
+    unblockUpdate() {
+      this.updateManuallyBlocked = false;
+    }
+    isUpdateBlocked() {
+      return this.updateManuallyBlocked || this.updateBlockedByResize;
+    }
+    isTreeAnimationBlocked() {
+      return this.isAnimationBlocked || this.parent && this.parent.isTreeAnimationBlocked() || false;
+    }
+    // Note: currently only running on root node
+    startUpdate() {
+      if (this.isUpdateBlocked())
+        return;
+      this.isUpdating = true;
+      this.nodes && this.nodes.forEach(resetRotation);
+      this.animationId++;
+    }
+    getTransformTemplate() {
+      const { visualElement } = this.options;
+      return visualElement && visualElement.getProps().transformTemplate;
+    }
+    willUpdate(shouldNotifyListeners = true) {
+      this.root.hasTreeAnimated = true;
+      if (this.root.isUpdateBlocked()) {
+        this.options.onExitComplete && this.options.onExitComplete();
+        return;
+      }
+      !this.root.isUpdating && this.root.startUpdate();
+      if (this.isLayoutDirty)
+        return;
+      this.isLayoutDirty = true;
+      for (let i = 0; i < this.path.length; i++) {
+        const node = this.path[i];
+        node.shouldResetTransform = true;
+        node.updateScroll("snapshot");
+        if (node.options.layoutRoot) {
+          node.willUpdate(false);
+        }
+      }
+      const { layoutId, layout: layout2 } = this.options;
+      if (layoutId === void 0 && !layout2)
+        return;
+      const transformTemplate = this.getTransformTemplate();
+      this.prevTransformTemplateValue = transformTemplate ? transformTemplate(this.latestValues, "") : void 0;
+      this.updateSnapshot();
+      shouldNotifyListeners && this.notifyListeners("willUpdate");
+    }
+    update() {
+      this.updateScheduled = false;
+      const updateWasBlocked = this.isUpdateBlocked();
+      if (updateWasBlocked) {
+        this.unblockUpdate();
+        this.clearAllSnapshots();
+        this.nodes.forEach(clearMeasurements);
+        return;
+      }
+      if (!this.isUpdating) {
+        this.nodes.forEach(clearIsLayoutDirty);
+      }
+      this.isUpdating = false;
+      this.nodes.forEach(resetTransformStyle);
+      this.nodes.forEach(updateLayout);
+      this.nodes.forEach(notifyLayoutUpdate);
+      this.clearAllSnapshots();
+      const now = performance.now();
+      frameData.delta = clamp(0, 1e3 / 60, now - frameData.timestamp);
+      frameData.timestamp = now;
+      frameData.isProcessing = true;
+      steps.update.process(frameData);
+      steps.preRender.process(frameData);
+      steps.render.process(frameData);
+      frameData.isProcessing = false;
+    }
+    didUpdate() {
+      if (!this.updateScheduled) {
+        this.updateScheduled = true;
+        queueMicrotask(() => this.update());
+      }
+    }
+    clearAllSnapshots() {
+      this.nodes.forEach(clearSnapshot);
+      this.sharedNodes.forEach(removeLeadSnapshots);
+    }
+    scheduleUpdateProjection() {
+      if (!this.projectionUpdateScheduled) {
+        this.projectionUpdateScheduled = true;
+        frame.preRender(this.updateProjection, false, true);
+      }
+    }
+    scheduleCheckAfterUnmount() {
+      frame.postRender(() => {
+        if (this.isLayoutDirty) {
+          this.root.didUpdate();
+        } else {
+          this.root.checkUpdateFailed();
+        }
+      });
+    }
+    /**
+     * Update measurements
+     */
+    updateSnapshot() {
+      if (this.snapshot || !this.instance)
+        return;
+      this.snapshot = this.measure();
+    }
+    updateLayout() {
+      if (!this.instance)
+        return;
+      this.updateScroll();
+      if (!(this.options.alwaysMeasureLayout && this.isLead()) && !this.isLayoutDirty) {
+        return;
+      }
+      if (this.resumeFrom && !this.resumeFrom.instance) {
+        for (let i = 0; i < this.path.length; i++) {
+          const node = this.path[i];
+          node.updateScroll();
+        }
+      }
+      const prevLayout = this.layout;
+      this.layout = this.measure(false);
+      this.layoutCorrected = createBox();
+      this.isLayoutDirty = false;
+      this.projectionDelta = void 0;
+      this.notifyListeners("measure", this.layout.layoutBox);
+      const { visualElement } = this.options;
+      visualElement && visualElement.notify("LayoutMeasure", this.layout.layoutBox, prevLayout ? prevLayout.layoutBox : void 0);
+    }
+    updateScroll(phase = "measure") {
+      let needsMeasurement = Boolean(this.options.layoutScroll && this.instance);
+      if (this.scroll && this.scroll.animationId === this.root.animationId && this.scroll.phase === phase) {
+        needsMeasurement = false;
+      }
+      if (needsMeasurement) {
+        this.scroll = {
+          animationId: this.root.animationId,
+          phase,
+          isRoot: checkIsScrollRoot(this.instance),
+          offset: measureScroll(this.instance)
+        };
+      }
+    }
+    resetTransform() {
+      if (!resetTransform)
+        return;
+      const isResetRequested = this.isLayoutDirty || this.shouldResetTransform;
+      const hasProjection = this.projectionDelta && !isDeltaZero(this.projectionDelta);
+      const transformTemplate = this.getTransformTemplate();
+      const transformTemplateValue = transformTemplate ? transformTemplate(this.latestValues, "") : void 0;
+      const transformTemplateHasChanged = transformTemplateValue !== this.prevTransformTemplateValue;
+      if (isResetRequested && (hasProjection || hasTransform(this.latestValues) || transformTemplateHasChanged)) {
+        resetTransform(this.instance, transformTemplateValue);
+        this.shouldResetTransform = false;
+        this.scheduleRender();
+      }
+    }
+    measure(removeTransform = true) {
+      const pageBox = this.measurePageBox();
+      let layoutBox = this.removeElementScroll(pageBox);
+      if (removeTransform) {
+        layoutBox = this.removeTransform(layoutBox);
+      }
+      roundBox(layoutBox);
+      return {
+        animationId: this.root.animationId,
+        measuredBox: pageBox,
+        layoutBox,
+        latestValues: {},
+        source: this.id
+      };
+    }
+    measurePageBox() {
+      const { visualElement } = this.options;
+      if (!visualElement)
+        return createBox();
+      const box = visualElement.measureViewportBox();
+      const { scroll } = this.root;
+      if (scroll) {
+        translateAxis(box.x, scroll.offset.x);
+        translateAxis(box.y, scroll.offset.y);
+      }
+      return box;
+    }
+    removeElementScroll(box) {
+      const boxWithoutScroll = createBox();
+      copyBoxInto(boxWithoutScroll, box);
+      for (let i = 0; i < this.path.length; i++) {
+        const node = this.path[i];
+        const { scroll, options } = node;
+        if (node !== this.root && scroll && options.layoutScroll) {
+          if (scroll.isRoot) {
+            copyBoxInto(boxWithoutScroll, box);
+            const { scroll: rootScroll } = this.root;
+            if (rootScroll) {
+              translateAxis(boxWithoutScroll.x, -rootScroll.offset.x);
+              translateAxis(boxWithoutScroll.y, -rootScroll.offset.y);
+            }
+          }
+          translateAxis(boxWithoutScroll.x, scroll.offset.x);
+          translateAxis(boxWithoutScroll.y, scroll.offset.y);
+        }
+      }
+      return boxWithoutScroll;
+    }
+    applyTransform(box, transformOnly = false) {
+      const withTransforms = createBox();
+      copyBoxInto(withTransforms, box);
+      for (let i = 0; i < this.path.length; i++) {
+        const node = this.path[i];
+        if (!transformOnly && node.options.layoutScroll && node.scroll && node !== node.root) {
+          transformBox(withTransforms, {
+            x: -node.scroll.offset.x,
+            y: -node.scroll.offset.y
+          });
+        }
+        if (!hasTransform(node.latestValues))
+          continue;
+        transformBox(withTransforms, node.latestValues);
+      }
+      if (hasTransform(this.latestValues)) {
+        transformBox(withTransforms, this.latestValues);
+      }
+      return withTransforms;
+    }
+    removeTransform(box) {
+      const boxWithoutTransform = createBox();
+      copyBoxInto(boxWithoutTransform, box);
+      for (let i = 0; i < this.path.length; i++) {
+        const node = this.path[i];
+        if (!node.instance)
+          continue;
+        if (!hasTransform(node.latestValues))
+          continue;
+        hasScale(node.latestValues) && node.updateSnapshot();
+        const sourceBox = createBox();
+        const nodeBox = node.measurePageBox();
+        copyBoxInto(sourceBox, nodeBox);
+        removeBoxTransforms(boxWithoutTransform, node.latestValues, node.snapshot ? node.snapshot.layoutBox : void 0, sourceBox);
+      }
+      if (hasTransform(this.latestValues)) {
+        removeBoxTransforms(boxWithoutTransform, this.latestValues);
+      }
+      return boxWithoutTransform;
+    }
+    setTargetDelta(delta) {
+      this.targetDelta = delta;
+      this.root.scheduleUpdateProjection();
+      this.isProjectionDirty = true;
+    }
+    setOptions(options) {
+      this.options = {
+        ...this.options,
+        ...options,
+        crossfade: options.crossfade !== void 0 ? options.crossfade : true
+      };
+    }
+    clearMeasurements() {
+      this.scroll = void 0;
+      this.layout = void 0;
+      this.snapshot = void 0;
+      this.prevTransformTemplateValue = void 0;
+      this.targetDelta = void 0;
+      this.target = void 0;
+      this.isLayoutDirty = false;
+    }
+    forceRelativeParentToResolveTarget() {
+      if (!this.relativeParent)
+        return;
+      if (this.relativeParent.resolvedRelativeTargetAt !== frameData.timestamp) {
+        this.relativeParent.resolveTargetDelta(true);
+      }
+    }
+    resolveTargetDelta(forceRecalculation = false) {
+      var _a;
+      const lead = this.getLead();
+      this.isProjectionDirty || (this.isProjectionDirty = lead.isProjectionDirty);
+      this.isTransformDirty || (this.isTransformDirty = lead.isTransformDirty);
+      this.isSharedProjectionDirty || (this.isSharedProjectionDirty = lead.isSharedProjectionDirty);
+      const isShared = Boolean(this.resumingFrom) || this !== lead;
+      const canSkip = !(forceRecalculation || isShared && this.isSharedProjectionDirty || this.isProjectionDirty || ((_a = this.parent) === null || _a === void 0 ? void 0 : _a.isProjectionDirty) || this.attemptToResolveRelativeTarget);
+      if (canSkip)
+        return;
+      const { layout: layout2, layoutId } = this.options;
+      if (!this.layout || !(layout2 || layoutId))
+        return;
+      this.resolvedRelativeTargetAt = frameData.timestamp;
+      if (!this.targetDelta && !this.relativeTarget) {
+        const relativeParent = this.getClosestProjectingParent();
+        if (relativeParent && relativeParent.layout && this.animationProgress !== 1) {
+          this.relativeParent = relativeParent;
+          this.forceRelativeParentToResolveTarget();
+          this.relativeTarget = createBox();
+          this.relativeTargetOrigin = createBox();
+          calcRelativePosition(this.relativeTargetOrigin, this.layout.layoutBox, relativeParent.layout.layoutBox);
+          copyBoxInto(this.relativeTarget, this.relativeTargetOrigin);
+        } else {
+          this.relativeParent = this.relativeTarget = void 0;
+        }
+      }
+      if (!this.relativeTarget && !this.targetDelta)
+        return;
+      if (!this.target) {
+        this.target = createBox();
+        this.targetWithTransforms = createBox();
+      }
+      if (this.relativeTarget && this.relativeTargetOrigin && this.relativeParent && this.relativeParent.target) {
+        this.forceRelativeParentToResolveTarget();
+        calcRelativeBox(this.target, this.relativeTarget, this.relativeParent.target);
+      } else if (this.targetDelta) {
+        if (Boolean(this.resumingFrom)) {
+          this.target = this.applyTransform(this.layout.layoutBox);
+        } else {
+          copyBoxInto(this.target, this.layout.layoutBox);
+        }
+        applyBoxDelta(this.target, this.targetDelta);
+      } else {
+        copyBoxInto(this.target, this.layout.layoutBox);
+      }
+      if (this.attemptToResolveRelativeTarget) {
+        this.attemptToResolveRelativeTarget = false;
+        const relativeParent = this.getClosestProjectingParent();
+        if (relativeParent && Boolean(relativeParent.resumingFrom) === Boolean(this.resumingFrom) && !relativeParent.options.layoutScroll && relativeParent.target && this.animationProgress !== 1) {
+          this.relativeParent = relativeParent;
+          this.forceRelativeParentToResolveTarget();
+          this.relativeTarget = createBox();
+          this.relativeTargetOrigin = createBox();
+          calcRelativePosition(this.relativeTargetOrigin, this.target, relativeParent.target);
+          copyBoxInto(this.relativeTarget, this.relativeTargetOrigin);
+        } else {
+          this.relativeParent = this.relativeTarget = void 0;
+        }
+      }
+      projectionFrameData.resolvedTargetDeltas++;
+    }
+    getClosestProjectingParent() {
+      if (!this.parent || hasScale(this.parent.latestValues) || has2DTranslate(this.parent.latestValues)) {
+        return void 0;
+      }
+      if (this.parent.isProjecting()) {
+        return this.parent;
+      } else {
+        return this.parent.getClosestProjectingParent();
+      }
+    }
+    isProjecting() {
+      return Boolean((this.relativeTarget || this.targetDelta || this.options.layoutRoot) && this.layout);
+    }
+    calcProjection() {
+      var _a;
+      const lead = this.getLead();
+      const isShared = Boolean(this.resumingFrom) || this !== lead;
+      let canSkip = true;
+      if (this.isProjectionDirty || ((_a = this.parent) === null || _a === void 0 ? void 0 : _a.isProjectionDirty)) {
+        canSkip = false;
+      }
+      if (isShared && (this.isSharedProjectionDirty || this.isTransformDirty)) {
+        canSkip = false;
+      }
+      if (this.resolvedRelativeTargetAt === frameData.timestamp) {
+        canSkip = false;
+      }
+      if (canSkip)
+        return;
+      const { layout: layout2, layoutId } = this.options;
+      this.isTreeAnimating = Boolean(this.parent && this.parent.isTreeAnimating || this.currentAnimation || this.pendingAnimation);
+      if (!this.isTreeAnimating) {
+        this.targetDelta = this.relativeTarget = void 0;
+      }
+      if (!this.layout || !(layout2 || layoutId))
+        return;
+      copyBoxInto(this.layoutCorrected, this.layout.layoutBox);
+      const prevTreeScaleX = this.treeScale.x;
+      const prevTreeScaleY = this.treeScale.y;
+      applyTreeDeltas(this.layoutCorrected, this.treeScale, this.path, isShared);
+      if (lead.layout && !lead.target && (this.treeScale.x !== 1 || this.treeScale.y !== 1)) {
+        lead.target = lead.layout.layoutBox;
+      }
+      const { target } = lead;
+      if (!target) {
+        if (this.projectionTransform) {
+          this.projectionDelta = createDelta();
+          this.projectionTransform = "none";
+          this.scheduleRender();
+        }
+        return;
+      }
+      if (!this.projectionDelta) {
+        this.projectionDelta = createDelta();
+        this.projectionDeltaWithTransform = createDelta();
+      }
+      const prevProjectionTransform = this.projectionTransform;
+      calcBoxDelta(this.projectionDelta, this.layoutCorrected, target, this.latestValues);
+      this.projectionTransform = buildProjectionTransform(this.projectionDelta, this.treeScale);
+      if (this.projectionTransform !== prevProjectionTransform || this.treeScale.x !== prevTreeScaleX || this.treeScale.y !== prevTreeScaleY) {
+        this.hasProjected = true;
+        this.scheduleRender();
+        this.notifyListeners("projectionUpdate", target);
+      }
+      projectionFrameData.recalculatedProjection++;
+    }
+    hide() {
+      this.isVisible = false;
+    }
+    show() {
+      this.isVisible = true;
+    }
+    scheduleRender(notifyAll = true) {
+      this.options.scheduleRender && this.options.scheduleRender();
+      if (notifyAll) {
+        const stack = this.getStack();
+        stack && stack.scheduleRender();
+      }
+      if (this.resumingFrom && !this.resumingFrom.instance) {
+        this.resumingFrom = void 0;
+      }
+    }
+    setAnimationOrigin(delta, hasOnlyRelativeTargetChanged = false) {
+      const snapshot = this.snapshot;
+      const snapshotLatestValues = snapshot ? snapshot.latestValues : {};
+      const mixedValues = { ...this.latestValues };
+      const targetDelta = createDelta();
+      if (!this.relativeParent || !this.relativeParent.options.layoutRoot) {
+        this.relativeTarget = this.relativeTargetOrigin = void 0;
+      }
+      this.attemptToResolveRelativeTarget = !hasOnlyRelativeTargetChanged;
+      const relativeLayout = createBox();
+      const snapshotSource = snapshot ? snapshot.source : void 0;
+      const layoutSource = this.layout ? this.layout.source : void 0;
+      const isSharedLayoutAnimation = snapshotSource !== layoutSource;
+      const stack = this.getStack();
+      const isOnlyMember = !stack || stack.members.length <= 1;
+      const shouldCrossfadeOpacity = Boolean(isSharedLayoutAnimation && !isOnlyMember && this.options.crossfade === true && !this.path.some(hasOpacityCrossfade));
+      this.animationProgress = 0;
+      let prevRelativeTarget;
+      this.mixTargetDelta = (latest) => {
+        const progress2 = latest / 1e3;
+        mixAxisDelta(targetDelta.x, delta.x, progress2);
+        mixAxisDelta(targetDelta.y, delta.y, progress2);
+        this.setTargetDelta(targetDelta);
+        if (this.relativeTarget && this.relativeTargetOrigin && this.layout && this.relativeParent && this.relativeParent.layout) {
+          calcRelativePosition(relativeLayout, this.layout.layoutBox, this.relativeParent.layout.layoutBox);
+          mixBox(this.relativeTarget, this.relativeTargetOrigin, relativeLayout, progress2);
+          if (prevRelativeTarget && boxEquals(this.relativeTarget, prevRelativeTarget)) {
+            this.isProjectionDirty = false;
+          }
+          if (!prevRelativeTarget)
+            prevRelativeTarget = createBox();
+          copyBoxInto(prevRelativeTarget, this.relativeTarget);
+        }
+        if (isSharedLayoutAnimation) {
+          this.animationValues = mixedValues;
+          mixValues(mixedValues, snapshotLatestValues, this.latestValues, progress2, shouldCrossfadeOpacity, isOnlyMember);
+        }
+        this.root.scheduleUpdateProjection();
+        this.scheduleRender();
+        this.animationProgress = progress2;
+      };
+      this.mixTargetDelta(this.options.layoutRoot ? 1e3 : 0);
+    }
+    startAnimation(options) {
+      this.notifyListeners("animationStart");
+      this.currentAnimation && this.currentAnimation.stop();
+      if (this.resumingFrom && this.resumingFrom.currentAnimation) {
+        this.resumingFrom.currentAnimation.stop();
+      }
+      if (this.pendingAnimation) {
+        cancelFrame(this.pendingAnimation);
+        this.pendingAnimation = void 0;
+      }
+      this.pendingAnimation = frame.update(() => {
+        globalProjectionState.hasAnimatedSinceResize = true;
+        this.currentAnimation = animateSingleValue(0, animationTarget, {
+          ...options,
+          onUpdate: (latest) => {
+            this.mixTargetDelta(latest);
+            options.onUpdate && options.onUpdate(latest);
+          },
+          onComplete: () => {
+            options.onComplete && options.onComplete();
+            this.completeAnimation();
+          }
+        });
+        if (this.resumingFrom) {
+          this.resumingFrom.currentAnimation = this.currentAnimation;
+        }
+        this.pendingAnimation = void 0;
+      });
+    }
+    completeAnimation() {
+      if (this.resumingFrom) {
+        this.resumingFrom.currentAnimation = void 0;
+        this.resumingFrom.preserveOpacity = void 0;
+      }
+      const stack = this.getStack();
+      stack && stack.exitAnimationComplete();
+      this.resumingFrom = this.currentAnimation = this.animationValues = void 0;
+      this.notifyListeners("animationComplete");
+    }
+    finishAnimation() {
+      if (this.currentAnimation) {
+        this.mixTargetDelta && this.mixTargetDelta(animationTarget);
+        this.currentAnimation.stop();
+      }
+      this.completeAnimation();
+    }
+    applyTransformsToTarget() {
+      const lead = this.getLead();
+      let { targetWithTransforms, target, layout: layout2, latestValues } = lead;
+      if (!targetWithTransforms || !target || !layout2)
+        return;
+      if (this !== lead && this.layout && layout2 && shouldAnimatePositionOnly(this.options.animationType, this.layout.layoutBox, layout2.layoutBox)) {
+        target = this.target || createBox();
+        const xLength = calcLength(this.layout.layoutBox.x);
+        target.x.min = lead.target.x.min;
+        target.x.max = target.x.min + xLength;
+        const yLength = calcLength(this.layout.layoutBox.y);
+        target.y.min = lead.target.y.min;
+        target.y.max = target.y.min + yLength;
+      }
+      copyBoxInto(targetWithTransforms, target);
+      transformBox(targetWithTransforms, latestValues);
+      calcBoxDelta(this.projectionDeltaWithTransform, this.layoutCorrected, targetWithTransforms, latestValues);
+    }
+    registerSharedNode(layoutId, node) {
+      if (!this.sharedNodes.has(layoutId)) {
+        this.sharedNodes.set(layoutId, new NodeStack());
+      }
+      const stack = this.sharedNodes.get(layoutId);
+      stack.add(node);
+      const config = node.options.initialPromotionConfig;
+      node.promote({
+        transition: config ? config.transition : void 0,
+        preserveFollowOpacity: config && config.shouldPreserveFollowOpacity ? config.shouldPreserveFollowOpacity(node) : void 0
+      });
+    }
+    isLead() {
+      const stack = this.getStack();
+      return stack ? stack.lead === this : true;
+    }
+    getLead() {
+      var _a;
+      const { layoutId } = this.options;
+      return layoutId ? ((_a = this.getStack()) === null || _a === void 0 ? void 0 : _a.lead) || this : this;
+    }
+    getPrevLead() {
+      var _a;
+      const { layoutId } = this.options;
+      return layoutId ? (_a = this.getStack()) === null || _a === void 0 ? void 0 : _a.prevLead : void 0;
+    }
+    getStack() {
+      const { layoutId } = this.options;
+      if (layoutId)
+        return this.root.sharedNodes.get(layoutId);
+    }
+    promote({ needsReset, transition, preserveFollowOpacity } = {}) {
+      const stack = this.getStack();
+      if (stack)
+        stack.promote(this, preserveFollowOpacity);
+      if (needsReset) {
+        this.projectionDelta = void 0;
+        this.needsReset = true;
+      }
+      if (transition)
+        this.setOptions({ transition });
+    }
+    relegate() {
+      const stack = this.getStack();
+      if (stack) {
+        return stack.relegate(this);
+      } else {
+        return false;
+      }
+    }
+    resetRotation() {
+      const { visualElement } = this.options;
+      if (!visualElement)
+        return;
+      let hasRotate = false;
+      const { latestValues } = visualElement;
+      if (latestValues.rotate || latestValues.rotateX || latestValues.rotateY || latestValues.rotateZ) {
+        hasRotate = true;
+      }
+      if (!hasRotate)
+        return;
+      const resetValues = {};
+      for (let i = 0; i < transformAxes.length; i++) {
+        const key = "rotate" + transformAxes[i];
+        if (latestValues[key]) {
+          resetValues[key] = latestValues[key];
+          visualElement.setStaticValue(key, 0);
+        }
+      }
+      visualElement.render();
+      for (const key in resetValues) {
+        visualElement.setStaticValue(key, resetValues[key]);
+      }
+      visualElement.scheduleRender();
+    }
+    getProjectionStyles(styleProp) {
+      var _a, _b;
+      if (!this.instance || this.isSVG)
+        return void 0;
+      if (!this.isVisible) {
+        return hiddenVisibility;
+      }
+      const styles = {
+        visibility: ""
+      };
+      const transformTemplate = this.getTransformTemplate();
+      if (this.needsReset) {
+        this.needsReset = false;
+        styles.opacity = "";
+        styles.pointerEvents = resolveMotionValue(styleProp === null || styleProp === void 0 ? void 0 : styleProp.pointerEvents) || "";
+        styles.transform = transformTemplate ? transformTemplate(this.latestValues, "") : "none";
+        return styles;
+      }
+      const lead = this.getLead();
+      if (!this.projectionDelta || !this.layout || !lead.target) {
+        const emptyStyles = {};
+        if (this.options.layoutId) {
+          emptyStyles.opacity = this.latestValues.opacity !== void 0 ? this.latestValues.opacity : 1;
+          emptyStyles.pointerEvents = resolveMotionValue(styleProp === null || styleProp === void 0 ? void 0 : styleProp.pointerEvents) || "";
+        }
+        if (this.hasProjected && !hasTransform(this.latestValues)) {
+          emptyStyles.transform = transformTemplate ? transformTemplate({}, "") : "none";
+          this.hasProjected = false;
+        }
+        return emptyStyles;
+      }
+      const valuesToRender = lead.animationValues || lead.latestValues;
+      this.applyTransformsToTarget();
+      styles.transform = buildProjectionTransform(this.projectionDeltaWithTransform, this.treeScale, valuesToRender);
+      if (transformTemplate) {
+        styles.transform = transformTemplate(valuesToRender, styles.transform);
+      }
+      const { x, y } = this.projectionDelta;
+      styles.transformOrigin = `${x.origin * 100}% ${y.origin * 100}% 0`;
+      if (lead.animationValues) {
+        styles.opacity = lead === this ? (_b = (_a = valuesToRender.opacity) !== null && _a !== void 0 ? _a : this.latestValues.opacity) !== null && _b !== void 0 ? _b : 1 : this.preserveOpacity ? this.latestValues.opacity : valuesToRender.opacityExit;
+      } else {
+        styles.opacity = lead === this ? valuesToRender.opacity !== void 0 ? valuesToRender.opacity : "" : valuesToRender.opacityExit !== void 0 ? valuesToRender.opacityExit : 0;
+      }
+      for (const key in scaleCorrectors) {
+        if (valuesToRender[key] === void 0)
+          continue;
+        const { correct, applyTo } = scaleCorrectors[key];
+        const corrected = styles.transform === "none" ? valuesToRender[key] : correct(valuesToRender[key], lead);
+        if (applyTo) {
+          const num = applyTo.length;
+          for (let i = 0; i < num; i++) {
+            styles[applyTo[i]] = corrected;
+          }
+        } else {
+          styles[key] = corrected;
+        }
+      }
+      if (this.options.layoutId) {
+        styles.pointerEvents = lead === this ? resolveMotionValue(styleProp === null || styleProp === void 0 ? void 0 : styleProp.pointerEvents) || "" : "none";
+      }
+      return styles;
+    }
+    clearSnapshot() {
+      this.resumeFrom = this.snapshot = void 0;
+    }
+    // Only run on root
+    resetTree() {
+      this.root.nodes.forEach((node) => {
+        var _a;
+        return (_a = node.currentAnimation) === null || _a === void 0 ? void 0 : _a.stop();
+      });
+      this.root.nodes.forEach(clearMeasurements);
+      this.root.sharedNodes.clear();
+    }
+  };
+}
+function updateLayout(node) {
+  node.updateLayout();
+}
+function notifyLayoutUpdate(node) {
+  var _a;
+  const snapshot = ((_a = node.resumeFrom) === null || _a === void 0 ? void 0 : _a.snapshot) || node.snapshot;
+  if (node.isLead() && node.layout && snapshot && node.hasListeners("didUpdate")) {
+    const { layoutBox: layout2, measuredBox: measuredLayout } = node.layout;
+    const { animationType } = node.options;
+    const isShared = snapshot.source !== node.layout.source;
+    if (animationType === "size") {
+      eachAxis((axis) => {
+        const axisSnapshot = isShared ? snapshot.measuredBox[axis] : snapshot.layoutBox[axis];
+        const length = calcLength(axisSnapshot);
+        axisSnapshot.min = layout2[axis].min;
+        axisSnapshot.max = axisSnapshot.min + length;
+      });
+    } else if (shouldAnimatePositionOnly(animationType, snapshot.layoutBox, layout2)) {
+      eachAxis((axis) => {
+        const axisSnapshot = isShared ? snapshot.measuredBox[axis] : snapshot.layoutBox[axis];
+        const length = calcLength(layout2[axis]);
+        axisSnapshot.max = axisSnapshot.min + length;
+        if (node.relativeTarget && !node.currentAnimation) {
+          node.isProjectionDirty = true;
+          node.relativeTarget[axis].max = node.relativeTarget[axis].min + length;
+        }
+      });
+    }
+    const layoutDelta = createDelta();
+    calcBoxDelta(layoutDelta, layout2, snapshot.layoutBox);
+    const visualDelta = createDelta();
+    if (isShared) {
+      calcBoxDelta(visualDelta, node.applyTransform(measuredLayout, true), snapshot.measuredBox);
+    } else {
+      calcBoxDelta(visualDelta, layout2, snapshot.layoutBox);
+    }
+    const hasLayoutChanged = !isDeltaZero(layoutDelta);
+    let hasRelativeTargetChanged = false;
+    if (!node.resumeFrom) {
+      const relativeParent = node.getClosestProjectingParent();
+      if (relativeParent && !relativeParent.resumeFrom) {
+        const { snapshot: parentSnapshot, layout: parentLayout } = relativeParent;
+        if (parentSnapshot && parentLayout) {
+          const relativeSnapshot = createBox();
+          calcRelativePosition(relativeSnapshot, snapshot.layoutBox, parentSnapshot.layoutBox);
+          const relativeLayout = createBox();
+          calcRelativePosition(relativeLayout, layout2, parentLayout.layoutBox);
+          if (!boxEqualsRounded(relativeSnapshot, relativeLayout)) {
+            hasRelativeTargetChanged = true;
+          }
+          if (relativeParent.options.layoutRoot) {
+            node.relativeTarget = relativeLayout;
+            node.relativeTargetOrigin = relativeSnapshot;
+            node.relativeParent = relativeParent;
+          }
+        }
+      }
+    }
+    node.notifyListeners("didUpdate", {
+      layout: layout2,
+      snapshot,
+      delta: visualDelta,
+      layoutDelta,
+      hasLayoutChanged,
+      hasRelativeTargetChanged
+    });
+  } else if (node.isLead()) {
+    const { onExitComplete } = node.options;
+    onExitComplete && onExitComplete();
+  }
+  node.options.transition = void 0;
+}
+function propagateDirtyNodes(node) {
+  projectionFrameData.totalNodes++;
+  if (!node.parent)
+    return;
+  if (!node.isProjecting()) {
+    node.isProjectionDirty = node.parent.isProjectionDirty;
+  }
+  node.isSharedProjectionDirty || (node.isSharedProjectionDirty = Boolean(node.isProjectionDirty || node.parent.isProjectionDirty || node.parent.isSharedProjectionDirty));
+  node.isTransformDirty || (node.isTransformDirty = node.parent.isTransformDirty);
+}
+function cleanDirtyNodes(node) {
+  node.isProjectionDirty = node.isSharedProjectionDirty = node.isTransformDirty = false;
+}
+function clearSnapshot(node) {
+  node.clearSnapshot();
+}
+function clearMeasurements(node) {
+  node.clearMeasurements();
+}
+function clearIsLayoutDirty(node) {
+  node.isLayoutDirty = false;
+}
+function resetTransformStyle(node) {
+  const { visualElement } = node.options;
+  if (visualElement && visualElement.getProps().onBeforeLayoutMeasure) {
+    visualElement.notify("BeforeLayoutMeasure");
+  }
+  node.resetTransform();
+}
+function finishAnimation(node) {
+  node.finishAnimation();
+  node.targetDelta = node.relativeTarget = node.target = void 0;
+  node.isProjectionDirty = true;
+}
+function resolveTargetDelta(node) {
+  node.resolveTargetDelta();
+}
+function calcProjection(node) {
+  node.calcProjection();
+}
+function resetRotation(node) {
+  node.resetRotation();
+}
+function removeLeadSnapshots(stack) {
+  stack.removeLeadSnapshot();
+}
+function mixAxisDelta(output, delta, p) {
+  output.translate = mix(delta.translate, 0, p);
+  output.scale = mix(delta.scale, 1, p);
+  output.origin = delta.origin;
+  output.originPoint = delta.originPoint;
+}
+function mixAxis(output, from, to, p) {
+  output.min = mix(from.min, to.min, p);
+  output.max = mix(from.max, to.max, p);
+}
+function mixBox(output, from, to, p) {
+  mixAxis(output.x, from.x, to.x, p);
+  mixAxis(output.y, from.y, to.y, p);
+}
+function hasOpacityCrossfade(node) {
+  return node.animationValues && node.animationValues.opacityExit !== void 0;
+}
+var defaultLayoutTransition = {
+  duration: 0.45,
+  ease: [0.4, 0, 0.1, 1]
+};
+var userAgentContains = (string) => typeof navigator !== "undefined" && navigator.userAgent.toLowerCase().includes(string);
+var roundPoint = userAgentContains("applewebkit/") && !userAgentContains("chrome/") ? Math.round : noop;
+function roundAxis(axis) {
+  axis.min = roundPoint(axis.min);
+  axis.max = roundPoint(axis.max);
+}
+function roundBox(box) {
+  roundAxis(box.x);
+  roundAxis(box.y);
+}
+function shouldAnimatePositionOnly(animationType, snapshot, layout2) {
+  return animationType === "position" || animationType === "preserve-aspect" && !isNear(aspectRatio(snapshot), aspectRatio(layout2), 0.2);
+}
+
+// node_modules/framer-motion/dist/es/projection/node/DocumentProjectionNode.mjs
+var DocumentProjectionNode = createProjectionNode({
+  attachResizeListener: (ref, notify) => addDomEvent(ref, "resize", notify),
+  measureScroll: () => ({
+    x: document.documentElement.scrollLeft || document.body.scrollLeft,
+    y: document.documentElement.scrollTop || document.body.scrollTop
+  }),
+  checkIsScrollRoot: () => true
+});
+
+// node_modules/framer-motion/dist/es/projection/node/HTMLProjectionNode.mjs
+var rootProjectionNode = {
+  current: void 0
+};
+var HTMLProjectionNode = createProjectionNode({
+  measureScroll: (instance) => ({
+    x: instance.scrollLeft,
+    y: instance.scrollTop
+  }),
+  defaultParent: () => {
+    if (!rootProjectionNode.current) {
+      const documentNode = new DocumentProjectionNode({});
+      documentNode.mount(window);
+      documentNode.setOptions({ layoutScroll: true });
+      rootProjectionNode.current = documentNode;
+    }
+    return rootProjectionNode.current;
+  },
+  resetTransform: (instance, value) => {
+    instance.style.transform = value !== void 0 ? value : "none";
+  },
+  checkIsScrollRoot: (instance) => Boolean(window.getComputedStyle(instance).position === "fixed")
+});
+
+// node_modules/framer-motion/dist/es/motion/features/drag.mjs
+var drag = {
+  pan: {
+    Feature: PanGesture
+  },
+  drag: {
+    Feature: DragGesture,
+    ProjectionNode: HTMLProjectionNode,
+    MeasureLayout
+  }
+};
+
+// node_modules/framer-motion/dist/es/render/dom/utils/css-variables-conversion.mjs
+var splitCSSVariableRegex = /var\((--[a-zA-Z0-9-_]+),? ?([a-zA-Z0-9 ()%#.,-]+)?\)/;
+function parseCSSVariable(current) {
+  const match = splitCSSVariableRegex.exec(current);
+  if (!match)
+    return [,];
+  const [, token, fallback] = match;
+  return [token, fallback];
+}
+var maxDepth = 4;
+function getVariableValue(current, element, depth = 1) {
+  invariant(depth <= maxDepth, `Max CSS variable fallback depth detected in property "${current}". This may indicate a circular fallback dependency.`);
+  const [token, fallback] = parseCSSVariable(current);
+  if (!token)
+    return;
+  const resolved = window.getComputedStyle(element).getPropertyValue(token);
+  if (resolved) {
+    const trimmed = resolved.trim();
+    return isNumericalString(trimmed) ? parseFloat(trimmed) : trimmed;
+  } else if (isCSSVariableToken(fallback)) {
+    return getVariableValue(fallback, element, depth + 1);
+  } else {
+    return fallback;
+  }
+}
+function resolveCSSVariables(visualElement, { ...target }, transitionEnd) {
+  const element = visualElement.current;
+  if (!(element instanceof Element))
+    return { target, transitionEnd };
+  if (transitionEnd) {
+    transitionEnd = { ...transitionEnd };
+  }
+  visualElement.values.forEach((value) => {
+    const current = value.get();
+    if (!isCSSVariableToken(current))
+      return;
+    const resolved = getVariableValue(current, element);
+    if (resolved)
+      value.set(resolved);
+  });
+  for (const key in target) {
+    const current = target[key];
+    if (!isCSSVariableToken(current))
+      continue;
+    const resolved = getVariableValue(current, element);
+    if (!resolved)
+      continue;
+    target[key] = resolved;
+    if (!transitionEnd)
+      transitionEnd = {};
+    if (transitionEnd[key] === void 0) {
+      transitionEnd[key] = current;
+    }
+  }
+  return { target, transitionEnd };
+}
+
+// node_modules/framer-motion/dist/es/render/dom/utils/unit-conversion.mjs
+var positionalKeys = /* @__PURE__ */ new Set([
+  "width",
+  "height",
+  "top",
+  "left",
+  "right",
+  "bottom",
+  "x",
+  "y",
+  "translateX",
+  "translateY"
+]);
+var isPositionalKey = (key) => positionalKeys.has(key);
+var hasPositionalKey = (target) => {
+  return Object.keys(target).some(isPositionalKey);
+};
+var isNumOrPxType = (v) => v === number || v === px;
+var getPosFromMatrix = (matrix, pos) => parseFloat(matrix.split(", ")[pos]);
+var getTranslateFromMatrix = (pos2, pos3) => (_bbox, { transform }) => {
+  if (transform === "none" || !transform)
+    return 0;
+  const matrix3d = transform.match(/^matrix3d\((.+)\)$/);
+  if (matrix3d) {
+    return getPosFromMatrix(matrix3d[1], pos3);
+  } else {
+    const matrix = transform.match(/^matrix\((.+)\)$/);
+    if (matrix) {
+      return getPosFromMatrix(matrix[1], pos2);
+    } else {
+      return 0;
+    }
+  }
+};
+var transformKeys = /* @__PURE__ */ new Set(["x", "y", "z"]);
+var nonTranslationalTransformKeys = transformPropOrder.filter((key) => !transformKeys.has(key));
+function removeNonTranslationalTransform(visualElement) {
+  const removedTransforms = [];
+  nonTranslationalTransformKeys.forEach((key) => {
+    const value = visualElement.getValue(key);
+    if (value !== void 0) {
+      removedTransforms.push([key, value.get()]);
+      value.set(key.startsWith("scale") ? 1 : 0);
+    }
+  });
+  if (removedTransforms.length)
+    visualElement.render();
+  return removedTransforms;
+}
+var positionalValues = {
+  // Dimensions
+  width: ({ x }, { paddingLeft = "0", paddingRight = "0" }) => x.max - x.min - parseFloat(paddingLeft) - parseFloat(paddingRight),
+  height: ({ y }, { paddingTop = "0", paddingBottom = "0" }) => y.max - y.min - parseFloat(paddingTop) - parseFloat(paddingBottom),
+  top: (_bbox, { top }) => parseFloat(top),
+  left: (_bbox, { left }) => parseFloat(left),
+  bottom: ({ y }, { top }) => parseFloat(top) + (y.max - y.min),
+  right: ({ x }, { left }) => parseFloat(left) + (x.max - x.min),
+  // Transform
+  x: getTranslateFromMatrix(4, 13),
+  y: getTranslateFromMatrix(5, 14)
+};
+positionalValues.translateX = positionalValues.x;
+positionalValues.translateY = positionalValues.y;
+var convertChangedValueTypes = (target, visualElement, changedKeys) => {
+  const originBbox = visualElement.measureViewportBox();
+  const element = visualElement.current;
+  const elementComputedStyle = getComputedStyle(element);
+  const { display } = elementComputedStyle;
+  const origin = {};
+  if (display === "none") {
+    visualElement.setStaticValue("display", target.display || "block");
+  }
+  changedKeys.forEach((key) => {
+    origin[key] = positionalValues[key](originBbox, elementComputedStyle);
+  });
+  visualElement.render();
+  const targetBbox = visualElement.measureViewportBox();
+  changedKeys.forEach((key) => {
+    const value = visualElement.getValue(key);
+    value && value.jump(origin[key]);
+    target[key] = positionalValues[key](targetBbox, elementComputedStyle);
+  });
+  return target;
+};
+var checkAndConvertChangedValueTypes = (visualElement, target, origin = {}, transitionEnd = {}) => {
+  target = { ...target };
+  transitionEnd = { ...transitionEnd };
+  const targetPositionalKeys = Object.keys(target).filter(isPositionalKey);
+  let removedTransformValues = [];
+  let hasAttemptedToRemoveTransformValues = false;
+  const changedValueTypeKeys = [];
+  targetPositionalKeys.forEach((key) => {
+    const value = visualElement.getValue(key);
+    if (!visualElement.hasValue(key))
+      return;
+    let from = origin[key];
+    let fromType = findDimensionValueType(from);
+    const to = target[key];
+    let toType;
+    if (isKeyframesTarget(to)) {
+      const numKeyframes = to.length;
+      const fromIndex = to[0] === null ? 1 : 0;
+      from = to[fromIndex];
+      fromType = findDimensionValueType(from);
+      for (let i = fromIndex; i < numKeyframes; i++) {
+        if (to[i] === null)
+          break;
+        if (!toType) {
+          toType = findDimensionValueType(to[i]);
+          invariant(toType === fromType || isNumOrPxType(fromType) && isNumOrPxType(toType), "Keyframes must be of the same dimension as the current value");
+        } else {
+          invariant(findDimensionValueType(to[i]) === toType, "All keyframes must be of the same type");
+        }
+      }
+    } else {
+      toType = findDimensionValueType(to);
+    }
+    if (fromType !== toType) {
+      if (isNumOrPxType(fromType) && isNumOrPxType(toType)) {
+        const current = value.get();
+        if (typeof current === "string") {
+          value.set(parseFloat(current));
+        }
+        if (typeof to === "string") {
+          target[key] = parseFloat(to);
+        } else if (Array.isArray(to) && toType === px) {
+          target[key] = to.map(parseFloat);
+        }
+      } else if ((fromType === null || fromType === void 0 ? void 0 : fromType.transform) && (toType === null || toType === void 0 ? void 0 : toType.transform) && (from === 0 || to === 0)) {
+        if (from === 0) {
+          value.set(toType.transform(from));
+        } else {
+          target[key] = fromType.transform(to);
+        }
+      } else {
+        if (!hasAttemptedToRemoveTransformValues) {
+          removedTransformValues = removeNonTranslationalTransform(visualElement);
+          hasAttemptedToRemoveTransformValues = true;
+        }
+        changedValueTypeKeys.push(key);
+        transitionEnd[key] = transitionEnd[key] !== void 0 ? transitionEnd[key] : target[key];
+        value.jump(to);
+      }
+    }
+  });
+  if (changedValueTypeKeys.length) {
+    const scrollY = changedValueTypeKeys.indexOf("height") >= 0 ? window.pageYOffset : null;
+    const convertedTarget = convertChangedValueTypes(target, visualElement, changedValueTypeKeys);
+    if (removedTransformValues.length) {
+      removedTransformValues.forEach(([key, value]) => {
+        visualElement.getValue(key).set(value);
+      });
+    }
+    visualElement.render();
+    if (isBrowser && scrollY !== null) {
+      window.scrollTo({ top: scrollY });
+    }
+    return { target: convertedTarget, transitionEnd };
+  } else {
+    return { target, transitionEnd };
+  }
+};
+function unitConversion(visualElement, target, origin, transitionEnd) {
+  return hasPositionalKey(target) ? checkAndConvertChangedValueTypes(visualElement, target, origin, transitionEnd) : { target, transitionEnd };
+}
+
+// node_modules/framer-motion/dist/es/render/dom/utils/parse-dom-variant.mjs
+var parseDomVariant = (visualElement, target, origin, transitionEnd) => {
+  const resolved = resolveCSSVariables(visualElement, target, transitionEnd);
+  target = resolved.target;
+  transitionEnd = resolved.transitionEnd;
+  return unitConversion(visualElement, target, origin, transitionEnd);
+};
+
+// node_modules/framer-motion/dist/es/utils/reduced-motion/state.mjs
+var prefersReducedMotion = { current: null };
+var hasReducedMotionListener = { current: false };
+
+// node_modules/framer-motion/dist/es/utils/reduced-motion/index.mjs
+function initPrefersReducedMotion() {
+  hasReducedMotionListener.current = true;
+  if (!isBrowser)
+    return;
+  if (window.matchMedia) {
+    const motionMediaQuery = window.matchMedia("(prefers-reduced-motion)");
+    const setReducedMotionPreferences = () => prefersReducedMotion.current = motionMediaQuery.matches;
+    motionMediaQuery.addListener(setReducedMotionPreferences);
+    setReducedMotionPreferences();
+  } else {
+    prefersReducedMotion.current = false;
+  }
+}
+
+// node_modules/framer-motion/dist/es/render/utils/motion-values.mjs
+function updateMotionValuesFromProps(element, next, prev) {
+  const { willChange } = next;
+  for (const key in next) {
+    const nextValue = next[key];
+    const prevValue = prev[key];
+    if (isMotionValue(nextValue)) {
+      element.addValue(key, nextValue);
+      if (isWillChangeMotionValue(willChange)) {
+        willChange.add(key);
+      }
+      if (true) {
+        warnOnce(nextValue.version === "10.18.0", `Attempting to mix Framer Motion versions ${nextValue.version} with 10.18.0 may not work as expected.`);
+      }
+    } else if (isMotionValue(prevValue)) {
+      element.addValue(key, motionValue(nextValue, { owner: element }));
+      if (isWillChangeMotionValue(willChange)) {
+        willChange.remove(key);
+      }
+    } else if (prevValue !== nextValue) {
+      if (element.hasValue(key)) {
+        const existingValue = element.getValue(key);
+        !existingValue.hasAnimated && existingValue.set(nextValue);
+      } else {
+        const latestValue = element.getStaticValue(key);
+        element.addValue(key, motionValue(latestValue !== void 0 ? latestValue : nextValue, { owner: element }));
+      }
+    }
+  }
+  for (const key in prev) {
+    if (next[key] === void 0)
+      element.removeValue(key);
+  }
+  return next;
+}
+
+// node_modules/framer-motion/dist/es/render/store.mjs
+var visualElementStore = /* @__PURE__ */ new WeakMap();
+
+// node_modules/framer-motion/dist/es/render/VisualElement.mjs
+var featureNames = Object.keys(featureDefinitions);
+var numFeatures = featureNames.length;
+var propEventHandlers = [
+  "AnimationStart",
+  "AnimationComplete",
+  "Update",
+  "BeforeLayoutMeasure",
+  "LayoutMeasure",
+  "LayoutAnimationStart",
+  "LayoutAnimationComplete"
+];
+var numVariantProps = variantProps.length;
+var VisualElement = class {
+  constructor({ parent, props, presenceContext, reducedMotionConfig, visualState }, options = {}) {
+    this.current = null;
+    this.children = /* @__PURE__ */ new Set();
+    this.isVariantNode = false;
+    this.isControllingVariants = false;
+    this.shouldReduceMotion = null;
+    this.values = /* @__PURE__ */ new Map();
+    this.features = {};
+    this.valueSubscriptions = /* @__PURE__ */ new Map();
+    this.prevMotionValues = {};
+    this.events = {};
+    this.propEventSubscriptions = {};
+    this.notifyUpdate = () => this.notify("Update", this.latestValues);
+    this.render = () => {
+      if (!this.current)
+        return;
+      this.triggerBuild();
+      this.renderInstance(this.current, this.renderState, this.props.style, this.projection);
+    };
+    this.scheduleRender = () => frame.render(this.render, false, true);
+    const { latestValues, renderState } = visualState;
+    this.latestValues = latestValues;
+    this.baseTarget = { ...latestValues };
+    this.initialValues = props.initial ? { ...latestValues } : {};
+    this.renderState = renderState;
+    this.parent = parent;
+    this.props = props;
+    this.presenceContext = presenceContext;
+    this.depth = parent ? parent.depth + 1 : 0;
+    this.reducedMotionConfig = reducedMotionConfig;
+    this.options = options;
+    this.isControllingVariants = isControllingVariants(props);
+    this.isVariantNode = isVariantNode(props);
+    if (this.isVariantNode) {
+      this.variantChildren = /* @__PURE__ */ new Set();
+    }
+    this.manuallyAnimateOnMount = Boolean(parent && parent.current);
+    const { willChange, ...initialMotionValues } = this.scrapeMotionValuesFromProps(props, {});
+    for (const key in initialMotionValues) {
+      const value = initialMotionValues[key];
+      if (latestValues[key] !== void 0 && isMotionValue(value)) {
+        value.set(latestValues[key], false);
+        if (isWillChangeMotionValue(willChange)) {
+          willChange.add(key);
+        }
+      }
+    }
+  }
+  /**
+   * This method takes React props and returns found MotionValues. For example, HTML
+   * MotionValues will be found within the style prop, whereas for Three.js within attribute arrays.
+   *
+   * This isn't an abstract method as it needs calling in the constructor, but it is
+   * intended to be one.
+   */
+  scrapeMotionValuesFromProps(_props, _prevProps) {
+    return {};
+  }
+  mount(instance) {
+    this.current = instance;
+    visualElementStore.set(instance, this);
+    if (this.projection && !this.projection.instance) {
+      this.projection.mount(instance);
+    }
+    if (this.parent && this.isVariantNode && !this.isControllingVariants) {
+      this.removeFromVariantTree = this.parent.addVariantChild(this);
+    }
+    this.values.forEach((value, key) => this.bindToMotionValue(key, value));
+    if (!hasReducedMotionListener.current) {
+      initPrefersReducedMotion();
+    }
+    this.shouldReduceMotion = this.reducedMotionConfig === "never" ? false : this.reducedMotionConfig === "always" ? true : prefersReducedMotion.current;
+    if (true) {
+      warnOnce(this.shouldReduceMotion !== true, "You have Reduced Motion enabled on your device. Animations may not appear as expected.");
+    }
+    if (this.parent)
+      this.parent.children.add(this);
+    this.update(this.props, this.presenceContext);
+  }
+  unmount() {
+    visualElementStore.delete(this.current);
+    this.projection && this.projection.unmount();
+    cancelFrame(this.notifyUpdate);
+    cancelFrame(this.render);
+    this.valueSubscriptions.forEach((remove) => remove());
+    this.removeFromVariantTree && this.removeFromVariantTree();
+    this.parent && this.parent.children.delete(this);
+    for (const key in this.events) {
+      this.events[key].clear();
+    }
+    for (const key in this.features) {
+      this.features[key].unmount();
+    }
+    this.current = null;
+  }
+  bindToMotionValue(key, value) {
+    const valueIsTransform = transformProps.has(key);
+    const removeOnChange = value.on("change", (latestValue) => {
+      this.latestValues[key] = latestValue;
+      this.props.onUpdate && frame.update(this.notifyUpdate, false, true);
+      if (valueIsTransform && this.projection) {
+        this.projection.isTransformDirty = true;
+      }
+    });
+    const removeOnRenderRequest = value.on("renderRequest", this.scheduleRender);
+    this.valueSubscriptions.set(key, () => {
+      removeOnChange();
+      removeOnRenderRequest();
+    });
+  }
+  sortNodePosition(other) {
+    if (!this.current || !this.sortInstanceNodePosition || this.type !== other.type) {
+      return 0;
+    }
+    return this.sortInstanceNodePosition(this.current, other.current);
+  }
+  loadFeatures({ children, ...renderedProps }, isStrict, preloadedFeatures2, initialLayoutGroupConfig) {
+    let ProjectionNodeConstructor;
+    let MeasureLayout2;
+    if (preloadedFeatures2 && isStrict) {
+      const strictMessage = "You have rendered a `motion` component within a `LazyMotion` component. This will break tree shaking. Import and render a `m` component instead.";
+      renderedProps.ignoreStrict ? warning(false, strictMessage) : invariant(false, strictMessage);
+    }
+    for (let i = 0; i < numFeatures; i++) {
+      const name = featureNames[i];
+      const { isEnabled, Feature: FeatureConstructor, ProjectionNode, MeasureLayout: MeasureLayoutComponent } = featureDefinitions[name];
+      if (ProjectionNode)
+        ProjectionNodeConstructor = ProjectionNode;
+      if (isEnabled(renderedProps)) {
+        if (!this.features[name] && FeatureConstructor) {
+          this.features[name] = new FeatureConstructor(this);
+        }
+        if (MeasureLayoutComponent) {
+          MeasureLayout2 = MeasureLayoutComponent;
+        }
+      }
+    }
+    if ((this.type === "html" || this.type === "svg") && !this.projection && ProjectionNodeConstructor) {
+      this.projection = new ProjectionNodeConstructor(this.latestValues, this.parent && this.parent.projection);
+      const { layoutId, layout: layout2, drag: drag2, dragConstraints, layoutScroll, layoutRoot } = renderedProps;
+      this.projection.setOptions({
+        layoutId,
+        layout: layout2,
+        alwaysMeasureLayout: Boolean(drag2) || dragConstraints && isRefObject(dragConstraints),
+        visualElement: this,
+        scheduleRender: () => this.scheduleRender(),
+        /**
+         * TODO: Update options in an effect. This could be tricky as it'll be too late
+         * to update by the time layout animations run.
+         * We also need to fix this safeToRemove by linking it up to the one returned by usePresence,
+         * ensuring it gets called if there's no potential layout animations.
+         *
+         */
+        animationType: typeof layout2 === "string" ? layout2 : "both",
+        initialPromotionConfig: initialLayoutGroupConfig,
+        layoutScroll,
+        layoutRoot
+      });
+    }
+    return MeasureLayout2;
+  }
+  updateFeatures() {
+    for (const key in this.features) {
+      const feature = this.features[key];
+      if (feature.isMounted) {
+        feature.update();
+      } else {
+        feature.mount();
+        feature.isMounted = true;
+      }
+    }
+  }
+  triggerBuild() {
+    this.build(this.renderState, this.latestValues, this.options, this.props);
+  }
+  /**
+   * Measure the current viewport box with or without transforms.
+   * Only measures axis-aligned boxes, rotate and skew must be manually
+   * removed with a re-render to work.
+   */
+  measureViewportBox() {
+    return this.current ? this.measureInstanceViewportBox(this.current, this.props) : createBox();
+  }
+  getStaticValue(key) {
+    return this.latestValues[key];
+  }
+  setStaticValue(key, value) {
+    this.latestValues[key] = value;
+  }
+  /**
+   * Make a target animatable by Popmotion. For instance, if we're
+   * trying to animate width from 100px to 100vw we need to measure 100vw
+   * in pixels to determine what we really need to animate to. This is also
+   * pluggable to support Framer's custom value types like Color,
+   * and CSS variables.
+   */
+  makeTargetAnimatable(target, canMutate = true) {
+    return this.makeTargetAnimatableFromInstance(target, this.props, canMutate);
+  }
+  /**
+   * Update the provided props. Ensure any newly-added motion values are
+   * added to our map, old ones removed, and listeners updated.
+   */
+  update(props, presenceContext) {
+    if (props.transformTemplate || this.props.transformTemplate) {
+      this.scheduleRender();
+    }
+    this.prevProps = this.props;
+    this.props = props;
+    this.prevPresenceContext = this.presenceContext;
+    this.presenceContext = presenceContext;
+    for (let i = 0; i < propEventHandlers.length; i++) {
+      const key = propEventHandlers[i];
+      if (this.propEventSubscriptions[key]) {
+        this.propEventSubscriptions[key]();
+        delete this.propEventSubscriptions[key];
+      }
+      const listener = props["on" + key];
+      if (listener) {
+        this.propEventSubscriptions[key] = this.on(key, listener);
+      }
+    }
+    this.prevMotionValues = updateMotionValuesFromProps(this, this.scrapeMotionValuesFromProps(props, this.prevProps), this.prevMotionValues);
+    if (this.handleChildMotionValue) {
+      this.handleChildMotionValue();
+    }
+  }
+  getProps() {
+    return this.props;
+  }
+  /**
+   * Returns the variant definition with a given name.
+   */
+  getVariant(name) {
+    return this.props.variants ? this.props.variants[name] : void 0;
+  }
+  /**
+   * Returns the defined default transition on this component.
+   */
+  getDefaultTransition() {
+    return this.props.transition;
+  }
+  getTransformPagePoint() {
+    return this.props.transformPagePoint;
+  }
+  getClosestVariantNode() {
+    return this.isVariantNode ? this : this.parent ? this.parent.getClosestVariantNode() : void 0;
+  }
+  getVariantContext(startAtParent = false) {
+    if (startAtParent) {
+      return this.parent ? this.parent.getVariantContext() : void 0;
+    }
+    if (!this.isControllingVariants) {
+      const context2 = this.parent ? this.parent.getVariantContext() || {} : {};
+      if (this.props.initial !== void 0) {
+        context2.initial = this.props.initial;
+      }
+      return context2;
+    }
+    const context = {};
+    for (let i = 0; i < numVariantProps; i++) {
+      const name = variantProps[i];
+      const prop = this.props[name];
+      if (isVariantLabel(prop) || prop === false) {
+        context[name] = prop;
+      }
+    }
+    return context;
+  }
+  /**
+   * Add a child visual element to our set of children.
+   */
+  addVariantChild(child) {
+    const closestVariantNode = this.getClosestVariantNode();
+    if (closestVariantNode) {
+      closestVariantNode.variantChildren && closestVariantNode.variantChildren.add(child);
+      return () => closestVariantNode.variantChildren.delete(child);
+    }
+  }
+  /**
+   * Add a motion value and bind it to this visual element.
+   */
+  addValue(key, value) {
+    if (value !== this.values.get(key)) {
+      this.removeValue(key);
+      this.bindToMotionValue(key, value);
+    }
+    this.values.set(key, value);
+    this.latestValues[key] = value.get();
+  }
+  /**
+   * Remove a motion value and unbind any active subscriptions.
+   */
+  removeValue(key) {
+    this.values.delete(key);
+    const unsubscribe = this.valueSubscriptions.get(key);
+    if (unsubscribe) {
+      unsubscribe();
+      this.valueSubscriptions.delete(key);
+    }
+    delete this.latestValues[key];
+    this.removeValueFromRenderState(key, this.renderState);
+  }
+  /**
+   * Check whether we have a motion value for this key
+   */
+  hasValue(key) {
+    return this.values.has(key);
+  }
+  getValue(key, defaultValue) {
+    if (this.props.values && this.props.values[key]) {
+      return this.props.values[key];
+    }
+    let value = this.values.get(key);
+    if (value === void 0 && defaultValue !== void 0) {
+      value = motionValue(defaultValue, { owner: this });
+      this.addValue(key, value);
+    }
+    return value;
+  }
+  /**
+   * If we're trying to animate to a previously unencountered value,
+   * we need to check for it in our state and as a last resort read it
+   * directly from the instance (which might have performance implications).
+   */
+  readValue(key) {
+    var _a;
+    return this.latestValues[key] !== void 0 || !this.current ? this.latestValues[key] : (_a = this.getBaseTargetFromProps(this.props, key)) !== null && _a !== void 0 ? _a : this.readValueFromInstance(this.current, key, this.options);
+  }
+  /**
+   * Set the base target to later animate back to. This is currently
+   * only hydrated on creation and when we first read a value.
+   */
+  setBaseTarget(key, value) {
+    this.baseTarget[key] = value;
+  }
+  /**
+   * Find the base target for a value thats been removed from all animation
+   * props.
+   */
+  getBaseTarget(key) {
+    var _a;
+    const { initial } = this.props;
+    const valueFromInitial = typeof initial === "string" || typeof initial === "object" ? (_a = resolveVariantFromProps(this.props, initial)) === null || _a === void 0 ? void 0 : _a[key] : void 0;
+    if (initial && valueFromInitial !== void 0) {
+      return valueFromInitial;
+    }
+    const target = this.getBaseTargetFromProps(this.props, key);
+    if (target !== void 0 && !isMotionValue(target))
+      return target;
+    return this.initialValues[key] !== void 0 && valueFromInitial === void 0 ? void 0 : this.baseTarget[key];
+  }
+  on(eventName, callback) {
+    if (!this.events[eventName]) {
+      this.events[eventName] = new SubscriptionManager();
+    }
+    return this.events[eventName].add(callback);
+  }
+  notify(eventName, ...args) {
+    if (this.events[eventName]) {
+      this.events[eventName].notify(...args);
+    }
+  }
+};
+
+// node_modules/framer-motion/dist/es/render/dom/DOMVisualElement.mjs
+var DOMVisualElement = class extends VisualElement {
+  sortInstanceNodePosition(a, b) {
+    return a.compareDocumentPosition(b) & 2 ? 1 : -1;
+  }
+  getBaseTargetFromProps(props, key) {
+    return props.style ? props.style[key] : void 0;
+  }
+  removeValueFromRenderState(key, { vars, style }) {
+    delete vars[key];
+    delete style[key];
+  }
+  makeTargetAnimatableFromInstance({ transition, transitionEnd, ...target }, { transformValues }, isMounted) {
+    let origin = getOrigin(target, transition || {}, this);
+    if (transformValues) {
+      if (transitionEnd)
+        transitionEnd = transformValues(transitionEnd);
+      if (target)
+        target = transformValues(target);
+      if (origin)
+        origin = transformValues(origin);
+    }
+    if (isMounted) {
+      checkTargetForNewValues(this, target, origin);
+      const parsed = parseDomVariant(this, target, origin, transitionEnd);
+      transitionEnd = parsed.transitionEnd;
+      target = parsed.target;
+    }
+    return {
+      transition,
+      transitionEnd,
+      ...target
+    };
+  }
+};
+
+// node_modules/framer-motion/dist/es/render/html/HTMLVisualElement.mjs
+function getComputedStyle2(element) {
+  return window.getComputedStyle(element);
+}
+var HTMLVisualElement = class extends DOMVisualElement {
+  constructor() {
+    super(...arguments);
+    this.type = "html";
+  }
+  readValueFromInstance(instance, key) {
+    if (transformProps.has(key)) {
+      const defaultType = getDefaultValueType(key);
+      return defaultType ? defaultType.default || 0 : 0;
+    } else {
+      const computedStyle = getComputedStyle2(instance);
+      const value = (isCSSVariableName(key) ? computedStyle.getPropertyValue(key) : computedStyle[key]) || 0;
+      return typeof value === "string" ? value.trim() : value;
+    }
+  }
+  measureInstanceViewportBox(instance, { transformPagePoint }) {
+    return measureViewportBox(instance, transformPagePoint);
+  }
+  build(renderState, latestValues, options, props) {
+    buildHTMLStyles(renderState, latestValues, options, props.transformTemplate);
+  }
+  scrapeMotionValuesFromProps(props, prevProps) {
+    return scrapeMotionValuesFromProps(props, prevProps);
+  }
+  handleChildMotionValue() {
+    if (this.childSubscription) {
+      this.childSubscription();
+      delete this.childSubscription;
+    }
+    const { children } = this.props;
+    if (isMotionValue(children)) {
+      this.childSubscription = children.on("change", (latest) => {
+        if (this.current)
+          this.current.textContent = `${latest}`;
+      });
+    }
+  }
+  renderInstance(instance, renderState, styleProp, projection) {
+    renderHTML(instance, renderState, styleProp, projection);
+  }
+};
+
+// node_modules/framer-motion/dist/es/render/svg/SVGVisualElement.mjs
+var SVGVisualElement = class extends DOMVisualElement {
+  constructor() {
+    super(...arguments);
+    this.type = "svg";
+    this.isSVGTag = false;
+  }
+  getBaseTargetFromProps(props, key) {
+    return props[key];
+  }
+  readValueFromInstance(instance, key) {
+    if (transformProps.has(key)) {
+      const defaultType = getDefaultValueType(key);
+      return defaultType ? defaultType.default || 0 : 0;
+    }
+    key = !camelCaseAttributes.has(key) ? camelToDash(key) : key;
+    return instance.getAttribute(key);
+  }
+  measureInstanceViewportBox() {
+    return createBox();
+  }
+  scrapeMotionValuesFromProps(props, prevProps) {
+    return scrapeMotionValuesFromProps2(props, prevProps);
+  }
+  build(renderState, latestValues, options, props) {
+    buildSVGAttrs(renderState, latestValues, options, this.isSVGTag, props.transformTemplate);
+  }
+  renderInstance(instance, renderState, styleProp, projection) {
+    renderSVG(instance, renderState, styleProp, projection);
+  }
+  mount(instance) {
+    this.isSVGTag = isSVGTag(instance.tagName);
+    super.mount(instance);
+  }
+};
+
+// node_modules/framer-motion/dist/es/render/dom/create-visual-element.mjs
+var createDomVisualElement = (Component, options) => {
+  return isSVGComponent(Component) ? new SVGVisualElement(options, { enableHardwareAcceleration: false }) : new HTMLVisualElement(options, { enableHardwareAcceleration: true });
+};
+
+// node_modules/framer-motion/dist/es/motion/features/layout.mjs
+var layout = {
+  layout: {
+    ProjectionNode: HTMLProjectionNode,
+    MeasureLayout
+  }
+};
+
+// node_modules/framer-motion/dist/es/render/dom/motion.mjs
+var preloadedFeatures = {
+  ...animations,
+  ...gestureAnimations,
+  ...drag,
+  ...layout
+};
+var motion = /* @__PURE__ */ createMotionProxy((Component, config) => createDomMotionConfig(Component, config, preloadedFeatures, createDomVisualElement));
+
+// src/components/BeeProgress.tsx
+var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+var ProgressBar = ({
+  value = 0,
+  max = 100,
+  variant = "primary",
+  size = "md",
+  showLabel = false,
+  className = ""
+}) => {
+  const progress2 = Math.min(Math.max(0, value / max * 100), 100);
+  const variantClasses = {
+    primary: "bg-bee-yellow-500",
+    success: "bg-green-500",
+    danger: "bg-red-500",
+    warning: "bg-amber-500",
+    info: "bg-blue-500"
+  };
+  const sizeClasses = {
+    sm: "h-1.5 text-xs",
+    md: "h-3 text-sm",
+    lg: "h-4 text-base"
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "w-full", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: (0, import_classnames.default)(
+      "w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden",
+      sizeClasses[size],
+      className
+    ), children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      motion.div,
+      {
+        className: (0, import_classnames.default)(
+          "h-full flex items-center justify-end",
+          variantClasses[variant]
+        ),
+        initial: { width: 0 },
+        animate: { width: `${progress2}%` },
+        transition: { duration: 0.5, ease: "easeOut" },
+        children: showLabel && progress2 > 20 && /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { className: "text-white font-medium px-2", children: [
+          Math.round(progress2),
+          "%"
+        ] })
+      }
+    ) }),
+    showLabel && progress2 <= 20 && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "mt-1 text-right", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { className: "text-gray-600 dark:text-gray-300", children: [
+      Math.round(progress2),
+      "%"
+    ] }) })
+  ] });
+};
+var CircularProgress = ({
+  value = 0,
+  size = 40,
+  strokeWidth = 4,
+  variant = "primary",
+  className = ""
+}) => {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const progress2 = Math.min(Math.max(0, value), 100);
+  const strokeDashoffset = circumference - progress2 / 100 * circumference;
+  const variantColors = {
+    primary: "#F59E0B",
+    // bee yellow
+    success: "#10B981",
+    // green-500
+    danger: "#EF4444",
+    // red-500
+    warning: "#F59E0B",
+    // amber-500
+    info: "#3B82F6"
+    // blue-500
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: (0, import_classnames.default)("relative inline-flex items-center justify-center", className), children: [
+    /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
+      "svg",
+      {
+        className: "transform -rotate-90",
+        width: size,
+        height: size,
+        viewBox: `0 0 ${size} ${size}`,
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+            "circle",
+            {
+              className: "text-gray-100 dark:text-gray-700",
+              cx: size / 2,
+              cy: size / 2,
+              r: radius,
+              strokeWidth,
+              fill: "transparent"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+            motion.circle,
+            {
+              cx: size / 2,
+              cy: size / 2,
+              r: radius,
+              strokeWidth,
+              fill: "transparent",
+              stroke: variantColors[variant],
+              strokeDasharray: circumference,
+              strokeDashoffset,
+              strokeLinecap: "round",
+              initial: { strokeDashoffset: circumference },
+              animate: { strokeDashoffset },
+              transition: { duration: 0.5, ease: "easeInOut" }
+            }
+          )
+        ]
+      }
+    ),
+    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { className: "text-xs font-bold text-gray-800 dark:text-white", children: [
+      Math.round(progress2),
+      "%"
+    ] }) })
+  ] });
+};
+
+// src/GameScreen.tsx
+var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+var MAX_SKIP_TURNS = 3;
+var MAX_ASK_FRIEND = 1;
+var initialTime = 60;
+var GameScreen = ({ config, onEndGame }) => {
+  const isTeamMode = config.gameMode === "team";
+  const handleNextWord = (0, import_react25.useCallback)(() => {
+    setState((prev) => {
+      const nextIndex = (prev.currentParticipantIndex + 1) % prev.participants.length;
+      return {
+        ...prev,
+        currentParticipantIndex: nextIndex,
+        currentWordIndex: prev.currentWordIndex + 1,
+        revealedIndices: /* @__PURE__ */ new Set(),
+        showDefinition: false,
+        feedback: null,
+        usedLetters: /* @__PURE__ */ new Set()
+      };
+    });
+  }, []);
+  const [state, setState] = (0, import_react25.useState)({
+    participants: config.participants.map((p) => ({
+      ...p,
+      attempted: 0,
+      correct: 0,
+      wordsAttempted: 0,
+      wordsCorrect: 0,
+      skipsRemaining: MAX_SKIP_TURNS,
+      askFriendRemaining: MAX_ASK_FRIEND,
+      achievements: [],
+      points: 0,
+      teamId: isTeamMode ? p.teamId : `p-${Date.now()}`,
+      avatar: "bee",
+      score: 0,
+      maxScore: 100
+      // Base max score, will be updated
+    })),
+    currentParticipantIndex: 0,
+    currentWordIndex: 0,
+    showShop: false,
+    coins: 100,
+    revealedIndices: /* @__PURE__ */ new Set(),
+    showDefinition: false,
+    currentHelp: null,
+    feedback: null,
+    usedHint: false,
+    showWord: true,
+    isHelpOpen: false,
+    letters: [],
+    usedLetters: /* @__PURE__ */ new Set(),
+    wordQueues: {
+      easy: [],
+      medium: [],
+      hard: []
+    },
+    extraAttempt: false,
+    attemptedParticipants: /* @__PURE__ */ new Set(),
+    missedWords: [],
+    totalWords: 0,
+    gameProgress: 0,
+    timeLeft: initialTime
+  });
+  const {
+    revealLetter: revealLetterHelp,
+    getDefinition: getDefinitionHelp,
+    addTime: addTimeHelp,
+    skipWord: skipWordHelp,
+    isHelpUsed,
+    setHelpUsed
+  } = useHelpSystem();
+  const timerRef = (0, import_react25.useRef)(null);
+  (0, import_react25.useEffect)(() => {
+    if (config.wordDatabase) {
+      const words = Object.values(config.wordDatabase).flat();
+      setState((prev) => ({ ...prev, totalWords: words.length }));
+      setState((prev) => ({
+        ...prev,
+        participants: prev.participants.map((p) => ({
+          ...p,
+          maxScore: words.length * 10
+          // 10 points per word
+        }))
+      }));
+    }
+  }, [config.wordDatabase]);
+  (0, import_react25.useEffect)(() => {
+    const gameProgress = state.totalWords > 0 ? Math.min(100, Math.round(state.currentWordIndex / state.totalWords * 100)) : 0;
+    setState((prev) => ({ ...prev, gameProgress }));
+  }, [state.currentWordIndex, state.totalWords]);
+  const handleShowDefinition = (0, import_react25.useCallback)(async (word) => {
+    setState((prev) => ({ ...prev, showDefinition: true }));
+    try {
+      const definition = await getDefinitionHelp(word);
+      setHelpUsed("hint-definition");
+      setState((prev) => ({
+        ...prev,
+        currentHelp: `Definition: ${definition}`,
+        feedback: { message: "Definition shown", type: "info" }
+      }));
+    } catch (error) {
+      setState((prev) => ({
+        ...prev,
+        feedback: { message: "Failed to load definition", type: "error" }
+      }));
+    }
+  }, [getDefinitionHelp, setHelpUsed]);
+  const handleAddTimeHelp = (0, import_react25.useCallback)(() => {
+    addTimeHelp(30);
+    setHelpUsed("extra-time");
+    setState((prev) => ({
+      ...prev,
+      currentHelp: "Added 30 seconds to the timer!",
+      feedback: { message: "Added 30 seconds to the timer!", type: "success" }
+    }));
+  }, [addTimeHelp, setHelpUsed]);
+  const handleSkipWordHelp = (0, import_react25.useCallback)(() => {
+    skipWordHelp();
+    setHelpUsed("skip-word");
+    setState((prev) => ({
+      ...prev,
+      currentHelp: "Skipped to the next word!",
+      feedback: { message: "Skipped to the next word!", type: "info" }
+    }));
+    handleNextWord();
+  }, [skipWordHelp, setHelpUsed, handleNextWord]);
+  const playSound = (0, import_react25.useCallback)((soundFile) => {
+    const audio = new Audio(soundFile);
+    audio.volume = 0.3;
+    audio.play().catch((e) => console.error("Audio playback failed:", e));
+  }, []);
+  const currentWord = config.words[state.currentWordIndex];
+  const currentParticipant = state.participants[state.currentParticipantIndex];
+  const handleSpellingSubmit = (0, import_react25.useCallback)(() => {
+    if (!currentWord) return;
+    const submittedWord = state.letters.join("");
+    const isCorrect = submittedWord.toLowerCase() === currentWord.word.toLowerCase();
+    const timeLeftPercentage = state.timeLeft / 60;
+    const timeBonus = Math.floor(timeLeftPercentage * 5);
+    playSound(isCorrect ? correct_default : wrong_default);
+    setState((prev) => {
+      const updatedParticipants = [...prev.participants];
+      const currentParticipant2 = updatedParticipants[prev.currentParticipantIndex];
+      currentParticipant2.attempted += 1;
+      currentParticipant2.wordsAttempted += 1;
+      if (isCorrect) {
+        currentParticipant2.correct += 1;
+        currentParticipant2.wordsCorrect += 1;
+        currentParticipant2.score += 10 + timeBonus;
+        currentParticipant2.points += 5 + timeBonus;
+        return {
+          ...prev,
+          participants: updatedParticipants,
+          coins: prev.coins + 5 + timeBonus,
+          feedback: { message: `Correct! +${timeBonus} time bonus`, type: "success" },
+          attemptedParticipants: /* @__PURE__ */ new Set()
+        };
+      } else {
+        return {
+          ...prev,
+          participants: updatedParticipants,
+          feedback: { message: "Try again!", type: "error" },
+          attemptedParticipants: /* @__PURE__ */ new Set([...prev.attemptedParticipants, prev.currentParticipantIndex])
+        };
+      }
+    });
+    if (isCorrect) {
+      setTimeout(handleNextWord, 1500);
+    }
+  }, [currentWord, state.letters, state.timeLeft, handleNextWord, playSound]);
+  const typeLetter = (0, import_react25.useCallback)((letter) => {
+    if (!currentWord) return;
+    const currentLetter = currentWord.word[state.letters.length].toLowerCase();
+    playSound(currentLetter === letter.toLowerCase() ? letter_correct_default : letter_wrong_default);
+    setState((prev) => ({
+      ...prev,
+      letters: [...prev.letters, letter],
+      usedLetters: /* @__PURE__ */ new Set([...prev.usedLetters, letter.toLowerCase()])
+    }));
+  }, [currentWord, state.letters.length, state.usedLetters, playSound]);
+  (0, import_react25.useEffect)(() => {
+    const handleAddTime = (e) => {
+      const { seconds } = e.detail;
+      if (timerRef.current) {
+        timerRef.current.addSeconds(seconds);
+      }
+    };
+    const handleSkipWord = () => handleNextWord();
+    window.addEventListener("addTime", handleAddTime);
+    window.addEventListener("skipWord", handleSkipWord);
+    return () => {
+      window.removeEventListener("addTime", handleAddTime);
+      window.removeEventListener("skipWord", handleSkipWord);
+    };
+  }, [handleNextWord]);
+  (0, import_react25.useEffect)(() => {
+    const timers = [];
+    if (state.currentHelp) {
+      const timer = setTimeout(() => setState((prev) => ({ ...prev, currentHelp: null })), 3e3);
+      timers.push(timer);
+    }
+    if (state.feedback) {
+      const timer = setTimeout(() => setState((prev) => ({ ...prev, feedback: null })), 3e3);
+      timers.push(timer);
+    }
+    return () => timers.forEach(clearTimeout);
+  }, [state.currentHelp, state.feedback]);
+  return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "game-screen", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "game-area", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("header", { className: "game-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "progress-container", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+            CircularProgress,
+            {
+              value: state.gameProgress,
+              size: 60,
+              strokeWidth: 8
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex items-center space-x-2 mr-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+              CircularProgress,
+              {
+                value: Math.round(currentParticipant.score / currentParticipant.maxScore * 100),
+                size: 40,
+                strokeWidth: 4,
+                variant: "primary"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { className: "text-bee-yellow-600 font-medium", children: [
+              currentParticipant.score,
+              "/",
+              currentParticipant.maxScore
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+            ProgressBar,
+            {
+              value: currentParticipant.score,
+              max: currentParticipant.maxScore,
+              size: "md",
+              showLabel: true
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2 mb-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+              ProgressBar,
+              {
+                value: Math.round(state.currentWordIndex / state.totalWords * 100),
+                size: "sm",
+                variant: "primary",
+                className: "h-full"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex justify-between text-xs mt-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { children: [
+                "Progress: ",
+                state.currentWordIndex,
+                "/",
+                state.totalWords,
+                " words"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { children: [
+                Math.round(state.currentWordIndex / state.totalWords * 100),
+                "%"
+              ] })
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "timer-container", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          CircularTimer_default,
+          {
+            timeLeft: state.timeLeft,
+            total: initialTime
+          }
+        ) }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "coins-display", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("img", { src: `${process.env.PUBLIC_URL}/img/bee.svg`, alt: "Bee" }),
+          state.coins
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "word-area", children: [
+        state.showWord && currentWord && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "current-word", children: currentWord.word.split("").map((letter, index) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          "span",
+          {
+            className: `letter ${state.revealedIndices.has(index) ? "revealed" : ""}`,
+            children: state.revealedIndices.has(index) ? letter : "_"
+          },
+          index
+        )) }),
+        currentWord && /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex items-center justify-between mb-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { className: "text-sm font-medium text-gray-600 dark:text-gray-300", children: [
+            "Difficulty:",
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: `font-bold ${currentWord.difficulty === "easy" ? "text-green-500" : currentWord.difficulty === "medium" ? "text-amber-500" : "text-red-500"}`, children: currentWord.difficulty })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+            ProgressBar,
+            {
+              value: currentWord.difficulty === "easy" ? 33 : currentWord.difficulty === "medium" ? 66 : 100,
+              size: "sm",
+              variant: currentWord.difficulty === "easy" ? "success" : currentWord.difficulty === "medium" ? "warning" : "danger",
+              className: "w-24"
+            }
+          )
+        ] }),
+        currentWord && /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex items-center justify-between mb-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { className: "text-sm font-medium text-gray-600 dark:text-gray-300", children: [
+            "Difficulty:",
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: `font-bold ${currentWord.difficulty === "easy" ? "text-green-500" : currentWord.difficulty === "medium" ? "text-amber-500" : "text-red-500"}`, children: currentWord.difficulty })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+            ProgressBar,
+            {
+              value: currentWord.difficulty === "easy" ? 33 : currentWord.difficulty === "medium" ? 66 : 100,
+              size: "sm",
+              variant: currentWord.difficulty === "easy" ? "success" : currentWord.difficulty === "medium" ? "warning" : "danger",
+              className: "w-24"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          HintPanel_default,
+          {
+            word: currentWord?.word || "",
+            onRevealLetter: () => handleRevealLetter(
+              currentWord?.word || "",
+              state.revealedIndices
+            ),
+            onShowDefinition: () => handleShowDefinition(currentWord?.word || ""),
+            onAddTime: handleAddTimeHelp,
+            onSkipWord: handleSkipWordHelp,
+            isHelpUsed,
+            coins: state.coins
+          }
+        ),
+        state.feedback && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: `feedback ${state.feedback.type}`, children: state.feedback.message }),
+        state.currentHelp && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "help-message", children: state.currentHelp }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          "button",
+          {
+            onClick: handleSpellingSubmit,
+            className: "submit-button",
+            disabled: state.letters.length === 0,
+            children: "Submit"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+        OnScreenKeyboard_default,
+        {
+          onLetter: typeLetter,
+          onBackspace: () => setState((prev) => ({ ...prev, letters: prev.letters.slice(0, -1) })),
+          onSubmit: handleSpellingSubmit,
+          soundEnabled: true,
+          usedLetters: state.usedLetters,
+          currentWord: currentWord?.word
+        }
+      )
+    ] }),
+    state.showShop && /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "shop-modal", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h2", { children: "Help Shop" }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: () => setState((prev) => ({ ...prev, showShop: false })), children: "Close" })
+    ] })
+  ] });
+};
+var GameScreenWithProvider = (props) => {
+  return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(HelpSystemProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(GameScreen, { ...props }) });
+};
+var GameScreen_default = GameScreenWithProvider;
+
+// src/ResultsScreen.tsx
+var import_react28 = __toESM(require_react());
+
+// audio/applause.mp3
+var applause_default = "./applause-I345E7HE.mp3";
+
+// src/utils/confetti.ts
+var launchConfetti = async () => {
+  if (typeof window === "undefined") return;
+  const confetti = (await Promise.resolve().then(() => (init_confetti_module(), confetti_module_exports))).default;
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 }
+  });
+};
+
+// src/DailyChallenge.tsx
+var import_react26 = __toESM(require_react());
+var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+var DATE_KEY = "dailyChallengeDates";
+var HIGH_KEY = "dailyChallengeHighest";
+var computeCurrentStreak = (dates) => {
+  const set = new Set(dates);
+  let streak = 0;
+  const date = /* @__PURE__ */ new Date();
+  while (true) {
+    const key = date.toISOString().split("T")[0];
+    if (!set.has(key)) break;
+    streak++;
+    date.setDate(date.getDate() - 1);
+  }
+  return streak;
+};
+var computeHighestStreak = (dates) => {
+  const sorted = Array.from(new Set(dates)).sort();
+  let max = 0;
+  let cur = 0;
+  let prev = null;
+  for (const d of sorted) {
+    if (!prev) {
+      cur = 1;
+    } else {
+      const diff = (new Date(d).getTime() - new Date(prev).getTime()) / (1e3 * 60 * 60 * 24);
+      cur = diff === 1 ? cur + 1 : 1;
+    }
+    if (cur > max) max = cur;
+    prev = d;
+  }
+  return max;
+};
+var getStreakInfo = () => {
+  const dates = JSON.parse(localStorage.getItem(DATE_KEY) || "[]");
+  return {
+    currentStreak: computeCurrentStreak(dates),
+    highestStreak: computeHighestStreak(dates)
+  };
+};
+var recordDailyCompletion = () => {
+  const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+  const dates = JSON.parse(localStorage.getItem(DATE_KEY) || "[]");
+  if (!dates.includes(today)) {
+    dates.push(today);
+    localStorage.setItem(DATE_KEY, JSON.stringify(dates));
+  }
+  const info = getStreakInfo();
+  localStorage.setItem(HIGH_KEY, String(info.highestStreak));
+  return info;
+};
+
+// src/components/MorphologyCard.tsx
+var import_react27 = __toESM(require_react());
+var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+var MorphologyCard = ({ word, database }) => {
+  const allWords = (0, import_react27.useMemo)(
+    () => Object.values(database).flat(),
+    [database]
+  );
+  const prefixExamples = (0, import_react27.useMemo)(() => {
+    if (!word.prefix) return [];
+    return allWords.filter((w) => w.word !== word.word && w.prefix === word.prefix).map((w) => w.word).slice(0, 3);
+  }, [allWords, word]);
+  const suffixExamples = (0, import_react27.useMemo)(() => {
+    if (!word.suffix) return [];
+    return allWords.filter((w) => w.word !== word.word && w.suffix === word.suffix).map((w) => w.word).slice(0, 3);
+  }, [allWords, word]);
+  if (!word.prefix && !word.suffix) return null;
+  return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "bg-white/10 p-3 rounded-md mt-2 text-sm", children: [
+    word.prefix && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "mb-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "font-bold", children: [
+        "Prefix: ",
+        word.prefix
+      ] }),
+      word.prefixMeaning && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "text-gray-200", children: word.prefixMeaning }),
+      prefixExamples.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "text-gray-300", children: [
+        "Example words: ",
+        prefixExamples.join(", ")
+      ] })
+    ] }),
+    word.suffix && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "font-bold", children: [
+        "Suffix: ",
+        word.suffix
+      ] }),
+      word.suffixMeaning && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "text-gray-200", children: word.suffixMeaning }),
+      suffixExamples.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "text-gray-300", children: [
+        "Example words: ",
+        suffixExamples.join(", ")
+      ] })
+    ] })
+  ] });
+};
+var MorphologyCard_default = MorphologyCard;
+
+// src/ResultsScreen.tsx
+var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+var ResultsScreen = ({ results, config, onRestart, onViewLeaderboard }) => {
+  const applauseAudio = (0, import_react28.useRef)(new Audio(applause_default));
+  const totalScore = results.participants.reduce((sum, p) => sum + p.points, 0);
+  const [bestClassScore, setBestClassScore] = (0, import_react28.useState)(0);
+  const [isBestScore, setIsBestScore] = (0, import_react28.useState)(false);
+  const [streakInfo, setStreakInfo] = (0, import_react28.useState)(null);
+  const [bonus, setBonus] = (0, import_react28.useState)(0);
+  (0, import_react28.useEffect)(() => {
+    if (config.dailyChallenge) {
+      const info = recordDailyCompletion();
+      setStreakInfo(info);
+      setBonus(info.currentStreak > 1 ? (info.currentStreak - 1) * 10 : 0);
+    }
+  }, [config.dailyChallenge]);
+  (0, import_react28.useEffect)(() => {
+    if (localStorage.getItem("teacherMode") === "true") {
+      document.body.classList.add("teacher-mode");
+    } else {
+      document.body.classList.remove("teacher-mode");
+    }
+  }, []);
+  (0, import_react28.useEffect)(() => {
+    const stored = JSON.parse(localStorage.getItem("leaderboard") || "[]");
+    const newEntries = results.participants.map((p) => ({
+      name: p.name,
+      score: p.points + (config.dailyChallenge ? bonus : 0),
+      date: (/* @__PURE__ */ new Date()).toISOString(),
+      avatar: p.avatar
+    }));
+    const updated = [...stored, ...newEntries].sort((a, b) => b.score - a.score).slice(0, 10);
+    localStorage.setItem("leaderboard", JSON.stringify(updated));
+  }, [results, config.dailyChallenge, bonus]);
+  (0, import_react28.useEffect)(() => {
+    const history = JSON.parse(
+      localStorage.getItem("sessionHistory") || "[]"
+    );
+    history.push({ date: (/* @__PURE__ */ new Date()).toISOString(), score: totalScore, duration: results.duration });
+    localStorage.setItem("sessionHistory", JSON.stringify(history));
+    const storedBest = Number(localStorage.getItem("bestClassScore") || "0");
+    if (totalScore > storedBest) {
+      localStorage.setItem("bestClassScore", String(totalScore));
+      setBestClassScore(totalScore);
+      setIsBestScore(true);
+    } else {
+      setBestClassScore(storedBest);
+    }
+  }, [totalScore, results.duration]);
+  (0, import_react28.useEffect)(() => {
+    if (results.winner) {
+      if (config.soundEnabled) {
+        applauseAudio.current.play();
+      }
+      const prefersReducedMotion2 = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (config.effectsEnabled && !prefersReducedMotion2) {
+        launchConfetti();
+      }
+    }
+  }, [results.winner, config.soundEnabled, config.effectsEnabled]);
+  const handleExport = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(results, null, 2));
+    const anchor = document.createElement("a");
+    anchor.href = dataStr;
+    anchor.download = "spelling-bee-results.json";
+    anchor.click();
+  };
+  const getWinnerMessage = () => {
+    const { winner, participants } = results;
+    if (winner) {
+      return `Winner: ${winner.name}`;
+    }
+    const activeParticipants = participants.filter((p) => p.lives > 0);
+    if (activeParticipants.length > 1) {
+      const names = activeParticipants.map((p) => p.name).join(" and ");
+      return `It's a draw between ${names}!`;
+    }
+    return "No one wins this round!";
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center font-body", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h1", { className: "text-6xl font-bold mb-4 text-yellow-300 uppercase font-sans", children: "\u{1F3C6} Game Over! \u{1F3C6}" }),
+    /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h2", { className: "text-4xl mb-8 uppercase font-sans", children: getWinnerMessage() }),
+    results?.duration && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "text-2xl mb-6", children: [
+      "Game Duration: ",
+      results.duration,
+      " seconds"
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "text-xl mb-4", children: [
+      "Session Score: ",
+      totalScore
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "text-xl mb-8", children: [
+      "Best Class Score: ",
+      bestClassScore,
+      isBestScore && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "text-green-400 font-bold ml-2", children: "New High Score!" })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md scorecard font-body", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { className: "text-3xl font-bold mb-4 uppercase font-sans", children: "\u{1F4CA} Final Scores" }),
+      results && results.participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "text-left text-xl mb-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("img", { src: p.avatar || bee_default, alt: `${p.name} avatar`, className: "w-6 h-6 rounded-full" }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "font-bold", children: p.name })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "text-yellow-300", children: [
+          p.wordsCorrect,
+          "/",
+          p.wordsAttempted,
+          " correct (",
+          p.wordsAttempted > 0 ? Math.round(p.wordsCorrect / p.wordsAttempted * 100) : 0,
+          "%) - ",
+          p.lives,
+          " lives remaining - ",
+          p.points + (config.dailyChallenge ? bonus : 0),
+          " points"
+        ] })
+      ] }, index))
+    ] }),
+    config.dailyChallenge && streakInfo && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "bg-white/10 p-4 rounded-lg w-full max-w-md mt-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "text-xl", children: [
+        "\u{1F525} Streak: ",
+        streakInfo.currentStreak,
+        " day",
+        streakInfo.currentStreak !== 1 ? "s" : "",
+        " (Best ",
+        streakInfo.highestStreak,
+        ")"
+      ] }),
+      bonus > 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "text-yellow-300", children: [
+        "Bonus Points: +",
+        bonus
+      ] })
+    ] }),
+    results.missedWords && results.missedWords.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md mt-8 scorecard font-body", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h3", { className: "text-3xl font-bold mb-4 uppercase font-sans", children: "\u274C Missed Words" }),
+      results.missedWords.map((w, index) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "text-left text-xl mb-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "font-bold", children: w.word }),
+        " - ",
+        w.definition,
+        (w.prefix || w.suffix) && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(MorphologyCard_default, { word: w, database: config.wordDatabase })
+      ] }, index))
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex gap-6 mt-12 flex-wrap justify-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { onClick: handleExport, className: "bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold", children: "\u{1F4E4} Export Results" }),
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { onClick: onViewLeaderboard, className: "bg-purple-500 hover:bg-purple-600 px-8 py-5 rounded-xl text-2xl font-bold", children: "\u{1F4C8} View Leaderboard" }),
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { onClick: onRestart, className: "bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold", children: "\u{1F504} Play Again" })
+    ] })
+  ] });
+};
+var ResultsScreen_default = ResultsScreen;
+
+// src/AchievementsScreen.tsx
+var import_react29 = __toESM(require_react());
+
+// constants/achievements.ts
+var achievements = {
+  firstWin: {
+    title: "First Victory",
+    description: "Win your first game",
+    icon: "/spelling-bee-game/img/achievements/first-win.svg"
+  },
+  perfectGame: {
+    title: "Perfect Game",
+    description: "Complete a game with no mistakes",
+    icon: "/spelling-bee-game/img/achievements/perfect-game.svg"
+  },
+  speedDemon: {
+    title: "Speed Demon",
+    description: "Complete a game in under 2 minutes",
+    icon: "/spelling-bee-game/img/achievements/speed-demon.svg"
+  },
+  wordMaster: {
+    title: "Word Master",
+    description: "Spell 100 words correctly",
+    icon: "/spelling-bee-game/img/achievements/word-master.svg"
+  },
+  dailyStreak: {
+    title: "Daily Streak",
+    description: "Complete daily challenges for 7 days in a row",
+    icon: "/spelling-bee-game/img/achievements/daily-streak.svg"
+  }
+};
+
+// src/AchievementsScreen.tsx
+var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+var AchievementBadge = ({ unlocked, title, description, icon }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: `achievement ${unlocked ? "unlocked" : "locked"} font-body`, children: [
+  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("img", { src: icon, alt: title }),
+  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h3", { className: "uppercase font-sans", children: title }),
+  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: description })
+] });
+var AchievementsScreen = ({ onBack }) => {
+  const [unlocked, setUnlocked] = (0, import_react29.useState)(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      return JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
+    } catch {
+      return [];
+    }
+  });
+  import_react29.default.useEffect(() => {
+    localStorage.setItem("unlockedAchievements", JSON.stringify(unlocked));
+  }, [unlocked]);
+  return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-green-600 to-teal-800 p-8 text-white font-body", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h1", { className: "text-4xl text-center mb-8 uppercase font-sans", children: "Achievements" }),
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "achievements-grid max-w-xl mx-auto", children: Object.entries(achievements).map(([key, achievement]) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      AchievementBadge,
+      {
+        unlocked: unlocked.includes(key),
+        title: achievement.title,
+        description: achievement.description,
+        icon: achievement.icon
+      },
+      key
+    )) }),
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      "button",
+      {
+        onClick: onBack,
+        className: "mt-8 block mx-auto bg-yellow-300 text-black px-6 py-3 rounded-lg font-bold",
+        children: "Back"
+      }
+    )
+  ] });
+};
+var AchievementsScreen_default = AchievementsScreen;
+
+// ShopScreen.tsx
+var import_react32 = __toESM(require_react());
+
+// src/components/AvatarSelector.tsx
+var import_react30 = __toESM(require_react());
+
 // constants/avatars.ts
 var avatars = {
   bee: { name: "Bee", icon: "/img/avatars/bee.svg" },
@@ -29102,219 +34552,199 @@ var avatars = {
 };
 
 // src/components/AvatarSelector.tsx
-var import_jsx_runtime9 = __toESM(require_jsx_runtime());
-function AvatarSelector({ currentAvatar, onSelect, availableAvatars }) {
-  const displayAvatars = availableAvatars ? Object.fromEntries(
-    availableAvatars.filter((key) => avatars[key]).map((key) => [key, avatars[key]])
+var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+function AvatarSelector({
+  currentAvatar,
+  onSelect,
+  availableAvatars: availableAvatars2,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  "aria-describedby": ariaDescribedBy
+}) {
+  const avatarListRef = (0, import_react30.useRef)(null);
+  const displayAvatars = availableAvatars2 && availableAvatars2.length > 0 ? Object.fromEntries(
+    availableAvatars2.filter((key) => key in avatars).map((key) => [key, avatars[key]])
   ) : avatars;
-  return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "avatar-selector", children: Object.entries(displayAvatars).map(([key, avatar]) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-    "button",
+  (0, import_react30.useEffect)(() => {
+    const handleKeyDown = (e) => {
+      if (!avatarListRef.current) return;
+      const buttons = Array.from(
+        avatarListRef.current.querySelectorAll('[role="radio"]')
+      );
+      if (!buttons.length) return;
+      const currentIndex = buttons.findIndex(
+        (button) => button.getAttribute("aria-checked") === "true"
+      );
+      let nextIndex = currentIndex;
+      switch (e.key) {
+        case "ArrowRight":
+        case "ArrowDown":
+          e.preventDefault();
+          nextIndex = (currentIndex + 1) % buttons.length;
+          break;
+        case "ArrowLeft":
+        case "ArrowUp":
+          e.preventDefault();
+          nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+          break;
+        case "Home":
+          e.preventDefault();
+          nextIndex = 0;
+          break;
+        case "End":
+          e.preventDefault();
+          nextIndex = buttons.length - 1;
+          break;
+        default:
+          return;
+      }
+      buttons[nextIndex]?.focus();
+    };
+    const list = avatarListRef.current;
+    list?.addEventListener("keydown", handleKeyDown);
+    return () => {
+      list?.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+  return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    "div",
     {
-      className: `avatar-option ${currentAvatar === key ? "selected" : ""}`,
-      onClick: () => onSelect(key),
-      children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("img", { src: avatar.icon, alt: avatar.name })
-    },
-    key
-  )) });
+      ref: avatarListRef,
+      role: "radiogroup",
+      "aria-label": ariaLabel,
+      "aria-labelledby": ariaLabelledBy,
+      "aria-describedby": ariaDescribedBy,
+      className: "avatar-selector flex flex-wrap gap-4 p-2",
+      children: Object.entries(displayAvatars).map(([key, avatar]) => {
+        const isSelected = currentAvatar === key;
+        return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          "button",
+          {
+            role: "radio",
+            "aria-checked": isSelected,
+            tabIndex: isSelected ? 0 : -1,
+            className: `avatar-option p-2 rounded-full transition-all ${isSelected ? "ring-4 ring-yellow-400 scale-110" : "hover:bg-white/20 focus:ring-2 focus:ring-yellow-400"}`,
+            onClick: () => onSelect(key),
+            "aria-label": `Select ${avatar.name} avatar`,
+            children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+              "img",
+              {
+                src: avatar.icon,
+                alt: "",
+                className: "w-12 h-12",
+                "aria-hidden": "true"
+              }
+            )
+          },
+          key
+        );
+      })
+    }
+  );
 }
 
-// src/components/AudioSettings.jsx
-var import_react14 = __toESM(require_react());
-init_audio();
-var import_jsx_runtime10 = __toESM(require_jsx_runtime());
-function AudioSettings() {
-  const [musicVolume, setMusicVolume] = import_react14.default.useState(audioManager.volume.music * 100);
-  const [sfxVolume, setSfxVolume] = import_react14.default.useState(audioManager.volume.sfx * 100);
-  const [isMusicMuted, setIsMusicMuted] = import_react14.default.useState(audioManager.isMusicMuted);
-  const [areSoundsMuted, setAreSoundsMuted] = import_react14.default.useState(audioManager.areSoundsMuted);
-  const handleMusicVolumeChange = (e) => {
-    const volume = parseInt(e.target.value) / 100;
-    setMusicVolume(volume * 100);
-    audioManager.setMusicVolume(volume);
-  };
-  const handleSfxVolumeChange = (e) => {
-    const volume = parseInt(e.target.value) / 100;
-    setSfxVolume(volume * 100);
-    audioManager.setSfxVolume(volume);
-  };
-  const toggleMusicMute = () => {
-    const isPlaying = audioManager.toggleMusic();
-    setIsMusicMuted(!isPlaying);
-  };
-  const toggleSoundsMute = () => {
-    const isEnabled = audioManager.toggleSound();
-    setAreSoundsMuted(!isEnabled);
-  };
-  return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "space-y-6 p-6", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "text-center mb-6", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { className: "section-header", children: "Audio Settings" }) }),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "space-y-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "bg-white bg-opacity-80 rounded-lg p-4 shadow-md", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex items-center justify-between mb-3", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("label", { className: "text-sm font-semibold text-gray-700", children: "Music Volume" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-            "button",
-            {
-              onClick: toggleMusicMute,
-              className: "p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200",
-              "aria-label": isMusicMuted ? "Unmute music" : "Mute music",
-              children: isMusicMuted ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("svg", { className: "w-5 h-5 text-gray-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z", clipRule: "evenodd" }),
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" })
-              ] }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("svg", { className: "w-5 h-5 text-indigo-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" }) })
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-          "input",
-          {
-            type: "range",
-            min: "0",
-            max: "100",
-            value: musicVolume,
-            onChange: handleMusicVolumeChange,
-            className: "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500",
-            disabled: isMusicMuted
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex justify-between text-xs text-gray-500 mt-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "0%" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { children: [
-            Math.round(musicVolume),
-            "%"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "100%" })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "bg-white bg-opacity-80 rounded-lg p-4 shadow-md", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex items-center justify-between mb-3", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("label", { className: "text-sm font-semibold text-gray-700", children: "Sound Effects" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-            "button",
-            {
-              onClick: toggleSoundsMute,
-              className: "p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200",
-              "aria-label": areSoundsMuted ? "Unmute sound effects" : "Mute sound effects",
-              children: areSoundsMuted ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("svg", { className: "w-5 h-5 text-gray-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z", clipRule: "evenodd" }),
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" })
-              ] }) : /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("svg", { className: "w-5 h-5 text-indigo-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z", clipRule: "evenodd" }),
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" }),
-                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M15.536 8.464a5 5 0 010 7.072" })
-              ] })
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-          "input",
-          {
-            type: "range",
-            min: "0",
-            max: "100",
-            value: sfxVolume,
-            onChange: handleSfxVolumeChange,
-            className: "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500",
-            disabled: areSoundsMuted
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex justify-between text-xs text-gray-500 mt-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "0%" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { children: [
-            Math.round(sfxVolume),
-            "%"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "100%" })
-        ] })
-      ] })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "text-center mt-6", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "text-xs text-gray-500", children: "Audio settings are saved automatically" }) })
-  ] });
+// src/hooks/useFocusTrap.ts
+var import_react31 = __toESM(require_react());
+function useFocusTrap() {
+  const ref = (0, import_react31.useRef)(null);
+  (0, import_react31.useEffect)(() => {
+    const element = ref.current;
+    if (!element) return;
+    const focusableElements = element.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    const handleKeyDown = (e) => {
+      if (e.key !== "Tab") return;
+      if (focusableElements.length === 1) {
+        e.preventDefault();
+        firstElement.focus();
+        return;
+      }
+      if (e.shiftKey && document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      } else if (!e.shiftKey && document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    };
+    element.addEventListener("keydown", handleKeyDown);
+    if (firstElement) {
+      firstElement.focus();
+    }
+    return () => {
+      element.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+  return ref;
 }
 
-// src/AudioContext.tsx
-var import_react15 = __toESM(require_react());
-var import_jsx_runtime11 = __toESM(require_jsx_runtime());
-var AudioContext3 = (0, import_react15.createContext)({
-  muted: false,
-  toggleMute: () => {
+// ShopScreen.tsx
+var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+var shopItems = [
+  {
+    id: "wizard",
+    name: "Wizard Avatar",
+    description: "A magical wizard avatar with special powers",
+    icon: "/img/avatars/bee.svg",
+    price: 50,
+    type: "avatar"
+  },
+  {
+    id: "top-hat",
+    name: "Top Hat",
+    description: "A fancy top hat for your avatar",
+    icon: "/img/avatars/book.svg",
+    price: 30,
+    type: "accessory"
+  },
+  {
+    id: "hint-letter",
+    name: "Hint: Reveal a Letter",
+    description: "Reveals one correct letter in the current word",
+    icon: "?",
+    price: 20,
+    type: "help",
+    cooldown: 60
+  },
+  {
+    id: "hint-definition",
+    name: "Hint: Show Definition",
+    description: "Shows the definition of the current word",
+    icon: "D",
+    price: 15,
+    type: "help",
+    cooldown: 30
+  },
+  {
+    id: "extra-time",
+    name: "Extra Time",
+    description: "Adds 30 seconds to the current round's timer",
+    icon: "\u23F1\uFE0F",
+    price: 25,
+    type: "help",
+    cooldown: 90
+  },
+  {
+    id: "skip-word",
+    name: "Skip Word",
+    description: "Skip the current word without penalty",
+    icon: "\u23ED\uFE0F",
+    price: 40,
+    type: "help",
+    cooldown: 120
   }
-});
-var useAudio2 = () => (0, import_react15.useContext)(AudioContext3);
-
-// src/GameScreen.tsx
-var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-var MAX_SKIP_TURNS = 1;
-var MAX_ASK_FRIEND = 1;
-var GameScreen = ({ config, onEndGame }) => {
-  const isTeamMode = config.gameMode === "team";
-  const [participants, setParticipants] = import_react16.default.useState(
-    config.participants.map((p) => ({
-      ...p,
-      attempted: 0,
-      correct: 0,
-      wordsAttempted: 0,
-      wordsCorrect: 0,
-      skipsRemaining: MAX_SKIP_TURNS,
-      askFriendRemaining: MAX_ASK_FRIEND
-    }))
-  );
-  const shuffle = (arr) => {
-    const copy = [...arr];
-    for (let i = copy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copy[i], copy[j]] = [copy[j], copy[i]];
-    }
-    return copy;
-  };
-  const [teamQueues, setTeamQueues] = import_react16.default.useState(() => {
-    if (!isTeamMode) return [];
-    return config.participants.map((t) => shuffle([...t.students]));
-  });
-  const [currentParticipantIndex, setCurrentParticipantIndex] = import_react16.default.useState(0);
-  const currentStudent = import_react16.default.useMemo(() => {
-    if (!isTeamMode) return null;
-    const queue = teamQueues[currentParticipantIndex] || [];
-    return queue[0] || null;
-  }, [teamQueues, currentParticipantIndex, isTeamMode]);
-  const [showWord, setShowWord] = import_react16.default.useState(true);
-  const [usedHint, setUsedHint] = import_react16.default.useState(false);
-  const [letters2, setLetters] = import_react16.default.useState([]);
-  const usedLetters = import_react16.default.useMemo(
-    () => new Set(letters2.filter((l) => l !== "").map((l) => l.toLowerCase())),
-    [letters2]
-  );
-  const [feedback, setFeedback] = import_react16.default.useState({
-    message: "",
-    type: ""
-  });
-  const [extraAttempt, setExtraAttempt] = import_react16.default.useState(false);
-  const [isHelpOpen, setIsHelpOpen] = import_react16.default.useState(false);
-  const {
-    wordQueues,
-    setWordQueues,
-    currentWord,
-    currentDifficulty,
-    selectNextWord
-  } = useWordSelection_default(config.wordDatabase);
-  const [attemptedParticipants, setAttemptedParticipants] = import_react16.default.useState(/* @__PURE__ */ new Set());
-  const [missedWords, setMissedWords] = import_react16.default.useState([]);
-  const [unlockedAchievements, setUnlockedAchievements] = import_react16.default.useState(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      return JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
-    } catch {
-      return [];
-    }
-  });
-  const [toast, setToast] = import_react16.default.useState("");
-  const hiddenInputRef = import_react16.default.useRef(null);
-  const [startTime] = import_react16.default.useState(Date.now());
-  const [coins, setCoins] = import_react16.default.useState(() => {
+];
+var ShopScreen = ({ onBack }) => {
+  const [cooldowns, setCooldowns] = import_react32.default.useState({});
+  const [coins, setCoins] = import_react32.default.useState(() => {
     if (typeof window === "undefined") return 0;
     const stored = localStorage.getItem("coins");
     return stored ? parseInt(stored, 10) : 0;
   });
-  const [ownedAvatars] = import_react16.default.useState(() => {
+  const [ownedAvatars, setOwnedAvatars] = import_react32.default.useState(() => {
     if (typeof window === "undefined") return ["bee", "book", "trophy"];
     try {
       return JSON.parse(
@@ -29324,589 +34754,459 @@ var GameScreen = ({ config, onEndGame }) => {
       return ["bee", "book", "trophy"];
     }
   });
-  const [currentAvatar, setCurrentAvatar] = import_react16.default.useState(() => {
+  const [ownedAccessories, setOwnedAccessories] = import_react32.default.useState(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      return JSON.parse(localStorage.getItem("ownedAccessories") || "[]");
+    } catch {
+      return [];
+    }
+  });
+  const [currentAvatar, setCurrentAvatar] = import_react32.default.useState(() => {
     if (typeof window === "undefined") return "";
     return localStorage.getItem("equippedAvatar") || "";
   });
-  import_react16.default.useEffect(() => {
+  import_react32.default.useEffect(() => {
     localStorage.setItem("equippedAvatar", currentAvatar);
   }, [currentAvatar]);
-  const { muted, toggleMute } = useAudio2();
-  const playCorrect = useSound_default(correct_default, !muted);
-  const playWrong = useSound_default(wrong_default, !muted);
-  const playTimeout = useSound_default(timeout_default, !muted);
-  const playLetterCorrect = useSound_default(
-    letter_correct_default,
-    !muted
-  );
-  const playLetterWrong = useSound_default(letter_wrong_default, !muted);
-  const playShop = useSound_default(shop_default, !muted);
-  const playLoseLife = useSound_default(lose_life_default, !muted);
-  const {
-    timeLeft,
-    start: startTimer,
-    pause: pauseTimer,
-    resume: resumeTimer,
-    reset: resetTimer,
-    stop: stopTimer,
-    isPaused
-  } = useTimer_default(config.timerDuration, () => {
-    playTimeout();
-    handleIncorrectAttempt();
-  });
-  import_react16.default.useEffect(() => {
-    if (!isPaused) {
-      setShowAudioSettings(false);
-    }
-  }, [isPaused]);
-  import_react16.default.useEffect(() => {
-    if (localStorage.getItem("teacherMode") === "true") {
-      document.body.classList.add("teacher-mode");
-    } else {
-      document.body.classList.remove("teacher-mode");
-    }
-  }, []);
-  import_react16.default.useEffect(() => {
-    if (currentWord) {
-      setLetters(Array.from({ length: currentWord.word.length }, () => ""));
-    }
-  }, [currentWord]);
-  import_react16.default.useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (!currentWord || isPaused) return;
-      if (/^[a-zA-Z]$/.test(e.key)) {
-        typeLetter(e.key);
-      } else if (e.key === "Backspace") {
-        handleVirtualBackspace();
-      } else if (e.key === "Enter") {
-        handleSpellingSubmit();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentWord, isPaused, letters2]);
-  const selectNextWordForLevel = (level) => {
-    const nextWord = selectNextWord(level);
-    if (nextWord) {
-      setAttemptedParticipants(/* @__PURE__ */ new Set());
-      setExtraAttempt(false);
-      setIsHelpOpen(false);
-      setUsedHint(false);
-      setLetters(Array(nextWord.word.length).fill(""));
-      if (hiddenInputRef.current) {
-        hiddenInputRef.current.focus();
-      }
-      speak(nextWord.word);
-      startTimer();
-    } else {
-      onEndGameWithMissedWords();
-    }
-  };
-  const nextTurn = () => {
-    if (isTeamMode) {
-      setTeamQueues((prev) => {
-        const newQueues = [...prev];
-        const queue = [...newQueues[currentParticipantIndex]];
-        queue.shift();
-        if (queue.length === 0) {
-          const team = participants[currentParticipantIndex];
-          newQueues[currentParticipantIndex] = shuffle([...team.students]);
-        } else {
-          newQueues[currentParticipantIndex] = queue;
-        }
-        return newQueues;
+  import_react32.default.useEffect(() => {
+    const timer = setInterval(() => {
+      setCooldowns((prevCooldowns) => {
+        const updated = { ...prevCooldowns };
+        Object.keys(updated).forEach((key) => {
+          if (updated[key] > 0) {
+            updated[key]--;
+            if (updated[key] <= 0) {
+              delete updated[key];
+            }
+          }
+        });
+        return Object.keys(updated).length ? updated : {};
       });
-    }
-    setCurrentParticipantIndex(
-      (prevIndex) => (prevIndex + 1) % participants.length
-    );
-  };
-  function handleIncorrectAttempt() {
-    if (extraAttempt) {
-      setFeedback({
-        message: "Incorrect. You still have one more attempt!",
-        type: "error"
-      });
-      setExtraAttempt(false);
-      if (currentWord) setLetters(Array(currentWord.word.length).fill(""));
-      startTimer();
-      return;
-    }
-    setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
-    if (currentWord) setMissedWords((prev) => [...prev, currentWord]);
-    const updatedParticipants = participants.map((p, index) => {
-      if (index === currentParticipantIndex) {
-        return {
-          ...p,
-          lives: p.lives - 1,
-          streak: 0,
-          difficultyLevel: Math.max(
-            0,
-            p.difficultyLevel - config.progressionSpeed
-          )
-        };
-      }
-      return p;
-    });
-    setParticipants(updatedParticipants);
-    playLoseLife();
-    if (currentWord) setLetters(Array(currentWord.word.length).fill(""));
-    const newAttempted = new Set(attemptedParticipants);
-    newAttempted.add(currentParticipantIndex);
-    setTimeout(() => {
-      setFeedback({ message: "", type: "" });
-      if (newAttempted.size >= participants.length) {
-        if (currentWord) {
-          setWordQueues((prev) => ({
-            ...prev,
-            review: [...prev.review, currentWord]
-          }));
-        }
-        setAttemptedParticipants(/* @__PURE__ */ new Set());
-        const nextIndex = (currentParticipantIndex + 1) % participants.length;
-        selectNextWordForLevel(updatedParticipants[nextIndex].difficultyLevel);
-        nextTurn();
-      } else {
-        setAttemptedParticipants(newAttempted);
-        setUsedHint(false);
-        nextTurn();
-        startTimer();
-      }
-    }, 2e3);
-  }
-  const spendPoints = (participantIndex, cost) => {
-    setParticipants(
-      (prev) => prev.map((p, index) => {
-        if (index === participantIndex) {
-          return { ...p, points: p.points - cost };
-        }
-        return p;
-      })
-    );
-    playShop();
-  };
-  const typeLetter = (letter) => {
-    if (!currentWord) return;
-    setLetters((prev) => {
-      const index = prev.findIndex((l) => l === "");
-      if (index === -1) return prev;
-      const newLetters = [...prev];
-      newLetters[index] = letter;
-      const isCorrectLetter = currentWord.word[index].toLowerCase() === letter.toLowerCase();
-      const play = isCorrectLetter ? playLetterCorrect : playLetterWrong;
-      play();
-      return newLetters;
-    });
-  };
-  const handleVirtualLetter = (letter) => {
-    typeLetter(letter);
-  };
-  const handleVirtualBackspace = () => {
-    setLetters((prev) => {
-      const reverseIndex = [...prev].reverse().findIndex((l) => l !== "");
-      if (reverseIndex === -1) return prev;
-      const index = prev.length - 1 - reverseIndex;
-      const newLetters = [...prev];
-      newLetters[index] = "";
-      return newLetters;
-    });
-  };
-  const handleSpellingSubmit = () => {
-    if (!currentWord) return;
-    stopTimer();
-    const guess = letters2.join("").trim().toLowerCase();
-    const isCorrect = guess === currentWord.word.toLowerCase();
-    const shouldCountWord = isCorrect || !extraAttempt;
-    const updatedParticipants = participants.map((p, index) => {
-      if (index === currentParticipantIndex) {
-        const multipliers = {
-          easy: 1,
-          medium: 2,
-          tricky: 3
-        };
-        const basePoints = 5;
-        const multiplier = multipliers[currentDifficulty] || 1;
-        const bonus = p.streak * 2;
-        const pointsEarned = basePoints * multiplier + bonus;
-        return {
-          ...p,
-          attempted: p.attempted + 1,
-          correct: p.correct + (isCorrect ? 1 : 0),
-          wordsAttempted: p.wordsAttempted + (shouldCountWord ? 1 : 0),
-          wordsCorrect: p.wordsCorrect + (shouldCountWord && isCorrect ? 1 : 0),
-          points: isCorrect ? p.points + pointsEarned : p.points,
-          streak: isCorrect ? p.streak + 1 : 0,
-          difficultyLevel: isCorrect ? usedHint ? p.difficultyLevel : p.difficultyLevel + config.progressionSpeed : p.difficultyLevel
-        };
-      }
-      return p;
-    });
-    setParticipants(updatedParticipants);
-    if (isCorrect) {
-      const participant = updatedParticipants[currentParticipantIndex];
-      const newlyUnlocked = defaultAchievements.filter(
-        (ach) => participant.wordsCorrect >= ach.threshold && !unlockedAchievements.includes(ach.id)
-      );
-      if (newlyUnlocked.length > 0) {
-        const updatedUnlocked = [
-          ...unlockedAchievements,
-          ...newlyUnlocked.map((a) => a.id)
-        ];
-        setUnlockedAchievements(updatedUnlocked);
-        localStorage.setItem(
-          "unlockedAchievements",
-          JSON.stringify(updatedUnlocked)
-        );
-        const first = newlyUnlocked[0];
-        setToast(`Achievement unlocked: ${first.icon} ${first.name}!`);
-        setTimeout(() => setToast(""), 3e3);
-      }
-      playCorrect();
-      const coinReward = 1;
-      const newCoins = coins + coinReward;
-      setCoins(newCoins);
-      localStorage.setItem("coins", String(newCoins));
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-      if (config.effectsEnabled && !prefersReducedMotion) {
-        launchConfetti();
-      }
-      setFeedback({ message: "Correct! \u{1F389}", type: "success" });
-      setTimeout(() => {
-        const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
-        const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
-        setFeedback({ message: "", type: "" });
-        selectNextWordForLevel(nextDifficulty);
-        nextTurn();
-      }, 2e3);
-      return;
-    }
-    playWrong();
-    handleIncorrectAttempt();
-  };
-  const handleSkipTurn = () => {
-    if (!currentWord) return;
-    stopTimer();
-    const updatedParticipants = participants.map(
-      (p, index) => index === currentParticipantIndex ? { ...p, skipsRemaining: (p.skipsRemaining || 0) - 1 } : p
-    );
-    setParticipants(updatedParticipants);
-    try {
-      const existing = JSON.parse(localStorage.getItem("skippedTurns") || "[]");
-      existing.push({
-        name: participants[currentParticipantIndex].name,
-        word: currentWord.word,
-        time: (/* @__PURE__ */ new Date()).toISOString()
-      });
-      localStorage.setItem("skippedTurns", JSON.stringify(existing));
-    } catch {
-    }
-    setWordQueues((prev) => ({
-      ...prev,
-      review: [...prev.review, currentWord]
-    }));
-    setFeedback({ message: "Turn Skipped", type: "info" });
-    setAttemptedParticipants(/* @__PURE__ */ new Set());
-    setTimeout(() => {
-      const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
-      const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
-      setFeedback({ message: "", type: "" });
-      setLetters(Array(currentWord.word.length).fill(""));
-      selectNextWordForLevel(nextDifficulty);
-      nextTurn();
     }, 1e3);
+    return () => clearInterval(timer);
+  }, []);
+  const purchaseItem = (item) => {
+    if (coins < item.price) {
+      alert("Not enough coins!");
+      return;
+    }
+    if (item.type === "help" && cooldowns[item.id]) {
+      alert(`This item is on cooldown for ${cooldowns[item.id]} more seconds`);
+      return;
+    }
+    const newCoins = coins - item.price;
+    setCoins(newCoins);
+    localStorage.setItem("coins", String(newCoins));
+    if (item.type === "avatar" && !ownedAvatars.includes(item.id)) {
+      const updated = [...ownedAvatars, item.id];
+      setOwnedAvatars(updated);
+      localStorage.setItem("ownedAvatars", JSON.stringify(updated));
+    } else if (item.type === "accessory" && !ownedAccessories.includes(item.id)) {
+      const updated = [...ownedAccessories, item.id];
+      setOwnedAccessories(updated);
+      localStorage.setItem("ownedAccessories", JSON.stringify(updated));
+    } else if (item.type === "help") {
+      if (item.effect) {
+        item.effect();
+      }
+      if (item.cooldown) {
+        setCooldowns((prev) => ({
+          ...prev,
+          [item.id]: item.cooldown
+        }));
+      }
+      onBack();
+      return;
+    }
   };
-  const handleAskFriend = () => {
-    const remaining = participants[currentParticipantIndex].askFriendRemaining || 0;
-    if (remaining <= 0) return;
-    setParticipants(
-      (prev) => prev.map(
-        (p, index) => index === currentParticipantIndex ? { ...p, askFriendRemaining: remaining - 1 } : p
-      )
-    );
-    setIsHelpOpen(true);
-    setFeedback({ message: "A teammate may help!", type: "info" });
-    setTimeout(() => setFeedback({ message: "", type: "" }), 2e3);
+  const isOwned = (item) => {
+    if (item.type === "avatar") {
+      return ownedAvatars.includes(item.id);
+    } else if (item.type === "accessory") {
+      return ownedAccessories.includes(item.id);
+    }
+    return false;
   };
-  const onEndGameWithMissedWords = () => {
-    const lessonKey = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
-    const stored = JSON.parse(
-      localStorage.getItem("missedWordsCollection") || "{}"
-    );
-    const existing = stored[lessonKey] || [];
-    stored[lessonKey] = [...existing, ...missedWords];
-    localStorage.setItem("missedWordsCollection", JSON.stringify(stored));
-    const activeParticipants = participants.filter((p) => p.lives > 0);
-    const finalParticipants = participants.map((p) => ({
-      ...p,
-      accuracy: p.wordsAttempted > 0 ? p.wordsCorrect / p.wordsAttempted * 100 : 0
-    }));
-    onEndGame({
-      winner: activeParticipants.length === 1 ? activeParticipants[0] : null,
-      participants: finalParticipants,
-      gameMode: config.gameMode,
-      duration: Math.round((Date.now() - startTime) / 1e3),
-      missedWords
-    });
+  const isOnCooldown = (item) => {
+    return item.type === "help" && cooldowns[item.id] > 0;
   };
-  import_react16.default.useEffect(() => {
-    if (config.participants.length > 0) {
-      selectNextWordForLevel(config.participants[0].difficultyLevel);
+  const formatCooldown = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+  const mainHeadingRef = (0, import_react32.useRef)(null);
+  const backButtonRef = (0, import_react32.useRef)(null);
+  const shopRef = useFocusTrap();
+  (0, import_react32.useEffect)(() => {
+    if (mainHeadingRef.current) {
+      mainHeadingRef.current.focus();
     }
   }, []);
-  import_react16.default.useEffect(() => {
-    if (!participants || participants.length === 0) return;
-    const activeParticipants = participants.filter((p) => p.lives > 0);
-    if (activeParticipants.length <= 1) {
-      onEndGameWithMissedWords();
+  const handleBackClick = () => {
+    onBack();
+    const lastFocused = document.activeElement;
+    if (lastFocused) {
+      lastFocused.focus();
     }
-  }, [participants]);
-  const [showAudioSettings, setShowAudioSettings] = import_react16.default.useState(false);
-  return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "relative min-h-screen bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white flex flex-col items-center justify-center font-body", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-      "input",
-      {
-        ref: hiddenInputRef,
-        type: "text",
-        className: "absolute opacity-0 pointer-events-none",
-        "aria-hidden": "true",
-        tabIndex: -1
-      }
-    ),
-    toast && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50", children: toast }),
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "absolute top-8 left-8 flex gap-8 items-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("img", { src: `${process.env.PUBLIC_URL || ""}/img/bee.svg`, alt: "Bee icon", className: "w-12 h-12" }),
-      participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "text-center bg-white/10 p-4 rounded-lg", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "text-2xl font-bold", children: p.name }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "text-4xl font-bold text-yellow-300", children: "\u2764\uFE0F".repeat(p.lives) }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "text-xl font-bold text-green-400", children: [
-          p.points,
-          " pts"
-        ] })
-      ] }, index))
-    ] }),
-    feedback.message && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-      "div",
-      {
-        className: `absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${feedback.type === "success" ? "bg-green-500" : feedback.type === "error" ? "bg-red-500" : "bg-blue-500"}`,
-        children: feedback.message
-      }
-    ),
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "absolute top-8 right-8 text-center z-50 bg-white/10 p-4 rounded-lg", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: `text-6xl font-bold ${timeLeft <= 10 ? "text-red-500" : "text-yellow-300"}`, children: timeLeft }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "text-lg", children: "seconds left" }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        "button",
-        {
-          onClick: isPaused ? resumeTimer : pauseTimer,
-          className: "mt-2 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold",
-          children: isPaused ? "Resume" : "Pause"
-        }
-      )
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-      AvatarSelector,
-      {
-        currentAvatar,
-        onSelect: (avatar) => setCurrentAvatar(avatar),
-        availableAvatars: ownedAvatars
-      }
-    ),
-    currentWord && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "w-full max-w-4xl text-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("img", { src: `${process.env.PUBLIC_URL || ""}/img/books.svg`, alt: "Book icon", className: "w-10 h-10 mx-auto mb-6" }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("h2", { className: "text-4xl font-bold mb-6 uppercase font-sans", children: [
-        "Word for ",
-        isTeamMode ? "Team" : "Student",
-        ": ",
-        participants[currentParticipantIndex]?.name || (isTeamMode ? "Team" : "Student")
-      ] }),
-      isTeamMode && currentStudent && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "text-xl mb-6", children: [
-        "Hot Seat: ",
-        currentStudent.name
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "relative mb-10 pt-12", children: [
-        showWord && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg", children: [
-          currentWord.word,
-          currentWord.pronunciation && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "ml-4 text-5xl text-yellow-300", children: currentWord.pronunciation })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+    "div",
+    {
+      ref: shopRef,
+      className: "min-h-screen bg-gradient-to-br from-purple-600 to-pink-500 text-white p-8",
+      role: "region",
+      "aria-label": "Shop",
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
-            onClick: () => speak(currentWord.word),
-            className: "absolute top-0 left-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold",
-            children: "Replay Word"
+            ref: backButtonRef,
+            onClick: handleBackClick,
+            className: "mb-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 focus:outline-none",
+            "aria-label": "Go back to previous screen",
+            children: "Back"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-          "button",
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+          "h1",
           {
-            onClick: () => setShowWord(!showWord),
-            className: "absolute top-0 right-0 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold",
-            children: showWord ? "Hide Word" : "Show Word"
+            ref: mainHeadingRef,
+            className: "text-3xl font-bold mb-4",
+            tabIndex: -1,
+            children: "Shop"
           }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        HintPanel_default,
-        {
-          word: currentWord,
-          participantPoints: participants[currentParticipantIndex].points,
-          participantIndex: currentParticipantIndex,
-          spendPoints,
-          isTeamMode,
-          showWord,
-          onHintUsed: () => setUsedHint(true),
-          onExtraAttempt: () => setExtraAttempt(true)
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "flex gap-2 justify-center mb-8", children: letters2.map((letter, idx) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        "div",
-        {
-          className: `w-12 h-16 text-4xl flex items-center justify-center rounded-lg border-b-2 ${letter ? letter.toLowerCase() === currentWord.word[idx].toLowerCase() ? "bg-green-500" : "bg-red-500" : "bg-white/20"}`,
-          children: letter.toUpperCase()
-        },
-        idx
-      )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        OnScreenKeyboard_default,
-        {
-          onLetter: handleVirtualLetter,
-          onBackspace: handleVirtualBackspace,
-          onSubmit: handleSpellingSubmit,
-          soundEnabled: !muted,
-          usedLetters
-        }
-      )
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "absolute bottom-8 right-8 flex flex-col gap-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
-        "button",
-        {
-          onClick: handleSkipTurn,
-          disabled: (participants[currentParticipantIndex].skipsRemaining || 0) <= 0,
-          className: "bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl disabled:opacity-50 flex items-center",
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SkipForward, { size: 24, className: "mr-2" }),
-            " Skip Turn"
-          ]
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
-        "button",
-        {
-          onClick: handleAskFriend,
-          disabled: (participants[currentParticipantIndex].askFriendRemaining || 0) <= 0,
-          className: "bg-blue-500 hover:bg-blue-600 p-4 rounded-lg text-xl disabled:opacity-50 flex items-center",
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Users, { size: 24, className: "mr-2" }),
-            " Ask a Friend"
-          ]
-        }
-      )
-    ] }),
-    isHelpOpen && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "absolute bottom-32 right-8 bg-blue-500 p-4 rounded-lg text-xl", children: "Friend assisting..." }),
-    isPaused && !showAudioSettings && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-6xl font-bold z-40 gap-8", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { children: "Paused" }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        "button",
-        {
-          onClick: () => setShowAudioSettings(true),
-          className: "bg-yellow-300 text-black px-6 py-3 rounded-lg text-2xl font-bold hover:bg-yellow-400 transition-colors",
-          children: "Audio Settings"
-        }
-      )
-    ] }),
-    showAudioSettings && isPaused && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "absolute inset-0 bg-black/70 flex items-center justify-center z-50", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "bg-white rounded-lg max-w-md w-full relative", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        "button",
-        {
-          onClick: () => setShowAudioSettings(false),
-          className: "absolute top-2 right-2 text-black",
-          "aria-label": "Close audio settings",
-          children: "\u2715"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(AudioSettings, {})
-    ] }) })
-  ] });
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+          "div",
+          {
+            className: "mb-4 text-xl font-semibold",
+            "aria-live": "polite",
+            "aria-atomic": "true",
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "sr-only", children: "You have" }),
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { "aria-hidden": "true", children: "\u{1FA99}" }),
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "ml-2", children: [
+                coins,
+                " coins"
+              ] })
+            ]
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { "aria-labelledby": "avatar-heading", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            "h2",
+            {
+              id: "avatar-heading",
+              className: "text-2xl font-bold mb-2",
+              children: "Your Avatar"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            AvatarSelector,
+            {
+              currentAvatar,
+              onSelect: setCurrentAvatar,
+              availableAvatars: ownedAvatars,
+              "aria-label": "Select your avatar"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { "aria-labelledby": "items-heading", className: "mt-8", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            "h2",
+            {
+              id: "items-heading",
+              className: "text-2xl font-bold mb-4",
+              children: "Available Items"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            "div",
+            {
+              className: "grid grid-cols-1 md:grid-cols-2 gap-4",
+              role: "list",
+              "aria-label": "List of available items for purchase",
+              children: shopItems.map((item) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                "div",
+                {
+                  className: `p-4 border rounded-lg mb-4 ${isOwned(item) ? "bg-green-50 border-green-200" : isOnCooldown(item) ? "bg-gray-50 opacity-75" : "bg-white hover:shadow-md"} transition-all`,
+                  children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-start justify-between gap-4", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-start space-x-4 flex-1", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "w-12 h-12 flex-shrink-0 flex items-center justify-center bg-blue-100 rounded-lg", children: item.icon.startsWith("/") ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("img", { src: item.icon, alt: "", className: "w-8 h-8" }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "text-xl", children: item.icon }) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex-1 min-w-0", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { className: "font-medium text-gray-900", children: item.name }),
+                        item.description && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "text-sm text-gray-600 mt-1", children: item.description }),
+                        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "mt-2 flex items-center justify-between", children: [
+                          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "text-sm font-medium text-blue-700", children: [
+                            item.price,
+                            " coins"
+                          ] }),
+                          item.type === "help" && item.cooldown && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "text-xs text-gray-500", children: isOnCooldown(item) ? `Cooldown: ${formatCooldown(cooldowns[item.id])}` : `Cooldown: ${formatCooldown(item.cooldown)}` })
+                        ] })
+                      ] })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "flex-shrink-0", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                      "button",
+                      {
+                        onClick: () => purchaseItem(item),
+                        disabled: isOwned(item) || isOnCooldown(item),
+                        className: `px-3 py-1.5 rounded text-sm font-medium ${isOwned(item) ? "bg-green-100 text-green-800 cursor-default" : isOnCooldown(item) ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}`,
+                        "aria-label": isOwned(item) ? "Already owned" : isOnCooldown(item) ? `On cooldown for ${formatCooldown(cooldowns[item.id])}` : `Buy ${item.name}`,
+                        children: isOwned(item) ? "Owned" : isOnCooldown(item) ? "On Cooldown" : "Buy"
+                      }
+                    ) })
+                  ] })
+                },
+                item.id
+              ))
+            }
+          )
+        ] })
+      ]
+    }
+  );
 };
-var GameScreen_default = GameScreen;
+var ShopScreen_default = ShopScreen;
+
+// src/utils/useMusic.ts
+var import_react33 = __toESM(require_react());
+var useMusic = (style, variant, volume, enabled, screen) => {
+  const menuRef = (0, import_react33.useRef)({
+    instrumental: null,
+    vocal: null
+  });
+  const gameRef = (0, import_react33.useRef)({
+    instrumental: null,
+    vocal: null
+  });
+  const promptRef = (0, import_react33.useRef)(false);
+  const stop = (0, import_react33.useCallback)(() => {
+    ["instrumental", "vocal"].forEach((v) => {
+      const menuAudio = menuRef.current[v];
+      if (menuAudio) {
+        menuAudio.pause();
+        menuAudio.currentTime = 0;
+      }
+      const gameAudio = gameRef.current[v];
+      if (gameAudio) {
+        gameAudio.pause();
+        gameAudio.currentTime = 0;
+      }
+    });
+  }, []);
+  const buildSrc = (0, import_react33.useCallback)((trackStyle, trackVariant) => {
+    const basePath = "audio/It's a Spelling Bee!";
+    const variantSuffix = trackVariant === "instrumental" ? " Instrumental" : "";
+    const style2 = trackStyle === "default" ? "Country" : trackStyle;
+    return `${basePath} (${style2}${variantSuffix}).mp3`;
+  }, []);
+  const loadTracks = (0, import_react33.useCallback)(
+    (trackStyle) => {
+      ["instrumental", "vocal"].forEach((trackVariant) => {
+        const menuSrc = buildSrc(trackStyle, trackVariant);
+        const gameSrc = buildSrc(trackStyle, trackVariant);
+        const menuAudio = new Audio(menuSrc);
+        menuAudio.loop = true;
+        menuAudio.volume = volume;
+        menuAudio.onerror = () => {
+          console.warn(`Menu music file not found: ${menuSrc}`);
+          menuRef.current[trackVariant] = null;
+        };
+        menuAudio.load();
+        const gameAudio = new Audio(gameSrc);
+        gameAudio.loop = true;
+        gameAudio.volume = volume;
+        gameAudio.onerror = () => {
+          console.warn(`Gameplay music file not found: ${gameSrc}`);
+          gameRef.current[trackVariant] = null;
+        };
+        gameAudio.load();
+        menuRef.current[trackVariant] = menuAudio;
+        gameRef.current[trackVariant] = gameAudio;
+      });
+    },
+    [buildSrc, volume]
+  );
+  (0, import_react33.useEffect)(() => {
+    stop();
+    loadTracks(style);
+  }, [style, loadTracks, stop]);
+  (0, import_react33.useEffect)(() => {
+    ["instrumental", "vocal"].forEach((v) => {
+      if (menuRef.current[v]) menuRef.current[v].volume = volume;
+      if (gameRef.current[v]) gameRef.current[v].volume = volume;
+    });
+  }, [volume]);
+  (0, import_react33.useEffect)(() => {
+    if (!enabled) {
+      stop();
+      return;
+    }
+    const refs = screen === "menu" ? menuRef.current : gameRef.current;
+    const track = refs[variant];
+    stop();
+    track?.play().catch(() => {
+      if (promptRef.current) return;
+      promptRef.current = true;
+      const enable = () => {
+        track.play().catch(() => {
+        });
+      };
+      document.addEventListener("click", enable, { once: true });
+      alert("Click anywhere to enable audio");
+    });
+  }, [screen, variant, enabled, stop]);
+  (0, import_react33.useEffect)(() => () => stop(), [stop]);
+};
+var useMusic_default = useMusic;
+
+// src/AudioContext.tsx
+var import_react34 = __toESM(require_react());
+var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+var AudioContext = (0, import_react34.createContext)({
+  muted: false,
+  toggleMute: () => {
+  }
+});
+var AudioProvider = ({ children }) => {
+  const [muted, setMuted] = (0, import_react34.useState)(false);
+  const toggleMute = () => {
+    setMuted(!muted);
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(AudioContext.Provider, { value: { muted, toggleMute }, children });
+};
 
 // src/spelling-bee-game.tsx
-var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+var import_jsx_runtime18 = __toESM(require_jsx_runtime());
 var SpellingBeeGame = () => {
-  (0, import_react17.useEffect)(() => {
-    const initAudio = async () => {
-      try {
-        const { preloadAudio: preloadAudio2 } = await Promise.resolve().then(() => (init_initAudio(), initAudio_exports));
-        await preloadAudio2();
-        console.log("Audio system initialized");
-      } catch (error) {
-        console.error("Failed to initialize audio:", error);
-      }
-    };
-    initAudio();
-    return () => {
-      const { audioManager: audioManager2 } = (init_audio(), __toCommonJS(audio_exports));
-      audioManager2.stopAll();
-    };
+  const [gameState, setGameState] = (0, import_react35.useState)("setup");
+  const [gameConfig, setGameConfig] = (0, import_react35.useState)(null);
+  const [gameResults, setGameResults] = (0, import_react35.useState)(null);
+  const [customWords, setCustomWords] = (0, import_react35.useState)({ easy: [], medium: [], tricky: [] });
+  const [wordDatabase, setWordDatabase] = (0, import_react35.useState)({ easy: [], medium: [], tricky: [] });
+  const [musicStyle, setMusicStyle] = (0, import_react35.useState)("Funk");
+  const [musicVolume, setMusicVolume] = (0, import_react35.useState)(0.5);
+  const [soundEnabled, setSoundEnabled] = (0, import_react35.useState)(true);
+  const [isMusicPlaying, setIsMusicPlaying] = (0, import_react35.useState)(true);
+  (0, import_react35.useEffect)(() => {
+    fetch("words.json").then((res) => res.json()).then((data) => setWordDatabase(data)).catch((err) => console.error("Failed to load word list", err));
   }, []);
-  const [gameState, setGameState] = (0, import_react17.useState)("setup");
-  const [gameConfig, setGameConfig] = (0, import_react17.useState)(null);
+  const handleAddCustomWords = (newWords) => {
+    const easy = newWords.filter((w) => w.word.length <= 5);
+    const medium = newWords.filter((w) => w.word.length > 5 && w.word.length <= 8);
+    const tricky = newWords.filter((w) => w.word.length > 8);
+    setCustomWords({ easy, medium, tricky });
+  };
   const handleStartGame = (config) => {
-    const defaultWordList = [];
-    const fullConfig = {
-      ...config,
-      wordList: defaultWordList
-    };
-    setGameConfig(fullConfig);
+    let finalWordDatabase;
+    if (config.dailyChallenge) {
+      finalWordDatabase = customWords;
+    } else {
+      finalWordDatabase = {
+        easy: [...wordDatabase.easy, ...customWords.easy],
+        medium: [...wordDatabase.medium, ...customWords.medium],
+        tricky: [...wordDatabase.tricky, ...customWords.tricky]
+      };
+    }
+    setGameConfig({ ...config, wordDatabase: finalWordDatabase });
+    setSoundEnabled(config.soundEnabled);
+    setMusicStyle(config.musicStyle);
+    setMusicVolume(config.musicVolume);
+    setIsMusicPlaying(true);
     setGameState("playing");
   };
-  const handleAddCustomWords = (words) => {
-    console.log("Adding custom words:", words);
-  };
-  const handleViewAchievements = () => {
-    console.log("Viewing achievements");
-  };
   const handleEndGame = (results) => {
+    setGameResults(results);
     setGameState("results");
   };
-  const renderScreen = () => {
-    switch (gameState) {
-      case "setup":
-        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-          SetupScreen_default,
-          {
-            onStartGame: handleStartGame,
-            onAddCustomWords: handleAddCustomWords,
-            onViewAchievements: handleViewAchievements
-          }
-        );
-      case "playing":
-        return gameConfig ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-          GameScreen_default,
-          {
-            config: gameConfig,
-            onEndGame: handleEndGame
-          }
-        ) : null;
-      case "results":
-        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { children: "Game Over" });
-      default:
-        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { children: "Loading..." });
-    }
+  const handleRestart = () => {
+    setGameState("setup");
+    setGameConfig(null);
+    setGameResults(null);
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(AudioProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("main", { className: "container mx-auto px-4 py-8", children: renderScreen() }),
-    /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(AudioControls, {})
-  ] }) });
+  const handleViewLeaderboard = () => {
+    setGameState("leaderboard");
+  };
+  const handleViewAchievements = () => {
+    setGameState("achievements");
+  };
+  const handleViewShop = () => {
+    setGameState("shop");
+  };
+  const handleBackToSetup = () => {
+    setGameState("setup");
+  };
+  const handleQuitToSetup = () => {
+    setGameState("setup");
+  };
+  (0, import_react35.useEffect)(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      document.body.classList.remove("theme-light", "theme-dark", "theme-honeycomb");
+      document.body.classList.add(`theme-${savedTheme}`);
+    }
+  }, []);
+  const screen = gameState === "playing" ? "game" : "menu";
+  const trackVariant = screen === "game" ? "instrumental" : "vocal";
+  useMusic_default(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
+  if (gameState === "setup") {
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      SetupScreen_default,
+      {
+        onStartGame: handleStartGame,
+        onAddCustomWords: handleAddCustomWords,
+        onViewAchievements: handleViewAchievements,
+        onViewShop: () => handleViewShop()
+      }
+    );
+  }
+  if (gameState === "playing") {
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      GameScreen_default,
+      {
+        config: gameConfig,
+        onEndGame: handleEndGame,
+        musicStyle,
+        musicVolume,
+        onMusicStyleChange: setMusicStyle,
+        onMusicVolumeChange: setMusicVolume,
+        soundEnabled,
+        onSoundEnabledChange: setSoundEnabled,
+        isMusicPlaying,
+        onToggleMusicPlaying: () => setIsMusicPlaying((prev) => !prev),
+        onQuit: handleQuitToSetup
+      }
+    );
+  }
+  if (gameState === "results") {
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      ResultsScreen_default,
+      {
+        results: gameResults,
+        config: gameConfig,
+        onRestart: handleRestart,
+        onViewLeaderboard: handleViewLeaderboard
+      }
+    );
+  }
+  if (gameState === "leaderboard") {
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LeaderboardScreen_default, { onBack: handleBackToSetup });
+  }
+  if (gameState === "achievements") {
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(AchievementsScreen_default, { onBack: handleBackToSetup });
+  }
+  if (gameState === "shop") {
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ShopScreen_default, { onBack: handleBackToSetup });
+  }
+  return null;
 };
-var rootElement = document.getElementById("root");
-if (rootElement) {
-  const root = import_client.default.createRoot(rootElement);
+var container = document.getElementById("root");
+if (container) {
+  const root = import_client.default.createRoot(container);
   root.render(
-    /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react17.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SpellingBeeGame, {}) })
+    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(import_react35.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(AudioProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(SpellingBeeGame, {}) }) })
   );
 }
 var spelling_bee_game_default = SpellingBeeGame;
@@ -29961,28 +35261,6 @@ react-dom/cjs/react-dom.development.js:
    * @license Modernizr 3.0.0pre (Custom Build) | MIT
    *)
 
-howler/dist/howler.js:
-  (*!
-   *  howler.js v2.2.4
-   *  howlerjs.com
-   *
-   *  (c) 2013-2020, James Simpson of GoldFire Studios
-   *  goldfirestudios.com
-   *
-   *  MIT License
-   *)
-  (*!
-   *  Spatial Plugin - Adds support for stereo and 3D audio where Web Audio is supported.
-   *  
-   *  howler.js v2.2.4
-   *  howlerjs.com
-   *
-   *  (c) 2013-2020, James Simpson of GoldFire Studios
-   *  goldfirestudios.com
-   *
-   *  MIT License
-   *)
-
 react/cjs/react-jsx-runtime.development.js:
   (**
    * @license React
@@ -29994,21 +35272,10 @@ react/cjs/react-jsx-runtime.development.js:
    * LICENSE file in the root directory of this source tree.
    *)
 
-lucide-react/dist/esm/shared/src/utils.js:
-lucide-react/dist/esm/defaultAttributes.js:
-lucide-react/dist/esm/Icon.js:
-lucide-react/dist/esm/createLucideIcon.js:
-lucide-react/dist/esm/icons/music.js:
-lucide-react/dist/esm/icons/skip-forward.js:
-lucide-react/dist/esm/icons/users.js:
-lucide-react/dist/esm/icons/volume-1.js:
-lucide-react/dist/esm/icons/volume-2.js:
-lucide-react/dist/esm/icons/volume-x.js:
-lucide-react/dist/esm/lucide-react.js:
-  (**
-   * @license lucide-react v0.460.0 - ISC
-   *
-   * This source code is licensed under the ISC license.
-   * See the LICENSE file in the root directory of this source tree.
-   *)
+classnames/index.js:
+  (*!
+  	Copyright (c) 2018 Jed Watson.
+  	Licensed under the MIT License (MIT), see
+  	http://jedwatson.github.io/classnames
+  *)
 */
