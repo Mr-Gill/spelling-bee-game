@@ -74,6 +74,7 @@ interface GameScreenState {
   totalWords: number;
   gameProgress: number;
   timeLeft: number;
+  musicConfirmed: boolean;
 }
 
 // Main GameScreen component
@@ -133,7 +134,8 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
     missedWords: [],
     totalWords: 0,
     gameProgress: 0,
-    timeLeft: initialTime
+    timeLeft: initialTime,
+    musicConfirmed: false
   });
 
   const { 
@@ -368,7 +370,13 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
             />
           </div>
           <div className="coins-display">
-            <img src={`${process.env.PUBLIC_URL}/img/bee.svg`} alt="Bee" />
+            {state.musicConfirmed && (
+              <img 
+                src={`${process.env.PUBLIC_URL}/img/bee.svg`} 
+                alt="Bee" 
+                className={!state.musicConfirmed ? 'hidden' : ''}
+              />
+            )}
             {state.coins}
           </div>
         </header>
