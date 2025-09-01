@@ -1,4 +1,15 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
+
+type AudioContextType = typeof window.AudioContext | typeof window.webkitAudioContext;
+
+interface UseMusicReturn {
+  loadAudio: (url: string) => Promise<AudioBuffer | null>;
+  initAudio: () => void;
+  getAudioContext: () => AudioContext | null;
+  stop: () => void;
+  buildSrc: (trackStyle: string, trackVariant: 'instrumental' | 'vocal') => string;
+  loadTracks: (trackStyle: string) => Promise<void>;
+}
 
 /**
  * React hook to manage background music for the app.
@@ -15,7 +26,7 @@ const useMusic = (
   volume: number,
   enabled: boolean,
   screen: 'menu' | 'game',
-) => {
+): UseMusicReturn => {
   const menuRef = useRef<Record<'instrumental' | 'vocal', HTMLAudioElement | null>>({
     instrumental: null,
     vocal: null,
@@ -25,6 +36,9 @@ const useMusic = (
     vocal: null,
   });
   const promptRef = useRef(false);
+
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const [audioBuffers, setAudioBuffers] = useState<Record<string, AudioBuffer>>({});
 
   const stop = useCallback(() => {
     (['instrumental', 'vocal'] as const).forEach((v) => {
@@ -49,36 +63,70 @@ const useMusic = (
     return `${basePath} (${style}${variantSuffix}).mp3`;
   }, []);
 
+  const loadAudio = useCallback(async (url: string): Promise<AudioBuffer | null> => {
+    const ctx = getAudioContext();
+    if (!ctx) return null;
+    
+    if (audioBuffers[url]) return audioBuffers[url];
+
+    try {
+      const response = await fetch(url);
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = await ctx.decodeAudioData(arrayBuffer);
+      if (buffer) {
+        setAudioBuffers(prev => ({ ...prev, [url]: buffer }));
+      }
+      return buffer;
+    } catch (error) {
+      console.error('Failed to load audio:', error);
+      return null;
+    }
+  }, [audioBuffers, getAudioContext]);
+
   const loadTracks = useCallback(
-    (trackStyle: string) => {
-      (['instrumental', 'vocal'] as const).forEach((trackVariant) => {
+    async (trackStyle: string) => {
+      (['instrumental', 'vocal'] as const).forEach(async (trackVariant) => {
         const menuSrc = buildSrc(trackStyle, trackVariant);
         const gameSrc = buildSrc(trackStyle, trackVariant);
 
-        const menuAudio = new Audio(menuSrc);
-        menuAudio.loop = true;
-        menuAudio.volume = volume;
-        menuAudio.onerror = () => {
-          console.warn(`Menu music file not found: ${menuSrc}`);
-          menuRef.current[trackVariant] = null;
-        };
-        menuAudio.load();
+        const menuBuffer = await loadAudio(menuSrc);
+        const gameBuffer = await loadAudio(gameSrc);
 
-        const gameAudio = new Audio(gameSrc);
-        gameAudio.loop = true;
-        gameAudio.volume = volume;
-        gameAudio.onerror = () => {
-          console.warn(`Gameplay music file not found: ${gameSrc}`);
-          gameRef.current[trackVariant] = null;
-        };
-        gameAudio.load();
+        if (menuBuffer) {
+          const menuAudio = new Audio();
+          menuAudio.loop = true;
+          menuAudio.volume = volume;
+          menuAudio.onerror = () => {
+            console.warn(`Menu music file not found: ${menuSrc}`);
+            menuRef.current[trackVariant] = null;
+          };
+          menuAudio.srcObject = menuBuffer;
+          menuRef.current[trackVariant] = menuAudio;
+        }
 
-        menuRef.current[trackVariant] = menuAudio;
-        gameRef.current[trackVariant] = gameAudio;
+        if (gameBuffer) {
+          const gameAudio = new Audio();
+          gameAudio.loop = true;
+          gameAudio.volume = volume;
+          gameAudio.onerror = () => {
+            console.warn(`Gameplay music file not found: ${gameSrc}`);
+            gameRef.current[trackVariant] = null;
+          };
+          gameAudio.srcObject = gameBuffer;
+          gameRef.current[trackVariant] = gameAudio;
+        }
       });
     },
-    [buildSrc, volume],
+    [buildSrc, loadAudio, volume],
   );
+
+  // Initialize AudioContext on user interaction
+  const initAudio = useCallback(() => {
+    if (!audioContext) {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      setAudioContext(new AudioCtx());
+    }
+  }, [audioContext]);
 
   // Load tracks whenever style changes
   useEffect(() => {
@@ -117,6 +165,10 @@ const useMusic = (
 
   // Clean up on unmount
   useEffect(() => () => stop(), [stop]);
+
+  const getAudioContext = () => audioContext;
+
+  return { loadAudio, initAudio, getAudioContext, stop, buildSrc, loadTracks };
 };
 
 export default useMusic;

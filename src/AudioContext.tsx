@@ -1,27 +1,44 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
+import useMusic from './utils/useMusic';
 
-interface AudioContextType {
-  muted: boolean;
-  toggleMute: () => void;
+interface AudioContextValue {
+  playSound: (url: string) => Promise<void>;
+  preloadSound: (url: string) => Promise<void>;
 }
 
-const AudioContext = createContext<AudioContextType>({
-  muted: false,
-  toggleMute: () => {},
-});
+const AudioContext = createContext<AudioContextValue | null>(null);
 
-export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [muted, setMuted] = useState(false);
+export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { loadAudio, initAudio, getAudioContext } = useMusic();
+  
+  const playSound = async (url: string): Promise<void> => {
+    initAudio();
+    const buffer = await loadAudio(url);
+    const ctx = getAudioContext();
+    if (buffer && ctx) {
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(ctx.destination);
+      source.start(0);
+    }
+  };
 
-  const toggleMute = () => {
-    setMuted(!muted);
+  const preloadSound = async (url: string): Promise<void> => {
+    initAudio();
+    await loadAudio(url);
   };
 
   return (
-    <AudioContext.Provider value={{ muted, toggleMute }}>
+    <AudioContext.Provider value={{ playSound, preloadSound }}>
       {children}
     </AudioContext.Provider>
   );
 };
 
-export const useAudio = () => useContext(AudioContext);
+export const useAudio = (): AudioContextValue => {
+  const context = useContext(AudioContext);
+  if (!context) {
+    throw new Error('useAudio must be used within an AudioProvider');
+  }
+  return context;
+};
