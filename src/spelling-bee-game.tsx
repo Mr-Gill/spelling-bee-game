@@ -3,49 +3,24 @@ import ReactDOM from 'react-dom/client';
 import LeaderboardScreen from './LeaderboardScreen';
 import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
-import ResultsScreen from './ResultsScreen.tsx';
+import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
 import HistoryScreen from './HistoryScreen';
 import ShopScreen from '../ShopScreen';
 import useMusic from './utils/useMusic';
 import { AudioProvider } from './AudioContext';
+import { HelpSystemProvider } from './contexts/HelpSystemContext';
 
 // Import types
 import type { GameConfig } from './types';
-// --- Type Definitions ---
-type Participant = {
-  // Add participant properties here
-};
-
-type WordDatabase = {
-  easy: string[];
-  medium: string[];
-  tricky: string[];
-};
-
-type GameConfig = {
-  participants: Participant[];
-  gameMode: 'team' | 'individual';
-  timerDuration: number;
-  skipPenaltyType: 'lives' | 'points';
-  skipPenaltyValue: number;
-  soundEnabled: boolean;
-  effectsEnabled: boolean;
-  difficultyLevel: number;
-  progressionSpeed: number;
-  musicStyle: string;
-  musicVolume: number;
-  wordDatabase: WordDatabase;
-  dailyChallenge?: boolean;
-};
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
   const [gameState, setGameState] = useState('setup');
   const [gameConfig, setGameConfig] = useState<GameConfig | null>(null);
   const [gameResults, setGameResults] = useState<any>(null);
-  const [customWords, setCustomWords] = useState<WordDatabase>({ easy: [], medium: [], tricky: [] });
-  const [wordDatabase, setWordDatabase] = useState<WordDatabase>({ easy: [], medium: [], tricky: [] });
+  const [customWords, setCustomWords] = useState<GameConfig['wordDatabase']>({ easy: [], medium: [], tricky: [] });
+  const [wordDatabase, setWordDatabase] = useState<GameConfig['wordDatabase']>({ easy: [], medium: [], tricky: [] });
   const [musicStyle, setMusicStyle] = useState('Funk');
   const [musicVolume, setMusicVolume] = useState(0.5);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -192,11 +167,12 @@ if (container) {
   root.render(
     <React.StrictMode>
       <AudioProvider>
-        <SpellingBeeGame />
+        <HelpSystemProvider>
+          <SpellingBeeGame />
+        </HelpSystemProvider>
       </AudioProvider>
     </React.StrictMode>
   );
 }
 
 export default SpellingBeeGame;
-

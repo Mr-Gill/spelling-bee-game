@@ -3,18 +3,18 @@ export {}; // Empty export to mark as module
 
 export interface Word {
   word: string;
-  syllables: string[];
-  phonemes: string[];
-  definition: string;
-  origin: string;
-  example: string;
-  prefix?: string;
-  suffix?: string;
+  syllables: string[] | null;
+  phonemes: string[] | null;
+  definition: string | null;
+  origin: string | null;
+  example: string | null;
+  prefix?: string | null;
+  suffix?: string | null;
   prefixMeaning?: string;
   suffixMeaning?: string;
   pronunciation?: string;
-  /** Optional source the word list was generated from */
   source?: string;
+  difficulty?: 'easy' | 'medium' | 'hard';
 }
 
 export interface Participant {
@@ -35,6 +35,8 @@ export interface Participant {
   skipsRemaining?: number;
   /** Remaining "ask a friend" opportunities */
   askFriendRemaining?: number;
+  score: number;
+  maxScore: number;
 }
 
 /**
@@ -50,28 +52,31 @@ export interface WordDatabase {
   easy: Word[];
   medium: Word[];
   tricky: Word[];
+  hard?: Word[];
 }
 
 export interface GameConfig {
-  /**
-   * Participants in the game. In individual mode this is an array of
-   * `Participant` objects. In team mode it is an array of `Team` objects.
-   */
+  publicUrl?: string;
+  baseUrl: string;
+  githubToken: string;
+  githubApiUrl: string;
+  elevenLabsApiKey: string;
+  newsApiKey: string;
+  openAiApiKey: string;
+  isProduction: boolean;
+  dailyChallenge: boolean;
+  soundEnabled: boolean;
+  effectsEnabled: boolean;
+  wordDatabase: WordDatabase;
   participants: Participant[] | Team[];
   gameMode: 'team' | 'individual';
   timerDuration: number;
-  wordDatabase: WordDatabase;
   skipPenaltyType: 'lives' | 'points';
   skipPenaltyValue: number;
-  soundEnabled: boolean;
-  effectsEnabled: boolean;
-
   musicStyle: string;
   musicVolume: number;
   difficultyLevel: number;
   progressionSpeed: number;
-  /** When true, the game uses the daily challenge word list */
-  dailyChallenge?: boolean;
 }
 
 export interface GameResults {
@@ -121,8 +126,6 @@ export const defaultAchievements: Achievement[] = [
   },
 ];
 
-import React from 'react';
-
 export interface OptionsState {
   soundEnabled: boolean;
   musicEnabled: boolean;
@@ -142,7 +145,8 @@ export interface ContentItem {
   value: string;
 }
 
+// Use standard SVG module declaration
 declare module '*.svg' {
-  const svg: any;
-  export default svg;
+  const content: string;
+  export default content;
 }

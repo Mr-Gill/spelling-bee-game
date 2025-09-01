@@ -1,8 +1,10 @@
 import { Word, Participant, Team } from './types';
+import { GameConfig as ConfigType } from './types';
 
 export interface GameResults {
   winner: Participant | Team | null;
-  participants: (Participant | Team)[];
+  participants: Participant[];
+  teams?: Team[];
   gameMode: 'team' | 'individual';
   duration: number;
   missedWords: Word[];
@@ -17,9 +19,16 @@ export interface GameResults {
 }
 
 export interface GameScreenState {
-  participants: (Participant | Team)[];
+  participants: (Participant & {
+    currentWord?: Word | null;
+    input: string;
+    feedback?: { message: string; type: 'success' | 'error' | 'info' };
+  })[];
   currentParticipantIndex: number;
   currentWordIndex: number;
+  timeLeft: number;
+  gameStarted: boolean;
+  gameEnded: boolean;
   showShop: boolean;
   coins: number;
   usedLetters: Set<string>;
@@ -37,30 +46,17 @@ export interface GameScreenState {
     message: string;
     type: 'success' | 'error' | 'info';
   } | null;
+  skipsRemaining: number;
+  askFriendRemaining: number;
+  letters: string[];
+  totalWords: number;
+  currentHelp: string | null;
+  musicConfirmed: boolean;
+  showWord: boolean;
+  gameProgress: number;
 }
 
 export interface GameScreenProps {
-  config: GameConfig & { publicUrl?: string; words: Word[] };
+  config: ConfigType;
   onEndGame: (results: GameResults) => void;
-}
-
-export interface GameConfig {
-  participants: (Participant | Team)[];
-  gameMode: 'team' | 'individual';
-  timerDuration: number;
-  wordDatabase: {
-    easy: Word[];
-    medium: Word[];
-    tricky: Word[];
-    hard?: Word[];
-  };
-  skipPenaltyType: 'lives' | 'points';
-  skipPenaltyValue: number;
-  soundEnabled: boolean;
-  effectsEnabled: boolean;
-  musicStyle: string;
-  musicVolume: number;
-  difficultyLevel: number;
-  progressionSpeed: number;
-  dailyChallenge?: boolean;
 }
