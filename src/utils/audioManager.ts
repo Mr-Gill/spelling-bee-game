@@ -1,6 +1,18 @@
 // Audio Manager Implementation
 import { Howl, Howler } from 'howler';
 
+const ensureAudioContext = () => {
+  // Howler automatically creates context when needed
+  // We just need to ensure it's available
+  if (!Howler.ctx) {
+    // Play silent sound to initialize audio context
+    const silentSound = new Howl({ src: ['data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...'] });
+    silentSound.play();
+    silentSound.stop();
+  }
+  return Howler.ctx;
+};
+
 export interface SoundOptions {
   loop?: boolean;
   volume?: number;
@@ -25,9 +37,14 @@ export interface AudioSettings {
 }
 
 class AudioManager {
+  private audioContext: AudioContext | null = null;
   private sounds: Map<string, Sound> = new Map();
   private music: Map<string, Howl> = new Map();
   private activeMusic: { key: string; instance: Howl } | null = null;
+
+  constructor() {
+    ensureAudioContext();
+  }
 
   public settings: AudioSettings = {
     areSoundsMuted: false,
