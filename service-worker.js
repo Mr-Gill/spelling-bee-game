@@ -1,22 +1,24 @@
-const CACHE_NAME = 'spelling-bee-cache-v3';
+const CACHE_NAME = 'spelling-bee-cache-v4';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
   './manifest.webmanifest',
-  './icons/icon.svg',
-  './app.js', // Cache bundled application script
-  './words.json',
-  './wordlists/example.json',
-  './wordlists/example.csv',
-  './wordlists/example.tsv',
-  'https://cdn.tailwindcss.com'
+  './app.js'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(ASSETS))
+      .then(cache => {
+        return Promise.all(
+          ASSETS.map(asset => {
+            return cache.add(asset).catch(err => {
+              console.log(`Failed to cache ${asset}:`, err);
+            });
+          })
+        );
+      })
       .then(() => self.skipWaiting())
   );
 });
@@ -33,6 +35,6 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
-      .then(response => response || fetch(event.request).catch(() => caches.match('offline.html')))
+      .then(response => response || fetch(event.request))
   );
 });
