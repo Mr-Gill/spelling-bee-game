@@ -386,7 +386,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
             <div className="flex flex-col items-center gap-4">
               <h2 className="headline-small text-on-surface">Current Word</h2>
               
-              {state.showWord && currentWord && (
+              {state.showWord && currentWord && currentWord.word && (
                 <div className="flex gap-2">
                   {currentWord.word.split('').map((letter, index) => (
                     <div 
@@ -405,7 +405,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
                 </div>
               )}
               
-              {currentWord && (
+              {currentWord && currentWord.word && (
                 <div className="w-full">
                   <div className="flex items-center justify-between mb-2">
                     <span className="label-medium text-on-surface-variant">
