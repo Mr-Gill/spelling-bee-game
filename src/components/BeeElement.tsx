@@ -1,6 +1,4 @@
 import React from 'react';
-import beeImage from '../img/bee.png';
-import flyingBeeImage from '../img/FlyingBee.png';
 
 type BeeElementProps = {
   variant?: 'default' | 'flying';
@@ -13,7 +11,9 @@ const BeeElement: React.FC<BeeElementProps> = ({
   size = 'medium',
   className = ''
 }) => {
-  const imageSrc = variant === 'flying' ? flyingBeeImage : beeImage;
+  const imageSrc = variant === 'flying' 
+    ? `${process.env.PUBLIC_URL}/img/FlyingBee.png`
+    : `${process.env.PUBLIC_URL}/img/bee.png`;
   
   const sizeClasses = {
     small: 'w-8 h-8',
@@ -27,6 +27,9 @@ const BeeElement: React.FC<BeeElementProps> = ({
         src={imageSrc} 
         alt="Decorative bee"
         className="w-full h-full object-contain"
+        onError={(e) => {
+          e.currentTarget.src = `${process.env.PUBLIC_URL}/img/default-bee.png`;
+        }}
       />
     </div>
   );

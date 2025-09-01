@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useHelpSystem } from './contexts/HelpSystemContext';
 import { 
   Word, 
   GameScreenProps, 
   GameScreenState,
-  Participant,
-  WordQueues
+  Participant
 } from './types/gameTypes';
 
 // Audio
@@ -50,7 +49,7 @@ import { useWordQueue } from './hooks/useWordQueue';
 export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   // Use custom hooks for state management
   const { gameStarted, timeLeft } = useGameState();
-  const { participants, currentParticipantIndex, setParticipants, setCurrentParticipantIndex } = useParticipants(config.participants);
+  const { participants, currentParticipantIndex, setParticipants, setCurrentParticipantIndex } = useParticipants(config.participants as Participant[]);
   const { setWordQueues } = useWordQueue();
   
   // Remaining state
@@ -174,33 +173,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     playSound(isCorrect ? correctSoundFile : wrongSoundFile);
 
     setParticipants(prev => {
-      const updatedParticipants = [...prev];
-      const currentParticipant = updatedParticipants[currentParticipantIndex];
-      
-      currentParticipant.attempted += 1;
-      currentParticipant.wordsAttempted += 1;
-      
-      if (isCorrect) {
-        currentParticipant.correct += 1;
-        currentParticipant.wordsCorrect += 1;
-        currentParticipant.score += 10;
-        currentParticipant.points += 5;
-        
-        return {
-          ...prev,
-          participants: updatedParticipants,
-          coins: coins + 5,
-          feedback: { message: `Correct!`, type: 'success' },
-          attemptedParticipants: new Set<number>()
-        };
-      } else {
-        return {
-          ...prev,
-          participants: updatedParticipants,
-          feedback: { message: 'Try again!', type: 'error' },
-          attemptedParticipants: new Set([...prev.attemptedParticipants, currentParticipantIndex])
-        };
-      }
+      const updated = [...prev];
+      updated[currentParticipantIndex] = {
+        ...updated[currentParticipantIndex],
+        currentWord: currentWord,
+        attempted: updated[currentParticipantIndex].attempted || 0,
+        correct: updated[currentParticipantIndex].correct || 0
+      };
+      return updated;
     });
 
     if (isCorrect) {
@@ -290,7 +270,15 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
         if (!abortController.signal.aborted) {
           setWordQueues(prev => ({
             ...prev,
-            easy: words
+            easy: words.map(w => ({
+              word: w.word,
+              difficulty: w.difficulty,
+              syllables: w.syllables || 0,
+              phonemes: w.phonemes || '',
+              definition: w.definition || '',
+              origin: w.origin || '',
+              example: w.example || ''
+            }))
           }));
         }
       } catch (error) {
