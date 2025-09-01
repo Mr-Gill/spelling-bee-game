@@ -540,7 +540,7 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                 src={`${process.env.PUBLIC_URL}/img/HelpBee.png`} 
                 alt="Bee mascot" 
                 className="w-16 h-16 md:w-20 md:h-20 mx-auto"
-                onError={(e) => e.currentTarget.src = "/img/DefaultBee.png"}
+                onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL}/img/DefaultBee.png`}
               />
             </div>
             <h1 className="text-3xl md:text-5xl font-bold text-primary font-sans tracking-wide">
@@ -655,6 +655,7 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                           src={student.avatar || `${process.env.PUBLIC_URL}/img/DefaultBee.png`} 
                           alt="avatar" 
                           className="w-8 h-8 rounded-full" 
+                          onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL}/img/DefaultBee.png`}
                         />
                         <input 
                           type="text" 

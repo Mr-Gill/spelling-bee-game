@@ -4,15 +4,15 @@ import applauseSoundFile from '../audio/applause.mp3';
 import { launchConfetti } from './utils/confetti';
 import { recordDailyCompletion, StreakInfo } from './DailyChallenge';
 import MorphologyCard from './components/MorphologyCard';
+import { config } from './config';
 
 interface ResultsScreenProps {
   results: GameResults;
-  config: GameConfig;
   onRestart: () => void;
   onViewLeaderboard: () => void;
 }
 
-const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestart, onViewLeaderboard }) => {
+const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onViewLeaderboard }) => {
   const applauseAudio = useRef<HTMLAudioElement>(new Audio(applauseSoundFile));
   const totalScore = results.participants.reduce((sum, p) => sum + p.points, 0);
   const [bestClassScore, setBestClassScore] = useState(0);
@@ -122,9 +122,9 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
             <div className="flex items-center gap-3 mb-1">
               <img 
                 src={
-                  p === results.winner ? `${process.env.PUBLIC_URL}/img/WinningBee.png` :
-                  p.points >= bestClassScore * 0.9 ? `${process.env.PUBLIC_URL}/img/CelebratoryBee.png` :
-                  p.avatar || `${process.env.PUBLIC_URL}/img/DefaultBee.png`
+                  p === results.winner ? `${config.baseUrl}img/WinningBee.png` :
+                  p.points >= bestClassScore * 0.9 ? `${config.baseUrl}img/CelebratoryBee.png` :
+                  p.avatar || `${config.baseUrl}img/DefaultBee.png`
                 } 
                 alt={`${p.name} avatar`} 
                 className="w-8 h-8 rounded-full" 

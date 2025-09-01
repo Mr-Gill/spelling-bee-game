@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LeaderboardEntry } from './types';
+import { config } from './config';
 
 interface LeaderboardScreenProps {
   onBack: () => void;
@@ -57,7 +58,7 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
                 <span className="flex items-center font-medium">
                   {index < 3 && <span className="mr-2 text-primary">{['🥇', '🥈', '🥉'][index]}</span>}
                   <img
-                    src={`${process.env.PUBLIC_URL}/img/avatars/${entry.name}.png`}
+                    src={`${config.baseUrl}img/avatars/${entry.name}.png`}
                     alt={`${entry.name}'s avatar`}
                     className="w-8 h-8 rounded-full mr-3"
                   />
