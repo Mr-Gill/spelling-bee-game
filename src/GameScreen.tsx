@@ -80,7 +80,7 @@ interface GameScreenState {
 
 // Main GameScreen component
 export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => {
-  const isTeamMode = config.gameMode === 'team';
+  const isTeamMode = config?.gameMode === 'team';
   const handleNextWord = useCallback(() => {
     setState(prev => {
       const nextIndex = (prev.currentParticipantIndex + 1) % prev.participants.length;
@@ -97,7 +97,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
   }, []);
 
   const [state, setState] = useState<GameScreenState>({
-    participants: (config.participants as Participant[]).map(p => ({
+    participants: (config?.participants as Participant[]).map(p => ({
       ...p,
       attempted: 0,
       correct: 0,
@@ -153,7 +153,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
   // Calculate game progress
   useEffect(() => {
     // Update total words when word database is available
-    if (config.wordDatabase) {
+    if (config?.wordDatabase) {
       const words = Object.values(config.wordDatabase).flat();
       setState(prev => ({ ...prev, totalWords: words.length }));
       
@@ -166,7 +166,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
         }))
       }));
     }
-  }, [config.wordDatabase]);
+  }, [config?.wordDatabase]);
 
   useEffect(() => {
     const gameProgress = state.totalWords > 0 
@@ -221,7 +221,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
     audio.play().catch(e => console.error("Audio playback failed:", e));
   }, []);
 
-  const currentWord = config.words[state.currentWordIndex];
+  const currentWord = config?.words[state.currentWordIndex];
   const currentParticipant = state.participants[state.currentParticipantIndex];
 
   const handleSpellingSubmit = useCallback(() => {
@@ -323,6 +323,26 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
     
     return () => timers.forEach(clearTimeout);
   }, [state.currentHelp, state.feedback]);
+
+  const loadWordList = async () => {
+    try {
+      // Try to load the bundled word list
+      const response = await fetch('./wordlists/example.json');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const words = await response.json();
+      setState(prev => ({ ...prev, wordQueues: { ...prev.wordQueues, easy: words } }));
+    } catch (error) {
+      console.error('Failed to load bundled word list', error);
+      // Fallback to default words
+      setState(prev => ({ ...prev, wordQueues: { ...prev.wordQueues, easy: [] } }));
+    }
+  };
+
+  useEffect(() => {
+    loadWordList();
+  }, []);
 
   return (
     <div className="game-screen">

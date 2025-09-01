@@ -26,3 +26,22 @@ export interface OptionsState {
   musicEnabled: boolean;
   startingLives: number;
 }
+
+export interface CoreGameConfig {
+  publicUrl: string;
+  baseUrl: string;
+  githubToken: string;
+  githubApiUrl: string;
+  elevenLabsApiKey: string;
+  newsApiKey: string;
+  openAiApiKey: string;
+  isProduction: boolean;
+  dailyChallenge: boolean;
+  soundEnabled: boolean;
+  effectsEnabled: boolean;
+  wordDatabase: WordDatabase;
+}
+
+export interface WordDatabase {
+  // Define word database structure
+}

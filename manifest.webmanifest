@@ -1,11 +1,14 @@
 {
-  "name": "Interactive Spelling Bee",
+  "name": "Spelling Bee Game",
   "short_name": "SpellingBee",
-  "start_url": ".",
-  "scope": "/",
-  "display": "standalone",
+  "description": "A fun and educational spelling game for all ages",
+  "categories": ["education", "games"],
+  "theme_color": "#7e22ce",
   "background_color": "#ffffff",
-  "theme_color": "#4f46e5",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/spelling-bee-game/",
+  "start_url": "/spelling-bee-game/",
   "icons": [
     {
       "src": "icons/icon-192x192.png",
@@ -16,12 +19,6 @@
       "src": "icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
-    },
-    {
-      "src": "icons/icon-maskable.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
     }
   ]
 }

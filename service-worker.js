@@ -1,43 +1,45 @@
-const CACHE_NAME = 'spelling-bee-cache-v4';
-const ASSETS = [
-  './',
-  './index.html',
-  './style.css',
-  './manifest.webmanifest',
-  './app.js',
-  './icons/icon-192x192.png',
-  './icons/icon-512x512.png',
-  './icons/icon-maskable.png'
+// Cache name with versioning
+const CACHE_NAME = 'spelling-bee-v1';
+
+// Precache essential assets
+const PRECACHE_ASSETS = [
+  '/spelling-bee-game/',
+  '/spelling-bee-game/index.html',
+  '/spelling-bee-game/app.js',
+  '/spelling-bee-game/style.css',
+  '/spelling-bee-game/manifest.webmanifest',
+  '/spelling-bee-game/icons/icon-192x192.png',
+  '/spelling-bee-game/icons/icon-512x512.png',
+  '/spelling-bee-game/icons/icon-maskable.png'
 ];
 
+// Install event: precache assets
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        return Promise.all(
-          ASSETS.map(asset => {
-            return cache.add(asset).catch(err => {
-              console.log(`Failed to cache ${asset}:`, err);
-            });
-          })
-        );
-      })
-      .then(() => self.skipWaiting())
+      .then(cache => cache.addAll(PRECACHE_ASSETS))
   );
 });
 
+// Activate event: clean old caches
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE_NAME)
-        .map(key => caches.delete(key))
-    ))
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cache => {
+          if (cache !== CACHE_NAME) return caches.delete(cache);
+        })
+      );
+    })
   );
 });
 
-self.addEventListener('fetch', (event) => {
+// Fetch event: cache-first strategy
+self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
-      .then(response => response || fetch(event.request))
+      .then(cachedResponse => {
+        return cachedResponse || fetch(event.request);
+      })
   );
 });
