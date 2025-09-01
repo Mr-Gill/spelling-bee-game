@@ -168,7 +168,7 @@
     @apply bg-surface-container-high rounded-xl shadow-md p-6;
   }
   .btn {
-    @apply font-readex uppercase px-4 py-2 rounded-full bg-primary text-on-primary;
+    @apply font-readex uppercase px-4 py-2 rounded-full bg-primary-500 text-white;
   }
 }
 
