@@ -367,9 +367,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
           <div className="coins-display">
             {state.musicConfirmed && (
               <img 
-                src={`${process.env.PUBLIC_URL}/img/bee.png`} 
-                alt="Bee" 
+                src={`${process.env.PUBLIC_URL}/img/${
+                  state.timeLeft < 15 ? 'TimePressureBee' : 
+                  state.letters.length > 0 ? 'TypingBee' : 
+                  'DefaultBee'
+                }.svg`} 
+                alt="Bee avatar"
                 className={!state.musicConfirmed ? 'hidden' : ''}
+                onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL}/img/DefaultBee.svg`}
               />
             )}
             {state.coins}

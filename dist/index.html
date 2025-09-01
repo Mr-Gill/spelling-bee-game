@@ -27,7 +27,7 @@
     
     <!-- App icons and manifest -->
     <link rel="manifest" href="./manifest.webmanifest">
-    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/icons/icon-512x512.png" type="image/png">
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
     <link rel="mask-icon" href="/icons/icon.svg" color="#ffbf00">
     
@@ -36,6 +36,8 @@
     
     <!-- Preload critical assets -->
     <link rel="preload" as="image" href="/img/bee-honeycomb.svg" type="image/svg+xml">
+    <link rel="preload" as="image" href="/img/bee.png" type="image/png">
+    <link rel="preload" as="image" href="/img/bee-2.png" type="image/png">
     
     <!-- Theme color for different browsers -->
     <meta name="msapplication-TileColor" content="#ffbf00">
@@ -59,7 +61,6 @@
     <div id="root"></div>
     
     <script type="module" src="app.js"></script>
-    <!--
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -67,8 +68,6 @@
             });
         }
     </script>
-    -->
-    <!-- Service worker temporarily disabled for debugging -->
     <script>
         document.addEventListener('click', (e) => {
             const target = e.target;

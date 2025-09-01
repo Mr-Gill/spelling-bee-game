@@ -120,7 +120,15 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
         {results && results.participants.map((p, index) => (
           <div key={index} className="text-left mb-4 p-3 rounded-lg bg-surface-container-low">
             <div className="flex items-center gap-3 mb-1">
-              <img src={p.avatar || `${process.env.PUBLIC_URL}/img/bee.png`} alt={`${p.name} avatar`} className="w-8 h-8 rounded-full" />
+              <img 
+                src={
+                  p === results.winner ? `${process.env.PUBLIC_URL}/img/WinningBee.png` :
+                  p.points >= bestClassScore * 0.9 ? `${process.env.PUBLIC_URL}/img/CelebratoryBee.png` :
+                  p.avatar || `${process.env.PUBLIC_URL}/img/DefaultBee.png`
+                } 
+                alt={`${p.name} avatar`} 
+                className="w-8 h-8 rounded-full" 
+              />
               <div className="font-bold text-lg">{p.name}</div>
             </div>
             <div className="text-primary">

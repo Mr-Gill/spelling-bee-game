@@ -29,9 +29,9 @@ interface SetupScreenProps {
 }
 
 // Using direct paths to assets in the public directory
-const beeImg = '/img/bee.png';
-const bookImg = '/img/book.svg';
-const trophyImg = '../img/trophy.svg';
+const beeImg = `${process.env.PUBLIC_URL}/img/HelpBee.png`;
+const bookImg = `${process.env.PUBLIC_URL}/img/book.svg`;
+const trophyImg = `${process.env.PUBLIC_URL}/img/trophy.svg`;
 
 // Available avatars for participants
 const availableAvatars = [beeImg, bookImg, trophyImg];
@@ -537,10 +537,10 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
           <div className="flex flex-col items-center mb-4">
             <div className="mb-2">
               <img 
-                src={`${process.env.PUBLIC_URL}/img/bee.png`} 
+                src={`${process.env.PUBLIC_URL}/img/HelpBee.png`} 
                 alt="Bee mascot" 
                 className="w-16 h-16 md:w-20 md:h-20 mx-auto"
-                onError={(e) => e.currentTarget.src = "/img/bee.png"}
+                onError={(e) => e.currentTarget.src = "/img/DefaultBee.png"}
               />
             </div>
             <h1 className="text-3xl md:text-5xl font-bold text-primary font-sans tracking-wide">
@@ -651,7 +651,11 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                     </div>
                     {participants.map((student) => (
                       <div key={student.id} className="flex items-center gap-2 mb-2">
-                        <img src={student.avatar || availableAvatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                        <img 
+                          src={student.avatar || `${process.env.PUBLIC_URL}/img/DefaultBee.png`} 
+                          alt="avatar" 
+                          className="w-8 h-8 rounded-full" 
+                        />
                         <input 
                           type="text" 
                           value={student.name} 

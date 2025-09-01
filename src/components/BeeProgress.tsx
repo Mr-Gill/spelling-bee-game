@@ -69,6 +69,8 @@ export const ProgressBar: React.FC<{
   );
 };
 
+export const LinearProgress = ProgressBar;
+
 export const CircularProgress: React.FC<{
   value: number;
   size?: number;
