@@ -30,8 +30,8 @@ interface SetupScreenProps {
 
 // Using direct paths to assets in the public directory
 const beeImg = `${process.env.PUBLIC_URL}/img/HelpBee.png`;
-const bookImg = `${process.env.PUBLIC_URL}/img/book.svg`;
-const trophyImg = `${process.env.PUBLIC_URL}/img/trophy.svg`;
+const bookImg = `${process.env.PUBLIC_URL}/img/avatars/book.svg`;
+const trophyImg = `${process.env.PUBLIC_URL}/img/avatars/trophy.svg`;
 
 // Available avatars for participants
 const availableAvatars = [beeImg, bookImg, trophyImg];

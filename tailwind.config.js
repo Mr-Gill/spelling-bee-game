@@ -28,6 +28,8 @@ module.exports = {
         'body-large': ['Roboto', 'sans-serif'],
         'body-medium': ['Roboto', 'sans-serif'],
         'body-small': ['Roboto', 'sans-serif'],
+        sans: ['All Inclusive Sans', 'sans-serif'],
+        readex: ['Readex Pro', 'sans-serif'],
       },
       fontSize: {
         // Material 3 type scale
@@ -124,16 +126,16 @@ module.exports = {
         
         // Material 3 Color System
         primary: {
-          50: '#f6edff',
-          100: '#e8d5ff',
-          200: '#d4b0ff',
-          300: '#b47cff',
-          400: '#9c4dff',  // Primary
-          500: '#8a2be2',
-          600: '#7b1fa2',
-          700: '#6915c2',
-          800: '#4a148c',
-          900: '#320b5e',
+          50: '#faf5ff',
+          100: '#f3e8ff',
+          200: '#e9d5ff',
+          300: '#d8b4fe',
+          400: '#c084fc',
+          500: '#a855f7',
+          600: '#9333ea',
+          700: '#7e22ce',
+          800: '#6b21a8',
+          900: '#581c87',
         },
         secondary: {
           50: '#e1f5fe',
@@ -207,6 +209,16 @@ module.exports = {
           800: '#1565c0',
           900: '#0d47a1',
         },
+      },
+      boxShadow: {
+        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        DEFAULT: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+        none: 'none',
       },
       transitionProperty: {
         'height': 'height',
