@@ -7,8 +7,10 @@ fs.ensureDirSync('dist');
 // Copy all assets
 const copyAssets = () => {
   try {
-    // Copy image assets from src
-    fs.copySync('src/img', 'dist/img');
+    // Copy image assets from src (recursively)
+    if (fs.existsSync('src/img')) {
+      fs.copySync('src/img', 'dist/img', {recursive: true});
+    }
     
     // Copy index.html
     if (fs.existsSync('index.html')) {
@@ -31,18 +33,18 @@ const copyAssets = () => {
       fs.copySync('wordlist.json', 'dist/wordlist.json');
     }
 
-    // Copy image assets from root (in case there are additional files)
+    // Copy image assets from root (recursively)
     if (fs.existsSync('img')) {
-      fs.copySync('img', 'dist/img');
+      fs.copySync('img', 'dist/img', {recursive: true});
     }
     
     // Copy icons directory
     if (fs.existsSync('icons')) {
-      fs.copySync('icons', 'dist/icons');
+      fs.copySync('icons', 'dist/icons', {recursive: true});
     }
     
     // Copy audio assets
-    fs.copySync('audio', 'dist/audio');
+    fs.copySync('audio', 'dist/audio', {recursive: true});
     
     // Copy manifest file
     if (fs.existsSync('manifest.webmanifest')) {

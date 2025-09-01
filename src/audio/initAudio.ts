@@ -1,4 +1,5 @@
 import { audioManager } from '../utils/audio';
+import { preloadWordsAudio } from './wordAudio';
 
 // Sound effects mapping
 const SOUND_EFFECTS = {
@@ -85,5 +86,24 @@ export const preloadAudio = async (): Promise<void> => {
   
   console.log('Audio preloading complete');
 };
+
+export function initAudio() {
+  // Preload essential sound effects
+  audioManager.loadSound('correct', '/audio/letter-correct.mp3', { preload: true });
+  audioManager.loadSound('wrong', '/audio/letter-wrong.mp3', { preload: true });
+  audioManager.loadSound('complete', '/audio/word-complete.mp3', { preload: true });
+  
+  // Preload background music
+  audioManager.loadMusic('background', '/audio/background-music.mp3', { preload: true });
+  
+  // Preload common words
+  preloadWordsAudio([
+    'example', 'spelling', 'bee', 'champion', 'winner',
+    'correct', 'excellent', 'good', 'try', 'again'
+  ]);
+}
+
+// Initialize audio when module loads
+initAudio();
 
 export default preloadAudio;

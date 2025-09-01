@@ -273,7 +273,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
   }, [currentWord, state.letters, state.timeLeft, handleNextWord, playSound]);
 
   const typeLetter = useCallback((letter: string) => {
-    if (!currentWord) return;
+    if (!currentWord || !currentWord.word) return;
     
     const currentLetter = currentWord.word[state.letters.length].toLowerCase();
     playSound(currentLetter === letter.toLowerCase() ? letterCorrectSoundFile : letterWrongSoundFile);
