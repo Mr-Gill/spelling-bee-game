@@ -29,7 +29,7 @@ interface SetupScreenProps {
 }
 
 // Using direct paths to assets in the public directory
-const beeImg = '/img/bee.svg';
+const beeImg = '/img/bee.png';
 const bookImg = '/img/book.svg';
 const trophyImg = '../img/trophy.svg';
 
@@ -531,43 +531,43 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
   const [activeTab, setActiveTab] = useState<'setup' | 'settings' | 'words'>('setup');
 
   return (
-    <div className="min-h-screen p-4 md:p-8 text-white font-body bg-gradient-to-b from-blue-900 to-purple-900">
+    <div className="min-h-screen p-4 md:p-8 bg-surface text-on-surface">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8 md:mb-12">
           <div className="flex flex-col items-center mb-4">
             <div className="mb-2">
               <img 
-                src="/icons/icon.svg" 
+                src={`${process.env.PUBLIC_URL}/img/bee.png`} 
                 alt="Bee mascot" 
                 className="w-16 h-16 md:w-20 md:h-20 mx-auto"
-                onError={(e) => e.currentTarget.src = "/img/bee.svg"}
+                onError={(e) => e.currentTarget.src = "/img/bee.png"}
               />
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-yellow-300 uppercase font-sans tracking-wide">
+            <h1 className="text-3xl md:text-5xl font-bold text-primary font-sans tracking-wide">
               Spelling Bee Championship
             </h1>
           </div>
-          <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto">
             Get ready to spell your way to victory!
           </p>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex mb-6 border-b border-blue-400">
+        <div className="flex mb-6 border-b border-outline-variant">
           <button
-            className={`px-4 py-2 font-medium ${activeTab === 'setup' ? 'text-yellow-300 border-b-2 border-yellow-300' : 'text-blue-200'}`}
+            className={`px-4 py-2 font-medium ${activeTab === 'setup' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant'}`}
             onClick={() => setActiveTab('setup')}
           >
             Game Setup
           </button>
           <button
-            className={`px-4 py-2 font-medium ${activeTab === 'settings' ? 'text-yellow-300 border-b-2 border-yellow-300' : 'text-blue-200'}`}
+            className={`px-4 py-2 font-medium ${activeTab === 'settings' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant'}`}
             onClick={() => setActiveTab('settings')}
           >
             Settings
           </button>
           <button
-            className={`px-4 py-2 font-medium ${activeTab === 'words' ? 'text-yellow-300 border-b-2 border-yellow-300' : 'text-blue-200'}`}
+            className={`px-4 py-2 font-medium ${activeTab === 'words' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant'}`}
             onClick={() => setActiveTab('words')}
           >
             Word List
@@ -575,7 +575,7 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
         </div>
 
         {/* Tab Content */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 shadow-lg">
+        <div className="bg-surface-container-high rounded-xl p-6 mb-8 shadow-elevation-1">
           {activeTab === 'setup' && (
             <>
               <div className="mb-8">
@@ -583,13 +583,13 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                 <div className="flex flex-wrap justify-center gap-4">
                   <button 
                     onClick={() => setGameMode('team')} 
-                    className={`px-6 py-3 rounded-lg text-lg font-bold transition-all ${gameMode === 'team' ? 'bg-yellow-300 text-black scale-105' : 'bg-blue-500 hover:bg-blue-400'}`}
+                    className={`px-6 py-3 rounded-full text-lg font-bold transition-all ${gameMode === 'team' ? 'bg-primary text-on-primary shadow-elevation-1' : 'bg-secondary-container text-on-secondary-container hover:shadow-elevation-1'}`}
                   >
                     Team Mode
                   </button>
                   <button 
                     onClick={() => setGameMode('individual')} 
-                    className={`px-6 py-3 rounded-lg text-lg font-bold transition-all ${gameMode === 'individual' ? 'bg-yellow-300 text-black scale-105' : 'bg-blue-500 hover:bg-blue-400'}`}
+                    className={`px-6 py-3 rounded-full text-lg font-bold transition-all ${gameMode === 'individual' ? 'bg-primary text-on-primary shadow-elevation-1' : 'bg-secondary-container text-on-secondary-container hover:shadow-elevation-1'}`}
                   >
                     Individual Mode
                   </button>
@@ -610,19 +610,41 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                 ) : (
                   <>
                     <div className="flex gap-4 mb-4">
-                      <input type="text" value={studentName} onChange={e => setStudentName(e.target.value)} className="flex-grow p-2 rounded-md bg-white/20 text-white" placeholder="Student name" />
-                      <button onClick={addStudent} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add</button>
+                      <input 
+                        type="text" 
+                        value={studentName} 
+                        onChange={e => setStudentName(e.target.value)} 
+                        className="flex-grow p-3 rounded-lg bg-surface-container-high text-on-surface placeholder:text-on-surface-variant" 
+                        placeholder="Student name" 
+                      />
+                      <button 
+                        onClick={addStudent} 
+                        className="bg-primary-container text-on-primary-container px-4 py-3 rounded-lg font-bold hover:shadow-elevation-1"
+                      >
+                        Add
+                      </button>
                     </div>
                     <div className="mb-4">
-                      <textarea value={bulkStudentText} onChange={e => setBulkStudentText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white mb-2" placeholder="Paste names, one per line or separated by commas" rows={4}></textarea>
-                      <button onClick={() => addBulkStudents(bulkStudentText.split('\n').map(name => createParticipant(name, undefined)))} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add Names</button>
+                      <textarea 
+                        value={bulkStudentText} 
+                        onChange={e => setBulkStudentText(e.target.value)} 
+                        className="w-full p-3 rounded-lg bg-surface-container-high text-on-surface placeholder:text-on-surface-variant mb-2" 
+                        placeholder="Paste names, one per line or separated by commas" 
+                        rows={4}
+                      ></textarea>
+                      <button 
+                        onClick={() => addBulkStudents(bulkStudentText.split('\n').map(name => createParticipant(name, undefined)))} 
+                        className="bg-primary-container text-on-primary-container px-4 py-3 rounded-lg font-bold hover:shadow-elevation-1"
+                      >
+                        Add Names
+                      </button>
                     </div>
                     <div className="mb-4">
                       <h3 className="text-xl font-bold mb-2">Randomize Teams</h3>
                       <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <input type="number" min={1} value={randomTeamCount || ''} onChange={e => { setRandomTeamCount(Number(e.target.value)); setRandomTeamSize(0); }} placeholder="Number of teams" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
+                        <input type="number" min={1} value={randomTeamCount || ''} onChange={e => { setRandomTeamCount(Number(e.target.value)); setRandomTeamSize(0); }} placeholder="Number of teams" className="p-2 rounded-md bg-surface-variant text-on-surface flex-grow" />
                         <span>or</span>
-                        <input type="number" min={1} value={randomTeamSize || ''} onChange={e => { setRandomTeamSize(Number(e.target.value)); setRandomTeamCount(0); }} placeholder="Team size" className="p-2 rounded-md bg-white/20 text-white flex-grow" />
+                        <input type="number" min={1} value={randomTeamSize || ''} onChange={e => { setRandomTeamSize(Number(e.target.value)); setRandomTeamCount(0); }} placeholder="Team size" className="p-2 rounded-md bg-surface-variant text-on-surface flex-grow" />
                         <button onClick={randomizeTeams} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Randomize</button>
                       </div>
                       {randomizeError && <p className="text-red-300">{randomizeError}</p>}
@@ -635,12 +657,12 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                           value={student.name} 
                           onChange={e => updateStudentName(student.id, e.target.value)} 
                           placeholder="Student name" 
-                          className="flex-grow p-2 rounded-md bg-white/20 text-white" 
+                          className="flex-grow p-3 rounded-lg bg-surface-container-high text-on-surface" 
                         />
                         {participants.length > 1 && (
                           <button 
                             onClick={() => removeStudent(participants.findIndex(s => s.id === student.id))} 
-                            className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded"
+                            className="px-3 py-1 bg-error-container text-on-error-container hover:shadow-elevation-1 rounded-lg"
                           >
                             Remove
                           </button>
@@ -656,22 +678,32 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
 
           {activeTab === 'settings' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-white/10 p-6 rounded-lg">
+              <div className="bg-surface-container-low p-6 rounded-xl shadow-elevation-1">
                 <h2 className="text-2xl font-bold mb-4 uppercase font-sans">Skip Penalty ⏭️</h2>
                 <div className="flex gap-4">
-                  <select value={optionsState.skipPenaltyType} onChange={e => handleOptionChange('skipPenaltyType', e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
+                  <select 
+                    value={optionsState.skipPenaltyType} 
+                    onChange={e => handleOptionChange('skipPenaltyType', e.target.value)} 
+                    className="p-2 rounded-lg bg-surface-container-high text-on-surface"
+                  >
                     <option value="lives">Lives</option>
                     <option value="points">Points</option>
                   </select>
-                  <input type="number" min={0} value={optionsState.skipPenaltyValue} onChange={e => handleOptionChange('skipPenaltyValue', Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
+                  <input 
+                    type="number" 
+                    min={0} 
+                    value={optionsState.skipPenaltyValue} 
+                    onChange={e => handleOptionChange('skipPenaltyValue', Number(e.target.value))} 
+                    className="p-2 rounded-lg bg-surface-container-high text-on-surface w-24" 
+                  />
                 </div>
               </div>
-              <div className="bg-white/10 p-6 rounded-lg">
+              <div className="bg-surface-container-low p-6 rounded-xl shadow-elevation-1">
                 <h2 className="text-2xl font-bold mb-4 uppercase font-sans">Difficulty Settings 🎚️</h2>
                 <div className="flex gap-4">
                   <div>
                     <label className="block mb-2">Initial Difficulty</label>
-                    <select value={optionsState.initialDifficulty} onChange={e => handleOptionChange('initialDifficulty', Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white">
+                    <select value={optionsState.initialDifficulty} onChange={e => handleOptionChange('initialDifficulty', Number(e.target.value))} className="p-2 rounded-lg bg-surface-container-high text-on-surface">
                       <option value={0}>Easy</option>
                       <option value={1}>Medium</option>
                       <option value={2}>Tricky</option>
@@ -679,32 +711,32 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                   </div>
                   <div>
                     <label className="block mb-2">Progression Speed</label>
-                    <input type="number" min={1} value={optionsState.progressionSpeed} onChange={e => handleOptionChange('progressionSpeed', Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
+                    <input type="number" min={1} value={optionsState.progressionSpeed} onChange={e => handleOptionChange('progressionSpeed', Number(e.target.value))} className="p-2 rounded-lg bg-surface-container-high text-on-surface w-24" />
                   </div>
                 </div>
               </div>
-              <div className="bg-white/10 p-6 rounded-lg">
+              <div className="bg-surface-container-low p-6 rounded-xl shadow-elevation-1">
                 <h2 className="text-2xl font-bold mb-4 uppercase font-sans">Audio & Effects 🔊✨</h2>
                 <label className="flex items-center space-x-3 mb-2"><input type="checkbox" checked={optionsState.soundEnabled} onChange={e => handleOptionChange('soundEnabled', e.target.checked)} /><span>Enable Sound</span></label>
                 <label className="flex items-center space-x-3"><input type="checkbox" checked={optionsState.effectsEnabled} onChange={e => handleOptionChange('effectsEnabled', e.target.checked)} /><span>Enable Visual Effects</span></label>
               </div>
-              <div className="bg-white/10 p-6 rounded-lg">
+              <div className="bg-surface-container-low p-6 rounded-xl shadow-elevation-1">
                 <h2 className="text-2xl font-bold mb-4 uppercase font-sans">Theme 🎨</h2>
-                <select value={theme} onChange={e => { const t = e.target.value; setTheme(t); try { localStorage.setItem('theme', t); } catch (error) { console.error('Failed to save theme to localStorage', error); } applyTheme(t); }} className="p-2 rounded-md bg-white/20 text-white">
+                <select value={theme} onChange={e => { const t = e.target.value; setTheme(t); try { localStorage.setItem('theme', t); } catch (error) { console.error('Failed to save theme to localStorage', error); } applyTheme(t); }} className="p-2 rounded-lg bg-surface-container-high text-on-surface">
                   <option value="light">Light</option>
                   <option value="dark">Dark</option>
                   <option value="honeycomb">Honeycomb</option>
                 </select>
               </div>
-              <div className="bg-white/10 p-6 rounded-lg">
+              <div className="bg-surface-container-low p-6 rounded-xl shadow-elevation-1">
                 <h2 className="text-2xl font-bold mb-4 uppercase font-sans">Teacher Mode 👩‍🏫</h2>
-                <label className="flex items-center gap-2 text-white"><input type="checkbox" checked={teacherMode} onChange={e => setTeacherMode(e.target.checked)} /><span>Enable larger fonts and spacing</span></label>
+                <label className="flex items-center gap-2 text-on-surface"><input type="checkbox" checked={teacherMode} onChange={e => setTeacherMode(e.target.checked)} /><span>Enable larger fonts and spacing</span></label>
               </div>
-               <div className="bg-white/10 p-6 rounded-lg">
+               <div className="bg-surface-container-low p-6 rounded-xl shadow-elevation-1">
                 <h2 className="text-2xl font-bold mb-4 uppercase font-sans">Music 🎵</h2>
                 <div className="mb-4">
                   <label className="block mb-2">Style</label>
-                  <select value={optionsState.musicStyle} onChange={e => handleOptionChange('musicStyle', e.target.value)} className="p-2 rounded-md bg-white/20 text-white">
+                  <select value={optionsState.musicStyle} onChange={e => handleOptionChange('musicStyle', e.target.value)} className="p-2 rounded-lg bg-surface-container-high text-on-surface">
                     {musicStyles.map(style => (<option key={style} value={style}>{style}</option>))}
                   </select>
                 </div>
@@ -720,34 +752,52 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
             <div>
               <h2 className="text-xl font-bold mb-4 uppercase font-sans">Word List</h2>
               <div className="mb-6">
-                <label htmlFor="bundled-list" className="block text-lg font-medium mb-2">Choose Bundled Word List</label>
-                <select id="bundled-list" value={selectedBundledList} onChange={e => setSelectedBundledList(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white">
+                <label htmlFor="bundled-list" className="block text-lg font-medium mb-2 text-on-surface">Choose Bundled Word List</label>
+                <select 
+                  id="bundled-list" 
+                  value={selectedBundledList} 
+                  onChange={e => setSelectedBundledList(e.target.value)} 
+                  className="w-full p-3 rounded-lg bg-surface-container-high text-on-surface"
+                >
                   <option value="">-- Select a list --</option>
                   {bundledWordLists.map(list => (<option key={list.file} value={list.file}>{list.label}</option>))}
                 </select>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="file-upload" className="block text-lg font-medium mb-2">Upload File</label>
-                  <p className="text-sm text-gray-300 mb-2">Upload a JSON or TSV file.</p>
-                  <input id="file-upload" type="file" accept=".json,.tsv,.txt,.csv" onChange={handleFileChange} className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-300 file:text-black hover:file:bg-yellow-400" />
+                  <label htmlFor="file-upload" className="block text-lg font-medium mb-2 text-on-surface">Upload File</label>
+                  <p className="text-sm text-on-surface-variant mb-2">Upload a JSON or TSV file.</p>
+                  <input 
+                    id="file-upload" 
+                    type="file" 
+                    accept=".json,.tsv,.txt,.csv" 
+                    onChange={handleFileChange} 
+                    className="block w-full text-sm text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-tertiary-container file:text-on-tertiary-container hover:file:bg-tertiary" 
+                  />
                 </div>
                 <div>
-                  <label htmlFor="paste-area" className="block text-lg font-medium mb-2">Or Paste Spreadsheet Data</label>
-                  <p className="text-sm text-gray-300 mb-2">Paste data from Excel or Google Sheets (tab-separated).</p>
-                  <textarea id="paste-area" rows={4} value={customWordListText} onChange={e => setCustomWordListText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white" placeholder="Paste your tab-separated values here..."></textarea>
+                  <label htmlFor="paste-area" className="block text-lg font-medium mb-2 text-on-surface">Or Paste Spreadsheet Data</label>
+                  <p className="text-sm text-on-surface-variant mb-2">Paste data from Excel or Google Sheets (tab-separated).</p>
+                  <textarea 
+                    id="paste-area" 
+                    rows={4} 
+                    value={customWordListText} 
+                    onChange={e => setCustomWordListText(e.target.value)} 
+                    className="w-full p-3 rounded-lg bg-surface-container-high text-on-surface placeholder:text-on-surface-variant" 
+                    placeholder="Paste your tab-separated values here..."
+                  ></textarea>
                 </div>
               </div>
               <div className="mt-6">
                 <div className="flex flex-col md:flex-row gap-2 mb-2">
-                  <input type="number" min={1} value={aiGrade} onChange={e => setAiGrade(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="Grade" />
-                  <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="# Words" />
+                  <input type="number" min={1} value={aiGrade} onChange={e => setAiGrade(Number(e.target.value))} className="p-2 rounded-md bg-surface-variant text-on-surface w-full md:w-24" placeholder="Grade" />
+                  <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-surface-variant text-on-surface w-full md:w-24" placeholder="# Words" />
                   <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
                 </div>
                 <WordListPrompt value={aiTopic} onChange={setAiTopic} />
                 {aiError && <p className="text-red-300 mt-2">{aiError}</p>}
               </div>
-              <div className="mt-4 text-sm text-gray-300">
+              <div className="mt-4 text-sm text-on-surface-variant">
                 <p>
                   <strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`,
                   `prefix`, `suffix`, `pronunciation`.
@@ -755,7 +805,7 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                 <a
                   href="wordlists/example.csv"
                   download
-                  className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mt-2"
+                  className="inline-block bg-green-500 hover:bg-green-600 text-on-surface px-4 py-2 rounded mt-2"
                 >
                   Download Template
                 </a>
@@ -765,7 +815,7 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
         </div>
 
         {missedWordCount > 0 && (
-          <div className="bg-white/10 p-4 rounded-lg mb-8">
+          <div className="bg-surface-variant p-4 rounded-lg mb-8">
             <label className="flex items-center space-x-3">
               <input type="checkbox" checked={includeMissedWords} onChange={e => setIncludeMissedWords(e.target.checked)} />
               <span>Include {missedWordCount} missed words from previous sessions</span>
@@ -776,19 +826,19 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
         {error && <p className="text-red-300 text-center mb-4">{error}</p>}
         
         <div className="flex flex-col md:flex-row gap-4 mt-8">
-          <button onClick={() => handleStart(false)} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Custom Game</button>
-          <button onClick={() => handleStart(true)} className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Session Challenge</button>
+          <button onClick={() => handleStart(false)} className="w-full bg-primary hover:bg-primary-pressed text-on-primary px-6 py-4 rounded-xl text-2xl font-bold">Start Custom Game</button>
+          <button onClick={() => handleStart(true)} className="w-full bg-orange-500 hover:bg-orange-600 text-on-surface px-6 py-4 rounded-xl text-2xl font-bold">Start Session Challenge</button>
         </div>
         <div className="mt-4 text-center flex flex-col sm:flex-row gap-4 justify-center">
           <button
             onClick={onViewAchievements}
-            className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl text-xl font-bold"
+            className="bg-purple-500 hover:bg-purple-600 text-on-surface px-6 py-3 rounded-xl text-xl font-bold"
           >
             View Achievements
           </button>
           <button
             onClick={onViewHistory}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl text-xl font-bold"
+            className="bg-blue-500 hover:bg-blue-600 text-on-surface px-6 py-3 rounded-xl text-xl font-bold"
           >
             View History
           </button>

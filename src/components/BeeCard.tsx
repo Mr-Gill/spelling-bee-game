@@ -4,67 +4,64 @@ import classNames from 'classnames';
 interface BeeCardProps {
   children: ReactNode;
   className?: string;
-  variant?: 'default' | 'elevated' | 'outlined' | 'filled';
-  hoverEffect?: 'none' | 'scale' | 'glow' | 'float';
+  variant?: 'elevated' | 'filled' | 'outlined';
+  elevation?: '0' | '1' | '2' | '3' | '4' | '5';
   padding?: 'none' | 'sm' | 'md' | 'lg';
-  rounded?: 'none' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+  rounded?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   onClick?: () => void;
-  isInteractive?: boolean;
 }
 
 const BeeCard: React.FC<BeeCardProps> = ({
   children,
   className = '',
-  variant = 'default',
-  hoverEffect = 'none',
+  variant = 'elevated',
+  elevation = '1',
   padding = 'md',
-  rounded = 'xl',
+  rounded = 'md',
   onClick,
-  isInteractive = false,
 }) => {
-  const baseClasses = 'relative overflow-hidden transition-all duration-300';
+  const baseClasses = 'relative transition-all duration-medium1';
   
   const variantClasses = {
-    default: 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm',
-    elevated: 'bg-white/90 dark:bg-gray-800/90 shadow-lg backdrop-blur-sm',
-    outlined: 'bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 backdrop-blur-sm',
-    filled: 'bg-gradient-to-br from-bee-yellow-50 to-bee-yellow-100 dark:from-gray-800 dark:to-gray-900',
-  };
-  
-  const hoverEffectClasses = {
-    none: '',
-    scale: 'hover:scale-[1.02]',
-    glow: 'hover:shadow-lg hover:shadow-bee-yellow-500/20',
-    float: 'hover:-translate-y-1 hover:shadow-md',
+    elevated: classNames(
+      'bg-surface-container-low',
+      {
+        'shadow-elevation-1': elevation === '1',
+        'shadow-elevation-2': elevation === '2',
+        'shadow-elevation-3': elevation === '3',
+        'shadow-elevation-4': elevation === '4',
+        'shadow-elevation-5': elevation === '5',
+      },
+      'hover:shadow-elevation-2'
+    ),
+    filled: 'bg-surface-container-highest',
+    outlined: 'bg-surface border border-outline',
   };
   
   const paddingClasses = {
     none: '',
     sm: 'p-3',
-    md: 'p-4 sm:p-6',
-    lg: 'p-6 sm:p-8',
+    md: 'p-4',
+    lg: 'p-6',
   };
   
   const roundedClasses = {
     none: 'rounded-none',
-    md: 'rounded-md',
-    lg: 'rounded-lg',
-    xl: 'rounded-xl',
-    '2xl': 'rounded-2xl',
-    full: 'rounded-3xl',
+    xs: 'rounded-extra-small',
+    sm: 'rounded-small',
+    md: 'rounded-medium',
+    lg: 'rounded-large',
+    xl: 'rounded-extra-large',
   };
-  
-  const interactiveClasses = isInteractive ? 'cursor-pointer' : '';
   
   return (
     <div 
       className={classNames(
         baseClasses,
         variantClasses[variant],
-        hoverEffectClasses[hoverEffect],
         paddingClasses[padding],
         roundedClasses[rounded],
-        interactiveClasses,
+        onClick && 'cursor-pointer',
         className
       )}
       onClick={onClick}
@@ -79,7 +76,7 @@ const BeeCard: React.FC<BeeCardProps> = ({
       </div>
       
       {/* Hover overlay */}
-      {isInteractive && (
+      {onClick && (
         <div className="absolute inset-0 bg-gradient-to-br from-transparent to-white/30 dark:to-gray-700/30 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
       )}
     </div>

@@ -13,10 +13,14 @@ type AchievementProps = {
 };
 
 const AchievementBadge = ({ unlocked, title, description, icon }: AchievementProps) => (
-    <div className={`achievement ${unlocked ? 'unlocked' : 'locked'} font-body`}>
-      <img src={icon} alt={title} />
-      <h3 className="uppercase font-sans">{title}</h3>
-      <p>{description}</p>
+    <div className={`p-6 rounded-xl ${unlocked ? 'bg-primary-container text-on-primary-container' : 'bg-surface-container-highest text-on-surface-variant'} shadow-elevation-1`}>
+      <div className="flex items-center gap-4">
+        <img src={icon} alt={title} className="w-12 h-12" />
+        <div>
+          <h3 className="text-lg font-medium uppercase font-sans">{title}</h3>
+          <p className="text-sm">{description}</p>
+        </div>
+      </div>
     </div>
 );
 
@@ -35,9 +39,9 @@ const AchievementsScreen: React.FC<AchievementsScreenProps> = ({ onBack }) => {
   }, [unlocked]);
 
   return (
-      <div className="min-h-screen bg-gradient-to-br from-green-600 to-teal-800 p-8 text-white font-body">
-        <h1 className="text-4xl text-center mb-8 uppercase font-sans">Achievements</h1>
-      <div className="achievements-grid max-w-xl mx-auto">
+      <div className="min-h-screen bg-surface p-8 text-on-surface font-body">
+        <h1 className="text-4xl text-center mb-8 uppercase font-sans text-primary">Achievements</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
         {Object.entries(achievements).map(([key, achievement]) => (
           <AchievementBadge
             key={key}
@@ -50,7 +54,7 @@ const AchievementsScreen: React.FC<AchievementsScreenProps> = ({ onBack }) => {
       </div>
       <button
         onClick={onBack}
-        className="mt-8 block mx-auto bg-yellow-300 text-black px-6 py-3 rounded-lg font-bold"
+        className="mt-8 block mx-auto bg-primary text-on-primary px-6 py-3 rounded-full font-bold hover:shadow-elevation-1"
       >
         Back
       </button>

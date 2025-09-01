@@ -3,7 +3,6 @@ import { GameResults, GameConfig, LeaderboardEntry } from './types';
 import applauseSoundFile from '../audio/applause.mp3';
 import { launchConfetti } from './utils/confetti';
 import { recordDailyCompletion, StreakInfo } from './DailyChallenge';
-import beeImg from '../img/avatars/bee.svg';
 import MorphologyCard from './components/MorphologyCard';
 
 interface ResultsScreenProps {
@@ -104,27 +103,27 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
   };
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center font-body">
-        <h1 className="text-6xl font-bold mb-4 text-yellow-300 uppercase font-sans">🏆 Game Over! 🏆</h1>
-        <h2 className="text-4xl mb-8 uppercase font-sans">{getWinnerMessage()}</h2>
+      <div className="min-h-screen bg-surface p-8 text-on-surface text-center flex flex-col items-center justify-center font-body">
+        <h1 className="text-4xl font-bold mb-4 text-primary uppercase font-sans">🏆 Game Over! 🏆</h1>
+        <h2 className="text-2xl mb-8 uppercase font-sans">{getWinnerMessage()}</h2>
 
-      {results?.duration && (<div className="text-2xl mb-6">Game Duration: {results.duration} seconds</div>)}
+      {results?.duration && (<div className="text-xl mb-6">Game Duration: {results.duration} seconds</div>)}
       
       <div className="text-xl mb-4">Session Score: {totalScore}</div>
       <div className="text-xl mb-8">
         Best Class Score: {bestClassScore}
-        {isBestScore && <span className="text-green-400 font-bold ml-2">New High Score!</span>}
+        {isBestScore && <span className="text-tertiary font-bold ml-2">New High Score!</span>}
       </div>
 
-        <div className="bg-white/10 p-8 rounded-lg w-full max-w-md scorecard font-body">
-          <h3 className="text-3xl font-bold mb-4 uppercase font-sans">📊 Final Scores</h3>
+        <div className="bg-surface-container-high p-6 rounded-xl w-full max-w-2xl shadow-elevation-1">
+          <h3 className="text-2xl font-bold mb-4 uppercase font-sans">📊 Final Scores</h3>
         {results && results.participants.map((p, index) => (
-          <div key={index} className="text-left text-xl mb-3">
-            <div className="flex items-center gap-2">
-              <img src={p.avatar || beeImg} alt={`${p.name} avatar`} className="w-6 h-6 rounded-full" />
-              <div className="font-bold">{p.name}</div>
+          <div key={index} className="text-left mb-4 p-3 rounded-lg bg-surface-container-low">
+            <div className="flex items-center gap-3 mb-1">
+              <img src={p.avatar || `${process.env.PUBLIC_URL}/img/bee.png`} alt={`${p.name} avatar`} className="w-8 h-8 rounded-full" />
+              <div className="font-bold text-lg">{p.name}</div>
             </div>
-            <div className="text-yellow-300">
+            <div className="text-primary">
               {p.wordsCorrect}/{p.wordsAttempted} correct ({p.wordsAttempted > 0 ? Math.round((p.wordsCorrect / p.wordsAttempted) * 100) : 0}
               %) - {p.lives} lives remaining - {p.points + (config.dailyChallenge ? bonus : 0)} points
             </div>
@@ -133,19 +132,19 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
       </div>
 
       {config.dailyChallenge && streakInfo && (
-        <div className="bg-white/10 p-4 rounded-lg w-full max-w-md mt-4">
-          <div className="text-xl">
+        <div className="bg-surface-container-high p-4 rounded-xl w-full max-w-2xl mt-4 shadow-elevation-1">
+          <div className="text-lg">
             🔥 Streak: {streakInfo.currentStreak} day{streakInfo.currentStreak !== 1 ? 's' : ''} (Best {streakInfo.highestStreak})
           </div>
-          {bonus > 0 && (<div className="text-yellow-300">Bonus Points: +{bonus}</div>)}
+          {bonus > 0 && (<div className="text-tertiary mt-2">Bonus Points: +{bonus}</div>)}
         </div>
       )}
 
       {results.missedWords && results.missedWords.length > 0 && (
-          <div className="bg-white/10 p-8 rounded-lg w-full max-w-md mt-8 scorecard font-body">
-            <h3 className="text-3xl font-bold mb-4 uppercase font-sans">❌ Missed Words</h3>
+          <div className="bg-surface-container-high p-6 rounded-xl w-full max-w-2xl mt-8 shadow-elevation-1">
+            <h3 className="text-2xl font-bold mb-4 uppercase font-sans">❌ Missed Words</h3>
           {results.missedWords.map((w, index) => (
-            <div key={index} className="text-left text-xl mb-2">
+            <div key={index} className="text-left mb-3 p-3 rounded-lg bg-surface-container-low">
               <span className="font-bold">{w.word}</span> - {w.definition}
               {(w.prefix || w.suffix) && (
                 <MorphologyCard word={w} database={config.wordDatabase} />
@@ -155,15 +154,24 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, config, onRestar
         </div>
       )}
 
-      <div className="flex gap-6 mt-12 flex-wrap justify-center">
-        <button onClick={handleExport} className="bg-green-500 hover:bg-green-600 px-8 py-5 rounded-xl text-2xl font-bold">
-            📤 Export Results
+      <div className="flex gap-4 mt-8 flex-wrap justify-center">
+        <button 
+          onClick={handleExport} 
+          className="bg-tertiary-container text-on-tertiary-container px-6 py-3 rounded-full text-lg font-bold hover:shadow-elevation-1"
+        >
+          📤 Export Results
         </button>
-        <button onClick={onViewLeaderboard} className="bg-purple-500 hover:bg-purple-600 px-8 py-5 rounded-xl text-2xl font-bold">
-            📈 View Leaderboard
+        <button 
+          onClick={onViewLeaderboard} 
+          className="bg-secondary-container text-on-secondary-container px-6 py-3 rounded-full text-lg font-bold hover:shadow-elevation-1"
+        >
+          📈 View Leaderboard
         </button>
-        <button onClick={onRestart} className="bg-blue-500 hover:bg-blue-600 px-10 py-5 rounded-xl text-2xl font-bold">
-            🔄 Play Again
+        <button 
+          onClick={onRestart} 
+          className="bg-primary text-on-primary px-8 py-3 rounded-full text-lg font-bold hover:shadow-elevation-2"
+        >
+          🔄 Play Again
         </button>
       </div>
     </div>

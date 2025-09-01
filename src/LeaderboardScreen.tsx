@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { LeaderboardEntry } from './types';
-import beeImg from '../img/avatars/bee.svg';
 
 interface LeaderboardScreenProps {
   onBack: () => void;
@@ -44,27 +43,27 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
   }, []);
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center font-body">
-        <h1 className="text-6xl font-bold mb-8 text-yellow-300 uppercase font-sans">🏅 Leaderboard</h1>
-      <div className="bg-white/10 p-8 rounded-lg w-full max-w-md scorecard">
+      <div className="min-h-screen bg-surface p-8 text-on-surface text-center flex flex-col items-center justify-center font-body">
+        <h1 className="text-4xl font-bold mb-8 text-primary uppercase font-sans">🏅 Leaderboard</h1>
+      <div className="bg-surface-container-high p-6 rounded-xl w-full max-w-md shadow-elevation-1">
         {error ? (
-          <div className="text-xl text-red-300">{error}</div>
+          <div className="text-xl text-error">{error}</div>
         ) : entries.length === 0 ? (
-          <div className="text-xl">No scores yet.</div>
+          <div className="text-xl text-on-surface-variant">No scores yet.</div>
         ) : (
-          <ol className="text-xl space-y-2">
+          <ol className="text-lg space-y-3">
             {entries.map((entry, index) => (
-              <li key={index} className="flex justify-between items-center py-1">
-                <span className="flex items-center font-bold">
-                  {index < 3 && <span className="mr-2">{['🥇', '🥈', '🥉'][index]}</span>}
+              <li key={index} className="flex justify-between items-center py-2 px-3 rounded-lg bg-surface-container-low">
+                <span className="flex items-center font-medium">
+                  {index < 3 && <span className="mr-2 text-primary">{['🥇', '🥈', '🥉'][index]}</span>}
                   <img
-                    src={entry.avatar || beeImg}
+                    src={`${process.env.PUBLIC_URL}/img/avatars/bee.png`}
                     alt={`${entry.name}'s avatar`}
-                    className="w-6 h-6 rounded-full mr-2"
+                    className="w-8 h-8 rounded-full mr-3"
                   />
                   {index + 1}. {entry.name}
                 </span>
-                <span className="text-yellow-300">{entry.score}</span>
+                <span className="text-primary font-bold">{entry.score}</span>
               </li>
             ))}
           </ol>
@@ -72,7 +71,7 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
       </div>
       <button
         onClick={onBack}
-        className="mt-8 bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-xl text-2xl font-bold block mx-auto"
+        className="mt-8 bg-primary text-on-primary px-6 py-3 rounded-full text-lg font-bold hover:shadow-elevation-1"
       >
         Back
       </button>

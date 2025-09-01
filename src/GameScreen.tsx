@@ -23,8 +23,9 @@ import CircularTimer from './components/CircularTimer';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
 import { HelpShop } from './components/HelpShop'; // Fix HelpShop import
+import Button from './components/Button'; // Import Button component
 // Progress components
-import { ProgressBar, CircularProgress } from './components/BeeProgress';
+import { CircularProgress, LinearProgress } from './components/BeeProgress';
 
 // Icons
 import { Award } from 'lucide-react';
@@ -327,40 +328,34 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
     <div className="game-screen">
       <div className="game-area">
         <header className="game-header">
-          <div className="progress-container">
-            <CircularProgress 
-              value={state.gameProgress} 
-              size={60}
-              strokeWidth={8}
-            />
-            <div className="flex items-center space-x-2 mr-4">
+          <div className="flex items-center gap-4 p-4 bg-surface-container-low rounded-xl">
+            <div className="flex flex-col items-center">
               <CircularProgress 
-                value={Math.round((currentParticipant.score / currentParticipant.maxScore) * 100)} 
-                size={40}
-                strokeWidth={4}
-                variant="primary"
+                value={state.gameProgress}
+                className="text-primary"
+                size="lg"
               />
-              <span className="text-bee-yellow-600 font-medium">
-                {currentParticipant.score}/{currentParticipant.maxScore}
-              </span>
+              <span className="label-small text-on-surface-variant mt-1">Game Progress</span>
             </div>
-            <ProgressBar 
-              value={currentParticipant.score} 
-              max={currentParticipant.maxScore}
-              size="md"
-              showLabel
-            />
-            <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2 mb-4">
-              <ProgressBar 
-                value={Math.round((state.currentWordIndex / state.totalWords) * 100)}
-                size="sm"
-                variant="primary"
-                className="h-full"
+            
+            <div className="flex flex-col items-center">
+              <CircularProgress 
+                value={Math.round((currentParticipant.score / currentParticipant.maxScore) * 100)}
+                className="text-secondary"
+                size="md"
               />
-              <div className="flex justify-between text-xs mt-1">
-                <span>Progress: {state.currentWordIndex}/{state.totalWords} words</span>
+              <span className="label-small text-on-surface-variant mt-1">Score</span>
+            </div>
+            
+            <div className="flex-1">
+              <div className="flex justify-between label-medium text-on-surface">
+                <span>Words: {state.currentWordIndex}/{state.totalWords}</span>
                 <span>{Math.round((state.currentWordIndex / state.totalWords) * 100)}%</span>
               </div>
+              <LinearProgress 
+                value={Math.round((state.currentWordIndex / state.totalWords) * 100)}
+                className="mt-1"
+              />
             </div>
           </div>
           <div className="timer-container">
@@ -372,7 +367,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
           <div className="coins-display">
             {state.musicConfirmed && (
               <img 
-                src={`${process.env.PUBLIC_URL}/img/bee.svg`} 
+                src={`${process.env.PUBLIC_URL}/img/bee.png`} 
                 alt="Bee" 
                 className={!state.musicConfirmed ? 'hidden' : ''}
               />
@@ -382,64 +377,54 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
         </header>
 
         <div className="word-area">
-          {state.showWord && currentWord && (
-            <div className="current-word">
-              {currentWord.word.split('').map((letter, index) => (
-                <span 
-                  key={index} 
-                  className={`letter ${state.revealedIndices.has(index) ? 'revealed' : ''}`}
-                >
-                  {state.revealedIndices.has(index) ? letter : '_'}
-                </span>
-              ))}
+          <div className="p-6 bg-surface-container-high rounded-xl shadow-sm">
+            <div className="flex flex-col items-center gap-4">
+              <h2 className="headline-small text-on-surface">Current Word</h2>
+              
+              {state.showWord && currentWord && (
+                <div className="flex gap-2">
+                  {currentWord.word.split('').map((letter, index) => (
+                    <div 
+                      key={index}
+                      className={classNames(
+                        'w-12 h-16 flex items-center justify-center rounded-md',
+                        'text-headline-medium font-medium',
+                        state.revealedIndices.has(index) 
+                          ? 'bg-primary-container text-on-primary-container'
+                          : 'bg-surface-container-highest text-on-surface-variant'
+                      )}
+                    >
+                      {state.revealedIndices.has(index) ? letter : '?'}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {currentWord && (
+                <div className="w-full">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="label-medium text-on-surface-variant">
+                      Difficulty: {currentWord.difficulty}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="label-medium text-on-surface-variant">
+                        {currentWord.difficulty === 'easy' ? 'Simple' :
+                         currentWord.difficulty === 'medium' ? 'Medium' : 'Challenging'}
+                      </span>
+                      <div className="w-24">
+                        <LinearProgress 
+                          value={currentWord.difficulty === 'easy' ? 33 : 
+                                currentWord.difficulty === 'medium' ? 66 : 100}
+                          variant={currentWord.difficulty === 'easy' ? 'success' :
+                                  currentWord.difficulty === 'medium' ? 'warning' : 'danger'}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-          {currentWord && (
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                Difficulty: 
-                <span className={`font-bold ${
-                  currentWord.difficulty === 'easy' ? 'text-green-500' :
-                  currentWord.difficulty === 'medium' ? 'text-amber-500' : 'text-red-500'
-                }`}>
-                  {currentWord.difficulty}
-                </span>
-              </span>
-              <ProgressBar 
-                value={currentWord.difficulty === 'easy' ? 33 : 
-                      currentWord.difficulty === 'medium' ? 66 : 100}
-                size="sm"
-                variant={
-                  currentWord.difficulty === 'easy' ? 'success' :
-                  currentWord.difficulty === 'medium' ? 'warning' : 'danger'
-                }
-                className="w-24"
-              />
-            </div>
-          )}
-          {currentWord && (
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                Difficulty: 
-                <span className={`font-bold ${
-                  currentWord.difficulty === 'easy' ? 'text-green-500' :
-                  currentWord.difficulty === 'medium' ? 'text-amber-500' : 'text-red-500'
-                }`}>
-                  {currentWord.difficulty}
-                </span>
-              </span>
-              <ProgressBar 
-                value={currentWord.difficulty === 'easy' ? 33 : 
-                      currentWord.difficulty === 'medium' ? 66 : 100}
-                size="sm"
-                variant={
-                  currentWord.difficulty === 'easy' ? 'success' :
-                  currentWord.difficulty === 'medium' ? 'warning' : 'danger'
-                }
-                className="w-24"
-              />
-            </div>
-          )}
+          </div>
           <HintPanel 
             word={currentWord?.word || ''}
             onRevealLetter={() => handleRevealLetter(
@@ -464,32 +449,46 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config, onEndGame }) => 
               {state.currentHelp}
             </div>
           )}
-          <button 
-            onClick={handleSpellingSubmit}
-            className="submit-button"
-            disabled={state.letters.length === 0}
-          >
-            Submit
-          </button>
+          <div className="space-y-4">
+            <OnScreenKeyboard 
+              onLetter={typeLetter}
+              onBackspace={() => setState(prev => ({...prev, letters: prev.letters.slice(0, -1)}))}
+              onSubmit={handleSpellingSubmit}
+              soundEnabled={true}
+              usedLetters={state.usedLetters}
+              currentWord={currentWord?.word}
+              className="bg-surface-container-high p-4 rounded-xl"
+            />
+            
+            <div className="flex gap-4">
+              <Button 
+                variant="filled"
+                onClick={handleSpellingSubmit}
+                disabled={state.letters.length === 0}
+                className="flex-1"
+              >
+                Submit
+              </Button>
+              
+              <Button 
+                variant="outlined" 
+                onClick={() => setState(prev => ({...prev, letters: []}))}
+                disabled={state.letters.length === 0}
+              >
+                Clear
+              </Button>
+            </div>
+          </div>
         </div>
 
-        <OnScreenKeyboard 
-          onLetter={typeLetter}
-          onBackspace={() => setState(prev => ({...prev, letters: prev.letters.slice(0, -1)}))}
-          onSubmit={handleSpellingSubmit}
-          soundEnabled={true}
-          usedLetters={state.usedLetters}
-          currentWord={currentWord?.word}
-        />
+        {state.showShop && (
+          <HelpShop 
+            onClose={() => setState(prev => ({ ...prev, showShop: false }))}
+            coins={state.coins}
+            onPurchase={(cost) => setState(prev => ({ ...prev, coins: prev.coins - cost }))}
+          />
+        )}
       </div>
-
-      {state.showShop && (
-        <HelpShop 
-          onClose={() => setState(prev => ({ ...prev, showShop: false }))}
-          coins={state.coins}
-          onPurchase={(cost) => setState(prev => ({ ...prev, coins: prev.coins - cost }))}
-        />
-      )}
     </div>
   );
 };
