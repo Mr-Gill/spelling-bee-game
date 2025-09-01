@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useHelpSystem } from './contexts/HelpSystemContext';
-import { Word } from './types';
-import { GameScreenProps, GameScreenState } from './gameTypes';
+import { 
+  Word, 
+  GameScreenProps, 
+  GameScreenState,
+  Participant,
+  WordQueues
+} from './types/gameTypes';
 
 // Audio
 import { loadAudio, preloadCriticalSounds, preloadBackgroundMusic } from './utils/audioUtils';
@@ -19,8 +24,6 @@ import Button from './components/Button';
 import { CircularProgress, LinearProgress } from './components/BeeProgress';
 
 // Constants
-const MAX_SKIP_TURNS = 3;
-const MAX_ASK_FRIEND = 1;
 const initialTime = 60;
 
 import classNames from 'classnames';
@@ -45,9 +48,9 @@ import { useWordQueue } from './hooks/useWordQueue';
 // Main GameScreen component
 export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   // Use custom hooks for state management
-  const { gameStarted, gameEnded, timeLeft, startGame, endGame, setTimeLeft } = useGameState();
+  const { gameStarted, timeLeft } = useGameState();
   const { participants, currentParticipantIndex, setParticipants, setCurrentParticipantIndex } = useParticipants(config.participants);
-  const { wordQueues, setWordQueues } = useWordQueue();
+  const { setWordQueues } = useWordQueue();
   
   // Remaining state
   const [state, setState] = useState<GameScreenState>({
@@ -56,13 +59,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     musicConfirmed: false
   });
   const [coins, setCoins] = useState(0);
-  const [skipsRemaining, setSkipsRemaining] = useState(3);
   const [usedLetters, setUsedLetters] = useState(new Set<string>());
   const [revealedIndices, setRevealedIndices] = useState(new Set<number>());
-  const [feedback, setFeedback] = useState(null);
+  const [feedback, setFeedback] = useState<{message: string, type: string} | null>(null);
   const [letters, setLetters] = useState([]);
   const [totalWords, setTotalWords] = useState(0);
-  const [currentHelp, setCurrentHelp] = useState(null);
+  const [currentHelp, setCurrentHelp] = useState<string | null>(null);
   const [gameProgress, setGameProgress] = useState(0);
   const [audioLoaded, setAudioLoaded] = useState(false);
 
@@ -149,8 +151,8 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     }
   };
 
-  const currentWord = currentParticipant?.currentWord?.word || '';
   const currentParticipant = participants[currentParticipantIndex];
+  const currentWord = currentParticipant?.currentWord?.word || '';
 
   const handleSpellingSubmit = useCallback(() => {
     if (!currentWord) return;
@@ -314,18 +316,34 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   // Memoized components
   const MemoizedProgress = React.memo(CircularProgress);
   const MemoizedTimer = React.memo(CircularTimer);
+  const MemoizedButton = React.memo(Button);
+  const MemoizedHintPanel = React.memo(HintPanel);
+
+  // Memoize word letter rendering
+  const WordLetter = React.memo(({ letter, revealed }: {letter: string, revealed: boolean}) => (
+    <div 
+      className={classNames(
+        'w-12 h-16 flex items-center justify-center rounded-md',
+        'text-headline-medium font-medium',
+        revealed 
+          ? 'bg-primary-container text-on-primary-container'
+          : 'bg-surface-container-highest text-on-surface-variant'
+      )}
+      aria-hidden={!revealed}
+      aria-label={revealed ? `Letter ${letter}` : "Hidden letter"}
+    >
+      {revealed ? letter : '?'}
+    </div>
+  ));
 
   // Optimized game loop
   const gameLoop = useCallback(() => {
     if (!gameStarted) return;
     requestAnimationFrame(() => {
-      updateGameState();
+      // updateGameState();
       gameLoop();
     });
-  }, [gameStarted, updateGameState]);
-
-  // Memoize participants data
-  const memoizedParticipants = useMemo(() => participants, [participants]);
+  }, [gameStarted]);
 
   return (
     <div className="game-screen">
@@ -392,18 +410,11 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
               {state.showDefinition && currentWord && (
                 <div className="flex gap-2">
                   {currentWord.split('').map((letter, index) => (
-                    <div 
+                    <WordLetter 
                       key={index}
-                      className={classNames(
-                        'w-12 h-16 flex items-center justify-center rounded-md',
-                        'text-headline-medium font-medium',
-                        revealedIndices.has(index) 
-                          ? 'bg-primary-container text-on-primary-container'
-                          : 'bg-surface-container-highest text-on-surface-variant'
-                      )}
-                    >
-                      {revealedIndices.has(index) ? letter : '?'}
-                    </div>
+                      letter={letter}
+                      revealed={revealedIndices.has(index)}
+                    />
                   ))}
                 </div>
               )}
@@ -433,7 +444,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
               )}
             </div>
           </div>
-          <HintPanel 
+          <MemoizedHintPanel 
             word={currentWord}
             onRevealLetter={handleRevealLetter}
             onShowDefinition={() => handleShowDefinition(currentWord)}
@@ -467,25 +478,34 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
               soundEnabled={audioLoaded}
               usedLetters={usedLetters}
               currentWord={currentWord}
+              aria-label="Spelling keyboard"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSpellingSubmit();
+                if (e.key === 'Escape') setLetters([]);
+              }}
             />
             
             <div className="flex gap-4">
-              <Button 
+              <MemoizedButton 
                 variant="filled"
                 onClick={handleSpellingSubmit}
                 disabled={letters.length === 0}
                 className="flex-1"
+                aria-label="Submit spelling"
+                aria-disabled={letters.length === 0}
               >
                 Submit
-              </Button>
+              </MemoizedButton>
               
-              <Button 
+              <MemoizedButton 
                 variant="outlined" 
                 onClick={() => setLetters([])}
                 disabled={letters.length === 0}
+                aria-label="Clear letters"
+                aria-disabled={letters.length === 0}
               >
                 Clear
-              </Button>
+              </MemoizedButton>
             </div>
           </div>
         </div>
