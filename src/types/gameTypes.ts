@@ -1,14 +1,15 @@
-export interface Participant {
-  id: string;
-  name: string;
-  score: number;
+import { BaseParticipant } from './participant';
+
+export interface Participant extends BaseParticipant {
   currentWord: Word | null;
   maxScore?: number;
-  points?: number;
-  correct?: number;
-  attempted?: number;
-  wordsCorrect?: number;
-  wordsAttempted?: number;
+  wordsAttempted: number;
+  wordsCorrect: number;
+  lives: number;
+  difficultyLevel: number;
+  streak: number;
+  skipsRemaining: number;
+  askFriendRemaining: number;
 }
 
 export interface Word {

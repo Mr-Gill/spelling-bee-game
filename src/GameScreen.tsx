@@ -22,7 +22,7 @@ import HintPanel from './components/HintPanel';
 import Button from './components/Button';
 // Progress components
 import { CircularProgress, LinearProgress } from './components/BeeProgress';
-import BeeElement from '../components/BeeElement';
+import BeeElement from './components/BeeElement';
 
 // Constants
 const initialTime = 60;
@@ -68,6 +68,15 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   const [currentHelp, setCurrentHelp] = useState<string | null>(null);
   const [gameProgress, setGameProgress] = useState(0);
   const [audioLoaded, setAudioLoaded] = useState(false);
+
+  const handleNextWord = useCallback(() => {
+    setCurrentParticipantIndex(prev => (prev + 1) % participants.length);
+    setLetters([]);
+    setRevealedIndices(new Set<number>());
+    setState(prev => ({ ...prev, showDefinition: false }));
+    setFeedback(null);
+    setUsedLetters(new Set<string>());
+  }, [participants]);
 
   const { 
     getDefinition: getDefinitionHelp, 
@@ -140,7 +149,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     setCurrentHelp('Skipped to the next word!');
     setState(prev => ({ ...prev, message: 'Skipped to the next word!' }));
     handleNextWord();
-  }, [skipWordHelp, setHelpUsed, handleNextWord]);
+  }, [skipWordHelp, setHelpUsed]);
 
   // Function to play sounds asynchronously
   const playSound = async (soundPath: string) => {
@@ -305,15 +314,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     };
   }, []);
 
-  const handleNextWord = useCallback(() => {
-    setCurrentParticipantIndex(prev => (prev + 1) % participants.length);
-    setLetters([]);
-    setRevealedIndices(new Set<number>());
-    setState(prev => ({ ...prev, showDefinition: false }));
-    setFeedback(null);
-    setUsedLetters(new Set<string>());
-  }, [participants]);
-
   // Memoized components
   const MemoizedProgress = React.memo(CircularProgress);
   const MemoizedTimer = React.memo(CircularTimer);
@@ -345,6 +345,19 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
       gameLoop();
     });
   }, [gameStarted]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleSpellingSubmit();
+    if (e.key === 'Escape') setLetters([]);
+  }, [handleSpellingSubmit]);
+
+  const handleLetter = useCallback((letter: string) => {
+    typeLetter(letter);
+  }, [typeLetter]);
+
+  const handleWordLetter = useCallback(({ letter, revealed }: {letter: string, revealed: boolean}) => (
+    <WordLetter letter={letter} revealed={revealed} />
+  ), []);
 
   return (
     <div className="game-screen">
@@ -419,9 +432,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             <div className="flex flex-col items-center gap-4">
               <h2 className="headline-small text-on-surface">Current Word</h2>
               
-              {state.showDefinition && currentWord && (
+              {state.showDefinition && currentParticipant?.currentWord?.word && (
                 <div className="flex gap-2">
-                  {currentWord.split('').map((letter, index) => (
+                  {currentParticipant?.currentWord?.word.split('').map((letter, index) => (
                     <WordLetter 
                       key={index}
                       letter={letter}
@@ -431,7 +444,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
                 </div>
               )}
               
-              {currentWord && (
+              {currentParticipant?.currentWord?.word && (
                 <div className="w-full">
                   <div className="flex items-center justify-between mb-2">
                     <span className="label-medium text-on-surface-variant">
@@ -457,9 +470,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             </div>
           </div>
           <MemoizedHintPanel 
-            word={currentWord}
+            word={currentParticipant?.currentWord?.word || ''}
             onRevealLetter={handleRevealLetter}
-            onShowDefinition={() => handleShowDefinition(currentWord)}
+            onShowDefinition={() => handleShowDefinition(currentParticipant?.currentWord?.word || '')}
             onAddTime={handleAddTimeHelp}
             onSkipWord={handleSkipWordHelp}
             isHelpUsed={isHelpUsed}
@@ -484,17 +497,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
           )}
           <div className="space-y-4">
             <OnScreenKeyboard 
-              onLetter={typeLetter}
+              onLetter={handleLetter}
               onBackspace={() => setLetters(letters.slice(0, -1))}
               onSubmit={handleSpellingSubmit}
               soundEnabled={audioLoaded}
               usedLetters={usedLetters}
-              currentWord={currentWord}
+              currentWord={currentParticipant?.currentWord?.word || ''}
               aria-label="Spelling keyboard"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSpellingSubmit();
-                if (e.key === 'Escape') setLetters([]);
-              }}
+              onKeyDown={handleKeyDown}
             />
             
             <div className="flex gap-4">

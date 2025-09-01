@@ -1,7 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 
-type AudioContextType = typeof window.AudioContext | typeof window.webkitAudioContext;
-
 interface UseMusicReturn {
   loadAudio: (url: string) => Promise<AudioBuffer | null>;
   initAudio: () => void;
@@ -63,6 +61,23 @@ const useMusic = (
     return `${basePath} (${style}${variantSuffix}).mp3`;
   }, []);
 
+  const initAudio = useCallback(() => {
+    if (!audioContext) {
+      const AudioCtx = window.AudioContext || 
+                      (window as unknown as {webkitAudioContext: typeof AudioContext}).webkitAudioContext;
+      if (AudioCtx) {
+        setAudioContext(new AudioCtx());
+      }
+    }
+  }, [audioContext]);
+
+  const getAudioContext = useCallback(() => {
+    if (!audioContext) {
+      initAudio();
+    }
+    return audioContext;
+  }, [audioContext, initAudio]);
+
   const loadAudio = useCallback(async (url: string): Promise<AudioBuffer | null> => {
     const ctx = getAudioContext();
     if (!ctx) return null;
@@ -100,7 +115,7 @@ const useMusic = (
             console.warn(`Menu music file not found: ${menuSrc}`);
             menuRef.current[trackVariant] = null;
           };
-          menuAudio.srcObject = menuBuffer;
+          menuAudio.src = menuSrc; // Use src instead of srcObject for AudioBuffer
           menuRef.current[trackVariant] = menuAudio;
         }
 
@@ -112,7 +127,7 @@ const useMusic = (
             console.warn(`Gameplay music file not found: ${gameSrc}`);
             gameRef.current[trackVariant] = null;
           };
-          gameAudio.srcObject = gameBuffer;
+          gameAudio.src = gameSrc; // Use src instead of srcObject for AudioBuffer
           gameRef.current[trackVariant] = gameAudio;
         }
       });
@@ -121,13 +136,6 @@ const useMusic = (
   );
 
   // Initialize AudioContext on user interaction
-  const initAudio = useCallback(() => {
-    if (!audioContext) {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      setAudioContext(new AudioCtx());
-    }
-  }, [audioContext]);
-
   // Load tracks whenever style changes
   useEffect(() => {
     stop();
@@ -165,8 +173,6 @@ const useMusic = (
 
   // Clean up on unmount
   useEffect(() => () => stop(), [stop]);
-
-  const getAudioContext = () => audioContext;
 
   return { loadAudio, initAudio, getAudioContext, stop, buildSrc, loadTracks };
 };
