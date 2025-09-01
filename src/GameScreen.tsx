@@ -22,6 +22,7 @@ import HintPanel from './components/HintPanel';
 import Button from './components/Button';
 // Progress components
 import { CircularProgress, LinearProgress } from './components/BeeProgress';
+import BeeElement from '../components/BeeElement';
 
 // Constants
 const initialTime = 60;
@@ -347,8 +348,19 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
 
   return (
     <div className="game-screen">
-      <div className="game-area">
-        <header className="game-header">
+      <header className="flex items-center justify-between p-4 bg-primary text-on-primary">
+        <BeeElement variant="flying" size="medium" className="mr-2" />
+        <h1 className="text-2xl font-bold">Spelling Bee</h1>
+        <BeeElement size="medium" className="ml-2" />
+      </header>
+      <div className="game-area bg-surface-container p-6 rounded-lg">
+        <div className="absolute top-1/4 left-4 opacity-30">
+          <BeeElement size="small" />
+        </div>
+        <div className="absolute bottom-1/4 right-4 opacity-30">
+          <BeeElement variant="flying" size="small" />
+        </div>
+        <div className="game-header">
           <div className="flex items-center gap-4 p-4 bg-surface-container-low rounded-xl">
             <div className="flex flex-col items-center">
               <MemoizedProgress 
@@ -400,7 +412,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             )}
             {coins}
           </div>
-        </header>
+        </div>
 
         <div className="word-area">
           <div className="p-6 bg-surface-container-high rounded-xl shadow-sm">
@@ -490,7 +502,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
                 variant="filled"
                 onClick={handleSpellingSubmit}
                 disabled={letters.length === 0}
-                className="flex-1"
+                className="bg-primary-container text-on-primary-container px-4 py-2 rounded-full flex-1"
                 aria-label="Submit spelling"
                 aria-disabled={letters.length === 0}
               >
