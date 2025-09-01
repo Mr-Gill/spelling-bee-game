@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useHelpSystem } from './contexts/HelpSystemContext';
 import { Word } from './types';
 import { GameScreenProps, GameScreenState } from './gameTypes';
@@ -50,17 +50,19 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   const { wordQueues, setWordQueues } = useWordQueue();
   
   // Remaining state
+  const [state, setState] = useState<GameScreenState>({
+    message: null,
+    showDefinition: false,
+    musicConfirmed: false
+  });
   const [coins, setCoins] = useState(0);
   const [skipsRemaining, setSkipsRemaining] = useState(3);
   const [usedLetters, setUsedLetters] = useState(new Set<string>());
   const [revealedIndices, setRevealedIndices] = useState(new Set<number>());
-  const [showDefinition, setShowDefinition] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [letters, setLetters] = useState([]);
   const [totalWords, setTotalWords] = useState(0);
   const [currentHelp, setCurrentHelp] = useState(null);
-  const [musicConfirmed, setMusicConfirmed] = useState(false);
-  const [showWord, setShowWord] = useState(false);
   const [gameProgress, setGameProgress] = useState(0);
   const [audioLoaded, setAudioLoaded] = useState(false);
 
@@ -111,14 +113,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   }, []);
 
   const handleShowDefinition = useCallback(async (word: string) => {
-    setShowDefinition(true);
+    setState(prev => ({ ...prev, showDefinition: true }));
     try {
       const definition = await getDefinitionHelp(word);
       setHelpUsed('hint-definition');
       setCurrentHelp(`Definition: ${definition}`);
-      setFeedback({ message: 'Definition shown', type: 'info' });
+      setState(prev => ({ ...prev, message: 'Definition shown' }));
     } catch (error) {
-      setFeedback({ message: 'Failed to load definition', type: 'error' });
+      setState(prev => ({ ...prev, message: 'Failed to load definition' }));
     }
   }, [getDefinitionHelp, setHelpUsed]);
 
@@ -126,14 +128,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     addTimeHelp(30);
     setHelpUsed('extra-time');
     setCurrentHelp('Added 30 seconds to the timer!');
-    setFeedback({ message: 'Added 30 seconds to the timer!', type: 'success' });
+    setState(prev => ({ ...prev, message: 'Added 30 seconds to the timer!' }));
   }, [addTimeHelp, setHelpUsed]);
 
   const handleSkipWordHelp = useCallback(() => {
     skipWordHelp();
     setHelpUsed('skip-word');
     setCurrentHelp('Skipped to the next word!');
-    setFeedback({ message: 'Skipped to the next word!', type: 'info' });
+    setState(prev => ({ ...prev, message: 'Skipped to the next word!' }));
     handleNextWord();
   }, [skipWordHelp, setHelpUsed, handleNextWord]);
 
@@ -147,14 +149,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     }
   };
 
-  const currentWord = participants[currentParticipantIndex]?.currentWord;
+  const currentWord = currentParticipant?.currentWord?.word || '';
   const currentParticipant = participants[currentParticipantIndex];
 
   const handleSpellingSubmit = useCallback(() => {
     if (!currentWord) return;
 
     const submittedWord = letters.join('');
-    const isCorrect = submittedWord.toLowerCase() === currentWord.word.toLowerCase();
+    const isCorrect = submittedWord.toLowerCase() === currentWord.toLowerCase();
     
     // Play sound based on correctness
     playSound(isCorrect ? correctSoundFile : wrongSoundFile);
@@ -195,9 +197,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   }, [currentWord, letters, handleNextWord, playSound]);
 
   const typeLetter = useCallback((letter: string) => {
-    if (!currentWord || !currentWord.word) return;
+    if (!currentWord || !currentWord) return;
     
-    const currentLetter = currentWord.word[letters.length].toLowerCase();
+    const currentLetter = currentWord[currentWord.length - letters.length - 1].toLowerCase();
     playSound(currentLetter === letter.toLowerCase() ? letterCorrectSoundFile : letterWrongSoundFile);
     
     setLetters([...letters, letter]);
@@ -207,7 +209,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   const handleRevealLetter = useCallback(() => {
     if (!currentWord) return;
     
-    const word = currentWord.word;
+    const word = currentWord;
     const unrevealedIndices = word
       .split('')
       .map((_, i) => i)
@@ -218,7 +220,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
       setRevealedIndices(new Set([...revealedIndices, randomIndex]));
       setCoins(coins - 2);
       setCurrentHelp('Revealed a letter! -2 coins');
-      setFeedback({ message: 'Revealed a letter!', type: 'info' });
+      setState(prev => ({ ...prev, message: 'Revealed a letter!' }));
     }
   }, [currentWord, revealedIndices, coins]);
 
@@ -252,14 +254,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
       timers.push(timer);
     }
     
-    if (feedback) {
+    if (state.message) {
       const timer = setTimeout(() => 
-        setFeedback(null), 3000);
+        setState(prev => ({ ...prev, message: null })), 3000);
       timers.push(timer);
     }
     
     return () => timers.forEach(clearTimeout);
-  }, [currentHelp, feedback]);
+  }, [currentHelp, state.message]);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -288,10 +290,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             ...prev,
             easy: DEFAULT_WORDS
           }));
-          setFeedback({
-            message: 'Failed to load word list. Using default words.',
-            type: 'error'
-          });
+          setState(prev => ({ ...prev, message: 'Failed to load word list. Using default words.' }));
         }
       }
     };
@@ -307,10 +306,26 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     setCurrentParticipantIndex(prev => (prev + 1) % participants.length);
     setLetters([]);
     setRevealedIndices(new Set<number>());
-    setShowDefinition(false);
+    setState(prev => ({ ...prev, showDefinition: false }));
     setFeedback(null);
     setUsedLetters(new Set<string>());
   }, [participants]);
+
+  // Memoized components
+  const MemoizedProgress = React.memo(CircularProgress);
+  const MemoizedTimer = React.memo(CircularTimer);
+
+  // Optimized game loop
+  const gameLoop = useCallback(() => {
+    if (!gameStarted) return;
+    requestAnimationFrame(() => {
+      updateGameState();
+      gameLoop();
+    });
+  }, [gameStarted, updateGameState]);
+
+  // Memoize participants data
+  const memoizedParticipants = useMemo(() => participants, [participants]);
 
   return (
     <div className="game-screen">
@@ -318,7 +333,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
         <header className="game-header">
           <div className="flex items-center gap-4 p-4 bg-surface-container-low rounded-xl">
             <div className="flex flex-col items-center">
-              <CircularProgress 
+              <MemoizedProgress 
                 value={gameProgress}
                 className="text-primary"
                 size="lg"
@@ -327,7 +342,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             </div>
             
             <div className="flex flex-col items-center">
-              <CircularProgress 
+              <MemoizedProgress 
                 value={Math.round((currentParticipant?.score / currentParticipant?.maxScore) * 100)}
                 className="text-secondary"
                 size="md"
@@ -347,13 +362,13 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             </div>
           </div>
           <div className="timer-container">
-            <CircularTimer 
+            <MemoizedTimer 
               timeLeft={timeLeft}
               total={initialTime}
             />
           </div>
           <div className="coins-display">
-            {musicConfirmed && (
+            {state.musicConfirmed && (
               <img 
                 src={`
                   ${process.env.PUBLIC_URL}/img/${
@@ -361,7 +376,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
                     Number(letters.length) > 0 ? 'TypingBee' : 'DefaultBee'
                   }.svg`} 
                 alt="Bee avatar"
-                className={!musicConfirmed ? 'hidden' : ''}
+                className={!state.musicConfirmed ? 'hidden' : ''}
                 onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL}/img/DefaultBee.svg`}
               />
             )}
@@ -374,9 +389,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             <div className="flex flex-col items-center gap-4">
               <h2 className="headline-small text-on-surface">Current Word</h2>
               
-              {showWord && currentWord && currentWord.word && (
+              {state.showDefinition && currentWord && (
                 <div className="flex gap-2">
-                  {currentWord.word.split('').map((letter, index) => (
+                  {currentWord.split('').map((letter, index) => (
                     <div 
                       key={index}
                       className={classNames(
@@ -393,23 +408,23 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
                 </div>
               )}
               
-              {currentWord && currentWord.word && (
+              {currentWord && (
                 <div className="w-full">
                   <div className="flex items-center justify-between mb-2">
                     <span className="label-medium text-on-surface-variant">
-                      Difficulty: {currentWord.difficulty}
+                      Difficulty: {currentParticipant?.currentWord?.difficulty}
                     </span>
                     <div className="flex items-center gap-2">
                       <span className="label-medium text-on-surface-variant">
-                        {currentWord.difficulty === 'easy' ? 'Simple' :
-                         currentWord.difficulty === 'medium' ? 'Medium' : 'Challenging'}
+                        {currentParticipant?.currentWord?.difficulty === 'easy' ? 'Simple' :
+                         currentParticipant?.currentWord?.difficulty === 'medium' ? 'Medium' : 'Challenging'}
                       </span>
                       <div className="w-24">
                         <LinearProgress 
-                          value={currentWord.difficulty === 'easy' ? 33 : 
-                                currentWord.difficulty === 'medium' ? 66 : 100}
-                          variant={currentWord.difficulty === 'easy' ? 'success' :
-                                  currentWord.difficulty === 'medium' ? 'warning' : 'danger'}
+                          value={currentParticipant?.currentWord?.difficulty === 'easy' ? 33 : 
+                                currentParticipant?.currentWord?.difficulty === 'medium' ? 66 : 100}
+                          variant={currentParticipant?.currentWord?.difficulty === 'easy' ? 'success' :
+                                  currentParticipant?.currentWord?.difficulty === 'medium' ? 'warning' : 'danger'}
                         />
                       </div>
                     </div>
@@ -419,9 +434,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             </div>
           </div>
           <HintPanel 
-            word={currentWord?.word ?? ''}
+            word={currentWord}
             onRevealLetter={handleRevealLetter}
-            onShowDefinition={() => handleShowDefinition(currentWord?.word ?? '')}
+            onShowDefinition={() => handleShowDefinition(currentWord)}
             onAddTime={handleAddTimeHelp}
             onSkipWord={handleSkipWordHelp}
             isHelpUsed={isHelpUsed}
@@ -439,6 +454,11 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
               {currentHelp}
             </div>
           )}
+          {state.message && (
+            <div className="help-message">
+              {state.message}
+            </div>
+          )}
           <div className="space-y-4">
             <OnScreenKeyboard 
               onLetter={typeLetter}
@@ -446,7 +466,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
               onSubmit={handleSpellingSubmit}
               soundEnabled={audioLoaded}
               usedLetters={usedLetters}
-              currentWord={currentWord?.word}
+              currentWord={currentWord}
             />
             
             <div className="flex gap-4">
@@ -470,9 +490,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
           </div>
         </div>
 
-        {showWord && (
+        {state.showDefinition && (
           <HelpShop 
-            onClose={() => setShowWord(false)}
+            onClose={() => setState(prev => ({ ...prev, showDefinition: false }))}
             onPurchase={(cost) => setCoins(coins - cost)}
           />
         )}
