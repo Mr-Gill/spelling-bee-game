@@ -1,21 +1,35 @@
 import { BaseParticipant } from './participant';
 
 export interface Participant extends BaseParticipant {
-  currentWord: Word | null;
+  id: string;
+  name: string;
+  score: number;
+  currentWord: WordLetter[];
   maxScore?: number;
-  wordsAttempted: number;
-  wordsCorrect: number;
+  attempted: number;
+  correct: number;
   lives: number;
   difficultyLevel: number;
   streak: number;
   skipsRemaining: number;
   askFriendRemaining: number;
+  [key: string]: any; // For any additional dynamic properties
+}
+
+export interface WordLetter {
+  letter: string;
+  isCorrect: boolean;
+  isRevealed: boolean;
 }
 
 export interface Word {
   word: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-  definition?: string;
+  difficulty: string;
+  syllables: string[];
+  phonemes: string[];
+  definition: string;
+  origin: string;
+  example: string;
 }
 
 export interface GameState {

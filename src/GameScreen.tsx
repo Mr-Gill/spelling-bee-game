@@ -7,13 +7,6 @@ import {
   Participant
 } from './types/gameTypes';
 
-// Audio
-import { loadAudio, preloadCriticalSounds, preloadBackgroundMusic } from './utils/audioUtils';
-import correctSoundFile from "../audio/correct.mp3";
-import wrongSoundFile from "../audio/wrong.mp3";
-import letterCorrectSoundFile from "../audio/letter-correct.mp3";
-import letterWrongSoundFile from "../audio/letter-wrong.mp3";
-
 // Components
 import CircularTimer from './components/CircularTimer';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
@@ -25,8 +18,6 @@ import BeeElement from './components/BeeElement';
 
 // Constants
 const initialTime = 60;
-
-import classNames from 'classnames';
 
 // Default words
 const DEFAULT_WORDS = [
@@ -44,6 +35,7 @@ const DEFAULT_WORDS = [
 import { useGameState } from './hooks/useGameState';
 import { useParticipants } from './hooks/useParticipants';
 import { useWordQueue } from './hooks/useWordQueue';
+import { useSound } from './hooks/useSound';
 
 // Main GameScreen component
 export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
@@ -51,6 +43,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   const { gameStarted, timeLeft } = useGameState();
   const { participants, currentParticipantIndex, setParticipants, setCurrentParticipantIndex } = useParticipants(config.participants as Participant[]);
   const { setWordQueues } = useWordQueue();
+  const { playSound } = useSound();
   
   // Remaining state
   const [state, setState] = useState<GameScreenState>({
@@ -66,7 +59,18 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   const [totalWords, setTotalWords] = useState(0);
   const [currentHelp, setCurrentHelp] = useState<string | null>(null);
   const [gameProgress, setGameProgress] = useState(0);
-  const [audioLoaded, setAudioLoaded] = useState(false);
+
+  interface GameState {
+    easy: Word[];
+    medium: Word[];
+    hard: Word[];
+  }
+
+  const [wordsByDifficulty, setWordsByDifficulty] = useState<GameState>({
+    easy: [],
+    medium: [],
+    hard: []
+  });
 
   const handleNextWord = useCallback(() => {
     setCurrentParticipantIndex(prev => (prev + 1) % participants.length);
@@ -109,19 +113,21 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     setGameProgress(gameProgress);
   }, [currentParticipantIndex, totalWords]);
 
-  useEffect(() => {
-    // Preload critical sounds
-    preloadCriticalSounds()
-      .then(() => setAudioLoaded(true))
-      .catch(console.error);
-    
-    // Preload background music after initial render
-    const timer = setTimeout(() => {
-      preloadBackgroundMusic();
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
+  const playCorrectSound = async () => {
+    playSound('correctSoundFile');
+  };
+
+  const playWrongSound = async () => {
+    playSound('wrongSoundFile');
+  };
+
+  const playLetterCorrectSound = async () => {
+    playSound('letterCorrectSoundFile');
+  };
+
+  const playLetterWrongSound = async () => {
+    playSound('letterWrongSoundFile');
+  };
 
   const handleShowDefinition = useCallback(async (word: string) => {
     setState(prev => ({ ...prev, showDefinition: true }));
@@ -130,8 +136,10 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
       setHelpUsed('hint-definition');
       setCurrentHelp(`Definition: ${definition}`);
       setState(prev => ({ ...prev, message: 'Definition shown' }));
-    } catch (error) {
-      setState(prev => ({ ...prev, message: 'Failed to load definition' }));
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setState(prev => ({ ...prev, message: 'Failed to load definition' }));
+      }
     }
   }, [getDefinitionHelp, setHelpUsed]);
 
@@ -150,16 +158,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     handleNextWord();
   }, [skipWordHelp, setHelpUsed]);
 
-  // Function to play sounds asynchronously
-  const playSound = async (soundPath: string) => {
-    try {
-      const sound = await loadAudio(soundPath);
-      sound.play();
-    } catch (error) {
-      console.error('Failed to play sound', error);
-    }
-  };
-
   const currentParticipant = participants[currentParticipantIndex];
   const currentWord = currentParticipant?.currentWord?.word || '';
 
@@ -170,7 +168,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     const isCorrect = submittedWord.toLowerCase() === currentWord.toLowerCase();
     
     // Play sound based on correctness
-    playSound(isCorrect ? correctSoundFile : wrongSoundFile);
+    isCorrect ? playCorrectSound() : playWrongSound();
 
     setParticipants(prev => {
       const updated = [...prev];
@@ -186,17 +184,17 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     if (isCorrect) {
       setTimeout(handleNextWord, 1500);
     }
-  }, [currentWord, letters, handleNextWord, playSound]);
+  }, [currentWord, letters, handleNextWord]);
 
   const typeLetter = useCallback((letter: string) => {
     if (!currentWord || !currentWord) return;
     
     const currentLetter = currentWord[currentWord.length - letters.length - 1].toLowerCase();
-    playSound(currentLetter === letter.toLowerCase() ? letterCorrectSoundFile : letterWrongSoundFile);
+    currentLetter === letter.toLowerCase() ? playLetterCorrectSound() : playLetterWrongSound();
     
     setLetters([...letters, letter]);
     setUsedLetters(new Set([...usedLetters, letter.toLowerCase()]));
-  }, [currentWord, letters.length, usedLetters, playSound]);
+  }, [currentWord, letters.length, usedLetters]);
 
   const handleRevealLetter = useCallback(() => {
     if (!currentWord) return;
@@ -281,16 +279,18 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             }))
           }));
         }
-      } catch (error) {
-        if (error.name === 'AbortError') {
-          console.log('Fetch aborted');
-        } else if (!abortController.signal.aborted) {
-          console.error('Failed to load bundled word list', error);
-          setWordQueues(prev => ({
-            ...prev,
-            easy: DEFAULT_WORDS
-          }));
-          setState(prev => ({ ...prev, message: 'Failed to load word list. Using default words.' }));
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') {
+            console.log('Fetch aborted');
+          } else if (!abortController.signal.aborted) {
+            console.error('Failed to load bundled word list', error);
+            setWordQueues(prev => ({
+              ...prev,
+              easy: DEFAULT_WORDS
+            }));
+            setState(prev => ({ ...prev, message: 'Failed to load word list. Using default words.' }));
+          }
         }
       }
     };
@@ -307,23 +307,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   const MemoizedTimer = React.memo(CircularTimer);
   const MemoizedButton = React.memo(Button);
   const MemoizedHintPanel = React.memo(HintPanel);
-
-  // Memoize word letter rendering
-  const WordLetter = React.memo(({ letter, revealed }: {letter: string, revealed: boolean}) => (
-    <div 
-      className={classNames(
-        'w-12 h-16 flex items-center justify-center rounded-md',
-        'text-headline-medium font-medium',
-        revealed 
-          ? 'bg-primary-container text-on-primary-container'
-          : 'bg-surface-container-highest text-on-surface-variant'
-      )}
-      aria-hidden={!revealed}
-      aria-label={revealed ? `Letter ${letter}` : "Hidden letter"}
-    >
-      {revealed ? letter : '?'}
-    </div>
-  ));
 
   // Optimized game loop
   const gameLoop = useCallback(() => {
@@ -342,10 +325,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   const handleLetter = useCallback((letter: string) => {
     typeLetter(letter);
   }, [typeLetter]);
-
-  const handleWordLetter = useCallback(({ letter, revealed }: {letter: string, revealed: boolean}) => (
-    <WordLetter letter={letter} revealed={revealed} />
-  ), []);
 
   return (
     <div className="game-screen">
@@ -488,7 +467,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
               onLetter={handleLetter}
               onBackspace={() => setLetters(letters.slice(0, -1))}
               onSubmit={handleSpellingSubmit}
-              soundEnabled={audioLoaded}
+              soundEnabled={true}
               usedLetters={usedLetters}
               currentWord={currentParticipant?.currentWord?.word || ''}
               aria-label="Spelling keyboard"
