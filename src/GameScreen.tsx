@@ -228,7 +228,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     
     const loadWordList = async () => {
       try {
-        const response = await fetch('./wordlists/example.json', {
+        const response = await fetch(`${process.env.PUBLIC_URL}/wordlists/example.json`, {
           signal: abortController.signal
         });
         
