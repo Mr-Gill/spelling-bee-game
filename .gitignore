@@ -1,9 +1,7 @@
 # Dependencies
 node_modules
-build
 dist
 app.js
-.DS_Store
 
 # Environment
 .env
@@ -14,4 +12,5 @@ app.js
 /tailwind.css
 /dist/tailwind.css
 
-.env
+# Common patterns
+.DS_Store
