@@ -5,7 +5,7 @@ interface UseMusicReturn {
   initAudio: () => void;
   getAudioContext: () => AudioContext | null;
   stop: () => void;
-  buildSrc: (trackStyle: string, trackVariant: 'instrumental' | 'vocal') => string;
+  buildSrc: (trackStyle: string | undefined, trackVariant: 'instrumental' | 'vocal') => string;
   loadTracks: (trackStyle: string) => Promise<void>;
 }
 
@@ -53,11 +53,16 @@ const useMusic = (
     });
   }, []);
 
-  const buildSrc = useCallback((trackStyle: string, trackVariant: 'instrumental' | 'vocal') => {
+  const buildSrc = useCallback((trackStyle: string | undefined, trackVariant: 'instrumental' | 'vocal') => {
     const basePath = "audio/It's a Spelling Bee!";
     const variantSuffix = trackVariant === 'instrumental' ? ' Instrumental' : '';
-    // Map 'default' style to 'Country' since we don't have default versions
-    const style = trackStyle === 'default' ? 'Country' : trackStyle;
+  
+    // Handle undefined/invalid styles safely
+    const validStyles = ['Country', 'Rock', 'Classical', 'Jazz'];
+    const style = trackStyle && validStyles.includes(trackStyle) 
+      ? trackStyle 
+      : 'Country';
+
     return `${basePath} (${style}${variantSuffix}).mp3`;
   }, []);
 

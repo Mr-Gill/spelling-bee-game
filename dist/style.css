@@ -1,51 +1,24 @@
+/* Resolved by accepting feature branch changes */
+
 /* Modern styles for Spelling Bee Championship */
 @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@700&family=Inclusive+Sans:wght@400;700&display=swap');
 
 :root {
-  /* Light Theme */
-  --primary: #4f46e5;
-  --primary-light: #818cf8;
-  --primary-dark: #4338ca;
-  --secondary: #f59e0b;
-  --success: #10b981;
-  --danger: #ef4444;
-  --warning: #f59e0b;
-  --text: #1f2937;
-  --text-light: #6b7280;
-  --bg: #f9fafb;
-  --card-bg: #ffffff;
-  --border: #e5e7eb;
-  
-  /* Dark Theme */
-  --dark-primary: #6366f1;
-  --dark-primary-light: #818cf8;
-  --dark-primary-dark: #4f46e5;
-  --dark-bg: #111827;
-  --dark-card-bg: #1f2937;
-  --dark-text: #f9fafb;
-  --dark-text-light: #9ca3af;
-  
-  /* Spacing */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  
-  /* Border Radius */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-full: 9999px;
-  
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  
-  /* Transitions */
-  --transition: all 0.2s ease-in-out;
+  --primary-color-light: #2563eb;
+  --text-color-light: #1e293b;
+  --bg-color-light: #f8fafc;
+
+  --primary-color-dark: #3b82f6;
+  --text-color-dark: #f1f5f9;
+  --bg-color-dark: #0f172a;
+
+  --primary-color-honeycomb: #d97706;
+  --text-color-honeycomb: #78350f;
+  --bg-color-honeycomb: #fef7cd;
+
+  --primary-color: var(--primary-color-light);
+  --text-color: var(--text-color-light);
+  --bg-color: var(--bg-color-light);
 }
 
 *,
@@ -59,14 +32,10 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Inclusive Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.5;
-  color: var(--text);
-  background-color: var(--bg);
-  transition: var(--transition);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
   overflow-x: hidden;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 /* Typography */
@@ -311,20 +280,81 @@ body.theme-dark .card {
 .mb-8 { margin-bottom: var(--spacing-xl); }
 
 body.theme-light {
-    background: #ffffff;
-    color: #1f2937;
+    --primary-color: var(--primary-color-light);
+    --text-color: var(--text-color-light);
+    --bg-color: var(--bg-color-light);
 }
 
 body.theme-dark {
-    background: #1f2937;
-    color: #f9fafb;
+    --primary-color: var(--primary-color-dark);
+    --text-color: var(--text-color-dark);
+    --bg-color: var(--bg-color-dark);
 }
 
 body.theme-honeycomb {
-    background-color: #fef7cd;
+    --primary-color: var(--primary-color-honeycomb);
+    --text-color: var(--text-color-honeycomb);
+    --bg-color: var(--bg-color-honeycomb);
     background-image: radial-gradient(#fbbf24 1px, transparent 1px);
     background-size: 20px 20px;
-    color: #78350f;
+}
+
+/* Shared layout utilities */
+.screen-container {
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+@media (min-width: 768px) {
+    .screen-container {
+        padding: 2rem;
+    }
+}
+
+.screen-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .screen-title {
+        font-size: 3rem;
+    }
+}
+
+.screen-subtitle {
+    font-size: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .screen-subtitle {
+        font-size: 1.5rem;
+    }
+}
+
+.btn-responsive {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .btn-responsive {
+        padding: 0.75rem 1.5rem;
+        font-size: 1.125rem;
+    }
+}
+
+.timer-display {
+    font-size: 2.25rem;
+    font-weight: 700;
+}
+
+@media (min-width: 768px) {
+    .timer-display {
+        font-size: 3.75rem;
+    }
 }
 
 /* Teacher Mode increases overall scaling for easier classroom viewing */
@@ -491,6 +521,21 @@ video {
 .modal-overlay {
     background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modal-overlay .modal-content {
+    width: 100%;
+    max-width: 500px;
+}
+
+@media (min-width: 768px) {
+    .modal-overlay .modal-content {
+        max-width: 600px;
+    }
 }
 
 /* Custom scrollbar */
@@ -555,12 +600,6 @@ video {
   place-items: center;
   cursor: pointer;
   transition: all 0.2s ease;
-}
-
-.dark-mode {
-  --primary-color: var(--dark-primary);
-  --text-color: var(--dark-text);
-  --bg-color: var(--dark-bg);
 }
 
 /* Responsive design */

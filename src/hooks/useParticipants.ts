@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { Participant } from '../types';
+import type { Participant } from '../types/gameTypes';
 
 export function useParticipants(initialParticipants: Participant[] = []) {
   const [participants, setParticipants] = useState(initialParticipants);
