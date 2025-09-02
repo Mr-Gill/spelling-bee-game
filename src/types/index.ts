@@ -18,9 +18,10 @@ export interface Feedback {
 export type AvatarType = 'bee' | 'book' | 'trophy';
 
 // Re-export all types
-export * from './game';
+export * from './gameTypes';
 export * from './participant';
-
-export { Team } from './participant'; // Explicitly re-export Team from participant
-
-export type { Participant, Word } from './gameTypes';
+export * from './team';
+export * from './word';
+export * from './game';
+export * from './audio';
+export * from './images';
