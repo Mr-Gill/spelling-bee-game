@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode, useEffect } from 'react';
-import { useMusic } from '../utils/useMusic';
+import { useMusic } from './utils/useMusic';
 import { Howl } from 'howler';
 
 interface AudioContextValue {
