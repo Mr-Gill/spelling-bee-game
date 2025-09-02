@@ -7285,63 +7285,31 @@ var require_jsx_runtime = __commonJS({
   }
 });
 
-// node_modules/classnames/index.js
-var require_classnames = __commonJS({
-  "node_modules/classnames/index.js"(exports, module2) {
-    (function() {
-      "use strict";
-      var hasOwn = {}.hasOwnProperty;
-      function classNames3() {
-        var classes = "";
-        for (var i = 0; i < arguments.length; i++) {
-          var arg = arguments[i];
-          if (arg) {
-            classes = appendClass(classes, parseValue(arg));
-          }
-        }
-        return classes;
-      }
-      function parseValue(arg) {
-        if (typeof arg === "string" || typeof arg === "number") {
-          return arg;
-        }
-        if (typeof arg !== "object") {
-          return "";
-        }
-        if (Array.isArray(arg)) {
-          return classNames3.apply(null, arg);
-        }
-        if (arg.toString !== Object.prototype.toString && !arg.toString.toString().includes("[native code]")) {
-          return arg.toString();
-        }
-        var classes = "";
-        for (var key in arg) {
-          if (hasOwn.call(arg, key) && arg[key]) {
-            classes = appendClass(classes, key);
-          }
-        }
-        return classes;
-      }
-      function appendClass(value, newClass) {
-        if (!newClass) {
-          return value;
-        }
-        if (value) {
-          return value + " " + newClass;
-        }
-        return value + newClass;
-      }
-      if (typeof module2 !== "undefined" && module2.exports) {
-        classNames3.default = classNames3;
-        module2.exports = classNames3;
-      } else if (typeof define === "function" && typeof define.amd === "object" && define.amd) {
-        define("classnames", [], function() {
-          return classNames3;
-        });
-      } else {
-        window.classNames = classNames3;
-      }
-    })();
+// src/audio/correct.mp3
+var require_correct = __commonJS({
+  "src/audio/correct.mp3"(exports, module2) {
+    module2.exports = "./correct-55DNWN2R.mp3";
+  }
+});
+
+// src/audio/wrong.mp3
+var require_wrong = __commonJS({
+  "src/audio/wrong.mp3"(exports, module2) {
+    module2.exports = "./wrong-55DNWN2R.mp3";
+  }
+});
+
+// src/audio/letter-correct.mp3
+var require_letter_correct = __commonJS({
+  "src/audio/letter-correct.mp3"(exports, module2) {
+    module2.exports = "./letter-correct-55DNWN2R.mp3";
+  }
+});
+
+// src/audio/letter-wrong.mp3
+var require_letter_wrong = __commonJS({
+  "src/audio/letter-wrong.mp3"(exports, module2) {
+    module2.exports = "./letter-wrong-55DNWN2R.mp3";
   }
 });
 
@@ -8090,7 +8058,7 @@ var init_confetti_module = __esm({
 });
 
 // src/spelling-bee-game.tsx
-var import_react37 = __toESM(require_react());
+var import_react41 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // src/LeaderboardScreen.tsx
@@ -8140,9 +8108,9 @@ var LeaderboardScreen = ({ onBack }) => {
       document.body.classList.remove("teacher-mode");
     }
   }, []);
-  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-h-screen bg-surface p-8 text-on-surface text-center flex flex-col items-center justify-center font-body", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-4xl font-bold mb-8 text-primary uppercase font-sans", children: "\u{1F3C5} Leaderboard" }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "bg-surface-container-high p-6 rounded-xl w-full max-w-md shadow-elevation-1", children: error ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-xl text-error", children: error }) : entries.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-xl text-on-surface-variant", children: "No scores yet." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ol", { className: "text-lg space-y-3", children: entries.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "flex justify-between items-center py-2 px-3 rounded-lg bg-surface-container-low", children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "screen-container bg-gradient-to-br from-gray-700 to-gray-900 text-white text-center flex flex-col items-center justify-center", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "screen-title text-yellow-300 mb-8", children: "\u{1F3C5} Leaderboard" }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md scorecard", children: error ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-xl text-error", children: error }) : entries.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-xl text-on-surface-variant", children: "No scores yet." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ol", { className: "text-lg space-y-3", children: entries.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "flex justify-between items-center py-2 px-3 rounded-lg bg-surface-container-low", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "flex items-center font-medium", children: [
         index < 3 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "mr-2 text-primary", children: ["\u{1F947}", "\u{1F948}", "\u{1F949}"][index] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
@@ -8163,7 +8131,7 @@ var LeaderboardScreen = ({ onBack }) => {
       "button",
       {
         onClick: onBack,
-        className: "mt-8 bg-primary text-on-primary px-6 py-3 rounded-full text-lg font-bold hover:shadow-elevation-1",
+        className: "mt-8 bg-blue-500 hover:bg-blue-600 btn-responsive font-bold block mx-auto rounded-xl",
         children: "Back"
       }
     )
@@ -8362,7 +8330,7 @@ var WordListPrompt_default = WordListPrompt;
 // src/SetupScreen.tsx
 var import_jsx_runtime4 = __toESM(require_jsx_runtime());
 var musicStyles = ["Funk", "Country", "Deep Bass", "Rock", "Jazz", "Classical"];
-var beeImg = `${"/spelling-bee-game/"}/img/HelpBee.png`;
+var beeImg = `${"/spelling-bee-game/"}/img/bee.png`;
 var bookImg = `${"/spelling-bee-game/"}/img/avatars/book.svg`;
 var trophyImg = `${"/spelling-bee-game/"}/img/avatars/trophy.svg`;
 var availableAvatars = [beeImg, bookImg, trophyImg];
@@ -8731,7 +8699,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewHi
   };
   (0, import_react3.useEffect)(() => {
     if (selectedBundledList) {
-      fetch(`wordlists/${selectedBundledList}`).then((res) => {
+      fetch(`${"/spelling-bee-game/"}/wordlists/${selectedBundledList}`).then((res) => {
         if (!res.ok) throw new Error("Network response was not ok");
         return res.text();
       }).then((text) => {
@@ -8759,7 +8727,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewHi
     if (isSessionChallenge) {
       try {
         const randomList = bundledWordLists[Math.floor(Math.random() * bundledWordLists.length)];
-        const response = await fetch(`wordlists/${randomList.file}`);
+        const response = await fetch(`${"/spelling-bee-game/"}/wordlists/${randomList.file}`);
         const text = await response.text();
         challengeWords = parseWordList(text);
       } catch (err) {
@@ -8819,10 +8787,10 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewHi
         /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "mb-2", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
           "img",
           {
-            src: `${"/spelling-bee-game/"}/img/HelpBee.png`,
+            src: `${"/spelling-bee-game/"}/img/bee.png`,
             alt: "Bee mascot",
             className: "w-16 h-16 md:w-20 md:h-20 mx-auto",
-            onError: (e) => e.currentTarget.src = `${"/spelling-bee-game/"}/img/DefaultBee.png`
+            onError: (e) => e.currentTarget.src = `${"/spelling-bee-game/"}/img/bee.png`
           }
         ) }),
         /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h1", { className: "text-3xl md:text-5xl font-bold text-primary font-sans tracking-wide", children: "Spelling Bee Championship" })
@@ -8897,8 +8865,9 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewHi
                   type: "text",
                   value: studentName,
                   onChange: (e) => setStudentName(e.target.value),
+                  placeholder: "Enter student name",
                   className: "flex-grow p-3 rounded-lg bg-surface-container-high text-on-surface placeholder:text-on-surface-variant",
-                  placeholder: "Student name"
+                  name: "student-name"
                 }
               ),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
@@ -8918,7 +8887,8 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewHi
                   onChange: (e) => setBulkStudentText(e.target.value),
                   className: "w-full p-3 rounded-lg bg-surface-container-high text-on-surface placeholder:text-on-surface-variant mb-2",
                   placeholder: "Paste names, one per line or separated by commas",
-                  rows: 4
+                  rows: 4,
+                  name: "bulk-students"
                 }
               ),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
@@ -8936,12 +8906,12 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewHi
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "number", min: 1, value: randomTeamCount || "", onChange: (e) => {
                   setRandomTeamCount(Number(e.target.value));
                   setRandomTeamSize(0);
-                }, placeholder: "Number of teams", className: "p-2 rounded-md bg-surface-variant text-on-surface flex-grow" }),
+                }, placeholder: "Number of teams", className: "p-2 rounded-md bg-surface-variant text-on-surface flex-grow", name: "random-team-count" }),
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "or" }),
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "number", min: 1, value: randomTeamSize || "", onChange: (e) => {
                   setRandomTeamSize(Number(e.target.value));
                   setRandomTeamCount(0);
-                }, placeholder: "Team size", className: "p-2 rounded-md bg-surface-variant text-on-surface flex-grow" }),
+                }, placeholder: "Team size", className: "p-2 rounded-md bg-surface-variant text-on-surface flex-grow", name: "random-team-size" }),
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: randomizeTeams, className: "bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded", children: "Randomize" })
               ] }),
               randomizeError && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "text-red-300", children: randomizeError })
@@ -8950,10 +8920,10 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewHi
               /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
                 "img",
                 {
-                  src: student.avatar || `${"/spelling-bee-game/"}/img/DefaultBee.png`,
+                  src: student.avatar || `${"/spelling-bee-game/"}/img/bee.png`,
                   alt: "avatar",
                   className: "w-8 h-8 rounded-full",
-                  onError: (e) => e.currentTarget.src = `${"/spelling-bee-game/"}/img/DefaultBee.png`
+                  onError: (e) => e.currentTarget.src = `${"/spelling-bee-game/"}/img/bee.png`
                 }
               ),
               /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
@@ -8989,6 +8959,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewHi
                 value: optionsState.skipPenaltyType,
                 onChange: (e) => handleOptionChange("skipPenaltyType", e.target.value),
                 className: "p-2 rounded-lg bg-surface-container-high text-on-surface",
+                name: "skip-penalty-type",
                 children: [
                   /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: "lives", children: "Lives" }),
                   /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("option", { value: "points", children: "Points" })
@@ -8999,10 +8970,11 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewHi
               "input",
               {
                 type: "number",
-                min: 0,
                 value: optionsState.skipPenaltyValue,
-                onChange: (e) => handleOptionChange("skipPenaltyValue", Number(e.target.value)),
-                className: "p-2 rounded-lg bg-surface-container-high text-on-surface w-24"
+                onChange: (e) => handleOptionChange("skipPenaltyValue", parseInt(e.target.value) || 0),
+                min: "0",
+                className: "p-2 rounded-lg bg-surface-container-high text-on-surface w-20",
+                name: "skip-penalty-value"
               }
             )
           ] })
@@ -9141,10 +9113,28 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewHi
           /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
             "a",
             {
-              href: "wordlists/example.csv",
+              href: `${"/spelling-bee-game/"}/wordlists/example.csv`,
               download: true,
               className: "inline-block bg-green-500 hover:bg-green-600 text-on-surface px-4 py-2 rounded mt-2",
               children: "Download Template"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+            "a",
+            {
+              href: `${"/spelling-bee-game/"}/wordlists/example.json`,
+              download: true,
+              className: "inline-block bg-green-500 hover:bg-green-600 text-on-surface px-4 py-2 rounded mt-2",
+              children: "Download JSON Template"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+            "a",
+            {
+              href: `${"/spelling-bee-game/"}/wordlists/example.tsv`,
+              download: true,
+              className: "inline-block bg-green-500 hover:bg-green-600 text-on-surface px-4 py-2 rounded mt-2",
+              children: "Download TSV Template"
             }
           )
         ] })
@@ -9186,7 +9176,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onViewHi
 var SetupScreen_default = SetupScreen;
 
 // src/GameScreen.tsx
-var import_react26 = __toESM(require_react());
+var import_react30 = __toESM(require_react());
 
 // src/contexts/HelpSystemContext.tsx
 var import_react4 = __toESM(require_react());
@@ -9251,18 +9241,6 @@ var useHelpSystem = () => {
   return context;
 };
 
-// audio/correct.mp3
-var correct_default = "./correct-CDLB3FN7.mp3";
-
-// audio/wrong.mp3
-var wrong_default = "./wrong-6QW3YAUM.mp3";
-
-// audio/letter-correct.mp3
-var letter_correct_default = "./letter-correct-TNM22ZIU.mp3";
-
-// audio/letter-wrong.mp3
-var letter_wrong_default = "./letter-wrong-R6BJ3H3U.mp3";
-
 // src/components/CircularTimer.tsx
 var import_jsx_runtime6 = __toESM(require_jsx_runtime());
 var CircularTimer = ({ timeLeft, total }) => {
@@ -9309,30 +9287,63 @@ var CircularTimer_default = CircularTimer;
 
 // src/utils/useSound.ts
 var import_react5 = __toESM(require_react());
-var useSound = (src, enabled = true) => {
-  const audioRef = (0, import_react5.useRef)(null);
-  (0, import_react5.useEffect)(() => {
-    const audio = new Audio(src);
-    audio.load();
-    audioRef.current = audio;
-    return () => {
-      audio.pause();
-      audioRef.current = null;
+
+// src/utils/audioLoader.ts
+var loadAudioFiles = async () => {
+  try {
+    const [correct, wrong, letterCorrect, letterWrong] = await Promise.all([
+      Promise.resolve().then(() => __toESM(require_correct())),
+      Promise.resolve().then(() => __toESM(require_wrong())),
+      Promise.resolve().then(() => __toESM(require_letter_correct())),
+      Promise.resolve().then(() => __toESM(require_letter_wrong()))
+    ]);
+    return {
+      correctSoundFile: correct.default,
+      wrongSoundFile: wrong.default,
+      letterCorrectSoundFile: letterCorrect.default,
+      letterWrongSoundFile: letterWrong.default
     };
-  }, [src]);
-  const play = (0, import_react5.useCallback)(() => {
-    if (!enabled || !audioRef.current) return;
-    audioRef.current.currentTime = 0;
-    const playPromise = audioRef.current.play();
-    if (playPromise !== void 0) {
-      playPromise.catch((error) => {
-        console.error("Error playing audio:", error);
-      });
-    }
-  }, [enabled]);
-  return play;
+  } catch (error) {
+    console.error("Failed to load audio files:", error);
+    return {};
+  }
 };
-var useSound_default = useSound;
+
+// src/utils/useSound.ts
+function useSound() {
+  const [audioContext, setAudioContext] = (0, import_react5.useState)(null);
+  const [audioBuffers, setAudioBuffers] = (0, import_react5.useState)({});
+  (0, import_react5.useEffect)(() => {
+    const initAudio = async () => {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      setAudioContext(ctx);
+      const files = await loadAudioFiles();
+      const buffers = {};
+      for (const [key, url] of Object.entries(files)) {
+        if (url) {
+          const response = await fetch(url);
+          const arrayBuffer = await response.arrayBuffer();
+          buffers[key] = await ctx.decodeAudioData(arrayBuffer);
+        }
+      }
+      setAudioBuffers(buffers);
+    };
+    initAudio();
+    return () => {
+      if (audioContext) {
+        audioContext.close();
+      }
+    };
+  }, []);
+  const playSound = (soundKey) => {
+    if (!audioContext || !audioBuffers[soundKey]) return;
+    const source = audioContext.createBufferSource();
+    source.buffer = audioBuffers[soundKey];
+    source.connect(audioContext.destination);
+    source.start(0);
+  };
+  return { playSound };
+}
 
 // src/components/OnScreenKeyboard.tsx
 var import_jsx_runtime7 = __toESM(require_jsx_runtime());
@@ -9346,9 +9357,17 @@ var OnScreenKeyboard = ({
   onSubmit,
   soundEnabled,
   usedLetters,
-  currentWord
+  currentWord,
+  "aria-label": ariaLabel
 }) => {
-  const playKey = useSound_default(letter_correct_default, soundEnabled);
+  const { playSound } = useSound();
+  const handleLetterClick = async (letter) => {
+    const audioFiles = await loadAudioFiles();
+    if (audioFiles.letterCorrectSoundFile && soundEnabled) {
+      playSound(audioFiles.letterCorrectSoundFile);
+    }
+    onLetter(letter);
+  };
   return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex flex-wrap justify-center gap-2 mt-4", children: [
     letters.map((letter) => {
       const lower = letter.toLowerCase();
@@ -9360,10 +9379,7 @@ var OnScreenKeyboard = ({
         return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
           "button",
           {
-            onClick: () => {
-              playKey();
-              onLetter(lower);
-            },
+            onClick: () => handleLetterClick(lower),
             disabled: isUsed || isDisabled,
             className: `px-4 py-2 rounded-lg font-bold transition-transform active:scale-95 ${isUsed ? "bg-gray-300 text-gray-500" : isDisabled ? "bg-gray-500 text-gray-700" : isHighlighted ? "bg-blue-300 text-black" : "bg-yellow-300 text-black"}`,
             children: letter
@@ -9374,10 +9390,7 @@ var OnScreenKeyboard = ({
         return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
           "button",
           {
-            onClick: () => {
-              playKey();
-              onLetter(lower);
-            },
+            onClick: () => handleLetterClick(lower),
             disabled: isUsed || isDisabled,
             className: `px-4 py-2 rounded-lg font-bold transition-transform active:scale-95 ${isUsed ? "bg-gray-300 text-gray-500" : isDisabled ? "bg-gray-500 text-gray-700" : "bg-yellow-300 text-black"}`,
             children: letter
@@ -9390,7 +9403,7 @@ var OnScreenKeyboard = ({
       "button",
       {
         onClick: () => {
-          playKey();
+          handleLetterClick("");
           onBackspace();
         },
         className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold transition-transform active:scale-95",
@@ -9402,7 +9415,7 @@ var OnScreenKeyboard = ({
       "button",
       {
         onClick: () => {
-          playKey();
+          handleLetterClick("");
           onSubmit();
         },
         className: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold transition-transform active:scale-95",
@@ -9444,14 +9457,24 @@ var speak = (text, options = {}) => {
 var import_jsx_runtime8 = __toESM(require_jsx_runtime());
 var HintPanel = ({
   word,
-  participantPoints,
-  participantIndex,
-  spendPoints,
-  isTeamMode,
-  showWord,
-  onHintUsed,
-  onExtraAttempt
+  coins,
+  onRevealLetter,
+  onAddTime
 }) => {
+  if (!word) {
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "flex", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "flex-shrink-0", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("svg", { className: "h-5 w-5 text-yellow-400", viewBox: "0 0 20 20", fill: "currentColor", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("path", { fillRule: "evenodd", d: "M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z", clipRule: "evenodd" }) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "ml-3", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "text-sm text-yellow-700", children: "No word selected. Please wait for the next word." }) })
+    ] }) });
+  }
+  const safeAccess = (obj, path, fallback = "N/A") => {
+    return path.split(".").reduce((acc, part) => acc && acc[part] ? acc[part] : fallback, obj);
+  };
+  const definition = safeAccess(word, "definition", "");
+  const origin = safeAccess(word, "origin", "");
+  const example = safeAccess(word, "example", "");
+  const prefix = safeAccess(word, "prefix", "");
+  const suffix = safeAccess(word, "suffix", "");
   const [showHint, setShowHint] = (0, import_react6.useState)(false);
   const [showDefinition, setShowDefinition] = (0, import_react6.useState)(false);
   const [showOrigin, setShowOrigin] = (0, import_react6.useState)(false);
@@ -9462,7 +9485,7 @@ var HintPanel = ({
   const [revealedSyllables, setRevealedSyllables] = (0, import_react6.useState)([]);
   (0, import_react6.useEffect)(() => {
     setRevealedLetters(Array(word.word.length).fill(false));
-    setRevealedSyllables(Array(word.syllables.length).fill(false));
+    setRevealedSyllables(Array(word.syllables?.length || 0).fill(false));
     setShowHint(false);
     setShowDefinition(false);
     setShowOrigin(false);
@@ -9470,16 +9493,10 @@ var HintPanel = ({
     setShowPrefix(false);
     setShowSuffix(false);
   }, [word]);
-  (0, import_react6.useEffect)(() => {
-    if (!showWord) {
-      setRevealedSyllables(Array(word.syllables.length).fill(false));
-    }
-  }, [showWord, word.syllables.length]);
   const handleRevealSyllable = (idx) => {
     const cost = 3;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
+    if (coins < cost) return;
+    onRevealLetter();
     setRevealedSyllables((prev) => {
       const updated = [...prev];
       updated[idx] = true;
@@ -9488,9 +9505,8 @@ var HintPanel = ({
   };
   const handleHangmanReveal = () => {
     const cost = 6;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
+    if (coins < cost) return;
+    onRevealLetter();
     const unrevealed = revealedLetters.map((r2, i) => !r2 ? i : null).filter((i) => i !== null);
     if (unrevealed.length === 0) return;
     const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
@@ -9502,67 +9518,64 @@ var HintPanel = ({
   };
   const handleVowelReveal = () => {
     const cost = 4;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
+    if (coins < cost) return;
+    onRevealLetter();
     setRevealedLetters(word.word.split("").map((l, idx) => revealedLetters[idx] || "aeiou".includes(l.toLowerCase())));
   };
   const handleFriendSubstitution = () => {
     const cost = 4;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    onExtraAttempt();
+    if (coins < cost) return;
+    onRevealLetter();
+    onAddTime();
   };
   const handlePrefixReveal = () => {
     const cost = 3;
-    if (participantPoints < cost || !word.prefix) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
+    if (coins < cost || !prefix) return;
+    onRevealLetter();
     setShowPrefix(true);
   };
   const handleSuffixReveal = () => {
     const cost = 3;
-    if (participantPoints < cost || !word.suffix) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
+    if (coins < cost || !suffix) return;
+    onRevealLetter();
     setShowSuffix(true);
   };
+  const syllableCount = word?.syllables?.length || 0;
   return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8", children: [
     revealedLetters.some((r2) => r2) && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "text-3xl font-mono mb-4", children: word.word.split("").map((letter, idx) => revealedLetters[idx] ? letter : "_").join(" ") }),
     showDefinition && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "text-2xl mb-2", children: [
       /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { className: "text-yellow-300", children: "Definition:" }),
       " ",
-      word.definition
+      definition || "Definition not available"
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
       "button",
       {
         onClick: () => {
           setShowHint(!showHint);
-          if (!showHint) onHintUsed();
+          if (!showHint) onRevealLetter();
         },
         className: "mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold",
         children: showHint ? "Hide Hint" : "Show Hint"
       }
     ),
     showHint && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "mt-4 flex flex-col items-center gap-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: word.syllables.map((syllable, idx) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: word.syllables?.map((syllable, idx) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
         "button",
         {
           onClick: () => speak(syllable),
-          disabled: !revealedSyllables[idx] || !showWord,
+          disabled: !revealedSyllables[idx],
           className: "bg-yellow-100 text-black px-2 py-1 rounded disabled:opacity-50",
-          children: showWord && revealedSyllables[idx] ? syllable : "???"
+          children: revealedSyllables[idx] ? syllable : "???"
         },
         idx
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: word.syllables.map(
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: word.syllables?.map(
         (_, idx) => !revealedSyllables[idx] && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
           "button",
           {
             onClick: () => handleRevealSyllable(idx),
-            disabled: participantPoints < 3,
+            disabled: coins < 3,
             className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
             children: `Reveal syllable ${idx + 1} (-3)`
           },
@@ -9573,35 +9586,34 @@ var HintPanel = ({
     showOrigin && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "text-xl mb-2", children: [
       /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { className: "text-yellow-300", children: "Origin:" }),
       " ",
-      word.origin
+      origin || "Origin not available"
     ] }),
     showSentence && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "text-xl", children: [
       /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { className: "text-yellow-300", children: "Example:" }),
       ' "',
-      word.example,
+      example || "Example not available",
       '"'
     ] }),
-    showPrefix && showWord && word.prefix && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "text-xl mb-2", children: [
+    showPrefix && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "text-xl mb-2", children: [
       /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { className: "text-yellow-300", children: "Prefix:" }),
       " ",
-      word.prefix
+      prefix || "Prefix not available"
     ] }),
-    showSuffix && showWord && word.suffix && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "text-xl mb-2", children: [
+    showSuffix && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "text-xl mb-2", children: [
       /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("strong", { className: "text-yellow-300", children: "Suffix:" }),
       " ",
-      word.suffix
+      suffix || "Suffix not available"
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "mt-4 flex gap-4 justify-center", children: [
       !showDefinition && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
         "button",
         {
           onClick: () => {
-            if (participantPoints < 1) return;
-            spendPoints(participantIndex, 1);
-            onHintUsed();
+            if (coins < 1) return;
+            onRevealLetter();
             setShowDefinition(true);
           },
-          disabled: participantPoints < 1,
+          disabled: coins < 1,
           className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
           children: "Buy Definition (-1)"
         }
@@ -9610,12 +9622,11 @@ var HintPanel = ({
         "button",
         {
           onClick: () => {
-            if (participantPoints < 1) return;
-            spendPoints(participantIndex, 1);
-            onHintUsed();
+            if (coins < 1) return;
+            onRevealLetter();
             setShowOrigin(true);
           },
-          disabled: participantPoints < 1,
+          disabled: coins < 1,
           className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
           children: "Buy Origin (-1)"
         }
@@ -9624,32 +9635,31 @@ var HintPanel = ({
         "button",
         {
           onClick: () => {
-            if (participantPoints < 1) return;
-            spendPoints(participantIndex, 1);
-            onHintUsed();
+            if (coins < 1) return;
+            onRevealLetter();
             setShowSentence(true);
           },
-          disabled: participantPoints < 1,
+          disabled: coins < 1,
           className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
           children: "Buy Sentence (-1)"
         }
       )
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "mt-4 flex gap-4 justify-center", children: [
-      !showPrefix && word.prefix && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      !showPrefix && prefix && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
         "button",
         {
           onClick: handlePrefixReveal,
-          disabled: participantPoints < 3,
+          disabled: coins < 3,
           className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
           children: "Reveal Prefix (-3)"
         }
       ),
-      !showSuffix && word.suffix && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      !showSuffix && suffix && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
         "button",
         {
           onClick: handleSuffixReveal,
-          disabled: participantPoints < 3,
+          disabled: coins < 3,
           className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
           children: "Reveal Suffix (-3)"
         }
@@ -9660,7 +9670,7 @@ var HintPanel = ({
         "button",
         {
           onClick: handleHangmanReveal,
-          disabled: participantPoints < 5 || !isTeamMode,
+          disabled: coins < 5,
           className: "bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg",
           children: "Hangman Reveal (-5)"
         }
@@ -9669,7 +9679,7 @@ var HintPanel = ({
         "button",
         {
           onClick: handleVowelReveal,
-          disabled: participantPoints < 3 || !isTeamMode,
+          disabled: coins < 3,
           className: "bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg",
           children: "Vowel Reveal (-3)"
         }
@@ -9678,95 +9688,19 @@ var HintPanel = ({
         "button",
         {
           onClick: handleFriendSubstitution,
-          disabled: participantPoints < 4 || !isTeamMode,
+          disabled: coins < 4,
           className: "bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg",
           children: "Friend Sub (-4)"
         }
       )
-    ] })
+    ] }),
+    word && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(import_jsx_runtime8.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "hint-section", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h3", { children: "Syllables" }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { children: syllableCount })
+    ] }) })
   ] });
 };
 var HintPanel_default = HintPanel;
-
-// src/components/HelpShop.tsx
-var import_jsx_runtime9 = __toESM(require_jsx_runtime());
-var HelpShop = ({ onClose, coins, onPurchase }) => {
-  const { isHelpUsed, setHelpUsed } = useHelpSystem();
-  const handlePurchase = (item) => {
-    if (coins >= item.cost) {
-      onPurchase(item.cost);
-      setHelpUsed(item.id);
-    }
-  };
-  const helpItems = [
-    {
-      id: "reveal-letter",
-      name: "Reveal Letter",
-      description: "Reveals one random letter in the current word",
-      cost: 10,
-      icon: "\u{1F524}"
-    },
-    {
-      id: "show-definition",
-      name: "Show Definition",
-      description: "Displays the definition of the current word",
-      cost: 15,
-      icon: "\u{1F4D6}"
-    },
-    {
-      id: "add-time",
-      name: "Add Time",
-      description: "Adds 30 seconds to the timer",
-      cost: 20,
-      icon: "\u23F1\uFE0F"
-    },
-    {
-      id: "skip-word",
-      name: "Skip Word",
-      description: "Skips to the next word",
-      cost: 25,
-      icon: "\u23ED\uFE0F"
-    }
-  ];
-  return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex justify-between items-center mb-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h2", { className: "text-2xl font-bold", children: "Help Shop" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex items-center", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "mr-2", children: "Your coins:" }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "font-bold", children: coins })
-      ] })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "space-y-4", children: helpItems.map((item) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex items-center justify-between p-3 border rounded-lg", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex items-center space-x-3", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "text-2xl", children: item.icon }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { className: "font-medium", children: item.name }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "text-sm text-gray-500", children: item.description })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
-        "button",
-        {
-          className: `px-3 py-1 rounded-md ${coins >= item.cost && !isHelpUsed(item.id) ? "bg-bee-yellow-500 text-white" : "bg-gray-200 text-gray-500"}`,
-          disabled: isHelpUsed(item.id) || coins < item.cost,
-          onClick: () => handlePurchase(item),
-          children: [
-            item.cost,
-            " pts"
-          ]
-        }
-      )
-    ] }, item.id)) }),
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-      "button",
-      {
-        onClick: onClose,
-        className: "mt-6 w-full py-2 bg-gray-200 dark:bg-gray-700 rounded-md",
-        children: "Close"
-      }
-    )
-  ] }) });
-};
 
 // src/components/Button.tsx
 var import_react7 = __toESM(require_react());
@@ -9829,7 +9763,7 @@ var cva = (base, config2) => (props) => {
 };
 
 // src/components/Button.tsx
-var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+var import_jsx_runtime9 = __toESM(require_jsx_runtime());
 var buttonVariants = cva(
   "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors",
   {
@@ -9853,7 +9787,7 @@ var buttonVariants = cva(
 );
 var Button = import_react7.default.forwardRef(
   ({ className, variant, size, ...props }, ref) => {
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
       "button",
       {
         className: buttonVariants({ variant, size, className }),
@@ -9867,7 +9801,67 @@ Button.displayName = "Button";
 var Button_default = Button;
 
 // src/components/BeeProgress.tsx
-var import_classnames = __toESM(require_classnames());
+var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+var BeeProgress = ({
+  progress: progress2 = 0,
+  color: color2 = "#4CAF50",
+  height = 8,
+  animated = true,
+  showMilestones = false,
+  showPercentage = false
+}) => {
+  const clampedProgress = Math.min(100, Math.max(0, progress2));
+  const getBackground = () => {
+    if (Array.isArray(color2)) {
+      return `linear-gradient(to right, ${color2.join(", ")})`;
+    }
+    return color2;
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "relative", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+      "div",
+      {
+        role: "progressbar",
+        "aria-valuenow": clampedProgress,
+        "aria-valuemin": 0,
+        "aria-valuemax": 100,
+        style: {
+          height: `${height}px`,
+          backgroundColor: "#e0e0e0",
+          borderRadius: height,
+          overflow: "hidden"
+        },
+        children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          "div",
+          {
+            style: {
+              width: `${clampedProgress}%`,
+              background: getBackground(),
+              height: "100%",
+              transition: animated ? "width 300ms ease-out" : "none",
+              borderRadius: height
+            }
+          }
+        )
+      }
+    ),
+    showPercentage && /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "text-center mt-1 text-sm", children: [
+      clampedProgress,
+      "%"
+    ] }),
+    showMilestones && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "flex justify-between mt-1", children: [25, 50, 75, 100].map((milestone) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+      "div",
+      {
+        className: `w-2 h-2 rounded-full ${clampedProgress >= milestone ? "bg-green-500" : "bg-gray-300"}`
+      },
+      milestone
+    )) })
+  ] });
+};
+var BeeProgress_default = BeeProgress;
+
+// src/components/BeeElement.tsx
+var import_react26 = __toESM(require_react());
 
 // node_modules/framer-motion/dist/es/motion/index.mjs
 var React7 = __toESM(require_react(), 1);
@@ -10289,7 +10283,7 @@ function buildTransform(transform, { enableHardwareAcceleration = true, allowTra
 }
 
 // node_modules/framer-motion/dist/es/render/dom/utils/is-css-variable.mjs
-var checkStringStartsWith = (token) => (key) => typeof key === "string" && key.startsWith(token);
+var checkStringStartsWith = (token2) => (key) => typeof key === "string" && key.startsWith(token2);
 var isCSSVariableName = checkStringStartsWith("--");
 var isCSSVariableToken = checkStringStartsWith("var(--");
 var cssVariableRegex = /var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\)/g;
@@ -10550,7 +10544,7 @@ function loadExternalIsValidProp(isValidProp) {
 }
 try {
   loadExternalIsValidProp(require_is_prop_valid_browser_cjs().default);
-} catch (_a) {
+} catch (_a2) {
 }
 function filterProps(props, isDom, forwardMotionProps) {
   const filteredProps = {};
@@ -11745,11 +11739,11 @@ var getColorType = (v) => colorTypes.find((type) => type.test(v));
 function asRGBA(color2) {
   const type = getColorType(color2);
   invariant(Boolean(type), `'${color2}' is not an animatable color. Use the equivalent color code instead.`);
-  let model = type.parse(color2);
+  let model2 = type.parse(color2);
   if (type === hsla) {
-    model = hslaToRgba(model);
+    model2 = hslaToRgba(model2);
   }
-  return model;
+  return model2;
 }
 var mixColor = (from, to) => {
   const fromRGBA = asRGBA(from);
@@ -11766,8 +11760,8 @@ var mixColor = (from, to) => {
 
 // node_modules/framer-motion/dist/es/value/types/complex/index.mjs
 function test(v) {
-  var _a, _b;
-  return isNaN(v) && isString(v) && (((_a = v.match(floatRegex)) === null || _a === void 0 ? void 0 : _a.length) || 0) + (((_b = v.match(colorRegex)) === null || _b === void 0 ? void 0 : _b.length) || 0) > 0;
+  var _a2, _b;
+  return isNaN(v) && isString(v) && (((_a2 = v.match(floatRegex)) === null || _a2 === void 0 ? void 0 : _a2.length) || 0) + (((_b = v.match(colorRegex)) === null || _b === void 0 ? void 0 : _b.length) || 0) > 0;
 }
 var cssVarTokeniser = {
   regex: cssVariableRegex,
@@ -11787,12 +11781,12 @@ var numberTokeniser = {
   token: "${n}",
   parse: number.parse
 };
-function tokenise(info, { regex, countKey, token, parse }) {
+function tokenise(info, { regex, countKey, token: token2, parse }) {
   const matches = info.tokenised.match(regex);
   if (!matches)
     return;
   info["num" + countKey] = matches.length;
-  info.tokenised = info.tokenised.replace(regex, token);
+  info.tokenised = info.tokenised.replace(regex, token2);
   info.values.push(...matches.map(parse));
 }
 function analyseComplexValue(value) {
@@ -13223,7 +13217,7 @@ function setTarget(visualElement, definition) {
   }
 }
 function checkTargetForNewValues(visualElement, target, origin) {
-  var _a, _b;
+  var _a2, _b;
   const newValueKeys = Object.keys(target).filter((key) => !visualElement.hasValue(key));
   const numNewValues = newValueKeys.length;
   if (!numNewValues)
@@ -13236,7 +13230,7 @@ function checkTargetForNewValues(visualElement, target, origin) {
       value = targetValue[0];
     }
     if (value === null) {
-      value = (_b = (_a = origin[key]) !== null && _a !== void 0 ? _a : visualElement.readValue(key)) !== null && _b !== void 0 ? _b : target[key];
+      value = (_b = (_a2 = origin[key]) !== null && _a2 !== void 0 ? _a2 : visualElement.readValue(key)) !== null && _b !== void 0 ? _b : target[key];
     }
     if (value === void 0 || value === null)
       continue;
@@ -13525,12 +13519,12 @@ function createAnimationState(visualElement) {
     return shouldAnimate ? animate(animations2) : Promise.resolve();
   }
   function setActive(type, isActive, options) {
-    var _a;
+    var _a2;
     if (state[type].isActive === isActive)
       return Promise.resolve();
-    (_a = visualElement.variantChildren) === null || _a === void 0 ? void 0 : _a.forEach((child) => {
-      var _a2;
-      return (_a2 = child.animationState) === null || _a2 === void 0 ? void 0 : _a2.setActive(type, isActive);
+    (_a2 = visualElement.variantChildren) === null || _a2 === void 0 ? void 0 : _a2.forEach((child) => {
+      var _a3;
+      return (_a3 = child.animationState) === null || _a3 === void 0 ? void 0 : _a3.setActive(type, isActive);
     });
     state[type].isActive = isActive;
     const animations2 = animateChanges(options, type);
@@ -14127,8 +14121,8 @@ var VisualElementDragControls = class {
     };
     const onSessionEnd = (event, info) => this.stop(event, info);
     const resumeAnimation = () => eachAxis((axis) => {
-      var _a;
-      return this.getAnimationState(axis) === "paused" && ((_a = this.getAxisMotionValue(axis).animation) === null || _a === void 0 ? void 0 : _a.play());
+      var _a2;
+      return this.getAnimationState(axis) === "paused" && ((_a2 = this.getAxisMotionValue(axis).animation) === null || _a2 === void 0 ? void 0 : _a2.play());
     });
     const { dragSnapToOrigin } = this.getProps();
     this.panSession = new PanSession(originEvent, {
@@ -14182,9 +14176,9 @@ var VisualElementDragControls = class {
     axisValue.set(next);
   }
   resolveConstraints() {
-    var _a;
+    var _a2;
     const { dragConstraints, dragElastic } = this.getProps();
-    const layout2 = this.visualElement.projection && !this.visualElement.projection.layout ? this.visualElement.projection.measure(false) : (_a = this.visualElement.projection) === null || _a === void 0 ? void 0 : _a.layout;
+    const layout2 = this.visualElement.projection && !this.visualElement.projection.layout ? this.visualElement.projection.measure(false) : (_a2 = this.visualElement.projection) === null || _a2 === void 0 ? void 0 : _a2.layout;
     const prevConstraints = this.constraints;
     if (dragConstraints && isRefObject(dragConstraints)) {
       if (!this.constraints) {
@@ -14262,13 +14256,13 @@ var VisualElementDragControls = class {
   }
   pauseAnimation() {
     eachAxis((axis) => {
-      var _a;
-      return (_a = this.getAxisMotionValue(axis).animation) === null || _a === void 0 ? void 0 : _a.pause();
+      var _a2;
+      return (_a2 = this.getAxisMotionValue(axis).animation) === null || _a2 === void 0 ? void 0 : _a2.pause();
     });
   }
   getAnimationState(axis) {
-    var _a;
-    return (_a = this.getAxisMotionValue(axis).animation) === null || _a === void 0 ? void 0 : _a.state;
+    var _a2;
+    return (_a2 = this.getAxisMotionValue(axis).animation) === null || _a2 === void 0 ? void 0 : _a2.state;
   }
   /**
    * Drag works differently depending on which props are provided.
@@ -15369,13 +15363,13 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       }
     }
     resolveTargetDelta(forceRecalculation = false) {
-      var _a;
+      var _a2;
       const lead = this.getLead();
       this.isProjectionDirty || (this.isProjectionDirty = lead.isProjectionDirty);
       this.isTransformDirty || (this.isTransformDirty = lead.isTransformDirty);
       this.isSharedProjectionDirty || (this.isSharedProjectionDirty = lead.isSharedProjectionDirty);
       const isShared = Boolean(this.resumingFrom) || this !== lead;
-      const canSkip = !(forceRecalculation || isShared && this.isSharedProjectionDirty || this.isProjectionDirty || ((_a = this.parent) === null || _a === void 0 ? void 0 : _a.isProjectionDirty) || this.attemptToResolveRelativeTarget);
+      const canSkip = !(forceRecalculation || isShared && this.isSharedProjectionDirty || this.isProjectionDirty || ((_a2 = this.parent) === null || _a2 === void 0 ? void 0 : _a2.isProjectionDirty) || this.attemptToResolveRelativeTarget);
       if (canSkip)
         return;
       const { layout: layout2, layoutId } = this.options;
@@ -15444,11 +15438,11 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       return Boolean((this.relativeTarget || this.targetDelta || this.options.layoutRoot) && this.layout);
     }
     calcProjection() {
-      var _a;
+      var _a2;
       const lead = this.getLead();
       const isShared = Boolean(this.resumingFrom) || this !== lead;
       let canSkip = true;
-      if (this.isProjectionDirty || ((_a = this.parent) === null || _a === void 0 ? void 0 : _a.isProjectionDirty)) {
+      if (this.isProjectionDirty || ((_a2 = this.parent) === null || _a2 === void 0 ? void 0 : _a2.isProjectionDirty)) {
         canSkip = false;
       }
       if (isShared && (this.isSharedProjectionDirty || this.isTransformDirty)) {
@@ -15636,14 +15630,14 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       return stack ? stack.lead === this : true;
     }
     getLead() {
-      var _a;
+      var _a2;
       const { layoutId } = this.options;
-      return layoutId ? ((_a = this.getStack()) === null || _a === void 0 ? void 0 : _a.lead) || this : this;
+      return layoutId ? ((_a2 = this.getStack()) === null || _a2 === void 0 ? void 0 : _a2.lead) || this : this;
     }
     getPrevLead() {
-      var _a;
+      var _a2;
       const { layoutId } = this.options;
-      return layoutId ? (_a = this.getStack()) === null || _a === void 0 ? void 0 : _a.prevLead : void 0;
+      return layoutId ? (_a2 = this.getStack()) === null || _a2 === void 0 ? void 0 : _a2.prevLead : void 0;
     }
     getStack() {
       const { layoutId } = this.options;
@@ -15695,7 +15689,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       visualElement.scheduleRender();
     }
     getProjectionStyles(styleProp) {
-      var _a, _b;
+      var _a2, _b;
       if (!this.instance || this.isSVG)
         return void 0;
       if (!this.isVisible) {
@@ -15734,7 +15728,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       const { x, y } = this.projectionDelta;
       styles.transformOrigin = `${x.origin * 100}% ${y.origin * 100}% 0`;
       if (lead.animationValues) {
-        styles.opacity = lead === this ? (_b = (_a = valuesToRender.opacity) !== null && _a !== void 0 ? _a : this.latestValues.opacity) !== null && _b !== void 0 ? _b : 1 : this.preserveOpacity ? this.latestValues.opacity : valuesToRender.opacityExit;
+        styles.opacity = lead === this ? (_b = (_a2 = valuesToRender.opacity) !== null && _a2 !== void 0 ? _a2 : this.latestValues.opacity) !== null && _b !== void 0 ? _b : 1 : this.preserveOpacity ? this.latestValues.opacity : valuesToRender.opacityExit;
       } else {
         styles.opacity = lead === this ? valuesToRender.opacity !== void 0 ? valuesToRender.opacity : "" : valuesToRender.opacityExit !== void 0 ? valuesToRender.opacityExit : 0;
       }
@@ -15763,8 +15757,8 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
     // Only run on root
     resetTree() {
       this.root.nodes.forEach((node) => {
-        var _a;
-        return (_a = node.currentAnimation) === null || _a === void 0 ? void 0 : _a.stop();
+        var _a2;
+        return (_a2 = node.currentAnimation) === null || _a2 === void 0 ? void 0 : _a2.stop();
       });
       this.root.nodes.forEach(clearMeasurements);
       this.root.sharedNodes.clear();
@@ -15775,8 +15769,8 @@ function updateLayout(node) {
   node.updateLayout();
 }
 function notifyLayoutUpdate(node) {
-  var _a;
-  const snapshot = ((_a = node.resumeFrom) === null || _a === void 0 ? void 0 : _a.snapshot) || node.snapshot;
+  var _a2;
+  const snapshot = ((_a2 = node.resumeFrom) === null || _a2 === void 0 ? void 0 : _a2.snapshot) || node.snapshot;
   if (node.isLead() && node.layout && snapshot && node.hasListeners("didUpdate")) {
     const { layoutBox: layout2, measuredBox: measuredLayout } = node.layout;
     const { animationType } = node.options;
@@ -15976,16 +15970,16 @@ function parseCSSVariable(current) {
   const match = splitCSSVariableRegex.exec(current);
   if (!match)
     return [,];
-  const [, token, fallback] = match;
-  return [token, fallback];
+  const [, token2, fallback] = match;
+  return [token2, fallback];
 }
 var maxDepth = 4;
 function getVariableValue(current, element, depth = 1) {
   invariant(depth <= maxDepth, `Max CSS variable fallback depth detected in property "${current}". This may indicate a circular fallback dependency.`);
-  const [token, fallback] = parseCSSVariable(current);
-  if (!token)
+  const [token2, fallback] = parseCSSVariable(current);
+  if (!token2)
     return;
-  const resolved = window.getComputedStyle(element).getPropertyValue(token);
+  const resolved = window.getComputedStyle(element).getPropertyValue(token2);
   if (resolved) {
     const trimmed = resolved.trim();
     return isNumericalString(trimmed) ? parseFloat(trimmed) : trimmed;
@@ -16599,8 +16593,8 @@ var VisualElement = class {
    * directly from the instance (which might have performance implications).
    */
   readValue(key) {
-    var _a;
-    return this.latestValues[key] !== void 0 || !this.current ? this.latestValues[key] : (_a = this.getBaseTargetFromProps(this.props, key)) !== null && _a !== void 0 ? _a : this.readValueFromInstance(this.current, key, this.options);
+    var _a2;
+    return this.latestValues[key] !== void 0 || !this.current ? this.latestValues[key] : (_a2 = this.getBaseTargetFromProps(this.props, key)) !== null && _a2 !== void 0 ? _a2 : this.readValueFromInstance(this.current, key, this.options);
   }
   /**
    * Set the base target to later animate back to. This is currently
@@ -16614,9 +16608,9 @@ var VisualElement = class {
    * props.
    */
   getBaseTarget(key) {
-    var _a;
+    var _a2;
     const { initial } = this.props;
-    const valueFromInitial = typeof initial === "string" || typeof initial === "object" ? (_a = resolveVariantFromProps(this.props, initial)) === null || _a === void 0 ? void 0 : _a[key] : void 0;
+    const valueFromInitial = typeof initial === "string" || typeof initial === "object" ? (_a2 = resolveVariantFromProps(this.props, initial)) === null || _a2 === void 0 ? void 0 : _a2[key] : void 0;
     if (initial && valueFromInitial !== void 0) {
       return valueFromInitial;
     }
@@ -16778,309 +16772,1721 @@ var preloadedFeatures = {
 };
 var motion = /* @__PURE__ */ createMotionProxy((Component, config2) => createDomMotionConfig(Component, config2, preloadedFeatures, createDomVisualElement));
 
-// src/components/BeeProgress.tsx
+// src/components/BeeElement.tsx
 var import_jsx_runtime11 = __toESM(require_jsx_runtime());
-var ProgressBar = ({
-  value = 0,
-  max = 100,
-  variant = "primary",
-  size = "md",
-  showLabel = false,
-  className = ""
-}) => {
-  const progress2 = Math.min(Math.max(0, value / max * 100), 100);
-  const variantClasses = {
-    primary: "bg-bee-yellow-500",
-    success: "bg-green-500",
-    danger: "bg-red-500",
-    warning: "bg-amber-500",
-    info: "bg-blue-500"
-  };
-  const sizeClasses = {
-    sm: "h-1.5 text-xs",
-    md: "h-3 text-sm",
-    lg: "h-4 text-base"
-  };
-  return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "w-full", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: (0, import_classnames.default)(
-      "w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden",
-      sizeClasses[size],
-      className
-    ), children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-      motion.div,
-      {
-        className: (0, import_classnames.default)(
-          "h-full flex items-center justify-end",
-          variantClasses[variant]
-        ),
-        initial: { width: 0 },
-        animate: { width: `${progress2}%` },
-        transition: { duration: 0.5, ease: "easeOut" },
-        children: showLabel && progress2 > 20 && /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "text-white font-medium px-2", children: [
-          Math.round(progress2),
-          "%"
-        ] })
-      }
-    ) }),
-    showLabel && progress2 <= 20 && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "mt-1 text-right", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "text-gray-600 dark:text-gray-300", children: [
-      Math.round(progress2),
-      "%"
-    ] }) })
-  ] });
-};
-var LinearProgress = ProgressBar;
-var CircularProgress = ({
-  value = 0,
+var BeeElement = (0, import_react26.memo)(({
+  state = "idle",
   size = 40,
-  strokeWidth = 4,
-  variant = "primary",
-  className = ""
+  speed = 1
 }) => {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const progress2 = Math.min(Math.max(0, value), 100);
-  const strokeDashoffset = circumference - progress2 / 100 * circumference;
-  const variantColors = {
-    primary: "#F59E0B",
-    // bee yellow
-    success: "#10B981",
-    // green-500
-    danger: "#EF4444",
-    // red-500
-    warning: "#F59E0B",
-    // amber-500
-    info: "#3B82F6"
-    // blue-500
-  };
-  return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: (0, import_classnames.default)("relative inline-flex items-center justify-center", className), children: [
-    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
-      "svg",
-      {
-        className: "transform -rotate-90",
-        width: size,
-        height: size,
-        viewBox: `0 0 ${size} ${size}`,
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-            "circle",
-            {
-              className: "text-gray-100 dark:text-gray-700",
-              cx: size / 2,
-              cy: size / 2,
-              r: radius,
-              strokeWidth,
-              fill: "transparent"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-            motion.circle,
-            {
-              cx: size / 2,
-              cy: size / 2,
-              r: radius,
-              strokeWidth,
-              fill: "transparent",
-              stroke: variantColors[variant],
-              strokeDasharray: circumference,
-              strokeDashoffset,
-              strokeLinecap: "round",
-              initial: { strokeDashoffset: circumference },
-              animate: { strokeDashoffset },
-              transition: { duration: 0.5, ease: "easeInOut" }
-            }
-          )
-        ]
+  const variants = {
+    idle: {
+      rotate: [0, 5, 0, -5, 0],
+      transition: {
+        duration: 2 * speed,
+        repeat: Infinity
       }
-    ),
-    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "text-xs font-bold text-gray-800 dark:text-white", children: [
-      Math.round(progress2),
-      "%"
-    ] }) })
-  ] });
+    },
+    happy: {
+      y: [0, -10, 0],
+      rotate: [0, 15, 0],
+      transition: {
+        duration: 1 * speed,
+        repeat: Infinity
+      }
+    },
+    stressed: {
+      x: [0, 5, -5, 0],
+      transition: {
+        duration: 0.5 * speed,
+        repeat: Infinity
+      }
+    }
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+    motion.div,
+    {
+      animate: state,
+      variants,
+      style: {
+        width: size,
+        height: size
+      },
+      children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("svg", { viewBox: "0 0 100 100", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          "path",
+          {
+            d: "M50,20 Q70,30 50,40 Q30,30 50,20",
+            fill: "#FFD700",
+            stroke: "#000"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("circle", { cx: "50", cy: "30", r: "10", fill: "#000" }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("path", { d: "M40,40 Q50,50 60,40", stroke: "#000", fill: "transparent" })
+      ] })
+    }
+  );
+});
+var BeeElement_default = BeeElement;
+
+// src/hooks/useGameState.ts
+var import_react27 = __toESM(require_react());
+function useGameState(initialState = { timeLeft: 0 }) {
+  const [gameStarted, setGameStarted] = (0, import_react27.useState)(false);
+  const [gameEnded, setGameEnded] = (0, import_react27.useState)(false);
+  const [timeLeft, setTimeLeft] = (0, import_react27.useState)(initialState.timeLeft);
+  const startGame = (0, import_react27.useCallback)(() => {
+    setGameStarted(true);
+  }, []);
+  const endGame = (0, import_react27.useCallback)(() => {
+    setGameEnded(true);
+  }, []);
+  return {
+    gameStarted,
+    gameEnded,
+    timeLeft,
+    startGame,
+    endGame,
+    setTimeLeft
+  };
+}
+
+// src/hooks/useParticipants.ts
+var import_react28 = __toESM(require_react());
+function useParticipants(initialParticipants = []) {
+  const [participants, setParticipants] = (0, import_react28.useState)(initialParticipants);
+  const [currentParticipantIndex, setCurrentParticipantIndex] = (0, import_react28.useState)(0);
+  const addParticipant = (0, import_react28.useCallback)((participant) => {
+    setParticipants((prev) => [...prev, participant]);
+  }, []);
+  const nextParticipant = (0, import_react28.useCallback)(() => {
+    setCurrentParticipantIndex((prev) => (prev + 1) % participants.length);
+  }, [participants.length]);
+  return {
+    participants,
+    currentParticipantIndex,
+    addParticipant,
+    nextParticipant,
+    setParticipants,
+    setCurrentParticipantIndex
+  };
+}
+
+// src/hooks/useWordQueue.ts
+var import_react29 = __toESM(require_react());
+function useWordQueue() {
+  const [wordQueues, setWordQueues] = (0, import_react29.useState)({
+    easy: [],
+    medium: [],
+    hard: []
+  });
+  (0, import_react29.useEffect)(() => {
+  }, []);
+  return {
+    wordQueues,
+    setWordQueues
+  };
+}
+
+// node_modules/openai/version.mjs
+var VERSION = "4.0.0";
+
+// node_modules/openai/streaming.mjs
+var Stream = class {
+  constructor(response, controller) {
+    this.response = response;
+    this.controller = controller;
+    this.decoder = new SSEDecoder();
+  }
+  async *iterMessages() {
+    if (!this.response.body) {
+      this.controller.abort();
+      throw new Error(`Attempted to iterate over a response with no body`);
+    }
+    const lineDecoder = new LineDecoder();
+    const iter = readableStreamAsyncIterable(this.response.body);
+    for await (const chunk of iter) {
+      for (const line of lineDecoder.decode(chunk)) {
+        const sse = this.decoder.decode(line);
+        if (sse) yield sse;
+      }
+    }
+    for (const line of lineDecoder.flush()) {
+      const sse = this.decoder.decode(line);
+      if (sse) yield sse;
+    }
+  }
+  async *[Symbol.asyncIterator]() {
+    let done = false;
+    try {
+      for await (const sse of this.iterMessages()) {
+        if (done) continue;
+        if (sse.data.startsWith("[DONE]")) {
+          done = true;
+          continue;
+        }
+        if (sse.event === null) {
+          try {
+            yield JSON.parse(sse.data);
+          } catch (e) {
+            console.error(`Could not parse message into JSON:`, sse.data);
+            console.error(`From chunk:`, sse.raw);
+            throw e;
+          }
+        }
+      }
+      done = true;
+    } catch (e) {
+      if (e instanceof Error && e.name === "AbortError") return;
+      throw e;
+    } finally {
+      if (!done) this.controller.abort();
+    }
+  }
 };
+var SSEDecoder = class {
+  constructor() {
+    this.event = null;
+    this.data = [];
+    this.chunks = [];
+  }
+  decode(line) {
+    if (line.endsWith("\r")) {
+      line = line.substring(0, line.length - 1);
+    }
+    if (!line) {
+      if (!this.event && !this.data.length) return null;
+      const sse = {
+        event: this.event,
+        data: this.data.join("\n"),
+        raw: this.chunks
+      };
+      this.event = null;
+      this.data = [];
+      this.chunks = [];
+      return sse;
+    }
+    this.chunks.push(line);
+    if (line.startsWith(":")) {
+      return null;
+    }
+    let [fieldname, _, value] = partition(line, ":");
+    if (value.startsWith(" ")) {
+      value = value.substring(1);
+    }
+    if (fieldname === "event") {
+      this.event = value;
+    } else if (fieldname === "data") {
+      this.data.push(value);
+    }
+    return null;
+  }
+};
+var LineDecoder = class _LineDecoder {
+  constructor() {
+    this.buffer = [];
+    this.trailingCR = false;
+  }
+  decode(chunk) {
+    let text = this.decodeText(chunk);
+    if (this.trailingCR) {
+      text = "\r" + text;
+      this.trailingCR = false;
+    }
+    if (text.endsWith("\r")) {
+      this.trailingCR = true;
+      text = text.slice(0, -1);
+    }
+    if (!text) {
+      return [];
+    }
+    const trailingNewline = _LineDecoder.NEWLINE_CHARS.has(text[text.length - 1] || "");
+    let lines = text.split(_LineDecoder.NEWLINE_REGEXP);
+    if (lines.length === 1 && !trailingNewline) {
+      this.buffer.push(lines[0]);
+      return [];
+    }
+    if (this.buffer.length > 0) {
+      lines = [this.buffer.join("") + lines[0], ...lines.slice(1)];
+      this.buffer = [];
+    }
+    if (!trailingNewline) {
+      this.buffer = [lines.pop() || ""];
+    }
+    return lines;
+  }
+  decodeText(bytes) {
+    var _a2;
+    if (bytes == null) return "";
+    if (typeof bytes === "string") return bytes;
+    if (typeof Buffer !== "undefined") {
+      if (bytes instanceof Buffer) {
+        return bytes.toString();
+      }
+      if (bytes instanceof Uint8Array) {
+        return Buffer.from(bytes).toString();
+      }
+      throw new Error(
+        `Unexpected: received non-Uint8Array (${bytes.constructor.name}) stream chunk in an environment with a global "Buffer" defined, which this library assumes to be Node. Please report this error.`
+      );
+    }
+    if (typeof TextDecoder !== "undefined") {
+      if (bytes instanceof Uint8Array || bytes instanceof ArrayBuffer) {
+        (_a2 = this.textDecoder) !== null && _a2 !== void 0 ? _a2 : this.textDecoder = new TextDecoder("utf8");
+        return this.textDecoder.decode(bytes);
+      }
+      throw new Error(
+        `Unexpected: received non-Uint8Array/ArrayBuffer (${bytes.constructor.name}) in a web platform. Please report this error.`
+      );
+    }
+    throw new Error(
+      `Unexpected: neither Buffer nor TextDecoder are available as globals. Please report this error.`
+    );
+  }
+  flush() {
+    if (!this.buffer.length && !this.trailingCR) {
+      return [];
+    }
+    const lines = [this.buffer.join("")];
+    this.buffer = [];
+    this.trailingCR = false;
+    return lines;
+  }
+};
+LineDecoder.NEWLINE_CHARS = /* @__PURE__ */ new Set(["\n", "\r", "\v", "\f", "", "", "", "\x85", "\u2028", "\u2029"]);
+LineDecoder.NEWLINE_REGEXP = /\r\n|[\n\r\x0b\x0c\x1c\x1d\x1e\x85\u2028\u2029]/g;
+function partition(str, delimiter) {
+  const index = str.indexOf(delimiter);
+  if (index !== -1) {
+    return [str.substring(0, index), delimiter, str.substring(index + delimiter.length)];
+  }
+  return [str, "", ""];
+}
+function readableStreamAsyncIterable(stream) {
+  if (stream[Symbol.asyncIterator]) return stream;
+  const reader = stream.getReader();
+  return {
+    async next() {
+      try {
+        const result = await reader.read();
+        if (result === null || result === void 0 ? void 0 : result.done) reader.releaseLock();
+        return result;
+      } catch (e) {
+        reader.releaseLock();
+        throw e;
+      }
+    },
+    async return() {
+      const cancelPromise = reader.cancel();
+      reader.releaseLock();
+      await cancelPromise;
+      return { done: true, value: void 0 };
+    },
+    [Symbol.asyncIterator]() {
+      return this;
+    }
+  };
+}
+
+// node_modules/openai/error.mjs
+var error_exports = {};
+__export(error_exports, {
+  APIConnectionError: () => APIConnectionError,
+  APIConnectionTimeoutError: () => APIConnectionTimeoutError,
+  APIError: () => APIError,
+  APIUserAbortError: () => APIUserAbortError,
+  AuthenticationError: () => AuthenticationError,
+  BadRequestError: () => BadRequestError,
+  ConflictError: () => ConflictError,
+  InternalServerError: () => InternalServerError,
+  NotFoundError: () => NotFoundError,
+  PermissionDeniedError: () => PermissionDeniedError,
+  RateLimitError: () => RateLimitError,
+  UnprocessableEntityError: () => UnprocessableEntityError
+});
+var APIError = class _APIError extends Error {
+  constructor(status, error, message, headers) {
+    super(_APIError.makeMessage(error, message));
+    this.status = status;
+    this.headers = headers;
+    const data = error;
+    this.error = data;
+    this.code = data === null || data === void 0 ? void 0 : data["code"];
+    this.param = data === null || data === void 0 ? void 0 : data["param"];
+    this.type = data === null || data === void 0 ? void 0 : data["type"];
+  }
+  static makeMessage(error, message) {
+    return (error === null || error === void 0 ? void 0 : error.message) ? typeof error.message === "string" ? error.message : JSON.stringify(error.message) : error ? JSON.stringify(error) : message || "Unknown error occurred";
+  }
+  static generate(status, errorResponse, message, headers) {
+    if (!status) {
+      return new APIConnectionError({ cause: castToError(errorResponse) });
+    }
+    const error = errorResponse === null || errorResponse === void 0 ? void 0 : errorResponse["error"];
+    if (status === 400) {
+      return new BadRequestError(status, error, message, headers);
+    }
+    if (status === 401) {
+      return new AuthenticationError(status, error, message, headers);
+    }
+    if (status === 403) {
+      return new PermissionDeniedError(status, error, message, headers);
+    }
+    if (status === 404) {
+      return new NotFoundError(status, error, message, headers);
+    }
+    if (status === 409) {
+      return new ConflictError(status, error, message, headers);
+    }
+    if (status === 422) {
+      return new UnprocessableEntityError(status, error, message, headers);
+    }
+    if (status === 429) {
+      return new RateLimitError(status, error, message, headers);
+    }
+    if (status >= 500) {
+      return new InternalServerError(status, error, message, headers);
+    }
+    return new _APIError(status, error, message, headers);
+  }
+};
+var APIUserAbortError = class extends APIError {
+  constructor({ message } = {}) {
+    super(void 0, void 0, message || "Request was aborted.", void 0);
+    this.status = void 0;
+  }
+};
+var APIConnectionError = class extends APIError {
+  constructor({ message, cause }) {
+    super(void 0, void 0, message || "Connection error.", void 0);
+    this.status = void 0;
+    if (cause) this.cause = cause;
+  }
+};
+var APIConnectionTimeoutError = class extends APIConnectionError {
+  constructor() {
+    super({ message: "Request timed out." });
+  }
+};
+var BadRequestError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 400;
+  }
+};
+var AuthenticationError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 401;
+  }
+};
+var PermissionDeniedError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 403;
+  }
+};
+var NotFoundError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 404;
+  }
+};
+var ConflictError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 409;
+  }
+};
+var UnprocessableEntityError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 422;
+  }
+};
+var RateLimitError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 429;
+  }
+};
+var InternalServerError = class extends APIError {
+};
+
+// node_modules/openai/_shims/agent.mjs
+var getDefaultAgent = (url) => {
+  return void 0;
+};
+
+// node_modules/openai/_shims/fetch.mjs
+var _fetch = fetch.bind(void 0);
+var isPolyfilled = false;
+
+// node_modules/openai/_shims/formdata.mjs
+var _FormData = FormData;
+var _File = File;
+
+// node_modules/openai/_shims/getMultipartRequestOptions.mjs
+async function getMultipartRequestOptions(form, opts) {
+  return { ...opts, body: new MultipartBody(form) };
+}
+
+// node_modules/openai/_shims/fileFromPath.mjs
+async function fileFromPath() {
+  throw new Error(
+    "The `fileFromPath` function is only supported in Node. See the README for more details: https://www.github.com/openai/openai-node#file-uploads"
+  );
+}
+
+// node_modules/openai/_shims/node-readable.mjs
+function isFsReadStream(value) {
+  return false;
+}
+
+// node_modules/openai/uploads.mjs
+var isResponseLike = (value) => value != null && typeof value === "object" && typeof value.url === "string" && typeof value.blob === "function";
+var isFileLike = (value) => value != null && typeof value === "object" && typeof value.name === "string" && typeof value.lastModified === "number" && isBlobLike(value);
+var isBlobLike = (value) => value != null && typeof value === "object" && typeof value.size === "number" && typeof value.type === "string" && typeof value.text === "function" && typeof value.slice === "function" && typeof value.arrayBuffer === "function";
+var isUploadable = (value) => {
+  return isFileLike(value) || isResponseLike(value) || isFsReadStream(value);
+};
+async function toFile(value, name, options = {}) {
+  var _a2, _b, _c;
+  value = await value;
+  if (isResponseLike(value)) {
+    const blob = await value.blob();
+    name || (name = (_a2 = new URL(value.url).pathname.split(/[\\/]/).pop()) !== null && _a2 !== void 0 ? _a2 : "unknown_file");
+    return new _File([blob], name, options);
+  }
+  const bits = await getBytes(value);
+  name || (name = (_b = getName(value)) !== null && _b !== void 0 ? _b : "unknown_file");
+  if (!options.type) {
+    const type = (_c = bits[0]) === null || _c === void 0 ? void 0 : _c.type;
+    if (typeof type === "string") {
+      options = { ...options, type };
+    }
+  }
+  return new _File(bits, name, options);
+}
+async function getBytes(value) {
+  var _a2;
+  let parts = [];
+  if (typeof value === "string" || ArrayBuffer.isView(value) || // includes Uint8Array, Buffer, etc.
+  value instanceof ArrayBuffer) {
+    parts.push(value);
+  } else if (isBlobLike(value)) {
+    parts.push(await value.arrayBuffer());
+  } else if (isAsyncIterableIterator(value)) {
+    for await (const chunk of value) {
+      parts.push(chunk);
+    }
+  } else {
+    throw new Error(
+      `Unexpected data type: ${typeof value}; constructor: ${(_a2 = value === null || value === void 0 ? void 0 : value.constructor) === null || _a2 === void 0 ? void 0 : _a2.name}; props: ${propsForError(value)}`
+    );
+  }
+  return parts;
+}
+function propsForError(value) {
+  const props = Object.getOwnPropertyNames(value);
+  return `[${props.map((p) => `"${p}"`).join(", ")}]`;
+}
+function getName(value) {
+  var _a2;
+  return getStringFromMaybeBuffer(value.name) || getStringFromMaybeBuffer(value.filename) || // For fs.ReadStream
+  ((_a2 = getStringFromMaybeBuffer(value.path)) === null || _a2 === void 0 ? void 0 : _a2.split(/[\\/]/).pop());
+}
+var getStringFromMaybeBuffer = (x) => {
+  if (typeof x === "string") return x;
+  if (typeof Buffer !== "undefined" && x instanceof Buffer) return String(x);
+  return void 0;
+};
+var isAsyncIterableIterator = (value) => value != null && typeof value === "object" && typeof value[Symbol.asyncIterator] === "function";
+var MultipartBody = class {
+  constructor(body) {
+    this.body = body;
+  }
+  get [Symbol.toStringTag]() {
+    return "MultipartBody";
+  }
+};
+var isMultipartBody = (body) => body && typeof body === "object" && body.body && body[Symbol.toStringTag] === "MultipartBody";
+var multipartFormRequestOptions = async (opts) => {
+  const form = await createForm(opts.body);
+  return getMultipartRequestOptions(form, opts);
+};
+var createForm = async (body) => {
+  const form = new _FormData();
+  await Promise.all(Object.entries(body || {}).map(([key, value]) => addFormValue(form, key, value)));
+  return form;
+};
+var addFormValue = async (form, key, value) => {
+  if (value === void 0) return;
+  if (value == null) {
+    throw new TypeError(
+      `Received null for "${key}"; to pass null in FormData, you must use the string 'null'`
+    );
+  }
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    form.append(key, String(value));
+  } else if (isUploadable(value)) {
+    const file = await toFile(value);
+    form.append(key, file);
+  } else if (Array.isArray(value)) {
+    await Promise.all(value.map((entry) => addFormValue(form, key + "[]", entry)));
+  } else if (typeof value === "object") {
+    await Promise.all(
+      Object.entries(value).map(([name, prop]) => addFormValue(form, `${key}[${name}]`, prop))
+    );
+  } else {
+    throw new TypeError(
+      `Invalid value given to form, expected a string, number, boolean, object, Array, File or Blob but got ${value} instead`
+    );
+  }
+};
+
+// node_modules/openai/core.mjs
+var __classPrivateFieldSet = function(receiver, state, value, kind, f) {
+  if (kind === "m") throw new TypeError("Private method is not writable");
+  if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
+    throw new TypeError("Cannot write private member to an object whose class did not declare it");
+  return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), value;
+};
+var __classPrivateFieldGet = function(receiver, state, kind, f) {
+  if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
+    throw new TypeError("Cannot read private member from an object whose class did not declare it");
+  return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var _AbstractPage_client;
+var MAX_RETRIES = 2;
+async function defaultParseResponse(props) {
+  const { response } = props;
+  if (props.options.stream) {
+    return new Stream(response, props.controller);
+  }
+  const contentType = response.headers.get("content-type");
+  if (contentType === null || contentType === void 0 ? void 0 : contentType.includes("application/json")) {
+    const json = await response.json();
+    debug("response", response.status, response.url, response.headers, json);
+    return json;
+  }
+  const text = await response.text();
+  debug("response", response.status, response.url, response.headers, text);
+  return text;
+}
+var APIPromise = class _APIPromise extends Promise {
+  constructor(responsePromise, parseResponse = defaultParseResponse) {
+    super((resolve) => {
+      resolve(null);
+    });
+    this.responsePromise = responsePromise;
+    this.parseResponse = parseResponse;
+  }
+  _thenUnwrap(transform) {
+    return new _APIPromise(this.responsePromise, async (props) => transform(await this.parseResponse(props)));
+  }
+  /**
+   * Gets the raw `Response` instance instead of parsing the response
+   * data.
+   *
+   * If you want to parse the response body but still get the `Response`
+   * instance, you can use {@link withResponse()}.
+   */
+  asResponse() {
+    return this.responsePromise.then((p) => p.response);
+  }
+  /**
+   * Gets the parsed response data and the raw `Response` instance.
+   *
+   * If you just want to get the raw `Response` instance without parsing it,
+   * you can use {@link asResponse()}.
+   */
+  async withResponse() {
+    const [data, response] = await Promise.all([this.parse(), this.asResponse()]);
+    return { data, response };
+  }
+  parse() {
+    if (!this.parsedPromise) {
+      this.parsedPromise = this.responsePromise.then(this.parseResponse);
+    }
+    return this.parsedPromise;
+  }
+  then(onfulfilled, onrejected) {
+    return this.parse().then(onfulfilled, onrejected);
+  }
+  catch(onrejected) {
+    return this.parse().catch(onrejected);
+  }
+  finally(onfinally) {
+    return this.parse().finally(onfinally);
+  }
+};
+var APIClient = class {
+  constructor({
+    baseURL,
+    maxRetries,
+    timeout = 6e5,
+    // 10 minutes
+    httpAgent,
+    fetch: overridenFetch
+  }) {
+    this.baseURL = baseURL;
+    this.maxRetries = validatePositiveInteger(
+      "maxRetries",
+      maxRetries !== null && maxRetries !== void 0 ? maxRetries : MAX_RETRIES
+    );
+    this.timeout = validatePositiveInteger("timeout", timeout);
+    this.httpAgent = httpAgent;
+    this.fetch = overridenFetch !== null && overridenFetch !== void 0 ? overridenFetch : _fetch;
+  }
+  authHeaders() {
+    return {};
+  }
+  /**
+   * Override this to add your own default headers, for example:
+   *
+   *  {
+   *    ...super.defaultHeaders(),
+   *    Authorization: 'Bearer 123',
+   *  }
+   */
+  defaultHeaders() {
+    return {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "User-Agent": this.getUserAgent(),
+      ...getPlatformHeaders(),
+      ...this.authHeaders()
+    };
+  }
+  /**
+   * Override this to add your own headers validation:
+   */
+  validateHeaders(headers, customHeaders) {
+  }
+  defaultIdempotencyKey() {
+    return `stainless-node-retry-${uuid4()}`;
+  }
+  get(path, opts) {
+    return this.methodRequest("get", path, opts);
+  }
+  post(path, opts) {
+    return this.methodRequest("post", path, opts);
+  }
+  patch(path, opts) {
+    return this.methodRequest("patch", path, opts);
+  }
+  put(path, opts) {
+    return this.methodRequest("put", path, opts);
+  }
+  delete(path, opts) {
+    return this.methodRequest("delete", path, opts);
+  }
+  methodRequest(method, path, opts) {
+    return this.request(Promise.resolve(opts).then((opts2) => ({ method, path, ...opts2 })));
+  }
+  getAPIList(path, Page2, opts) {
+    return this.requestAPIList(Page2, { method: "get", path, ...opts });
+  }
+  calculateContentLength(body) {
+    if (typeof body === "string") {
+      if (typeof Buffer !== "undefined") {
+        return Buffer.byteLength(body, "utf8").toString();
+      }
+      if (typeof TextEncoder !== "undefined") {
+        const encoder = new TextEncoder();
+        const encoded = encoder.encode(body);
+        return encoded.length.toString();
+      }
+    }
+    return null;
+  }
+  buildRequest(options) {
+    var _a2, _b, _c, _d, _e, _f;
+    const { method, path, query, headers = {} } = options;
+    const body = isMultipartBody(options.body) ? options.body.body : options.body ? JSON.stringify(options.body, null, 2) : null;
+    const contentLength = this.calculateContentLength(body);
+    const url = this.buildURL(path, query);
+    if ("timeout" in options) validatePositiveInteger("timeout", options.timeout);
+    const timeout = (_a2 = options.timeout) !== null && _a2 !== void 0 ? _a2 : this.timeout;
+    const httpAgent = (_c = (_b = options.httpAgent) !== null && _b !== void 0 ? _b : this.httpAgent) !== null && _c !== void 0 ? _c : getDefaultAgent(url);
+    const minAgentTimeout = timeout + 1e3;
+    if (typeof ((_d = httpAgent === null || httpAgent === void 0 ? void 0 : httpAgent.options) === null || _d === void 0 ? void 0 : _d.timeout) === "number" && minAgentTimeout > ((_e = httpAgent.options.timeout) !== null && _e !== void 0 ? _e : 0)) {
+      httpAgent.options.timeout = minAgentTimeout;
+    }
+    if (this.idempotencyHeader && method !== "get") {
+      if (!options.idempotencyKey) options.idempotencyKey = this.defaultIdempotencyKey();
+      headers[this.idempotencyHeader] = options.idempotencyKey;
+    }
+    const reqHeaders = {
+      ...contentLength && { "Content-Length": contentLength },
+      ...this.defaultHeaders(),
+      ...headers
+    };
+    if (isMultipartBody(options.body) && !isPolyfilled) {
+      delete reqHeaders["Content-Type"];
+    }
+    Object.keys(reqHeaders).forEach((key) => reqHeaders[key] === null && delete reqHeaders[key]);
+    const req = {
+      method,
+      ...body && { body },
+      headers: reqHeaders,
+      ...httpAgent && { agent: httpAgent },
+      // @ts-ignore node-fetch uses a custom AbortSignal type that is
+      // not compatible with standard web types
+      signal: (_f = options.signal) !== null && _f !== void 0 ? _f : null
+    };
+    this.validateHeaders(reqHeaders, headers);
+    return { req, url, timeout };
+  }
+  /**
+   * Used as a callback for mutating the given `RequestInit` object.
+   *
+   * This is useful for cases where you want to add certain headers based off of
+   * the request properties, e.g. `method` or `url`.
+   */
+  async prepareRequest(request, { url }) {
+  }
+  makeStatusError(status, error, message, headers) {
+    return APIError.generate(status, error, message, headers);
+  }
+  request(options, remainingRetries = null) {
+    return new APIPromise(this.makeRequest(options, remainingRetries));
+  }
+  async makeRequest(optionsInput, retriesRemaining) {
+    var _a2, _b, _c;
+    const options = await optionsInput;
+    if (retriesRemaining == null) {
+      retriesRemaining = (_a2 = options.maxRetries) !== null && _a2 !== void 0 ? _a2 : this.maxRetries;
+    }
+    const { req, url, timeout } = this.buildRequest(options);
+    await this.prepareRequest(req, { url });
+    debug("request", url, options, req.headers);
+    if ((_b = options.signal) === null || _b === void 0 ? void 0 : _b.aborted) {
+      throw new APIUserAbortError();
+    }
+    const controller = new AbortController();
+    const response = await this.fetchWithTimeout(url, req, timeout, controller).catch(castToError);
+    if (response instanceof Error) {
+      if ((_c = options.signal) === null || _c === void 0 ? void 0 : _c.aborted) {
+        throw new APIUserAbortError();
+      }
+      if (retriesRemaining) {
+        return this.retryRequest(options, retriesRemaining);
+      }
+      if (response.name === "AbortError") {
+        throw new APIConnectionTimeoutError();
+      }
+      throw new APIConnectionError({ cause: response });
+    }
+    const responseHeaders = createResponseHeaders(response.headers);
+    if (!response.ok) {
+      if (retriesRemaining && this.shouldRetry(response)) {
+        return this.retryRequest(options, retriesRemaining, responseHeaders);
+      }
+      const errText = await response.text().catch(() => "Unknown");
+      const errJSON = safeJSON(errText);
+      const errMessage = errJSON ? void 0 : errText;
+      debug("response", response.status, url, responseHeaders, errMessage);
+      const err = this.makeStatusError(response.status, errJSON, errMessage, responseHeaders);
+      throw err;
+    }
+    return { response, options, controller };
+  }
+  requestAPIList(Page2, options) {
+    const request = this.makeRequest(options, null);
+    return new PagePromise(this, request, Page2);
+  }
+  buildURL(path, query) {
+    const url = isAbsoluteURL(path) ? new URL(path) : new URL(this.baseURL + (this.baseURL.endsWith("/") && path.startsWith("/") ? path.slice(1) : path));
+    const defaultQuery = this.defaultQuery();
+    if (!isEmptyObj(defaultQuery)) {
+      query = { ...defaultQuery, ...query };
+    }
+    if (query) {
+      url.search = this.stringifyQuery(query);
+    }
+    return url.toString();
+  }
+  stringifyQuery(query) {
+    return Object.entries(query).filter(([_, value]) => typeof value !== "undefined").map(([key, value]) => {
+      if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+        return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+      }
+      if (value === null) {
+        return `${encodeURIComponent(key)}=`;
+      }
+      throw new Error(
+        `Cannot stringify type ${typeof value}; Expected string, number, boolean, or null. If you need to pass nested query parameters, you can manually encode them, e.g. { query: { 'foo[key1]': value1, 'foo[key2]': value2 } }, and please open a GitHub issue requesting better support for your use case.`
+      );
+    }).join("&");
+  }
+  async fetchWithTimeout(url, init, ms, controller) {
+    const { signal, ...options } = init || {};
+    if (signal) signal.addEventListener("abort", () => controller.abort());
+    const timeout = setTimeout(() => controller.abort(), ms);
+    return this.getRequestClient().fetch(url, { signal: controller.signal, ...options }).finally(() => {
+      clearTimeout(timeout);
+    });
+  }
+  getRequestClient() {
+    return { fetch: this.fetch };
+  }
+  shouldRetry(response) {
+    const shouldRetryHeader = response.headers.get("x-should-retry");
+    if (shouldRetryHeader === "true") return true;
+    if (shouldRetryHeader === "false") return false;
+    if (response.status === 409) return true;
+    if (response.status === 429) return true;
+    if (response.status >= 500) return true;
+    return false;
+  }
+  async retryRequest(options, retriesRemaining, responseHeaders) {
+    var _a2;
+    retriesRemaining -= 1;
+    const retryAfter = parseInt(
+      (responseHeaders === null || responseHeaders === void 0 ? void 0 : responseHeaders["retry-after"]) || ""
+    );
+    const maxRetries = (_a2 = options.maxRetries) !== null && _a2 !== void 0 ? _a2 : this.maxRetries;
+    const timeout = this.calculateRetryTimeoutSeconds(retriesRemaining, retryAfter, maxRetries) * 1e3;
+    await sleep(timeout);
+    return this.makeRequest(options, retriesRemaining);
+  }
+  calculateRetryTimeoutSeconds(retriesRemaining, retryAfter, maxRetries) {
+    const initialRetryDelay = 0.5;
+    const maxRetryDelay = 2;
+    if (Number.isInteger(retryAfter) && retryAfter <= 60) {
+      return retryAfter;
+    }
+    const numRetries = maxRetries - retriesRemaining;
+    const sleepSeconds = Math.min(initialRetryDelay * Math.pow(numRetries - 1, 2), maxRetryDelay);
+    const jitter = Math.random() - 0.5;
+    return sleepSeconds + jitter;
+  }
+  getUserAgent() {
+    return `${this.constructor.name}/JS ${VERSION}`;
+  }
+};
+var AbstractPage = class {
+  constructor(client, response, body, options) {
+    _AbstractPage_client.set(this, void 0);
+    __classPrivateFieldSet(this, _AbstractPage_client, client, "f");
+    this.options = options;
+    this.response = response;
+    this.body = body;
+  }
+  hasNextPage() {
+    const items = this.getPaginatedItems();
+    if (!items.length) return false;
+    return this.nextPageInfo() != null;
+  }
+  async getNextPage() {
+    const nextInfo = this.nextPageInfo();
+    if (!nextInfo) {
+      throw new Error(
+        "No next page expected; please check `.hasNextPage()` before calling `.getNextPage()`."
+      );
+    }
+    const nextOptions = { ...this.options };
+    if ("params" in nextInfo) {
+      nextOptions.query = { ...nextOptions.query, ...nextInfo.params };
+    } else if ("url" in nextInfo) {
+      const params = [...Object.entries(nextOptions.query || {}), ...nextInfo.url.searchParams.entries()];
+      for (const [key, value] of params) {
+        nextInfo.url.searchParams.set(key, value);
+      }
+      nextOptions.query = void 0;
+      nextOptions.path = nextInfo.url.toString();
+    }
+    return await __classPrivateFieldGet(this, _AbstractPage_client, "f").requestAPIList(
+      this.constructor,
+      nextOptions
+    );
+  }
+  async *iterPages() {
+    let page = this;
+    yield page;
+    while (page.hasNextPage()) {
+      page = await page.getNextPage();
+      yield page;
+    }
+  }
+  async *[(_AbstractPage_client = /* @__PURE__ */ new WeakMap(), Symbol.asyncIterator)]() {
+    for await (const page of this.iterPages()) {
+      for (const item of page.getPaginatedItems()) {
+        yield item;
+      }
+    }
+  }
+};
+var PagePromise = class extends APIPromise {
+  constructor(client, request, Page2) {
+    super(
+      request,
+      async (props) => new Page2(client, props.response, await defaultParseResponse(props), props.options)
+    );
+  }
+  /**
+   * Allow auto-paginating iteration on an unawaited list call, eg:
+   *
+   *    for await (const item of client.items.list()) {
+   *      console.log(item)
+   *    }
+   */
+  async *[Symbol.asyncIterator]() {
+    const page = await this;
+    for await (const item of page) {
+      yield item;
+    }
+  }
+};
+var createResponseHeaders = (headers) => {
+  return new Proxy(
+    Object.fromEntries(
+      // @ts-ignore
+      headers.entries()
+    ),
+    {
+      get(target, name) {
+        const key = name.toString();
+        return target[key.toLowerCase()] || target[key];
+      }
+    }
+  );
+};
+var getPlatformProperties = () => {
+  if (typeof Deno !== "undefined" && Deno.build != null) {
+    return {
+      "X-Stainless-Lang": "js",
+      "X-Stainless-Package-Version": VERSION,
+      "X-Stainless-OS": normalizePlatform(Deno.build.os),
+      "X-Stainless-Arch": normalizeArch(Deno.build.arch),
+      "X-Stainless-Runtime": "deno",
+      "X-Stainless-Runtime-Version": Deno.version
+    };
+  }
+  if (typeof EdgeRuntime !== "undefined") {
+    return {
+      "X-Stainless-Lang": "js",
+      "X-Stainless-Package-Version": VERSION,
+      "X-Stainless-OS": "Unknown",
+      "X-Stainless-Arch": `other:${EdgeRuntime}`,
+      "X-Stainless-Runtime": "edge",
+      "X-Stainless-Runtime-Version": process.version
+    };
+  }
+  if (Object.prototype.toString.call(typeof process !== "undefined" ? process : 0) === "[object process]") {
+    return {
+      "X-Stainless-Lang": "js",
+      "X-Stainless-Package-Version": VERSION,
+      "X-Stainless-OS": normalizePlatform(process.platform),
+      "X-Stainless-Arch": normalizeArch(process.arch),
+      "X-Stainless-Runtime": "node",
+      "X-Stainless-Runtime-Version": process.version
+    };
+  }
+  const browserInfo = getBrowserInfo();
+  if (browserInfo) {
+    return {
+      "X-Stainless-Lang": "js",
+      "X-Stainless-Package-Version": VERSION,
+      "X-Stainless-OS": "Unknown",
+      "X-Stainless-Arch": "unknown",
+      "X-Stainless-Runtime": `browser:${browserInfo.browser}`,
+      "X-Stainless-Runtime-Version": browserInfo.version
+    };
+  }
+  return {
+    "X-Stainless-Lang": "js",
+    "X-Stainless-Package-Version": VERSION,
+    "X-Stainless-OS": "Unknown",
+    "X-Stainless-Arch": "unknown",
+    "X-Stainless-Runtime": "unknown",
+    "X-Stainless-Runtime-Version": "unknown"
+  };
+};
+function getBrowserInfo() {
+  if (!navigator || typeof navigator === "undefined") {
+    return null;
+  }
+  const browserPatterns = [
+    { key: "edge", pattern: /Edge(?:\W+(\d+)\.(\d+)(?:\.(\d+))?)?/ },
+    { key: "ie", pattern: /MSIE(?:\W+(\d+)\.(\d+)(?:\.(\d+))?)?/ },
+    { key: "ie", pattern: /Trident(?:.*rv\:(\d+)\.(\d+)(?:\.(\d+))?)?/ },
+    { key: "chrome", pattern: /Chrome(?:\W+(\d+)\.(\d+)(?:\.(\d+))?)?/ },
+    { key: "firefox", pattern: /Firefox(?:\W+(\d+)\.(\d+)(?:\.(\d+))?)?/ },
+    { key: "safari", pattern: /(?:Version\W+(\d+)\.(\d+)(?:\.(\d+))?)?(?:\W+Mobile\S*)?\W+Safari/ }
+  ];
+  for (const { key, pattern } of browserPatterns) {
+    const match = pattern.exec(navigator.userAgent);
+    if (match) {
+      const major = match[1] || 0;
+      const minor = match[2] || 0;
+      const patch = match[3] || 0;
+      return { browser: key, version: `${major}.${minor}.${patch}` };
+    }
+  }
+  return null;
+}
+var normalizeArch = (arch) => {
+  if (arch === "x32") return "x32";
+  if (arch === "x86_64" || arch === "x64") return "x64";
+  if (arch === "arm") return "arm";
+  if (arch === "aarch64" || arch === "arm64") return "arm64";
+  if (arch) return `other:${arch}`;
+  return "unknown";
+};
+var normalizePlatform = (platform) => {
+  platform = platform.toLowerCase();
+  if (platform.includes("ios")) return "iOS";
+  if (platform === "android") return "Android";
+  if (platform === "darwin") return "MacOS";
+  if (platform === "win32") return "Windows";
+  if (platform === "freebsd") return "FreeBSD";
+  if (platform === "openbsd") return "OpenBSD";
+  if (platform === "linux") return "Linux";
+  if (platform) return `Other:${platform}`;
+  return "Unknown";
+};
+var _platformHeaders;
+var getPlatformHeaders = () => {
+  return _platformHeaders !== null && _platformHeaders !== void 0 ? _platformHeaders : _platformHeaders = getPlatformProperties();
+};
+var safeJSON = (text) => {
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    return void 0;
+  }
+};
+var startsWithSchemeRegexp = new RegExp("^(?:[a-z]+:)?//", "i");
+var isAbsoluteURL = (url) => {
+  return startsWithSchemeRegexp.test(url);
+};
+var sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+var validatePositiveInteger = (name, n) => {
+  if (typeof n !== "number" || !Number.isInteger(n)) {
+    throw new Error(`${name} must be an integer`);
+  }
+  if (n < 0) {
+    throw new Error(`${name} must be a positive integer`);
+  }
+  return n;
+};
+var castToError = (err) => {
+  if (err instanceof Error) return err;
+  return new Error(err);
+};
+var readEnv = (env) => {
+  var _a2, _b, _c, _d;
+  if (typeof process !== "undefined") {
+    return (_b = (_a2 = process.env) === null || _a2 === void 0 ? void 0 : _a2[env]) !== null && _b !== void 0 ? _b : void 0;
+  }
+  if (typeof Deno !== "undefined") {
+    return (_d = (_c = Deno.env) === null || _c === void 0 ? void 0 : _c.get) === null || _d === void 0 ? void 0 : _d.call(_c, env);
+  }
+  return void 0;
+};
+function isEmptyObj(obj) {
+  if (!obj) return true;
+  for (const _k in obj) return false;
+  return true;
+}
+function debug(action, ...args) {
+  if (typeof process !== "undefined" && process.env["DEBUG"] === "true") {
+    console.log(`OpenAI:DEBUG:${action}`, ...args);
+  }
+}
+var uuid4 = () => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r2 = Math.random() * 16 | 0;
+    const v = c === "x" ? r2 : r2 & 3 | 8;
+    return v.toString(16);
+  });
+};
+var isRunningInBrowser = () => {
+  return (
+    // @ts-ignore
+    typeof window !== "undefined" && // @ts-ignore
+    typeof window.document !== "undefined" && // @ts-ignore
+    typeof navigator !== "undefined"
+  );
+};
+
+// node_modules/openai/pagination.mjs
+var Page = class extends AbstractPage {
+  constructor(client, response, body, options) {
+    super(client, response, body, options);
+    this.object = body.object;
+    this.data = body.data;
+  }
+  getPaginatedItems() {
+    return this.data;
+  }
+  // @deprecated Please use `nextPageInfo()` instead
+  /**
+   * This page represents a response that isn't actually paginated at the API level
+   * so there will never be any next page params.
+   */
+  nextPageParams() {
+    return null;
+  }
+  nextPageInfo() {
+    return null;
+  }
+};
+
+// node_modules/openai/resource.mjs
+var APIResource = class {
+  constructor(client) {
+    this.client = client;
+    this.get = client.get.bind(client);
+    this.post = client.post.bind(client);
+    this.patch = client.patch.bind(client);
+    this.put = client.put.bind(client);
+    this.delete = client.delete.bind(client);
+    this.getAPIList = client.getAPIList.bind(client);
+  }
+};
+
+// node_modules/openai/resources/audio/transcriptions.mjs
+var Transcriptions = class extends APIResource {
+  /**
+   * Transcribes audio into the input language.
+   */
+  create(body, options) {
+    return this.post("/audio/transcriptions", multipartFormRequestOptions({ body, ...options }));
+  }
+};
+/* @__PURE__ */ (function(Transcriptions2) {
+})(Transcriptions || (Transcriptions = {}));
+
+// node_modules/openai/resources/audio/translations.mjs
+var Translations = class extends APIResource {
+  /**
+   * Translates audio into English.
+   */
+  create(body, options) {
+    return this.post("/audio/translations", multipartFormRequestOptions({ body, ...options }));
+  }
+};
+/* @__PURE__ */ (function(Translations2) {
+})(Translations || (Translations = {}));
+
+// node_modules/openai/resources/audio/audio.mjs
+var Audio2 = class extends APIResource {
+  constructor() {
+    super(...arguments);
+    this.transcriptions = new Transcriptions(this.client);
+    this.translations = new Translations(this.client);
+  }
+};
+(function(Audio3) {
+  Audio3.Transcriptions = Transcriptions;
+  Audio3.Translations = Translations;
+})(Audio2 || (Audio2 = {}));
+
+// node_modules/openai/resources/chat/completions.mjs
+var Completions = class extends APIResource {
+  create(body, options) {
+    var _a2;
+    return this.post("/chat/completions", {
+      body,
+      ...options,
+      stream: (_a2 = body.stream) !== null && _a2 !== void 0 ? _a2 : false
+    });
+  }
+};
+/* @__PURE__ */ (function(Completions3) {
+})(Completions || (Completions = {}));
+
+// node_modules/openai/resources/chat/chat.mjs
+var Chat = class extends APIResource {
+  constructor() {
+    super(...arguments);
+    this.completions = new Completions(this.client);
+  }
+};
+(function(Chat2) {
+  Chat2.Completions = Completions;
+})(Chat || (Chat = {}));
+
+// node_modules/openai/resources/completions.mjs
+var Completions2 = class extends APIResource {
+  create(body, options) {
+    var _a2;
+    return this.post("/completions", {
+      body,
+      ...options,
+      stream: (_a2 = body.stream) !== null && _a2 !== void 0 ? _a2 : false
+    });
+  }
+};
+/* @__PURE__ */ (function(Completions3) {
+})(Completions2 || (Completions2 = {}));
+
+// node_modules/openai/resources/embeddings.mjs
+var Embeddings = class extends APIResource {
+  /**
+   * Creates an embedding vector representing the input text.
+   */
+  create(body, options) {
+    return this.post("/embeddings", { body, ...options });
+  }
+};
+/* @__PURE__ */ (function(Embeddings2) {
+})(Embeddings || (Embeddings = {}));
+
+// node_modules/openai/resources/edits.mjs
+var Edits = class extends APIResource {
+  /**
+   * Creates a new edit for the provided input, instruction, and parameters.
+   *
+   * @deprecated The Edits API is deprecated; please use Chat Completions instead.
+   *
+   * https://openai.com/blog/gpt-4-api-general-availability#deprecation-of-the-edits-api
+   */
+  create(body, options) {
+    return this.post("/edits", { body, ...options });
+  }
+};
+/* @__PURE__ */ (function(Edits2) {
+})(Edits || (Edits = {}));
+
+// node_modules/openai/resources/files.mjs
+var Files = class extends APIResource {
+  /**
+   * Upload a file that contains document(s) to be used across various
+   * endpoints/features. Currently, the size of all the files uploaded by one
+   * organization can be up to 1 GB. Please contact us if you need to increase the
+   * storage limit.
+   */
+  create(body, options) {
+    return this.post("/files", multipartFormRequestOptions({ body, ...options }));
+  }
+  /**
+   * Returns information about a specific file.
+   */
+  retrieve(fileId, options) {
+    return this.get(`/files/${fileId}`, options);
+  }
+  /**
+   * Returns a list of files that belong to the user's organization.
+   */
+  list(options) {
+    return this.getAPIList("/files", FileObjectsPage, options);
+  }
+  /**
+   * Delete a file.
+   */
+  del(fileId, options) {
+    return this.delete(`/files/${fileId}`, options);
+  }
+  /**
+   * Returns the contents of the specified file
+   */
+  retrieveContent(fileId, options) {
+    return this.get(`/files/${fileId}/content`, {
+      ...options,
+      headers: {
+        Accept: "application/json",
+        ...options === null || options === void 0 ? void 0 : options.headers
+      }
+    });
+  }
+};
+var FileObjectsPage = class extends Page {
+};
+/* @__PURE__ */ (function(Files2) {
+})(Files || (Files = {}));
+
+// node_modules/openai/resources/fine-tunes.mjs
+var FineTunes = class extends APIResource {
+  /**
+   * Creates a job that fine-tunes a specified model from a given dataset.
+   *
+   * Response includes details of the enqueued job including job status and the name
+   * of the fine-tuned models once complete.
+   *
+   * [Learn more about Fine-tuning](/docs/guides/fine-tuning)
+   */
+  create(body, options) {
+    return this.post("/fine-tunes", { body, ...options });
+  }
+  /**
+   * Gets info about the fine-tune job.
+   *
+   * [Learn more about Fine-tuning](/docs/guides/fine-tuning)
+   */
+  retrieve(fineTuneId, options) {
+    return this.get(`/fine-tunes/${fineTuneId}`, options);
+  }
+  /**
+   * List your organization's fine-tuning jobs
+   */
+  list(options) {
+    return this.getAPIList("/fine-tunes", FineTunesPage, options);
+  }
+  /**
+   * Immediately cancel a fine-tune job.
+   */
+  cancel(fineTuneId, options) {
+    return this.post(`/fine-tunes/${fineTuneId}/cancel`, options);
+  }
+  listEvents(fineTuneId, query, options) {
+    var _a2;
+    return this.get(`/fine-tunes/${fineTuneId}/events`, {
+      query,
+      timeout: 864e5,
+      ...options,
+      stream: (_a2 = query === null || query === void 0 ? void 0 : query.stream) !== null && _a2 !== void 0 ? _a2 : false
+    });
+  }
+};
+var FineTunesPage = class extends Page {
+};
+/* @__PURE__ */ (function(FineTunes2) {
+})(FineTunes || (FineTunes = {}));
+
+// node_modules/openai/resources/images.mjs
+var Images = class extends APIResource {
+  /**
+   * Creates a variation of a given image.
+   */
+  createVariation(body, options) {
+    return this.post("/images/variations", multipartFormRequestOptions({ body, ...options }));
+  }
+  /**
+   * Creates an edited or extended image given an original image and a prompt.
+   */
+  edit(body, options) {
+    return this.post("/images/edits", multipartFormRequestOptions({ body, ...options }));
+  }
+  /**
+   * Creates an image given a prompt.
+   */
+  generate(body, options) {
+    return this.post("/images/generations", { body, ...options });
+  }
+};
+/* @__PURE__ */ (function(Images2) {
+})(Images || (Images = {}));
+
+// node_modules/openai/resources/models.mjs
+var Models = class extends APIResource {
+  /**
+   * Retrieves a model instance, providing basic information about the model such as
+   * the owner and permissioning.
+   */
+  retrieve(model2, options) {
+    return this.get(`/models/${model2}`, options);
+  }
+  /**
+   * Lists the currently available models, and provides basic information about each
+   * one such as the owner and availability.
+   */
+  list(options) {
+    return this.getAPIList("/models", ModelsPage, options);
+  }
+  /**
+   * Delete a fine-tuned model. You must have the Owner role in your organization.
+   */
+  del(model2, options) {
+    return this.delete(`/models/${model2}`, options);
+  }
+};
+var ModelsPage = class extends Page {
+};
+/* @__PURE__ */ (function(Models2) {
+})(Models || (Models = {}));
+
+// node_modules/openai/resources/moderations.mjs
+var Moderations = class extends APIResource {
+  /**
+   * Classifies if text violates OpenAI's Content Policy
+   */
+  create(body, options) {
+    return this.post("/moderations", { body, ...options });
+  }
+};
+/* @__PURE__ */ (function(Moderations2) {
+})(Moderations || (Moderations = {}));
+
+// node_modules/openai/index.mjs
+var _a;
+var OpenAI = class extends APIClient {
+  /**
+   * API Client for interfacing with the OpenAI API.
+   *
+   * @param {string} [opts.apiKey=process.env['OPENAI_API_KEY']] - The API Key to send to the API.
+   * @param {string} [opts.baseURL] - Override the default base URL for the API.
+   * @param {number} [opts.timeout=10 minutes] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
+   * @param {number} [opts.httpAgent] - An HTTP agent used to manage HTTP(s) connections.
+   * @param {Core.Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.
+   * @param {number} [opts.maxRetries=2] - The maximum number of times the client will retry a request.
+   * @param {Core.Headers} opts.defaultHeaders - Default headers to include with every request to the API.
+   * @param {Core.DefaultQuery} opts.defaultQuery - Default query parameters to include with every request to the API.
+   * @param {boolean} [opts.dangerouslyAllowBrowser=false] - By default, client-side use of this library is not allowed, as it risks exposing your secret API credentials to attackers.
+   * @param {string | null} [opts.organization]
+   */
+  constructor(_b) {
+    var _c, _d;
+    var {
+      apiKey = readEnv("OPENAI_API_KEY"),
+      organization = (_c = readEnv("OPENAI_ORG_ID")) !== null && _c !== void 0 ? _c : null,
+      ...opts
+    } = _b === void 0 ? {} : _b;
+    if (apiKey === void 0) {
+      throw new Error(
+        "The OPENAI_API_KEY environment variable is missing or empty; either provide it, or instantiate the OpenAI client with an apiKey option, like new OpenAI({ apiKey: 'my apiKey' })."
+      );
+    }
+    const options = {
+      apiKey,
+      organization,
+      baseURL: `https://api.openai.com/v1`,
+      ...opts
+    };
+    if (!options.dangerouslyAllowBrowser && isRunningInBrowser()) {
+      throw new Error(
+        "It looks like you're running in a browser-like environment.\n\nThis is disabled by default, as it risks exposing your secret API credentials to attackers.\nIf you understand the risks and have appropriate mitigations in place,\nyou can set the `dangerouslyAllowBrowser` option to `true`, e.g.,\n\nnew OpenAI({ apiKey, dangerouslyAllowBrowser: true });\n\nhttps://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety\n"
+      );
+    }
+    super({
+      baseURL: options.baseURL,
+      timeout: (_d = options.timeout) !== null && _d !== void 0 ? _d : 6e5,
+      httpAgent: options.httpAgent,
+      maxRetries: options.maxRetries,
+      fetch: options.fetch
+    });
+    this.completions = new Completions2(this);
+    this.chat = new Chat(this);
+    this.edits = new Edits(this);
+    this.embeddings = new Embeddings(this);
+    this.files = new Files(this);
+    this.images = new Images(this);
+    this.audio = new Audio2(this);
+    this.moderations = new Moderations(this);
+    this.models = new Models(this);
+    this.fineTunes = new FineTunes(this);
+    this._options = options;
+    this.apiKey = apiKey;
+    this.organization = organization;
+  }
+  defaultQuery() {
+    return this._options.defaultQuery;
+  }
+  defaultHeaders() {
+    return {
+      ...super.defaultHeaders(),
+      "OpenAI-Organization": this.organization,
+      ...this._options.defaultHeaders
+    };
+  }
+  authHeaders() {
+    return { Authorization: `Bearer ${this.apiKey}` };
+  }
+};
+_a = OpenAI;
+OpenAI.OpenAI = _a;
+OpenAI.APIError = APIError;
+OpenAI.APIConnectionError = APIConnectionError;
+OpenAI.APIConnectionTimeoutError = APIConnectionTimeoutError;
+OpenAI.APIUserAbortError = APIUserAbortError;
+OpenAI.NotFoundError = NotFoundError;
+OpenAI.ConflictError = ConflictError;
+OpenAI.RateLimitError = RateLimitError;
+OpenAI.BadRequestError = BadRequestError;
+OpenAI.AuthenticationError = AuthenticationError;
+OpenAI.InternalServerError = InternalServerError;
+OpenAI.PermissionDeniedError = PermissionDeniedError;
+OpenAI.UnprocessableEntityError = UnprocessableEntityError;
+var {
+  APIError: APIError2,
+  APIConnectionError: APIConnectionError2,
+  APIConnectionTimeoutError: APIConnectionTimeoutError2,
+  APIUserAbortError: APIUserAbortError2,
+  NotFoundError: NotFoundError2,
+  ConflictError: ConflictError2,
+  RateLimitError: RateLimitError2,
+  BadRequestError: BadRequestError2,
+  AuthenticationError: AuthenticationError2,
+  InternalServerError: InternalServerError2,
+  PermissionDeniedError: PermissionDeniedError2,
+  UnprocessableEntityError: UnprocessableEntityError2
+} = error_exports;
+(function(OpenAI2) {
+  OpenAI2.toFile = toFile;
+  OpenAI2.fileFromPath = fileFromPath;
+  OpenAI2.Page = Page;
+  OpenAI2.Completions = Completions2;
+  OpenAI2.Chat = Chat;
+  OpenAI2.Edits = Edits;
+  OpenAI2.Embeddings = Embeddings;
+  OpenAI2.Files = Files;
+  OpenAI2.FileObjectsPage = FileObjectsPage;
+  OpenAI2.Images = Images;
+  OpenAI2.Audio = Audio2;
+  OpenAI2.Moderations = Moderations;
+  OpenAI2.Models = Models;
+  OpenAI2.ModelsPage = ModelsPage;
+  OpenAI2.FineTunes = FineTunes;
+  OpenAI2.FineTunesPage = FineTunesPage;
+})(OpenAI || (OpenAI = {}));
+var openai_default = OpenAI;
+
+// src/api/githubAIService.ts
+var token = "";
+var endpoint = "https://models.github.ai/inference";
+var model = "openai/gpt-4.1";
+async function generateWordList(prompt) {
+  const client = new openai_default({ baseURL: endpoint, apiKey: token });
+  const response = await client.chat.completions.create({
+    messages: [
+      { role: "system", content: "You are a helpful assistant that generates spelling bee word lists." },
+      { role: "user", content: prompt }
+    ],
+    temperature: 1,
+    top_p: 1,
+    model
+  });
+  return response.choices[0].message.content;
+}
 
 // src/GameScreen.tsx
 var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-var MAX_SKIP_TURNS = 3;
-var MAX_ASK_FRIEND = 1;
 var initialTime = 60;
-var GameScreen = ({ config: config2, onEndGame }) => {
-  const isTeamMode = config2?.gameMode === "team";
-  const handleNextWord = (0, import_react26.useCallback)(() => {
-    setState((prev) => {
-      const nextIndex = (prev.currentParticipantIndex + 1) % prev.participants.length;
-      return {
-        ...prev,
-        currentParticipantIndex: nextIndex,
-        currentWordIndex: prev.currentWordIndex + 1,
-        revealedIndices: /* @__PURE__ */ new Set(),
-        showDefinition: false,
-        feedback: null,
-        usedLetters: /* @__PURE__ */ new Set()
-      };
-    });
-  }, []);
-  const [state, setState] = (0, import_react26.useState)({
-    participants: (config2?.participants).map((p) => ({
-      ...p,
-      attempted: 0,
-      correct: 0,
-      wordsAttempted: 0,
-      wordsCorrect: 0,
-      skipsRemaining: MAX_SKIP_TURNS,
-      askFriendRemaining: MAX_ASK_FRIEND,
-      achievements: [],
-      points: 0,
-      teamId: isTeamMode ? p.teamId : `p-${Date.now()}`,
-      avatar: "bee",
-      score: 0,
-      maxScore: 100
-      // Base max score, will be updated
-    })),
-    currentParticipantIndex: 0,
-    currentWordIndex: 0,
-    showShop: false,
-    coins: 100,
-    revealedIndices: /* @__PURE__ */ new Set(),
+var DEFAULT_WORDS = {
+  easy: [
+    { word: "apple", difficulty: "easy", syllables: ["ap", "ple"], phonemes: ["/\xE6/", "/p/", "/\u0259l/"], definition: "a fruit", origin: "Old English", example: "I ate an apple." },
+    { word: "banana", difficulty: "easy", syllables: ["ba", "na", "na"], phonemes: ["/b/", "/\u0259/", "/n/", "/\u0251\u02D0/", "/n/", "/\u0259/"], definition: "a fruit", origin: "Spanish", example: "I ate a banana." },
+    { word: "cherry", difficulty: "easy", syllables: ["cher", "ry"], phonemes: ["/t\u0283/", "/\u025B/", "/r/", "/i/"], definition: "a fruit", origin: "Old English", example: "I ate a cherry." },
+    { word: "date", difficulty: "easy", syllables: ["date"], phonemes: ["/de\u026At/"], definition: "a fruit", origin: "Old English", example: "I ate a date." },
+    { word: "elderberry", difficulty: "medium", syllables: ["el", "der", "ber", "ry"], phonemes: ["/\u025B/", "/l/", "/d/", "/\u0259/", "/r/", "/b/", "/\u025B/", "/r/", "/i/"], definition: "a fruit", origin: "Old English", example: "I ate an elderberry." },
+    { word: "fig", difficulty: "medium", syllables: ["fig"], phonemes: ["/f\u026A\u0261/"], definition: "a fruit", origin: "Old English", example: "I ate a fig." },
+    { word: "grape", difficulty: "medium", syllables: ["grape"], phonemes: ["/\u0261/", "/r/", "/e\u026A/", "/p/"], definition: "a fruit", origin: "Old English", example: "I ate a grape." },
+    { word: "honeydew", difficulty: "hard", syllables: ["hon", "ey", "dew"], phonemes: ["/h/", "/\u028C/", "/n/", "/i/", "/d/", "/u\u02D0/"], definition: "a fruit", origin: "Old English", example: "I ate a honeydew." }
+  ],
+  medium: [
+    // ...
+  ],
+  hard: [
+    // ...
+  ]
+};
+var GameScreen = ({ config: config2 }) => {
+  const { gameStarted, timeLeft } = useGameState();
+  const { participants, currentParticipantIndex, setParticipants, setCurrentParticipantIndex } = useParticipants(config2.participants);
+  const { setWordQueues } = useWordQueue();
+  const [state, setState] = (0, import_react30.useState)({
+    message: null,
     showDefinition: false,
-    currentHelp: null,
-    feedback: null,
-    usedHint: false,
-    showWord: true,
-    isHelpOpen: false,
-    letters: [],
-    usedLetters: /* @__PURE__ */ new Set(),
-    wordQueues: {
-      easy: [],
-      medium: [],
-      hard: []
-    },
-    extraAttempt: false,
-    attemptedParticipants: /* @__PURE__ */ new Set(),
-    missedWords: [],
-    totalWords: 0,
-    gameProgress: 0,
-    timeLeft: initialTime,
     musicConfirmed: false
   });
+  const [coins, setCoins] = (0, import_react30.useState)(0);
+  const [usedLetters, setUsedLetters] = (0, import_react30.useState)(/* @__PURE__ */ new Set());
+  const [revealedIndices, setRevealedIndices] = (0, import_react30.useState)(/* @__PURE__ */ new Set());
+  const [feedback, setFeedback] = (0, import_react30.useState)(null);
+  const [letters2, setLetters] = (0, import_react30.useState)([]);
+  const [totalWords, setTotalWords] = (0, import_react30.useState)(0);
+  const [currentHelp, setCurrentHelp] = (0, import_react30.useState)(null);
+  const [gameProgress, setGameProgress] = (0, import_react30.useState)(0);
+  const handleNextWord = (0, import_react30.useCallback)(() => {
+    setCurrentParticipantIndex((prev) => (prev + 1) % participants.length);
+    setLetters([]);
+    setRevealedIndices(/* @__PURE__ */ new Set());
+    setState((prev) => ({ ...prev, showDefinition: false }));
+    setFeedback(null);
+    setUsedLetters(/* @__PURE__ */ new Set());
+  }, [participants]);
   const {
-    revealLetter: revealLetterHelp,
     getDefinition: getDefinitionHelp,
     addTime: addTimeHelp,
     skipWord: skipWordHelp,
     isHelpUsed,
     setHelpUsed
   } = useHelpSystem();
-  const timerRef = (0, import_react26.useRef)(null);
-  (0, import_react26.useEffect)(() => {
+  const timerRef = (0, import_react30.useRef)(null);
+  (0, import_react30.useEffect)(() => {
     if (config2?.wordDatabase) {
       const words = Object.values(config2.wordDatabase).flat();
-      setState((prev) => ({ ...prev, totalWords: words.length }));
-      setState((prev) => ({
-        ...prev,
-        participants: prev.participants.map((p) => ({
-          ...p,
-          maxScore: words.length * 10
-          // 10 points per word
-        }))
-      }));
+      setTotalWords(words.length);
+      setParticipants((prev) => prev.map((p) => ({
+        ...p,
+        maxScore: words.length * 10
+        // 10 points per word
+      })));
     }
   }, [config2?.wordDatabase]);
-  (0, import_react26.useEffect)(() => {
-    const gameProgress = state.totalWords > 0 ? Math.min(100, Math.round(state.currentWordIndex / state.totalWords * 100)) : 0;
-    setState((prev) => ({ ...prev, gameProgress }));
-  }, [state.currentWordIndex, state.totalWords]);
-  const handleShowDefinition = (0, import_react26.useCallback)(async (word) => {
+  (0, import_react30.useEffect)(() => {
+    const gameProgress2 = totalWords > 0 ? Math.min(100, Math.round(currentParticipantIndex / totalWords * 100)) : 0;
+    setGameProgress(gameProgress2);
+  }, [currentParticipantIndex, totalWords]);
+  const handleShowDefinition = (0, import_react30.useCallback)(async (word) => {
     setState((prev) => ({ ...prev, showDefinition: true }));
     try {
       const definition = await getDefinitionHelp(word);
       setHelpUsed("hint-definition");
-      setState((prev) => ({
-        ...prev,
-        currentHelp: `Definition: ${definition}`,
-        feedback: { message: "Definition shown", type: "info" }
-      }));
+      setCurrentHelp(`Definition: ${definition}`);
+      setState((prev) => ({ ...prev, message: "Definition shown" }));
     } catch (error) {
-      setState((prev) => ({
-        ...prev,
-        feedback: { message: "Failed to load definition", type: "error" }
-      }));
+      if (error instanceof Error) {
+        setState((prev) => ({ ...prev, message: "Failed to load definition" }));
+      }
     }
   }, [getDefinitionHelp, setHelpUsed]);
-  const handleAddTimeHelp = (0, import_react26.useCallback)(() => {
+  const handleAddTimeHelp = (0, import_react30.useCallback)(() => {
     addTimeHelp(30);
     setHelpUsed("extra-time");
-    setState((prev) => ({
-      ...prev,
-      currentHelp: "Added 30 seconds to the timer!",
-      feedback: { message: "Added 30 seconds to the timer!", type: "success" }
-    }));
+    setCurrentHelp("Added 30 seconds to the timer!");
+    setState((prev) => ({ ...prev, message: "Added 30 seconds to the timer!" }));
   }, [addTimeHelp, setHelpUsed]);
-  const handleSkipWordHelp = (0, import_react26.useCallback)(() => {
+  const handleSkipWordHelp = (0, import_react30.useCallback)(() => {
     skipWordHelp();
     setHelpUsed("skip-word");
-    setState((prev) => ({
-      ...prev,
-      currentHelp: "Skipped to the next word!",
-      feedback: { message: "Skipped to the next word!", type: "info" }
-    }));
+    setCurrentHelp("Skipped to the next word!");
+    setState((prev) => ({ ...prev, message: "Skipped to the next word!" }));
     handleNextWord();
-  }, [skipWordHelp, setHelpUsed, handleNextWord]);
-  const playSound = (0, import_react26.useCallback)((soundFile) => {
-    const audio = new Audio(soundFile);
-    audio.volume = 0.3;
-    audio.play().catch((e) => console.error("Audio playback failed:", e));
-  }, []);
-  const currentWord = config2?.words[state.currentWordIndex];
-  const currentParticipant = state.participants[state.currentParticipantIndex];
-  const handleSpellingSubmit = (0, import_react26.useCallback)(() => {
-    if (!currentWord) return;
-    const submittedWord = state.letters.join("");
-    const isCorrect = submittedWord.toLowerCase() === currentWord.word.toLowerCase();
-    const timeLeftPercentage = state.timeLeft / 60;
-    const timeBonus = Math.floor(timeLeftPercentage * 5);
-    playSound(isCorrect ? correct_default : wrong_default);
-    setState((prev) => {
-      const updatedParticipants = [...prev.participants];
-      const currentParticipant2 = updatedParticipants[prev.currentParticipantIndex];
-      currentParticipant2.attempted += 1;
-      currentParticipant2.wordsAttempted += 1;
-      if (isCorrect) {
-        currentParticipant2.correct += 1;
-        currentParticipant2.wordsCorrect += 1;
-        currentParticipant2.score += 10 + timeBonus;
-        currentParticipant2.points += 5 + timeBonus;
-        return {
-          ...prev,
-          participants: updatedParticipants,
-          coins: prev.coins + 5 + timeBonus,
-          feedback: { message: `Correct! +${timeBonus} time bonus`, type: "success" },
-          attemptedParticipants: /* @__PURE__ */ new Set()
-        };
-      } else {
-        return {
-          ...prev,
-          participants: updatedParticipants,
-          feedback: { message: "Try again!", type: "error" },
-          attemptedParticipants: /* @__PURE__ */ new Set([...prev.attemptedParticipants, prev.currentParticipantIndex])
-        };
-      }
+  }, [skipWordHelp, setHelpUsed]);
+  const currentParticipant = participants[currentParticipantIndex];
+  const handleSpellingSubmit = (0, import_react30.useCallback)(() => {
+    if (!currentParticipant?.currentWord) return;
+    const submittedWord = letters2.join("");
+    const isCorrect = submittedWord.toLowerCase() === currentParticipant.currentWord.word.toLowerCase();
+    setParticipants((prev) => {
+      const updated = [...prev];
+      updated[currentParticipantIndex] = {
+        ...updated[currentParticipantIndex],
+        currentWord: currentParticipant.currentWord,
+        attempted: updated[currentParticipantIndex].attempted || 0,
+        correct: updated[currentParticipantIndex].correct || 0
+      };
+      return updated;
     });
     if (isCorrect) {
       setTimeout(handleNextWord, 1500);
     }
-  }, [currentWord, state.letters, state.timeLeft, handleNextWord, playSound]);
-  const typeLetter = (0, import_react26.useCallback)((letter) => {
-    if (!currentWord || !currentWord.word) return;
-    const currentLetter = currentWord.word[state.letters.length].toLowerCase();
-    playSound(currentLetter === letter.toLowerCase() ? letter_correct_default : letter_wrong_default);
-    setState((prev) => ({
-      ...prev,
-      letters: [...prev.letters, letter],
-      usedLetters: /* @__PURE__ */ new Set([...prev.usedLetters, letter.toLowerCase()])
-    }));
-  }, [currentWord, state.letters.length, state.usedLetters, playSound]);
-  (0, import_react26.useEffect)(() => {
+  }, [currentParticipant, letters2, handleNextWord]);
+  const typeLetter = (0, import_react30.useCallback)((letter) => {
+    if (!currentParticipant?.currentWord) return;
+    setLetters([...letters2, letter]);
+    setUsedLetters(/* @__PURE__ */ new Set([...usedLetters, letter.toLowerCase()]));
+  }, [currentParticipant, letters2, usedLetters]);
+  const handleRevealLetter = (0, import_react30.useCallback)(() => {
+    if (!currentParticipant?.currentWord) return;
+    const word = currentParticipant.currentWord.word;
+    const unrevealedIndices = word.split("").map((_, i) => i).filter((i) => !revealedIndices.has(i));
+    if (unrevealedIndices.length > 0) {
+      const randomIndex = unrevealedIndices[Math.floor(Math.random() * unrevealedIndices.length)];
+      setRevealedIndices(/* @__PURE__ */ new Set([...revealedIndices, randomIndex]));
+      setCoins(coins - 2);
+      setCurrentHelp("Revealed a letter! -2 coins");
+      setState((prev) => ({ ...prev, message: "Revealed a letter!" }));
+    }
+  }, [currentParticipant, revealedIndices, coins]);
+  (0, import_react30.useEffect)(() => {
     const handleAddTime = (e) => {
       const { seconds } = e.detail;
       if (timerRef.current) {
@@ -17095,203 +18501,252 @@ var GameScreen = ({ config: config2, onEndGame }) => {
       window.removeEventListener("skipWord", handleSkipWord);
     };
   }, [handleNextWord]);
-  (0, import_react26.useEffect)(() => {
+  (0, import_react30.useEffect)(() => {
     const timers = [];
-    if (state.currentHelp) {
-      const timer = setTimeout(() => setState((prev) => ({ ...prev, currentHelp: null })), 3e3);
+    if (currentHelp) {
+      const timer = setTimeout(() => setCurrentHelp(null), 3e3);
       timers.push(timer);
     }
-    if (state.feedback) {
-      const timer = setTimeout(() => setState((prev) => ({ ...prev, feedback: null })), 3e3);
+    if (state.message) {
+      const timer = setTimeout(() => setState((prev) => ({ ...prev, message: null })), 3e3);
       timers.push(timer);
     }
     return () => timers.forEach(clearTimeout);
-  }, [state.currentHelp, state.feedback]);
-  const loadWordList = async () => {
-    try {
-      const response = await fetch("./wordlists/example.json");
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+  }, [currentHelp, state.message]);
+  (0, import_react30.useEffect)(() => {
+    const abortController = new AbortController();
+    const loadWordList = async () => {
+      try {
+        const aiWordList = await generateWordList("Generate a list of spelling bee words for grade level");
+        if (!abortController.signal.aborted) {
+          setWordQueues((prev) => ({
+            ...prev,
+            easy: aiWordList.map((w) => ({
+              word: w.word,
+              difficulty: w.difficulty === "easy" ? "easy" : w.difficulty === "medium" ? "medium" : "hard",
+              syllables: w.syllables || [],
+              phonemes: w.phonemes || [],
+              definition: w.definition || "",
+              origin: w.origin || "",
+              example: w.example || ""
+            }))
+          }));
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          if (error.name === "AbortError") {
+            console.log("Fetch aborted");
+          } else if (!abortController.signal.aborted) {
+            console.error("Failed to load AI word list", error);
+            setWordQueues((prev) => ({
+              ...prev,
+              easy: DEFAULT_WORDS.easy
+            }));
+            setState((prev) => ({ ...prev, message: "Failed to load word list. Using default words." }));
+          }
+        }
       }
-      const words = await response.json();
-      setState((prev) => ({ ...prev, wordQueues: { ...prev.wordQueues, easy: words } }));
-    } catch (error) {
-      console.error("Failed to load bundled word list", error);
-      setState((prev) => ({ ...prev, wordQueues: { ...prev.wordQueues, easy: [] } }));
-    }
-  };
-  (0, import_react26.useEffect)(() => {
+    };
     loadWordList();
+    return () => {
+      abortController.abort();
+    };
   }, []);
-  return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "game-screen", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "game-area", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("header", { className: "game-header", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex items-center gap-4 p-4 bg-surface-container-low rounded-xl", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex flex-col items-center", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-            CircularProgress,
-            {
-              value: state.gameProgress,
-              className: "text-primary",
-              size: "lg"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "label-small text-on-surface-variant mt-1", children: "Game Progress" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex flex-col items-center", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-            CircularProgress,
-            {
-              value: Math.round(currentParticipant.score / currentParticipant.maxScore * 100),
-              className: "text-secondary",
-              size: "md"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "label-small text-on-surface-variant mt-1", children: "Score" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex justify-between label-medium text-on-surface", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
-              "Words: ",
-              state.currentWordIndex,
-              "/",
-              state.totalWords
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
-              Math.round(state.currentWordIndex / state.totalWords * 100),
-              "%"
-            ] })
+  const MemoizedProgress = import_react30.default.memo(BeeProgress_default);
+  const MemoizedTimer = import_react30.default.memo(CircularTimer_default);
+  const MemoizedButton = import_react30.default.memo(Button_default);
+  const MemoizedHintPanel = import_react30.default.memo(HintPanel_default);
+  const gameLoop = (0, import_react30.useCallback)(() => {
+    if (!gameStarted) return;
+    requestAnimationFrame(() => {
+      gameLoop();
+    });
+  }, [gameStarted]);
+  const handleLetter = (0, import_react30.useCallback)((letter) => {
+    typeLetter(letter);
+  }, [typeLetter]);
+  const WordLetter = ({ letter, revealed }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: `letter ${revealed ? "revealed" : "hidden"}`, children: revealed ? letter : "_" });
+  return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "game-screen", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("header", { className: "flex items-center justify-between p-4 bg-primary text-on-primary", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(BeeElement_default, { variant: "flying", size: "medium", className: "mr-2" }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h1", { className: "text-2xl font-bold", children: "Spelling Bee" }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(BeeElement_default, { size: "medium", className: "ml-2" })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "game-area bg-surface-container p-6 rounded-lg", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "absolute top-1/4 left-4 opacity-30", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(BeeElement_default, { size: "small" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "absolute bottom-1/4 right-4 opacity-30", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(BeeElement_default, { variant: "flying", size: "small" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "game-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex items-center gap-4 p-4 bg-surface-container-low rounded-xl", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex flex-col items-center", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+              MemoizedProgress,
+              {
+                value: gameProgress,
+                className: "text-primary",
+                size: "lg"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "label-small text-on-surface-variant mt-1", children: "Game Progress" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-            LinearProgress,
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex flex-col items-center", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+              MemoizedProgress,
+              {
+                value: currentParticipant?.score && currentParticipant?.maxScore ? Math.round(currentParticipant.score / currentParticipant.maxScore * 100) : 0,
+                className: "text-secondary",
+                size: "md"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "label-small text-on-surface-variant mt-1", children: "Score" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex justify-between label-medium text-on-surface", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
+                "Words: ",
+                currentParticipantIndex,
+                "/",
+                totalWords
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
+                currentParticipantIndex && totalWords ? Math.round(currentParticipantIndex / totalWords * 100) : 0,
+                "%"
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+              BeeProgress_default,
+              {
+                value: currentParticipantIndex && totalWords ? Math.round(currentParticipantIndex / totalWords * 100) : 0,
+                className: "mt-1"
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "timer-container", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+          MemoizedTimer,
+          {
+            timeLeft,
+            total: initialTime
+          }
+        ) }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "coins-display", children: [
+          state.musicConfirmed && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            "img",
             {
-              value: Math.round(state.currentWordIndex / state.totalWords * 100),
-              className: "mt-1"
+              src: `
+                  ${"/spelling-bee-game/"}/img/${Number(timeLeft) < 15 ? "TimePressureBee" : Number(letters2.length) > 0 ? "TypingBee" : "DefaultBee"}.svg`,
+              alt: "Bee avatar",
+              className: !state.musicConfirmed ? "hidden" : "",
+              onError: (e) => e.currentTarget.src = `${"/spelling-bee-game/"}/img/DefaultBee.svg`
             }
-          )
+          ),
+          coins
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "timer-container", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        CircularTimer_default,
-        {
-          timeLeft: state.timeLeft,
-          total: initialTime
-        }
-      ) }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "coins-display", children: [
-        state.musicConfirmed && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-          "img",
-          {
-            src: `${"/spelling-bee-game/"}/img/${state.timeLeft < 15 ? "TimePressureBee" : state.letters.length > 0 ? "TypingBee" : "DefaultBee"}.svg`,
-            alt: "Bee avatar",
-            className: !state.musicConfirmed ? "hidden" : "",
-            onError: (e) => e.currentTarget.src = `${"/spelling-bee-game/"}/img/DefaultBee.svg`
-          }
-        ),
-        state.coins
-      ] })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "word-area", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "p-6 bg-surface-container-high rounded-xl shadow-sm", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex flex-col items-center gap-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { className: "headline-small text-on-surface", children: "Current Word" }),
-        state.showWord && currentWord && currentWord.word && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "flex gap-2", children: currentWord.word.split("").map((letter, index) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-          "div",
-          {
-            className: classNames(
-              "w-12 h-16 flex items-center justify-center rounded-md",
-              "text-headline-medium font-medium",
-              state.revealedIndices.has(index) ? "bg-primary-container text-on-primary-container" : "bg-surface-container-highest text-on-surface-variant"
-            ),
-            children: state.revealedIndices.has(index) ? letter : "?"
-          },
-          index
-        )) }),
-        currentWord && currentWord.word && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "w-full", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex items-center justify-between mb-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "label-medium text-on-surface-variant", children: [
-            "Difficulty: ",
-            currentWord.difficulty
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "label-medium text-on-surface-variant", children: currentWord.difficulty === "easy" ? "Simple" : currentWord.difficulty === "medium" ? "Medium" : "Challenging" }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "w-24", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-              LinearProgress,
-              {
-                value: currentWord.difficulty === "easy" ? 33 : currentWord.difficulty === "medium" ? 66 : 100,
-                variant: currentWord.difficulty === "easy" ? "success" : currentWord.difficulty === "medium" ? "warning" : "danger"
-              }
-            ) })
-          ] })
-        ] }) })
-      ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        HintPanel_default,
-        {
-          word: currentWord?.word || "",
-          onRevealLetter: () => handleRevealLetter(
-            currentWord?.word || "",
-            state.revealedIndices
-          ),
-          onShowDefinition: () => handleShowDefinition(currentWord?.word || ""),
-          onAddTime: handleAddTimeHelp,
-          onSkipWord: handleSkipWordHelp,
-          isHelpUsed,
-          coins: state.coins
-        }
-      ),
-      state.feedback && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: `feedback ${state.feedback.type}`, children: state.feedback.message }),
-      state.currentHelp && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "help-message", children: state.currentHelp }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "space-y-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "word-area", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "p-6 bg-surface-container-high rounded-xl shadow-sm", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex flex-col items-center gap-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { className: "headline-small text-on-surface", children: "Current Word" }),
+          state.showDefinition && currentParticipant?.currentWord && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "flex gap-2", children: currentParticipant.currentWord.word.split("").map((letter, index) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            WordLetter,
+            {
+              letter,
+              revealed: revealedIndices.has(index)
+            },
+            index
+          )) }),
+          currentParticipant?.currentWord && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "w-full", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex items-center justify-between mb-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "label-medium text-on-surface-variant", children: [
+              "Difficulty: ",
+              currentParticipant.currentWord.difficulty
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex items-center gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "label-medium text-on-surface-variant", children: currentParticipant.currentWord.difficulty === "easy" ? "Simple" : currentParticipant.currentWord.difficulty === "medium" ? "Medium" : "Challenging" }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "w-24", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+                BeeProgress_default,
+                {
+                  value: currentParticipant.currentWord.difficulty === "easy" ? 33 : currentParticipant.currentWord.difficulty === "medium" ? 66 : 100,
+                  variant: currentParticipant.currentWord.difficulty === "easy" ? "success" : currentParticipant.currentWord.difficulty === "medium" ? "warning" : "danger"
+                }
+              ) })
+            ] })
+          ] }) })
+        ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-          OnScreenKeyboard_default,
+          MemoizedHintPanel,
           {
-            onLetter: typeLetter,
-            onBackspace: () => setState((prev) => ({ ...prev, letters: prev.letters.slice(0, -1) })),
-            onSubmit: handleSpellingSubmit,
-            soundEnabled: true,
-            usedLetters: state.usedLetters,
-            currentWord: currentWord?.word,
-            className: "bg-surface-container-high p-4 rounded-xl"
+            word: currentParticipant?.currentWord,
+            onRevealLetter: handleRevealLetter,
+            onShowDefinition: () => handleShowDefinition(currentParticipant?.currentWord?.word || ""),
+            onAddTime: handleAddTimeHelp,
+            onSkipWord: handleSkipWordHelp,
+            isHelpUsed,
+            coins
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex gap-4", children: [
+        feedback && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: `feedback ${feedback.type}`, children: feedback.message }),
+        currentHelp && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "help-message", children: currentHelp }),
+        state.message && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "help-message", children: state.message }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "space-y-4", children: [
           /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-            Button_default,
+            OnScreenKeyboard_default,
             {
-              variant: "filled",
-              onClick: handleSpellingSubmit,
-              disabled: state.letters.length === 0,
-              className: "flex-1",
-              children: "Submit"
+              onLetter: handleLetter,
+              onBackspace: () => setLetters(letters2.slice(0, -1)),
+              onSubmit: handleSpellingSubmit,
+              soundEnabled: false,
+              usedLetters,
+              currentWord: currentParticipant?.currentWord?.word || "",
+              "aria-label": "Spelling keyboard"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-            Button_default,
-            {
-              variant: "outlined",
-              onClick: () => setState((prev) => ({ ...prev, letters: [] })),
-              disabled: state.letters.length === 0,
-              children: "Clear"
-            }
-          )
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "flex gap-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+              MemoizedButton,
+              {
+                variant: "filled",
+                onClick: handleSpellingSubmit,
+                disabled: letters2.length === 0,
+                className: "bg-primary-container text-on-primary-container px-4 py-2 rounded-full flex-1",
+                "aria-label": "Submit spelling",
+                "aria-disabled": letters2.length === 0,
+                children: "Submit"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+              MemoizedButton,
+              {
+                variant: "outlined",
+                onClick: () => setLetters([]),
+                disabled: letters2.length === 0,
+                "aria-label": "Clear letters",
+                "aria-disabled": letters2.length === 0,
+                children: "Clear"
+              }
+            )
+          ] })
         ] })
-      ] })
-    ] }),
-    state.showShop && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-      HelpShop,
-      {
-        onClose: () => setState((prev) => ({ ...prev, showShop: false })),
-        coins: state.coins,
-        onPurchase: (cost) => setState((prev) => ({ ...prev, coins: prev.coins - cost }))
-      }
-    )
-  ] }) });
+      ] }),
+      state.showDefinition && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        HelpShop,
+        {
+          onClose: () => setState((prev) => ({ ...prev, showDefinition: false })),
+          onPurchase: (cost) => setCoins(coins - cost)
+        }
+      )
+    ] })
+  ] });
 };
-var GameScreenWithProvider = (props) => {
-  return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(HelpSystemProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(GameScreen, { ...props }) });
-};
-var GameScreen_default = GameScreenWithProvider;
+var HelpShop = ({ onClose, onPurchase }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "help-shop", children: [
+  /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: () => onPurchase(2), children: [
+    "Reveal Letter (",
+    2,
+    " coins)"
+  ] }),
+  /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { onClick: onClose, children: "Close" })
+] });
+var GameScreen_default = GameScreen;
 
 // src/ResultsScreen.tsx
-var import_react29 = __toESM(require_react());
+var import_react33 = __toESM(require_react());
 
 // audio/applause.mp3
 var applause_default = "./applause-I345E7HE.mp3";
@@ -17308,7 +18763,7 @@ var launchConfetti = async () => {
 };
 
 // src/DailyChallenge.tsx
-var import_react27 = __toESM(require_react());
+var import_react31 = __toESM(require_react());
 var import_jsx_runtime13 = __toESM(require_jsx_runtime());
 var DATE_KEY = "dailyChallengeDates";
 var HIGH_KEY = "dailyChallengeHighest";
@@ -17361,18 +18816,18 @@ var recordDailyCompletion = () => {
 };
 
 // src/components/MorphologyCard.tsx
-var import_react28 = __toESM(require_react());
+var import_react32 = __toESM(require_react());
 var import_jsx_runtime14 = __toESM(require_jsx_runtime());
 var MorphologyCard = ({ word, database }) => {
-  const allWords = (0, import_react28.useMemo)(
+  const allWords = (0, import_react32.useMemo)(
     () => Object.values(database).flat(),
     [database]
   );
-  const prefixExamples = (0, import_react28.useMemo)(() => {
+  const prefixExamples = (0, import_react32.useMemo)(() => {
     if (!word.prefix) return [];
     return allWords.filter((w) => w.word !== word.word && w.prefix === word.prefix).map((w) => w.word).slice(0, 3);
   }, [allWords, word]);
-  const suffixExamples = (0, import_react28.useMemo)(() => {
+  const suffixExamples = (0, import_react32.useMemo)(() => {
     if (!word.suffix) return [];
     return allWords.filter((w) => w.word !== word.word && w.suffix === word.suffix).map((w) => w.word).slice(0, 3);
   }, [allWords, word]);
@@ -17407,27 +18862,27 @@ var MorphologyCard_default = MorphologyCard;
 // src/ResultsScreen.tsx
 var import_jsx_runtime15 = __toESM(require_jsx_runtime());
 var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
-  const applauseAudio = (0, import_react29.useRef)(new Audio(applause_default));
+  const applauseAudio = (0, import_react33.useRef)(new Audio(applause_default));
   const totalScore = results.participants.reduce((sum, p) => sum + p.points, 0);
-  const [bestClassScore, setBestClassScore] = (0, import_react29.useState)(0);
-  const [isBestScore, setIsBestScore] = (0, import_react29.useState)(false);
-  const [streakInfo, setStreakInfo] = (0, import_react29.useState)(null);
-  const [bonus, setBonus] = (0, import_react29.useState)(0);
-  (0, import_react29.useEffect)(() => {
+  const [bestClassScore, setBestClassScore] = (0, import_react33.useState)(0);
+  const [isBestScore, setIsBestScore] = (0, import_react33.useState)(false);
+  const [streakInfo, setStreakInfo] = (0, import_react33.useState)(null);
+  const [bonus, setBonus] = (0, import_react33.useState)(0);
+  (0, import_react33.useEffect)(() => {
     if (config.dailyChallenge) {
       const info = recordDailyCompletion();
       setStreakInfo(info);
       setBonus(info.currentStreak > 1 ? (info.currentStreak - 1) * 10 : 0);
     }
   }, [config.dailyChallenge]);
-  (0, import_react29.useEffect)(() => {
+  (0, import_react33.useEffect)(() => {
     if (localStorage.getItem("teacherMode") === "true") {
       document.body.classList.add("teacher-mode");
     } else {
       document.body.classList.remove("teacher-mode");
     }
   }, []);
-  (0, import_react29.useEffect)(() => {
+  (0, import_react33.useEffect)(() => {
     const stored = JSON.parse(localStorage.getItem("leaderboard") || "[]");
     const newEntries = results.participants.map((p) => ({
       name: p.name,
@@ -17438,7 +18893,7 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
     const updated = [...stored, ...newEntries].sort((a, b) => b.score - a.score).slice(0, 10);
     localStorage.setItem("leaderboard", JSON.stringify(updated));
   }, [results, config.dailyChallenge, bonus]);
-  (0, import_react29.useEffect)(() => {
+  (0, import_react33.useEffect)(() => {
     const history = JSON.parse(
       localStorage.getItem("sessionHistory") || "[]"
     );
@@ -17453,7 +18908,7 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
       setBestClassScore(storedBest);
     }
   }, [totalScore, results.duration]);
-  (0, import_react29.useEffect)(() => {
+  (0, import_react33.useEffect)(() => {
     if (results.winner) {
       if (config.soundEnabled) {
         applauseAudio.current.play();
@@ -17507,7 +18962,7 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
           /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
             "img",
             {
-              src: p === results.winner ? `${config.baseUrl}img/WinningBee.png` : p.points >= bestClassScore * 0.9 ? `${config.baseUrl}img/CelebratoryBee.png` : p.avatar || `${config.baseUrl}img/DefaultBee.png`,
+              src: p === results.winner ? `${config.baseUrl}img/WinningBee.png` : p.points >= bestClassScore * 0.9 ? `${config.baseUrl}img/CelebratoryBee.png` : p.avatar || `${config.baseUrl}img/bee.png`,
               alt: `${p.name} avatar`,
               className: "w-8 h-8 rounded-full"
             }
@@ -17583,7 +19038,7 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
 var ResultsScreen_default = ResultsScreen;
 
 // src/AchievementsScreen.tsx
-var import_react30 = __toESM(require_react());
+var import_react34 = __toESM(require_react());
 
 // constants/achievements.ts
 var achievements = {
@@ -17624,7 +19079,7 @@ var AchievementBadge = ({ unlocked, title, description, icon }) => /* @__PURE__ 
   ] })
 ] }) });
 var AchievementsScreen = ({ onBack }) => {
-  const [unlocked, setUnlocked] = (0, import_react30.useState)(() => {
+  const [unlocked, setUnlocked] = (0, import_react34.useState)(() => {
     if (typeof window === "undefined") return [];
     try {
       return JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
@@ -17632,7 +19087,7 @@ var AchievementsScreen = ({ onBack }) => {
       return [];
     }
   });
-  import_react30.default.useEffect(() => {
+  import_react34.default.useEffect(() => {
     localStorage.setItem("unlockedAchievements", JSON.stringify(unlocked));
   }, [unlocked]);
   return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "min-h-screen bg-surface p-8 text-on-surface font-body", children: [
@@ -17660,11 +19115,11 @@ var AchievementsScreen = ({ onBack }) => {
 var AchievementsScreen_default = AchievementsScreen;
 
 // src/HistoryScreen.tsx
-var import_react31 = __toESM(require_react());
+var import_react35 = __toESM(require_react());
 var import_jsx_runtime17 = __toESM(require_jsx_runtime());
 var HistoryScreen = ({ onBack }) => {
-  const [history, setHistory] = (0, import_react31.useState)([]);
-  (0, import_react31.useEffect)(() => {
+  const [history, setHistory] = (0, import_react35.useState)([]);
+  (0, import_react35.useEffect)(() => {
     const stored = localStorage.getItem("sessionHistory");
     if (stored) {
       try {
@@ -17697,10 +19152,10 @@ var HistoryScreen = ({ onBack }) => {
 var HistoryScreen_default = HistoryScreen;
 
 // ShopScreen.tsx
-var import_react34 = __toESM(require_react());
+var import_react38 = __toESM(require_react());
 
 // src/components/AvatarSelector.tsx
-var import_react32 = __toESM(require_react());
+var import_react36 = __toESM(require_react());
 
 // constants/avatars.ts
 var avatars = {
@@ -17721,11 +19176,11 @@ function AvatarSelector({
   "aria-labelledby": ariaLabelledBy,
   "aria-describedby": ariaDescribedBy
 }) {
-  const avatarListRef = (0, import_react32.useRef)(null);
+  const avatarListRef = (0, import_react36.useRef)(null);
   const displayAvatars = availableAvatars2 && availableAvatars2.length > 0 ? Object.fromEntries(
     availableAvatars2.filter((key) => key in avatars).map((key) => [key, avatars[key]])
   ) : avatars;
-  (0, import_react32.useEffect)(() => {
+  (0, import_react36.useEffect)(() => {
     const handleKeyDown = (e) => {
       if (!avatarListRef.current) return;
       const buttons = Array.from(
@@ -17804,10 +19259,10 @@ function AvatarSelector({
 }
 
 // src/hooks/useFocusTrap.ts
-var import_react33 = __toESM(require_react());
+var import_react37 = __toESM(require_react());
 function useFocusTrap() {
-  const ref = (0, import_react33.useRef)(null);
-  (0, import_react33.useEffect)(() => {
+  const ref = (0, import_react37.useRef)(null);
+  (0, import_react37.useEffect)(() => {
     const element = ref.current;
     if (!element) return;
     const focusableElements = element.querySelectorAll(
@@ -17898,13 +19353,13 @@ var shopItems = [
   }
 ];
 var ShopScreen = ({ onBack }) => {
-  const [cooldowns, setCooldowns] = import_react34.default.useState({});
-  const [coins, setCoins] = import_react34.default.useState(() => {
+  const [cooldowns, setCooldowns] = import_react38.default.useState({});
+  const [coins, setCoins] = import_react38.default.useState(() => {
     if (typeof window === "undefined") return 0;
     const stored = localStorage.getItem("coins");
     return stored ? parseInt(stored, 10) : 0;
   });
-  const [ownedAvatars, setOwnedAvatars] = import_react34.default.useState(() => {
+  const [ownedAvatars, setOwnedAvatars] = import_react38.default.useState(() => {
     if (typeof window === "undefined") return ["bee", "book", "trophy"];
     try {
       return JSON.parse(
@@ -17914,7 +19369,7 @@ var ShopScreen = ({ onBack }) => {
       return ["bee", "book", "trophy"];
     }
   });
-  const [ownedAccessories, setOwnedAccessories] = import_react34.default.useState(() => {
+  const [ownedAccessories, setOwnedAccessories] = import_react38.default.useState(() => {
     if (typeof window === "undefined") return [];
     try {
       return JSON.parse(localStorage.getItem("ownedAccessories") || "[]");
@@ -17922,14 +19377,14 @@ var ShopScreen = ({ onBack }) => {
       return [];
     }
   });
-  const [currentAvatar, setCurrentAvatar] = import_react34.default.useState(() => {
+  const [currentAvatar, setCurrentAvatar] = import_react38.default.useState(() => {
     if (typeof window === "undefined") return "";
     return localStorage.getItem("equippedAvatar") || "";
   });
-  import_react34.default.useEffect(() => {
+  import_react38.default.useEffect(() => {
     localStorage.setItem("equippedAvatar", currentAvatar);
   }, [currentAvatar]);
-  import_react34.default.useEffect(() => {
+  import_react38.default.useEffect(() => {
     const timer = setInterval(() => {
       setCooldowns((prevCooldowns) => {
         const updated = { ...prevCooldowns };
@@ -17996,10 +19451,10 @@ var ShopScreen = ({ onBack }) => {
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
-  const mainHeadingRef = (0, import_react34.useRef)(null);
-  const backButtonRef = (0, import_react34.useRef)(null);
+  const mainHeadingRef = (0, import_react38.useRef)(null);
+  const backButtonRef = (0, import_react38.useRef)(null);
   const shopRef = useFocusTrap();
-  (0, import_react34.useEffect)(() => {
+  (0, import_react38.useEffect)(() => {
     if (mainHeadingRef.current) {
       mainHeadingRef.current.focus();
     }
@@ -18131,126 +19586,144 @@ var ShopScreen = ({ onBack }) => {
 var ShopScreen_default = ShopScreen;
 
 // src/utils/useMusic.ts
-var import_react35 = __toESM(require_react());
-var useMusic = (style, variant, volume, enabled, screen) => {
-  const menuRef = (0, import_react35.useRef)({
-    instrumental: null,
-    vocal: null
-  });
-  const gameRef = (0, import_react35.useRef)({
-    instrumental: null,
-    vocal: null
-  });
-  const promptRef = (0, import_react35.useRef)(false);
-  const stop = (0, import_react35.useCallback)(() => {
-    ["instrumental", "vocal"].forEach((v) => {
-      const menuAudio = menuRef.current[v];
-      if (menuAudio) {
-        menuAudio.pause();
-        menuAudio.currentTime = 0;
-      }
-      const gameAudio = gameRef.current[v];
-      if (gameAudio) {
-        gameAudio.pause();
-        gameAudio.currentTime = 0;
-      }
-    });
-  }, []);
-  const buildSrc = (0, import_react35.useCallback)((trackStyle, trackVariant) => {
-    const basePath = "audio/It's a Spelling Bee!";
-    const variantSuffix = trackVariant === "instrumental" ? " Instrumental" : "";
-    const style2 = trackStyle === "default" ? "Country" : trackStyle;
-    return `${basePath} (${style2}${variantSuffix}).mp3`;
-  }, []);
-  const loadTracks = (0, import_react35.useCallback)(
-    (trackStyle) => {
-      ["instrumental", "vocal"].forEach((trackVariant) => {
-        const menuSrc = buildSrc(trackStyle, trackVariant);
-        const gameSrc = buildSrc(trackStyle, trackVariant);
-        const menuAudio = new Audio(menuSrc);
-        menuAudio.loop = true;
-        menuAudio.volume = volume;
-        menuAudio.onerror = () => {
-          console.warn(`Menu music file not found: ${menuSrc}`);
-          menuRef.current[trackVariant] = null;
-        };
-        menuAudio.load();
-        const gameAudio = new Audio(gameSrc);
-        gameAudio.loop = true;
-        gameAudio.volume = volume;
-        gameAudio.onerror = () => {
-          console.warn(`Gameplay music file not found: ${gameSrc}`);
-          gameRef.current[trackVariant] = null;
-        };
-        gameAudio.load();
-        menuRef.current[trackVariant] = menuAudio;
-        gameRef.current[trackVariant] = gameAudio;
-      });
-    },
-    [buildSrc, volume]
-  );
-  (0, import_react35.useEffect)(() => {
-    stop();
-    loadTracks(style);
-  }, [style, loadTracks, stop]);
-  (0, import_react35.useEffect)(() => {
-    ["instrumental", "vocal"].forEach((v) => {
-      if (menuRef.current[v]) menuRef.current[v].volume = volume;
-      if (gameRef.current[v]) gameRef.current[v].volume = volume;
-    });
-  }, [volume]);
-  (0, import_react35.useEffect)(() => {
-    if (!enabled) {
-      stop();
-      return;
+var import_react39 = __toESM(require_react());
+var validateVolume = (volume) => {
+  return Number.isFinite(volume) ? Math.min(1, Math.max(0, volume)) : 0.5;
+};
+var checkAudioFile = async (url) => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const refs = screen === "menu" ? menuRef.current : gameRef.current;
-    const track = refs[variant];
+    const contentType = response.headers.get("Content-Type");
+    if (!contentType || !contentType.startsWith("audio/")) {
+      throw new Error("Invalid audio content type");
+    }
+    return true;
+  } catch (error) {
+    console.error(`Audio file validation failed for ${url}:`, error);
+    return false;
+  }
+};
+var useMusic = (initialVolume = 0.5) => {
+  const [isPlaying, setIsPlaying] = (0, import_react39.useState)(false);
+  const [currentVolume, setCurrentVolume] = (0, import_react39.useState)(validateVolume(initialVolume));
+  const audioContextRef = (0, import_react39.useRef)(null);
+  const audioBufferRef = (0, import_react39.useRef)(null);
+  const sourceNodeRef = (0, import_react39.useRef)(null);
+  const gainNodeRef = (0, import_react39.useRef)(null);
+  (0, import_react39.useEffect)(() => {
+    const AudioContext2 = window.AudioContext || window.webkitAudioContext;
+    audioContextRef.current = new AudioContext2();
+    return () => {
+      if (sourceNodeRef.current) {
+        sourceNodeRef.current.stop();
+        sourceNodeRef.current.disconnect();
+      }
+      if (gainNodeRef.current) {
+        gainNodeRef.current.disconnect();
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+    };
+  }, []);
+  const loadAudio = async (url) => {
+    if (!audioContextRef.current) return null;
+    try {
+      const isValid = await checkAudioFile(url);
+      if (!isValid) {
+        throw new Error(`Invalid audio file: ${url}`);
+      }
+      const response = await fetch(url);
+      const arrayBuffer = await response.arrayBuffer();
+      return await audioContextRef.current.decodeAudioData(arrayBuffer);
+    } catch (error) {
+      console.error("Error loading audio:", error);
+      return null;
+    }
+  };
+  const play = async (url) => {
+    if (!audioContextRef.current) return;
     stop();
-    track?.play().catch(() => {
-      if (promptRef.current) return;
-      promptRef.current = true;
-      const enable = () => {
-        track.play().catch(() => {
-        });
-      };
-      document.addEventListener("click", enable, { once: true });
-      alert("Click anywhere to enable audio");
-    });
-  }, [screen, variant, enabled, stop]);
-  (0, import_react35.useEffect)(() => () => stop(), [stop]);
+    const audioBuffer = await loadAudio(url);
+    if (!audioBuffer) return;
+    audioBufferRef.current = audioBuffer;
+    sourceNodeRef.current = audioContextRef.current.createBufferSource();
+    sourceNodeRef.current.buffer = audioBufferRef.current;
+    gainNodeRef.current = audioContextRef.current.createGain();
+    gainNodeRef.current.gain.value = currentVolume;
+    sourceNodeRef.current.connect(gainNodeRef.current);
+    gainNodeRef.current.connect(audioContextRef.current.destination);
+    sourceNodeRef.current.start(0);
+    setIsPlaying(true);
+    sourceNodeRef.current.onended = () => {
+      setIsPlaying(false);
+    };
+  };
+  const stop = () => {
+    if (sourceNodeRef.current) {
+      sourceNodeRef.current.stop();
+      sourceNodeRef.current.disconnect();
+      sourceNodeRef.current = null;
+    }
+    setIsPlaying(false);
+  };
+  const setVolume = (newVolume) => {
+    const validatedVolume = validateVolume(newVolume);
+    setCurrentVolume(validatedVolume);
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = validatedVolume;
+    }
+  };
+  return {
+    isPlaying,
+    play,
+    stop,
+    volume: currentVolume,
+    setVolume
+  };
 };
 var useMusic_default = useMusic;
 
 // src/AudioContext.tsx
-var import_react36 = __toESM(require_react());
+var import_react40 = __toESM(require_react());
 var import_jsx_runtime20 = __toESM(require_jsx_runtime());
-var AudioContext = (0, import_react36.createContext)({
-  muted: false,
-  toggleMute: () => {
-  }
-});
+var AudioContext = (0, import_react40.createContext)(null);
 var AudioProvider = ({ children }) => {
-  const [muted, setMuted] = (0, import_react36.useState)(false);
-  const toggleMute = () => {
-    setMuted(!muted);
+  const { loadAudio, initAudio, getAudioContext } = useMusic_default();
+  const playSound = async (url) => {
+    initAudio();
+    const buffer = await loadAudio(url);
+    const ctx = getAudioContext();
+    if (buffer && ctx) {
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(ctx.destination);
+      source.start(0);
+    }
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(AudioContext.Provider, { value: { muted, toggleMute }, children });
+  const preloadSound = async (url) => {
+    initAudio();
+    await loadAudio(url);
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(AudioContext.Provider, { value: { playSound, preloadSound }, children });
 };
 
 // src/spelling-bee-game.tsx
 var import_jsx_runtime21 = __toESM(require_jsx_runtime());
 var SpellingBeeGame = () => {
-  const [gameState, setGameState] = (0, import_react37.useState)("setup");
-  const [gameConfig, setGameConfig] = (0, import_react37.useState)(null);
-  const [gameResults, setGameResults] = (0, import_react37.useState)(null);
-  const [customWords, setCustomWords] = (0, import_react37.useState)({ easy: [], medium: [], tricky: [] });
-  const [wordDatabase, setWordDatabase] = (0, import_react37.useState)({ easy: [], medium: [], tricky: [] });
-  const [musicStyle, setMusicStyle] = (0, import_react37.useState)("Funk");
-  const [musicVolume, setMusicVolume] = (0, import_react37.useState)(0.5);
-  const [soundEnabled, setSoundEnabled] = (0, import_react37.useState)(true);
-  const [isMusicPlaying, setIsMusicPlaying] = (0, import_react37.useState)(true);
-  (0, import_react37.useEffect)(() => {
+  const [gameState, setGameState] = (0, import_react41.useState)("setup");
+  const [gameConfig, setGameConfig] = (0, import_react41.useState)(null);
+  const [gameResults, setGameResults] = (0, import_react41.useState)(null);
+  const [customWords, setCustomWords] = (0, import_react41.useState)({ easy: [], medium: [], tricky: [] });
+  const [wordDatabase, setWordDatabase] = (0, import_react41.useState)({ easy: [], medium: [], tricky: [] });
+  const [musicStyle, setMusicStyle] = (0, import_react41.useState)("Funk");
+  const [musicVolume, setMusicVolume] = (0, import_react41.useState)(0.5);
+  const [soundEnabled, setSoundEnabled] = (0, import_react41.useState)(true);
+  const [isMusicPlaying, setIsMusicPlaying] = (0, import_react41.useState)(true);
+  (0, import_react41.useEffect)(() => {
     fetch("words.json").then((res) => res.json()).then((data) => setWordDatabase(data)).catch((err) => console.error("Failed to load word list", err));
   }, []);
   const handleAddCustomWords = (newWords) => {
@@ -18304,7 +19777,7 @@ var SpellingBeeGame = () => {
   const handleQuitToSetup = () => {
     setGameState("setup");
   };
-  (0, import_react37.useEffect)(() => {
+  (0, import_react41.useEffect)(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
       document.body.classList.remove("theme-light", "theme-dark", "theme-honeycomb");
@@ -18373,7 +19846,7 @@ var container = document.getElementById("root");
 if (container) {
   const root = import_client.default.createRoot(container);
   root.render(
-    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(import_react37.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(AudioProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SpellingBeeGame, {}) }) })
+    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(import_react41.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(AudioProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(HelpSystemProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(SpellingBeeGame, {}) }) }) })
   );
 }
 var spelling_bee_game_default = SpellingBeeGame;
@@ -18425,11 +19898,4 @@ react/cjs/react-jsx-runtime.production.min.js:
    * This source code is licensed under the MIT license found in the
    * LICENSE file in the root directory of this source tree.
    *)
-
-classnames/index.js:
-  (*!
-  	Copyright (c) 2018 Jed Watson.
-  	Licensed under the MIT License (MIT), see
-  	http://jedwatson.github.io/classnames
-  *)
 */
