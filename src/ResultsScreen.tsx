@@ -102,10 +102,17 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
     return 'No one wins this round!';
   };
 
+<<<<<<< HEAD:src/ResultsScreen.tsx
     return (
       <div className="min-h-screen bg-surface p-8 text-on-surface text-center flex flex-col items-center justify-center font-body">
         <h1 className="text-4xl font-bold mb-4 text-primary uppercase font-sans">🏆 Game Over! 🏆</h1>
         <h2 className="text-2xl mb-8 uppercase font-sans">{getWinnerMessage()}</h2>
+=======
+  return (
+    <div className="screen-container bg-gradient-to-br from-gray-700 to-gray-900 text-white text-center flex flex-col items-center justify-center">
+      <h1 className="screen-title text-yellow-300 mb-4">🏆 Game Over! 🏆</h1>
+      <h2 className="screen-subtitle mb-8">{getWinnerMessage()}</h2>
+>>>>>>> origin/codex/consolidate-theme-variables-in-style.css:ResultsScreen.tsx
 
       {results?.duration && (<div className="text-xl mb-6">Game Duration: {results.duration} seconds</div>)}
       
@@ -162,6 +169,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
         </div>
       )}
 
+<<<<<<< HEAD:src/ResultsScreen.tsx
       <div className="flex gap-4 mt-8 flex-wrap justify-center">
         <button 
           onClick={handleExport} 
@@ -180,6 +188,17 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
           className="bg-primary text-on-primary px-8 py-3 rounded-full text-lg font-bold hover:shadow-elevation-2"
         >
           🔄 Play Again
+=======
+      <div className="flex gap-6 mt-12 flex-wrap justify-center">
+        <button onClick={handleExport} className="bg-green-500 hover:bg-green-600 btn-responsive rounded-xl font-bold text-xl md:text-2xl">
+            📤 Export Results
+        </button>
+        <button onClick={onViewLeaderboard} className="bg-purple-500 hover:bg-purple-600 btn-responsive rounded-xl font-bold text-xl md:text-2xl">
+            📈 View Leaderboard
+        </button>
+        <button onClick={onRestart} className="bg-blue-500 hover:bg-blue-600 btn-responsive rounded-xl font-bold text-xl md:text-2xl">
+            🔄 Play Again
+>>>>>>> origin/codex/consolidate-theme-variables-in-style.css:ResultsScreen.tsx
         </button>
       </div>
     </div>
