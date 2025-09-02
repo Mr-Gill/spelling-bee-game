@@ -293,6 +293,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     </span>
   );
 
+  const { playGameMusic } = useContext(AudioContext);
+  
+  useEffect(() => {
+    playGameMusic('Funk'); // Default to Funk genre
+  }, []);
+
   return (
     <div className="game-screen">
       <header className="flex items-center justify-between p-4 bg-primary text-on-primary">

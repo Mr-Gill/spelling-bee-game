@@ -1,0 +1,22 @@
+[
+  {
+    "word": "apple",
+    "syllables": ["ap", "ple"],
+    "definition": "a fruit",
+    "origin": "Old English",
+    "example": "She ate an apple.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "AP-uhl"
+  },
+  {
+    "word": "banana",
+    "syllables": ["ba", "na", "na"],
+    "definition": "another fruit",
+    "origin": "Wolof",
+    "example": "Bananas are yellow.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "buh-NA-nuh"
+  }
+]

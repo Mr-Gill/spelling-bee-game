@@ -83,6 +83,7 @@
     "openai": "^4.0.0",
     "postcss": "^8.5.6",
     "prettier": "^3.0.3",
+    "react-scripts": "^5.0.1",
     "serve": "^14.2.1",
     "tailwindcss": "^3.4.0",
     "ts-node": "^10.9.2",
@@ -100,13 +101,18 @@
       "\\.(mp3)$": "<rootDir>/src/__mocks__/audioFiles.ts"
     }
   },
-  "browserslist": [
-    "defaults",
-    "not IE 11",
-    "not IE_Mob 11",
-    "maintained node versions",
-    "not dead"
-  ],
+  "browserslist": {
+    "production": [
+      "last 2 chrome versions",
+      "last 2 firefox versions",
+      "last 2 safari versions"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "engines": {
     "node": ">=14"
   }

@@ -23,9 +23,14 @@ const checkAudioFile = async (url: string) => {
   }
 };
 
+type MusicGenre = 'Funk' | 'Country' | 'Rock' | 'Classical';
+
+const DEFAULT_GENRE: MusicGenre = 'Funk';
+
 const useMusic = (initialVolume: number = 0.5) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentVolume, setCurrentVolume] = useState<number>(validateVolume(initialVolume));
+  const [currentTrack, setCurrentTrack] = useState<string>(`${process.env.PUBLIC_URL}/audio/It's a Spelling Bee! (${DEFAULT_GENRE}).mp3`);
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioBufferRef = useRef<AudioBuffer | null>(null);
   const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
@@ -120,12 +125,24 @@ const useMusic = (initialVolume: number = 0.5) => {
     }
   };
 
+  const playTitleMusic = (genre: MusicGenre = DEFAULT_GENRE) => {
+    setCurrentTrack(`${process.env.PUBLIC_URL}/audio/It's a Spelling Bee! (${genre}).mp3`);
+    play(`${process.env.PUBLIC_URL}/audio/It's a Spelling Bee! (${genre}).mp3`);
+  };
+
+  const playGameMusic = (genre: MusicGenre = DEFAULT_GENRE) => {
+    setCurrentTrack(`${process.env.PUBLIC_URL}/audio/It's a Spelling Bee! (${genre} Instrumental).mp3`);
+    play(`${process.env.PUBLIC_URL}/audio/It's a Spelling Bee! (${genre} Instrumental).mp3`);
+  };
+
   return {
     isPlaying,
-    play,
-    stop,
+    currentTrack,
+    playTitleMusic,
+    playGameMusic,
     volume: currentVolume,
     setVolume,
+    stop,
   };
 };
 

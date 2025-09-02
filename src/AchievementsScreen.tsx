@@ -25,7 +25,7 @@ const AchievementBadge = ({ unlocked, title, description, icon }: AchievementPro
 );
 
 const AchievementsScreen: React.FC<AchievementsScreenProps> = ({ onBack }) => {
-  const [unlocked, setUnlocked] = useState<string[]>(() => {
+  const [unlocked] = useState<string[]>(() => {
     if (typeof window === 'undefined') return [];
     try {
       return JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
