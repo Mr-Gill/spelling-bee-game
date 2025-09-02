@@ -29,7 +29,7 @@ interface SetupScreenProps {
 }
 
 // Using direct paths to assets in the public directory
-const beeImg = `${process.env.PUBLIC_URL}/img/HelpBee.png`;
+const beeImg = `${process.env.PUBLIC_URL}/img/bee.png`;
 const bookImg = `${process.env.PUBLIC_URL}/img/avatars/book.svg`;
 const trophyImg = `${process.env.PUBLIC_URL}/img/avatars/trophy.svg`;
 
@@ -537,10 +537,10 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
           <div className="flex flex-col items-center mb-4">
             <div className="mb-2">
               <img 
-                src={`${process.env.PUBLIC_URL}/img/HelpBee.png`} 
+                src={`${process.env.PUBLIC_URL}/img/bee.png`} 
                 alt="Bee mascot" 
                 className="w-16 h-16 md:w-20 md:h-20 mx-auto"
-                onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL}/img/DefaultBee.png`}
+                onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL}/img/bee.png`}
               />
             </div>
             <h1 className="text-3xl md:text-5xl font-bold text-primary font-sans tracking-wide">
@@ -654,10 +654,10 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                     {participants.map((student) => (
                       <div key={student.id} className="flex items-center gap-2 mb-2">
                         <img 
-                          src={student.avatar || `${process.env.PUBLIC_URL}/img/DefaultBee.png`} 
+                          src={student.avatar || `${process.env.PUBLIC_URL}/img/bee.png`} 
                           alt="avatar" 
                           className="w-8 h-8 rounded-full" 
-                          onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL}/img/DefaultBee.png`}
+                          onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL}/img/bee.png`}
                         />
                         <input 
                           type="text" 
