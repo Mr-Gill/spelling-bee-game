@@ -42,7 +42,7 @@ const DEFAULT_WORDS = {
 import { useGameState } from './hooks/useGameState';
 import { useParticipants } from './hooks/useParticipants';
 import { useWordQueue } from './hooks/useWordQueue';
-import { generateWordList } from '../api/githubAIService';
+import { generateWordList } from './api/githubAIService';
 
 // Main GameScreen component
 export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
