@@ -4,7 +4,7 @@ export interface Participant extends BaseParticipant {
   id: string;
   name: string;
   score: number;
-  currentWord: WordLetter[];
+  currentWord: Word | null;
   maxScore?: number;
   attempted: number;
   correct: number;

@@ -3,9 +3,8 @@ import { useHelpSystem } from './contexts/HelpSystemContext';
 import { 
   Word, 
   GameScreenProps, 
-  GameScreenState,
-  Participant
-} from './types/gameTypes';
+  GameScreenState
+} from '../types';
 
 // Components
 import CircularTimer from './components/CircularTimer';
@@ -20,30 +19,36 @@ import BeeElement from './components/BeeElement';
 const initialTime = 60;
 
 // Default words
-const DEFAULT_WORDS = [
-  { word: 'apple', difficulty: 'easy' },
-  { word: 'banana', difficulty: 'easy' },
-  { word: 'cherry', difficulty: 'easy' },
-  { word: 'date', difficulty: 'easy' },
-  { word: 'elderberry', difficulty: 'medium' },
-  { word: 'fig', difficulty: 'medium' },
-  { word: 'grape', difficulty: 'medium' },
-  { word: 'honeydew', difficulty: 'hard' },
-];
+const DEFAULT_WORDS = {
+  easy: [
+    { word: 'apple', difficulty: 'easy', syllables: ['ap', 'ple'], phonemes: ['/æ/', '/p/', '/əl/'], definition: 'a fruit', origin: 'Old English', example: 'I ate an apple.' },
+    { word: 'banana', difficulty: 'easy', syllables: ['ba', 'na', 'na'], phonemes: ['/b/', '/ə/', '/n/', '/ɑː/', '/n/', '/ə/'], definition: 'a fruit', origin: 'Spanish', example: 'I ate a banana.' },
+    { word: 'cherry', difficulty: 'easy', syllables: ['cher', 'ry'], phonemes: ['/tʃ/', '/ɛ/', '/r/', '/i/'], definition: 'a fruit', origin: 'Old English', example: 'I ate a cherry.' },
+    { word: 'date', difficulty: 'easy', syllables: ['date'], phonemes: ['/deɪt/'], definition: 'a fruit', origin: 'Old English', example: 'I ate a date.' },
+    { word: 'elderberry', difficulty: 'medium', syllables: ['el', 'der', 'ber', 'ry'], phonemes: ['/ɛ/', '/l/', '/d/', '/ə/', '/r/', '/b/', '/ɛ/', '/r/', '/i/'], definition: 'a fruit', origin: 'Old English', example: 'I ate an elderberry.' },
+    { word: 'fig', difficulty: 'medium', syllables: ['fig'], phonemes: ['/fɪɡ/'], definition: 'a fruit', origin: 'Old English', example: 'I ate a fig.' },
+    { word: 'grape', difficulty: 'medium', syllables: ['grape'], phonemes: ['/ɡ/', '/r/', '/eɪ/', '/p/'], definition: 'a fruit', origin: 'Old English', example: 'I ate a grape.' },
+    { word: 'honeydew', difficulty: 'hard', syllables: ['hon', 'ey', 'dew'], phonemes: ['/h/', '/ʌ/', '/n/', '/i/', '/d/', '/uː/'], definition: 'a fruit', origin: 'Old English', example: 'I ate a honeydew.' },
+  ],
+  medium: [
+    // ...
+  ],
+  hard: [
+    // ...
+  ]
+};
 
 // Import custom hooks
 import { useGameState } from './hooks/useGameState';
 import { useParticipants } from './hooks/useParticipants';
 import { useWordQueue } from './hooks/useWordQueue';
-import { useSound } from './hooks/useSound';
 
 // Main GameScreen component
 export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   // Use custom hooks for state management
   const { gameStarted, timeLeft } = useGameState();
-  const { participants, currentParticipantIndex, setParticipants, setCurrentParticipantIndex } = useParticipants(config.participants as Participant[]);
+  const { participants, currentParticipantIndex, setParticipants, setCurrentParticipantIndex } = useParticipants(config.participants);
   const { setWordQueues } = useWordQueue();
-  const { playSound } = useSound();
   
   // Remaining state
   const [state, setState] = useState<GameScreenState>({
@@ -55,22 +60,10 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   const [usedLetters, setUsedLetters] = useState(new Set<string>());
   const [revealedIndices, setRevealedIndices] = useState(new Set<number>());
   const [feedback, setFeedback] = useState<{message: string, type: string} | null>(null);
-  const [letters, setLetters] = useState([]);
+  const [letters, setLetters] = useState<string[]>([]);
   const [totalWords, setTotalWords] = useState(0);
   const [currentHelp, setCurrentHelp] = useState<string | null>(null);
   const [gameProgress, setGameProgress] = useState(0);
-
-  interface GameState {
-    easy: Word[];
-    medium: Word[];
-    hard: Word[];
-  }
-
-  const [wordsByDifficulty, setWordsByDifficulty] = useState<GameState>({
-    easy: [],
-    medium: [],
-    hard: []
-  });
 
   const handleNextWord = useCallback(() => {
     setCurrentParticipantIndex(prev => (prev + 1) % participants.length);
@@ -113,22 +106,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     setGameProgress(gameProgress);
   }, [currentParticipantIndex, totalWords]);
 
-  const playCorrectSound = async () => {
-    playSound('correctSoundFile');
-  };
-
-  const playWrongSound = async () => {
-    playSound('wrongSoundFile');
-  };
-
-  const playLetterCorrectSound = async () => {
-    playSound('letterCorrectSoundFile');
-  };
-
-  const playLetterWrongSound = async () => {
-    playSound('letterWrongSoundFile');
-  };
-
   const handleShowDefinition = useCallback(async (word: string) => {
     setState(prev => ({ ...prev, showDefinition: true }));
     try {
@@ -159,22 +136,18 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   }, [skipWordHelp, setHelpUsed]);
 
   const currentParticipant = participants[currentParticipantIndex];
-  const currentWord = currentParticipant?.currentWord?.word || '';
 
   const handleSpellingSubmit = useCallback(() => {
-    if (!currentWord) return;
+    if (!currentParticipant?.currentWord) return;
 
     const submittedWord = letters.join('');
-    const isCorrect = submittedWord.toLowerCase() === currentWord.toLowerCase();
+    const isCorrect = submittedWord.toLowerCase() === currentParticipant.currentWord.word.toLowerCase();
     
-    // Play sound based on correctness
-    isCorrect ? playCorrectSound() : playWrongSound();
-
     setParticipants(prev => {
       const updated = [...prev];
       updated[currentParticipantIndex] = {
         ...updated[currentParticipantIndex],
-        currentWord: currentWord,
+        currentWord: currentParticipant.currentWord,
         attempted: updated[currentParticipantIndex].attempted || 0,
         correct: updated[currentParticipantIndex].correct || 0
       };
@@ -184,26 +157,23 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     if (isCorrect) {
       setTimeout(handleNextWord, 1500);
     }
-  }, [currentWord, letters, handleNextWord]);
+  }, [currentParticipant, letters, handleNextWord]);
 
   const typeLetter = useCallback((letter: string) => {
-    if (!currentWord || !currentWord) return;
-    
-    const currentLetter = currentWord[currentWord.length - letters.length - 1].toLowerCase();
-    currentLetter === letter.toLowerCase() ? playLetterCorrectSound() : playLetterWrongSound();
+    if (!currentParticipant?.currentWord) return;
     
     setLetters([...letters, letter]);
     setUsedLetters(new Set([...usedLetters, letter.toLowerCase()]));
-  }, [currentWord, letters.length, usedLetters]);
+  }, [currentParticipant, letters, usedLetters]);
 
   const handleRevealLetter = useCallback(() => {
-    if (!currentWord) return;
+    if (!currentParticipant?.currentWord) return;
     
-    const word = currentWord;
+    const word = currentParticipant.currentWord.word;
     const unrevealedIndices = word
       .split('')
-      .map((_, i) => i)
-      .filter(i => !revealedIndices.has(i));
+      .map((_: string, i: number) => i)
+      .filter((i: number) => !revealedIndices.has(i));
     
     if (unrevealedIndices.length > 0) {
       const randomIndex = unrevealedIndices[Math.floor(Math.random() * unrevealedIndices.length)];
@@ -212,7 +182,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
       setCurrentHelp('Revealed a letter! -2 coins');
       setState(prev => ({ ...prev, message: 'Revealed a letter!' }));
     }
-  }, [currentWord, revealedIndices, coins]);
+  }, [currentParticipant, revealedIndices, coins]);
 
   // Set up event listeners for help system
   useEffect(() => {
@@ -268,11 +238,11 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
         if (!abortController.signal.aborted) {
           setWordQueues(prev => ({
             ...prev,
-            easy: words.map(w => ({
+            easy: words.map((w: Word) => ({
               word: w.word,
-              difficulty: w.difficulty,
-              syllables: w.syllables || 0,
-              phonemes: w.phonemes || '',
+              difficulty: w.difficulty === 'easy' ? 'easy' : w.difficulty === 'medium' ? 'medium' : 'hard',
+              syllables: w.syllables || [],
+              phonemes: w.phonemes || [],
               definition: w.definition || '',
               origin: w.origin || '',
               example: w.example || ''
@@ -287,7 +257,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             console.error('Failed to load bundled word list', error);
             setWordQueues(prev => ({
               ...prev,
-              easy: DEFAULT_WORDS
+              easy: DEFAULT_WORDS.easy
             }));
             setState(prev => ({ ...prev, message: 'Failed to load word list. Using default words.' }));
           }
@@ -317,14 +287,16 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     });
   }, [gameStarted]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') handleSpellingSubmit();
-    if (e.key === 'Escape') setLetters([]);
-  }, [handleSpellingSubmit]);
-
   const handleLetter = useCallback((letter: string) => {
     typeLetter(letter);
   }, [typeLetter]);
+
+  // WordLetter component for displaying letters
+  const WordLetter = ({ letter, revealed }: { letter: string; revealed: boolean }) => (
+    <span className={`letter ${revealed ? 'revealed' : 'hidden'}`}>
+      {revealed ? letter : '_'}
+    </span>
+  );
 
   return (
     <div className="game-screen">
@@ -353,7 +325,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             
             <div className="flex flex-col items-center">
               <MemoizedProgress 
-                value={Math.round((currentParticipant?.score / currentParticipant?.maxScore) * 100)}
+                value={currentParticipant?.score && currentParticipant?.maxScore 
+                  ? Math.round((currentParticipant.score / currentParticipant.maxScore) * 100)
+                  : 0}
                 className="text-secondary"
                 size="md"
               />
@@ -363,10 +337,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             <div className="flex-1">
               <div className="flex justify-between label-medium text-on-surface">
                 <span>Words: {currentParticipantIndex}/{totalWords}</span>
-                <span>{Math.round((currentParticipantIndex / totalWords) * 100)}%</span>
+                <span>{currentParticipantIndex && totalWords 
+                  ? Math.round((currentParticipantIndex / totalWords) * 100)
+                  : 0}%</span>
               </div>
               <LinearProgress 
-                value={Math.round((currentParticipantIndex / totalWords) * 100)}
+                value={currentParticipantIndex && totalWords 
+                  ? Math.round((currentParticipantIndex / totalWords) * 100)
+                  : 0}
                 className="mt-1"
               />
             </div>
@@ -399,9 +377,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             <div className="flex flex-col items-center gap-4">
               <h2 className="headline-small text-on-surface">Current Word</h2>
               
-              {state.showDefinition && currentParticipant?.currentWord?.word && (
+              {state.showDefinition && currentParticipant?.currentWord && (
                 <div className="flex gap-2">
-                  {currentParticipant?.currentWord?.word.split('').map((letter, index) => (
+                  {currentParticipant.currentWord.word.split('').map((letter, index) => (
                     <WordLetter 
                       key={index}
                       letter={letter}
@@ -411,23 +389,23 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
                 </div>
               )}
               
-              {currentParticipant?.currentWord?.word && (
+              {currentParticipant?.currentWord && (
                 <div className="w-full">
                   <div className="flex items-center justify-between mb-2">
                     <span className="label-medium text-on-surface-variant">
-                      Difficulty: {currentParticipant?.currentWord?.difficulty}
+                      Difficulty: {currentParticipant.currentWord.difficulty}
                     </span>
                     <div className="flex items-center gap-2">
                       <span className="label-medium text-on-surface-variant">
-                        {currentParticipant?.currentWord?.difficulty === 'easy' ? 'Simple' :
-                         currentParticipant?.currentWord?.difficulty === 'medium' ? 'Medium' : 'Challenging'}
+                        {currentParticipant.currentWord.difficulty === 'easy' ? 'Simple' :
+                         currentParticipant.currentWord.difficulty === 'medium' ? 'Medium' : 'Challenging'}
                       </span>
                       <div className="w-24">
                         <LinearProgress 
-                          value={currentParticipant?.currentWord?.difficulty === 'easy' ? 33 : 
-                                currentParticipant?.currentWord?.difficulty === 'medium' ? 66 : 100}
-                          variant={currentParticipant?.currentWord?.difficulty === 'easy' ? 'success' :
-                                  currentParticipant?.currentWord?.difficulty === 'medium' ? 'warning' : 'danger'}
+                          value={currentParticipant.currentWord.difficulty === 'easy' ? 33 : 
+                                currentParticipant.currentWord.difficulty === 'medium' ? 66 : 100}
+                          variant={currentParticipant.currentWord.difficulty === 'easy' ? 'success' :
+                                  currentParticipant.currentWord.difficulty === 'medium' ? 'warning' : 'danger'}
                         />
                       </div>
                     </div>
@@ -437,7 +415,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
             </div>
           </div>
           <MemoizedHintPanel 
-            word={currentParticipant?.currentWord?.word || ''}
+            word={currentParticipant?.currentWord}
             onRevealLetter={handleRevealLetter}
             onShowDefinition={() => handleShowDefinition(currentParticipant?.currentWord?.word || '')}
             onAddTime={handleAddTimeHelp}
@@ -467,11 +445,10 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
               onLetter={handleLetter}
               onBackspace={() => setLetters(letters.slice(0, -1))}
               onSubmit={handleSpellingSubmit}
-              soundEnabled={true}
+              soundEnabled={false}
               usedLetters={usedLetters}
               currentWord={currentParticipant?.currentWord?.word || ''}
               aria-label="Spelling keyboard"
-              onKeyDown={handleKeyDown}
             />
             
             <div className="flex gap-4">

@@ -6,9 +6,10 @@ interface OnScreenKeyboardProps {
   onLetter: (letter: string) => void;
   onBackspace: () => void;
   onSubmit: () => void;
-  soundEnabled?: boolean;
-  usedLetters?: Set<string>;
-  currentWord?: string;
+  soundEnabled: boolean;
+  usedLetters: Set<string>;
+  currentWord: string;
+  'aria-label'?: string;
 }
 
 const letters = Array.from({ length: 26 }, (_, i) =>
@@ -22,6 +23,7 @@ const OnScreenKeyboard: React.FC<OnScreenKeyboardProps> = ({
   soundEnabled,
   usedLetters,
   currentWord,
+  'aria-label': ariaLabel
 }) => {
   const { playSound } = useSound();
   
