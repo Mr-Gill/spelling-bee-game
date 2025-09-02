@@ -1,53 +1,9 @@
+/* Resolved by accepting feature branch changes */
+
 /* Modern styles for Spelling Bee Championship */
 @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@700&family=Inclusive+Sans:wght@400;700&display=swap');
 
 :root {
-<<<<<<< HEAD
-  /* Light Theme */
-  --primary: #4f46e5;
-  --primary-light: #818cf8;
-  --primary-dark: #4338ca;
-  --secondary: #f59e0b;
-  --success: #10b981;
-  --danger: #ef4444;
-  --warning: #f59e0b;
-  --text: #1f2937;
-  --text-light: #6b7280;
-  --bg: #f9fafb;
-  --card-bg: #ffffff;
-  --border: #e5e7eb;
-  
-  /* Dark Theme */
-  --dark-primary: #6366f1;
-  --dark-primary-light: #818cf8;
-  --dark-primary-dark: #4f46e5;
-  --dark-bg: #111827;
-  --dark-card-bg: #1f2937;
-  --dark-text: #f9fafb;
-  --dark-text-light: #9ca3af;
-  
-  /* Spacing */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  
-  /* Border Radius */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-full: 9999px;
-  
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  
-  /* Transitions */
-  --transition: all 0.2s ease-in-out;
-=======
   --primary-color-light: #2563eb;
   --text-color-light: #1e293b;
   --bg-color-light: #f8fafc;
@@ -63,7 +19,6 @@
   --primary-color: var(--primary-color-light);
   --text-color: var(--text-color-light);
   --bg-color: var(--bg-color-light);
->>>>>>> origin/codex/consolidate-theme-variables-in-style.css
 }
 
 *,
@@ -75,25 +30,12 @@
 }
 
 body {
-<<<<<<< HEAD
   margin: 0;
   padding: 0;
-  font-family: 'Inclusive Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.5;
-  color: var(--text);
-  background-color: var(--bg);
-  transition: var(--transition);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
   overflow-x: hidden;
-=======
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
-    overflow-x: hidden;
-    background-color: var(--bg-color);
-    color: var(--text-color);
->>>>>>> origin/codex/consolidate-theme-variables-in-style.css
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 /* Typography */
