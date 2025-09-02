@@ -102,10 +102,10 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
     return 'No one wins this round!';
   };
 
-    return (
-      <div className="min-h-screen bg-surface p-8 text-on-surface text-center flex flex-col items-center justify-center font-body">
-        <h1 className="text-4xl font-bold mb-4 text-primary uppercase font-sans">🏆 Game Over! 🏆</h1>
-        <h2 className="text-2xl mb-8 uppercase font-sans">{getWinnerMessage()}</h2>
+  return (
+    <div className="min-h-screen bg-surface p-8 text-on-surface text-center flex flex-col items-center justify-center font-body">
+      <h1 className="text-4xl font-bold mb-4 text-primary uppercase font-sans">🏆 Game Over! 🏆</h1>
+      <h2 className="text-2xl mb-8 uppercase font-sans">{getWinnerMessage()}</h2>
 
       {results?.duration && (<div className="text-xl mb-6">Game Duration: {results.duration} seconds</div>)}
       
