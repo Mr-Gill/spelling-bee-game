@@ -294,47 +294,23 @@ This project includes scripts to generate high-quality audio files using ElevenL
 - Edit `scripts/generate-sfx.ts` to modify sound effects
 - Update voice settings in `.env`
 
-## 🚀 **Build & Deployment**
+## Setup
 
-1. Install dependencies:
-   ```bash
-   npm install
+1. Clone the repository
+2. Run `npm install`
+3. Create a `.env` file with the following content:
    ```
-2. Build the project (outputs files to `dist/`):
-   ```bash
-   npm run build
+   GITHUB_TOKEN=your_token_here
    ```
-   This generates `dist/app.js`, `dist/tailwind.css`, and copies required assets.
-3. Deploy or serve the contents of the `dist/` directory.
+4. Run `npm start` to start the development server
 
-> Built files are no longer committed to the repository and are produced during the build step.
+## Building for Production
 
-## 🔧 **Customization Options**
-
-### ⚙️ **Easy Modifications** (Edit `spelling-bee-game.tsx` then run `npm run build` to generate `dist/app.js`)
-```javascript
-// Change timer duration
-setTimeLeft(30) // 30 seconds (default)
-
-// Adjust lives per game mode  
-lives = gameMode === 'individual' ? 5 : 10
-
-// Modify help shop costs
-useHelpItem('reveal', 3) // 3 points to reveal word
-
-// Update team colors
-getTeamColor = ['bg-red-500', 'bg-blue-500', 'bg-green-500']
-```
-
-### 🎨 **Visual Customization**
-- **School Colors** - Match your institution's branding
-- **Custom Themes** - Seasonal or subject-specific designs
-- **Audio Packs** - Different sound effects for variety
-- **Team Names** - Pre-set school team names or houses
+Run `npm run build` to create a production build in the `dist` directory.
 
 ---
 
-## 🔄 **Future Enhancements Roadmap**
+## 🎯 **Future Enhancements Roadmap**
 
 ### 🛍️ **Enhanced Help Shop System**
 - **Hangman-Style Reveals** - Show word with missing letters (4-5 points)

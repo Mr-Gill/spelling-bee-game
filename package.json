@@ -9,7 +9,7 @@
     "start": "npx serve dist",
     "serve": "npx serve dist",
     "build:css": "npx tailwindcss -i ./src/tailwind.css -o ./tailwind.css --minify",
-    "build": "PUBLIC_URL=/spelling-bee-game/ npm run build:css && npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --resolve-extensions=.ts,.tsx,.js,.jsx --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file --define:process.env.NODE_ENV=\"'production'\" --define:process.env.PUBLIC_URL=\"'/spelling-bee-game/'\" && node scripts/copy-assets.js && node scripts/copy-wordlist.js",
+    "build": "PUBLIC_URL=/spelling-bee-game/ npm run build:css && GITHUB_TOKEN=$GITHUB_TOKEN npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --resolve-extensions=.ts,.tsx,.js,.jsx --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file --define:process.env.NODE_ENV=\"'production'\" --define:process.env.PUBLIC_URL=\"'/spelling-bee-game/'\" --define:process.env.GITHUB_TOKEN=\"'$GITHUB_TOKEN'\" && node scripts/copy-assets.js && node scripts/copy-wordlist.js",
     "watch": "npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --watch",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
