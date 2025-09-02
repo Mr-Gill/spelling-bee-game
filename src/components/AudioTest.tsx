@@ -44,6 +44,7 @@ const AudioTest: React.FC = () => {
             step="0.01"
             value={volume}
             onChange={(e) => setVolume(parseFloat(e.target.value))}
+            name="volume"
             className="w-32"
           />
         </div>

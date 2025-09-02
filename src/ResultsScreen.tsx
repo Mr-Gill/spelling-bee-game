@@ -124,7 +124,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
                 src={
                   p === results.winner ? `${config.baseUrl}img/WinningBee.png` :
                   p.points >= bestClassScore * 0.9 ? `${config.baseUrl}img/CelebratoryBee.png` :
-                  p.avatar || `${config.baseUrl}img/DefaultBee.png`
+                  p.avatar || `${config.baseUrl}img/bee.png`
                 } 
                 alt={`${p.name} avatar`} 
                 className="w-8 h-8 rounded-full" 

@@ -29,7 +29,7 @@ interface SetupScreenProps {
 }
 
 // Using direct paths to assets in the public directory
-const beeImg = `${process.env.PUBLIC_URL}/img/HelpBee.png`;
+const beeImg = `${process.env.PUBLIC_URL}/img/bee.png`;
 const bookImg = `${process.env.PUBLIC_URL}/img/avatars/book.svg`;
 const trophyImg = `${process.env.PUBLIC_URL}/img/avatars/trophy.svg`;
 
@@ -537,10 +537,10 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
           <div className="flex flex-col items-center mb-4">
             <div className="mb-2">
               <img 
-                src={`${process.env.PUBLIC_URL}/img/HelpBee.png`} 
+                src={`${process.env.PUBLIC_URL}/img/bee.png`} 
                 alt="Bee mascot" 
                 className="w-16 h-16 md:w-20 md:h-20 mx-auto"
-                onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL}/img/DefaultBee.png`}
+                onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL}/img/bee.png`}
               />
             </div>
             <h1 className="text-3xl md:text-5xl font-bold text-primary font-sans tracking-wide">
@@ -614,8 +614,9 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                         type="text" 
                         value={studentName} 
                         onChange={e => setStudentName(e.target.value)} 
-                        className="flex-grow p-3 rounded-lg bg-surface-container-high text-on-surface placeholder:text-on-surface-variant" 
-                        placeholder="Student name" 
+                        placeholder="Enter student name" 
+                        className="flex-grow p-3 rounded-lg bg-surface-container-high text-on-surface placeholder:text-on-surface-variant"
+                        name="student-name"
                       />
                       <button 
                         onClick={addStudent} 
@@ -631,6 +632,7 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                         className="w-full p-3 rounded-lg bg-surface-container-high text-on-surface placeholder:text-on-surface-variant mb-2" 
                         placeholder="Paste names, one per line or separated by commas" 
                         rows={4}
+                        name="bulk-students"
                       ></textarea>
                       <button 
                         onClick={() => addBulkStudents(bulkStudentText.split('\n').map(name => createParticipant(name, undefined)))} 
@@ -642,9 +644,9 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                     <div className="mb-4">
                       <h3 className="text-xl font-bold mb-2">Randomize Teams</h3>
                       <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <input type="number" min={1} value={randomTeamCount || ''} onChange={e => { setRandomTeamCount(Number(e.target.value)); setRandomTeamSize(0); }} placeholder="Number of teams" className="p-2 rounded-md bg-surface-variant text-on-surface flex-grow" />
+                        <input type="number" min={1} value={randomTeamCount || ''} onChange={e => { setRandomTeamCount(Number(e.target.value)); setRandomTeamSize(0); }} placeholder="Number of teams" className="p-2 rounded-md bg-surface-variant text-on-surface flex-grow" name="random-team-count" />
                         <span>or</span>
-                        <input type="number" min={1} value={randomTeamSize || ''} onChange={e => { setRandomTeamSize(Number(e.target.value)); setRandomTeamCount(0); }} placeholder="Team size" className="p-2 rounded-md bg-surface-variant text-on-surface flex-grow" />
+                        <input type="number" min={1} value={randomTeamSize || ''} onChange={e => { setRandomTeamSize(Number(e.target.value)); setRandomTeamCount(0); }} placeholder="Team size" className="p-2 rounded-md bg-surface-variant text-on-surface flex-grow" name="random-team-size" />
                         <button onClick={randomizeTeams} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Randomize</button>
                       </div>
                       {randomizeError && <p className="text-red-300">{randomizeError}</p>}
@@ -652,10 +654,10 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                     {participants.map((student) => (
                       <div key={student.id} className="flex items-center gap-2 mb-2">
                         <img 
-                          src={student.avatar || `${process.env.PUBLIC_URL}/img/DefaultBee.png`} 
+                          src={student.avatar || `${process.env.PUBLIC_URL}/img/bee.png`} 
                           alt="avatar" 
                           className="w-8 h-8 rounded-full" 
-                          onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL}/img/DefaultBee.png`}
+                          onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL}/img/bee.png`}
                         />
                         <input 
                           type="text" 
@@ -690,16 +692,18 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                     value={optionsState.skipPenaltyType} 
                     onChange={e => handleOptionChange('skipPenaltyType', e.target.value)} 
                     className="p-2 rounded-lg bg-surface-container-high text-on-surface"
+                    name="skip-penalty-type"
                   >
                     <option value="lives">Lives</option>
                     <option value="points">Points</option>
                   </select>
                   <input 
                     type="number" 
-                    min={0} 
                     value={optionsState.skipPenaltyValue} 
-                    onChange={e => handleOptionChange('skipPenaltyValue', Number(e.target.value))} 
-                    className="p-2 rounded-lg bg-surface-container-high text-on-surface w-24" 
+                    onChange={e => handleOptionChange('skipPenaltyValue', parseInt(e.target.value) || 0)} 
+                    min="0" 
+                    className="p-2 rounded-lg bg-surface-container-high text-on-surface w-20"
+                    name="skip-penalty-value"
                   />
                 </div>
               </div>

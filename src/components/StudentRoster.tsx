@@ -74,12 +74,14 @@ const StudentRoster: React.FC<StudentRosterProps> = ({
               onChange={(e) => updateStudentName(index, e.target.value)}
               placeholder="Student name"
               className="flex-grow p-2 rounded-md bg-white/20 text-white"
+              name={`student-name-${index}`}
             />
             {teams.length > 0 && (
               <select
                 value={student.team || ''}
                 onChange={(e) => onAssignTeam && onAssignTeam(index, e.target.value)}
                 className="p-2 rounded-md bg-white/20 text-white"
+                name={`student-team-${index}`}
               >
                 <option value="">No Team</option>
                 {teams.map((t, i) => (
