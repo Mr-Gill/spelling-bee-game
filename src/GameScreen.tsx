@@ -12,7 +12,7 @@ import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
 import Button from './components/Button';
 // Progress components
-import { CircularProgress, LinearProgress } from './components/BeeProgress';
+import BeeProgress from './components/BeeProgress';
 import BeeElement from './components/BeeElement';
 
 // Constants
@@ -273,7 +273,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
   }, []);
 
   // Memoized components
-  const MemoizedProgress = React.memo(CircularProgress);
+  const MemoizedProgress = React.memo(BeeProgress);
   const MemoizedTimer = React.memo(CircularTimer);
   const MemoizedButton = React.memo(Button);
   const MemoizedHintPanel = React.memo(HintPanel);
@@ -341,7 +341,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
                   ? Math.round((currentParticipantIndex / totalWords) * 100)
                   : 0}%</span>
               </div>
-              <LinearProgress 
+              <BeeProgress 
                 value={currentParticipantIndex && totalWords 
                   ? Math.round((currentParticipantIndex / totalWords) * 100)
                   : 0}
@@ -401,7 +401,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
                          currentParticipant.currentWord.difficulty === 'medium' ? 'Medium' : 'Challenging'}
                       </span>
                       <div className="w-24">
-                        <LinearProgress 
+                        <BeeProgress 
                           value={currentParticipant.currentWord.difficulty === 'easy' ? 33 : 
                                 currentParticipant.currentWord.difficulty === 'medium' ? 66 : 100}
                           variant={currentParticipant.currentWord.difficulty === 'easy' ? 'success' :

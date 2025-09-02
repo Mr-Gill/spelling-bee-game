@@ -1,185 +1,132 @@
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-interface UseMusicReturn {
-  loadAudio: (url: string) => Promise<AudioBuffer | null>;
-  initAudio: () => void;
-  getAudioContext: () => AudioContext | null;
-  stop: () => void;
-  buildSrc: (trackStyle: string | undefined, trackVariant: 'instrumental' | 'vocal') => string;
-  loadTracks: (trackStyle: string) => Promise<void>;
-}
+// Validate volume to be between 0 and 1 and finite
+const validateVolume = (volume: number) => {
+  return Number.isFinite(volume) ? Math.min(1, Math.max(0, volume)) : 0.5;
+};
 
-/**
- * React hook to manage background music for the app.
- *
- * @param style The musical style to load.
- * @param variant Whether to use the vocal or instrumental audio files.
- * @param volume Playback volume (0-1).
- * @param enabled Whether music should be playing at all.
- * @param screen Which screen is currently active.
- */
-const useMusic = (
-  style: string,
-  variant: 'instrumental' | 'vocal',
-  volume: number,
-  enabled: boolean,
-  screen: 'menu' | 'game',
-): UseMusicReturn => {
-  const menuRef = useRef<Record<'instrumental' | 'vocal', HTMLAudioElement | null>>({
-    instrumental: null,
-    vocal: null,
-  });
-  const gameRef = useRef<Record<'instrumental' | 'vocal', HTMLAudioElement | null>>({
-    instrumental: null,
-    vocal: null,
-  });
-  const promptRef = useRef(false);
+// Check if the audio file is valid
+const checkAudioFile = async (url: string) => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const contentType = response.headers.get('Content-Type');
+    if (!contentType || !contentType.startsWith('audio/')) {
+      throw new Error('Invalid audio content type');
+    }
+    return true;
+  } catch (error) {
+    console.error(`Audio file validation failed for ${url}:`, error);
+    return false;
+  }
+};
 
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [audioBuffers, setAudioBuffers] = useState<Record<string, AudioBuffer>>({});
+const useMusic = (initialVolume: number = 0.5) => {
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [currentVolume, setCurrentVolume] = useState<number>(validateVolume(initialVolume));
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioBufferRef = useRef<AudioBuffer | null>(null);
+  const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
 
-  const stop = useCallback(() => {
-    (['instrumental', 'vocal'] as const).forEach((v) => {
-      const menuAudio = menuRef.current[v];
-      if (menuAudio) {
-        menuAudio.pause();
-        menuAudio.currentTime = 0;
+  useEffect(() => {
+    // Initialize audio context
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    audioContextRef.current = new AudioContext();
+
+    return () => {
+      // Cleanup
+      if (sourceNodeRef.current) {
+        sourceNodeRef.current.stop();
+        sourceNodeRef.current.disconnect();
       }
-      const gameAudio = gameRef.current[v];
-      if (gameAudio) {
-        gameAudio.pause();
-        gameAudio.currentTime = 0;
+      if (gainNodeRef.current) {
+        gainNodeRef.current.disconnect();
       }
-    });
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+    };
   }, []);
 
-  const buildSrc = useCallback((trackStyle: string | undefined, trackVariant: 'instrumental' | 'vocal') => {
-    const basePath = "audio/It's a Spelling Bee!";
-    const variantSuffix = trackVariant === 'instrumental' ? ' Instrumental' : '';
-  
-    // Handle undefined/invalid styles safely
-    const validStyles = ['Country', 'Rock', 'Classical', 'Jazz'];
-    const style = trackStyle && validStyles.includes(trackStyle) 
-      ? trackStyle 
-      : 'Country';
-
-    return `${basePath} (${style}${variantSuffix}).mp3`;
-  }, []);
-
-  const initAudio = useCallback(() => {
-    if (!audioContext) {
-      const AudioCtx = window.AudioContext || 
-                      (window as unknown as {webkitAudioContext: typeof AudioContext}).webkitAudioContext;
-      if (AudioCtx) {
-        setAudioContext(new AudioCtx());
-      }
-    }
-  }, [audioContext]);
-
-  const getAudioContext = useCallback(() => {
-    if (!audioContext) {
-      initAudio();
-    }
-    return audioContext;
-  }, [audioContext, initAudio]);
-
-  const loadAudio = useCallback(async (url: string): Promise<AudioBuffer | null> => {
-    const ctx = getAudioContext();
-    if (!ctx) return null;
-    
-    if (audioBuffers[url]) return audioBuffers[url];
+  const loadAudio = async (url: string) => {
+    if (!audioContextRef.current) return null;
 
     try {
+      // Validate the audio file first
+      const isValid = await checkAudioFile(url);
+      if (!isValid) {
+        throw new Error(`Invalid audio file: ${url}`);
+      }
+
       const response = await fetch(url);
       const arrayBuffer = await response.arrayBuffer();
-      const buffer = await ctx.decodeAudioData(arrayBuffer);
-      if (buffer) {
-        setAudioBuffers(prev => ({ ...prev, [url]: buffer }));
-      }
-      return buffer;
+      return await audioContextRef.current.decodeAudioData(arrayBuffer);
     } catch (error) {
-      console.error('Failed to load audio:', error);
+      console.error('Error loading audio:', error);
       return null;
     }
-  }, [audioBuffers, getAudioContext]);
+  };
 
-  const loadTracks = useCallback(
-    async (trackStyle: string) => {
-      (['instrumental', 'vocal'] as const).forEach(async (trackVariant) => {
-        const menuSrc = buildSrc(trackStyle, trackVariant);
-        const gameSrc = buildSrc(trackStyle, trackVariant);
+  const play = async (url: string) => {
+    if (!audioContextRef.current) return;
 
-        const menuBuffer = await loadAudio(menuSrc);
-        const gameBuffer = await loadAudio(gameSrc);
-
-        if (menuBuffer) {
-          const menuAudio = new Audio();
-          menuAudio.loop = true;
-          menuAudio.volume = volume;
-          menuAudio.onerror = () => {
-            console.warn(`Menu music file not found: ${menuSrc}`);
-            menuRef.current[trackVariant] = null;
-          };
-          menuAudio.src = menuSrc; // Use src instead of srcObject for AudioBuffer
-          menuRef.current[trackVariant] = menuAudio;
-        }
-
-        if (gameBuffer) {
-          const gameAudio = new Audio();
-          gameAudio.loop = true;
-          gameAudio.volume = volume;
-          gameAudio.onerror = () => {
-            console.warn(`Gameplay music file not found: ${gameSrc}`);
-            gameRef.current[trackVariant] = null;
-          };
-          gameAudio.src = gameSrc; // Use src instead of srcObject for AudioBuffer
-          gameRef.current[trackVariant] = gameAudio;
-        }
-      });
-    },
-    [buildSrc, loadAudio, volume],
-  );
-
-  // Initialize AudioContext on user interaction
-  // Load tracks whenever style changes
-  useEffect(() => {
+    // Stop any currently playing audio
     stop();
-    loadTracks(style);
-  }, [style, loadTracks, stop]);
 
-  // Keep volumes in sync with state
-  useEffect(() => {
-    (['instrumental', 'vocal'] as const).forEach((v) => {
-      if (menuRef.current[v]) menuRef.current[v]!.volume = volume;
-      if (gameRef.current[v]) gameRef.current[v]!.volume = volume;
-    });
-  }, [volume]);
+    // Load new audio
+    const audioBuffer = await loadAudio(url);
+    if (!audioBuffer) return;
 
-  // Play the correct track based on screen, variant, and enabled flag
-  useEffect(() => {
-    if (!enabled) {
-      stop();
-      return;
+    audioBufferRef.current = audioBuffer;
+
+    // Create and configure nodes
+    sourceNodeRef.current = audioContextRef.current.createBufferSource();
+    sourceNodeRef.current.buffer = audioBufferRef.current;
+
+    gainNodeRef.current = audioContextRef.current.createGain();
+    gainNodeRef.current.gain.value = currentVolume;
+
+    // Connect nodes
+    sourceNodeRef.current.connect(gainNodeRef.current);
+    gainNodeRef.current.connect(audioContextRef.current.destination);
+
+    // Start playing
+    sourceNodeRef.current.start(0);
+    setIsPlaying(true);
+
+    // Handle end of playback
+    sourceNodeRef.current.onended = () => {
+      setIsPlaying(false);
+    };
+  };
+
+  const stop = () => {
+    if (sourceNodeRef.current) {
+      sourceNodeRef.current.stop();
+      sourceNodeRef.current.disconnect();
+      sourceNodeRef.current = null;
     }
+    setIsPlaying(false);
+  };
 
-    const refs = screen === 'menu' ? menuRef.current : gameRef.current;
-    const track = refs[variant];
-    stop();
-    track?.play().catch(() => {
-      if (promptRef.current) return;
-      promptRef.current = true;
-      const enable = () => {
-        track.play().catch(() => {});
-      };
-      document.addEventListener('click', enable, { once: true });
-      alert('Click anywhere to enable audio');
-    });
-  }, [screen, variant, enabled, stop]);
+  const setVolume = (newVolume: number) => {
+    const validatedVolume = validateVolume(newVolume);
+    setCurrentVolume(validatedVolume);
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = validatedVolume;
+    }
+  };
 
-  // Clean up on unmount
-  useEffect(() => () => stop(), [stop]);
-
-  return { loadAudio, initAudio, getAudioContext, stop, buildSrc, loadTracks };
+  return {
+    isPlaying,
+    play,
+    stop,
+    volume: currentVolume,
+    setVolume,
+  };
 };
 
 export default useMusic;
