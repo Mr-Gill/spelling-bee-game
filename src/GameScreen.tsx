@@ -42,6 +42,7 @@ const DEFAULT_WORDS = {
 import { useGameState } from './hooks/useGameState';
 import { useParticipants } from './hooks/useParticipants';
 import { useWordQueue } from './hooks/useWordQueue';
+import { generateWordList } from '../api/githubAIService';
 
 // Main GameScreen component
 export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
@@ -228,17 +229,11 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
     
     const loadWordList = async () => {
       try {
-        const response = await fetch('./wordlists/example.json', {
-          signal: abortController.signal
-        });
-        
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const words = await response.json();
+        const aiWordList = await generateWordList("Generate a list of spelling bee words for grade level");
         if (!abortController.signal.aborted) {
           setWordQueues(prev => ({
             ...prev,
-            easy: words.map((w: Word) => ({
+            easy: aiWordList.map((w: Word) => ({
               word: w.word,
               difficulty: w.difficulty === 'easy' ? 'easy' : w.difficulty === 'medium' ? 'medium' : 'hard',
               syllables: w.syllables || [],
@@ -254,7 +249,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
           if (error.name === 'AbortError') {
             console.log('Fetch aborted');
           } else if (!abortController.signal.aborted) {
-            console.error('Failed to load bundled word list', error);
+            console.error('Failed to load AI word list', error);
             setWordQueues(prev => ({
               ...prev,
               easy: DEFAULT_WORDS.easy

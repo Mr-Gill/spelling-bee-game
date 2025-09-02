@@ -433,7 +433,7 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
   
   useEffect(() => {
     if (selectedBundledList) {
-      fetch(`wordlists/${selectedBundledList}`)
+      fetch(`${process.env.PUBLIC_URL}/wordlists/${selectedBundledList}`)
         .then(res => {
           if (!res.ok) throw new Error('Network response was not ok');
           return res.text();
@@ -469,7 +469,7 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
     if (isSessionChallenge) {
       try {
         const randomList = bundledWordLists[Math.floor(Math.random() * bundledWordLists.length)];
-        const response = await fetch(`wordlists/${randomList.file}`);
+        const response = await fetch(`${process.env.PUBLIC_URL}/wordlists/${randomList.file}`);
         const text = await response.text();
         challengeWords = parseWordList(text);
       } catch (err) {
@@ -812,11 +812,25 @@ const SetupScreen: FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onVi
                   `prefix`, `suffix`, `pronunciation`.
                 </p>
                 <a
-                  href="wordlists/example.csv"
+                  href={`${process.env.PUBLIC_URL}/wordlists/example.csv`}
                   download
                   className="inline-block bg-green-500 hover:bg-green-600 text-on-surface px-4 py-2 rounded mt-2"
                 >
                   Download Template
+                </a>
+                <a
+                  href={`${process.env.PUBLIC_URL}/wordlists/example.json`}
+                  download
+                  className="inline-block bg-green-500 hover:bg-green-600 text-on-surface px-4 py-2 rounded mt-2"
+                >
+                  Download JSON Template
+                </a>
+                <a
+                  href={`${process.env.PUBLIC_URL}/wordlists/example.tsv`}
+                  download
+                  className="inline-block bg-green-500 hover:bg-green-600 text-on-surface px-4 py-2 rounded mt-2"
+                >
+                  Download TSV Template
                 </a>
               </div>
             </div>
