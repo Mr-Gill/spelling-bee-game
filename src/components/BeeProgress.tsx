@@ -12,6 +12,7 @@ export const ProgressBar: React.FC<{
   size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
   className?: string;
+  audioRef?: React.RefObject<HTMLAudioElement>;
 }> = ({
   value = 0,
   max = 100,
@@ -19,6 +20,7 @@ export const ProgressBar: React.FC<{
   size = 'md',
   showLabel = false,
   className = '',
+  audioRef,
 }) => {
   const progress = Math.min(Math.max(0, (value / max) * 100), 100);
   
@@ -35,6 +37,14 @@ export const ProgressBar: React.FC<{
     md: 'h-3 text-sm',
     lg: 'h-4 text-base',
   };
+  
+  React.useEffect(() => {
+    if (audioRef && audioRef.current) {
+      if (progress === 100) {
+        audioRef.current.play();
+      }
+    }
+  }, [progress, audioRef]);
   
   return (
     <div className="w-full">

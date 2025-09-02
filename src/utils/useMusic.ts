@@ -1,5 +1,11 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 
+declare global {
+  interface Window {
+    webkitAudioContext: typeof AudioContext;
+  }
+}
+
 interface UseMusicReturn {
   loadAudio: (url: string) => Promise<AudioBuffer | null>;
   initAudio: () => void;
@@ -7,6 +13,7 @@ interface UseMusicReturn {
   stop: () => void;
   buildSrc: (trackStyle: string | undefined, trackVariant: 'instrumental' | 'vocal') => string;
   loadTracks: (trackStyle: string) => Promise<void>;
+  playSound: (src: string, volume?: number) => Promise<boolean>;
 }
 
 /**
@@ -35,7 +42,10 @@ const useMusic = (
   });
   const promptRef = useRef(false);
 
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const [audioContext] = useState(() => {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    return ctx;
+  });
   const [audioBuffers, setAudioBuffers] = useState<Record<string, AudioBuffer>>({});
 
   const stop = useCallback(() => {
@@ -67,32 +77,20 @@ const useMusic = (
   }, []);
 
   const initAudio = useCallback(() => {
-    if (!audioContext) {
-      const AudioCtx = window.AudioContext || 
-                      (window as unknown as {webkitAudioContext: typeof AudioContext}).webkitAudioContext;
-      if (AudioCtx) {
-        setAudioContext(new AudioCtx());
-      }
-    }
-  }, [audioContext]);
+    // Do nothing, audioContext is already initialized in useState
+  }, []);
 
   const getAudioContext = useCallback(() => {
-    if (!audioContext) {
-      initAudio();
-    }
     return audioContext;
-  }, [audioContext, initAudio]);
+  }, [audioContext]);
 
   const loadAudio = useCallback(async (url: string): Promise<AudioBuffer | null> => {
-    const ctx = getAudioContext();
-    if (!ctx) return null;
-    
     if (audioBuffers[url]) return audioBuffers[url];
 
     try {
       const response = await fetch(url);
       const arrayBuffer = await response.arrayBuffer();
-      const buffer = await ctx.decodeAudioData(arrayBuffer);
+      const buffer = await audioContext.decodeAudioData(arrayBuffer);
       if (buffer) {
         setAudioBuffers(prev => ({ ...prev, [url]: buffer }));
       }
@@ -101,7 +99,7 @@ const useMusic = (
       console.error('Failed to load audio:', error);
       return null;
     }
-  }, [audioBuffers, getAudioContext]);
+  }, [audioBuffers, audioContext]);
 
   const loadTracks = useCallback(
     async (trackStyle: string) => {
@@ -139,6 +137,36 @@ const useMusic = (
     },
     [buildSrc, loadAudio, volume],
   );
+
+  const playSound = useCallback(async (src: string, volume: number = 0.5): Promise<boolean> => {
+    try {
+      // Validate volume
+      const safeVolume = Math.max(0, Math.min(1, Number(volume) || 0.5));
+      
+      // Load audio
+      const response = await fetch(src);
+      if (!response.ok) throw new Error(`Failed to load audio: ${response.status}`);
+      
+      const buffer = await audioContext.decodeAudioData(await response.arrayBuffer());
+      const source = audioContext.createBufferSource();
+      const gainNode = audioContext.createGain();
+      
+      // Connect nodes with null checks
+      if (!source || !gainNode || !audioContext.destination) {
+        throw new Error('Failed to create audio nodes');
+      }
+      
+      source.buffer = buffer;
+      gainNode.gain.value = safeVolume;
+      source.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      source.start(0);
+    } catch (error) {
+      console.error('Audio playback error:', error);
+      return false;
+    }
+    return true;
+  }, [audioContext]);
 
   // Initialize AudioContext on user interaction
   // Load tracks whenever style changes
@@ -179,7 +207,7 @@ const useMusic = (
   // Clean up on unmount
   useEffect(() => () => stop(), [stop]);
 
-  return { loadAudio, initAudio, getAudioContext, stop, buildSrc, loadTracks };
+  return { loadAudio, initAudio, getAudioContext, stop, buildSrc, loadTracks, playSound };
 };
 
 export default useMusic;
