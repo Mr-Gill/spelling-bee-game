@@ -3,7 +3,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import axios from 'axios';
 
-const PORT = Number(process.env.PORT || 3002);
+const PORT = 3005;
 const wordlistsDir = path.join(process.cwd(), 'wordlists');
 
 const staticWordLists = {
