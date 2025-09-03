@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Volume2, VolumeX, Music, Volume1, Volume2 as Volume2Icon } from 'lucide-react';
 import { useAudio } from '../contexts/AudioContext';
 import { useClickAway } from '../hooks/useClickAway';
@@ -17,7 +17,7 @@ export const AudioControls: React.FC = () => {
   
   const [isOpen, setIsOpen] = useState(false);
   const [localVolume, setLocalVolume] = useState(volume);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null!);
   
   // Close dropdown when clicking outside
   useClickAway(dropdownRef, () => {
@@ -25,9 +25,9 @@ export const AudioControls: React.FC = () => {
   });
   
   // Sync local volume with context
-  useEffect(() => {
-    setLocalVolume(volume);
-  }, [volume]);
+  // useEffect(() => {
+  //   setLocalVolume(volume);
+  // }, [volume]);
 
   const handleVolumeChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value);
