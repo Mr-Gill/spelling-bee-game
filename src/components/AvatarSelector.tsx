@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { avatars } from '@constants/avatars';
+import { avatars } from '../constants/avatars';
 
 type AvatarType = 'bee' | 'book' | 'trophy' | 'wizard' | 'ninja';
 

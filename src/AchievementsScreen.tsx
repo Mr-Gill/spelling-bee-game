@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { achievements } from '@constants/achievements';
-import { defaultAchievements } from './types';
+import { useMemo } from 'react';
+import { achievements } from './constants/achievements';
 
 interface AchievementsScreenProps {
   onBack: () => void;
@@ -21,27 +20,16 @@ const AchievementBadge = ({ unlocked, title, description, icon }: AchievementPro
   </div>
 );
 
-const AchievementsScreen: React.FC<AchievementsScreenProps> = ({ onBack }) => {
-  const [userAchievements, setUserAchievements] = useState<string[]>([]);
+const AchievementsScreen = ({ onBack }: AchievementsScreenProps) => {
 
-  const unlocked = React.useMemo(() => {
+  const unlocked = useMemo(() => {
     if (typeof window === 'undefined') return [] as string[];
     try {
       return JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
     } catch {
       return [];
     }
-<<<<<<< Updated upstream
   }, []);
-=======
-  });
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
   return (
     <div className="screen-container bg-gradient-to-br from-green-600 to-teal-800 text-white">

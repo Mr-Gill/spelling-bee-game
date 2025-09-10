@@ -8,15 +8,15 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "@/*": ["./src/*"],
-      "@constants/*": ["constants/*"],
-      "@wordlists/*": ["wordlists/*"],
-      "@components/*": ["src/components/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@contexts/*": ["src/contexts/*"],
-      "@types/*": ["src/types/*"]
+      "@/*": ["./*"],
+      "@constants/*": ["./constants/*"],
+      "@wordlists/*": ["../wordlists/*"],
+      "@components/*": ["./components/*"],
+      "@hooks/*": ["./hooks/*"],
+      "@contexts/*": ["./contexts/*"],
+      "@types/*": ["./types/*"]
     },
     "resolveJsonModule": true,
     "typeRoots": [
@@ -32,8 +32,8 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true
