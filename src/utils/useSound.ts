@@ -1,50 +1,34 @@
-import { useState, useEffect } from 'react';
-import { loadAudioFiles } from './audioLoader';
+import { useRef, useCallback } from 'react';
 
 /**
  * React hook to load and play an audio clip.
+ * @param audioFile - The audio file URL/path
+ * @param enabled - Whether audio is enabled
  * @returns Function to trigger the sound
  */
-export default function useSound() {
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [audioBuffers, setAudioBuffers] = useState<Record<string, AudioBuffer>>({});
+export default function useSound(audioFile: string, enabled: boolean = true) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  useEffect(() => {
-    const initAudio = async () => {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      setAudioContext(ctx);
-      
-      const files = await loadAudioFiles();
-      const buffers: Record<string, AudioBuffer> = {};
-      
-      for (const [key, url] of Object.entries(files)) {
-        if (url) {
-          const response = await fetch(url);
-          const arrayBuffer = await response.arrayBuffer();
-          buffers[key] = await ctx.decodeAudioData(arrayBuffer);
-        }
-      }
-      
-      setAudioBuffers(buffers);
-    };
+  // Initialize audio element lazily
+  if (!audioRef.current && audioFile) {
+    audioRef.current = new Audio(audioFile);
+    audioRef.current.preload = 'auto';
+  }
 
-    initAudio();
-
-    return () => {
-      if (audioContext) {
-        audioContext.close();
-      }
-    };
-  }, []);
-
-  const playSound = (soundKey: string) => {
-    if (!audioContext || !audioBuffers[soundKey]) return;
+  const playSound = useCallback(() => {
+    if (!enabled || !audioRef.current) return;
     
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffers[soundKey];
-    source.connect(audioContext.destination);
-    source.start(0);
-  };
+    try {
+      // Reset the audio to the beginning
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch((error) => {
+        // Silently handle audio play errors (common in browsers with autoplay restrictions)
+        console.debug('Audio play failed:', error);
+      });
+    } catch (error) {
+      console.debug('Audio play error:', error);
+    }
+  }, [enabled]);
 
-  return { playSound };
+  return playSound;
 }
