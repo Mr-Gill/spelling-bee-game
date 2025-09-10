@@ -1,38 +1,27 @@
-import React, { createContext, useContext, ReactNode, useEffect } from 'react';
-import useMusic from './utils/useMusic';
-import { Howl } from 'howler';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface AudioContextValue {
-  playTitleMusic: (genre?: any) => void;
-  playGameMusic: (genre?: any) => void;
-  playSoundEffect: (effect: 'correct' | 'wrong' | 'win' | 'lose') => void;
+interface AudioManager {
+  muted: boolean;
+  toggleMute: () => void;
 }
 
-const AudioContext = createContext<AudioContextValue | null>(null);
+const AudioContext = createContext<AudioManager | undefined>(undefined);
 
-export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { currentTrack, playTitleMusic, playGameMusic } = useMusic();
+export const AudioProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+  const [muted, setMuted] = useState(false);
   
-  // Initialize audio context and setup audio elements
-  useEffect(() => {
-    // Setup audio elements and event listeners
-  }, [currentTrack]);
-
-  const playSoundEffect = (effect: 'correct' | 'wrong' | 'win' | 'lose') => {
-    const sound = new Howl({
-      src: [`${process.env.PUBLIC_URL}/audio/${effect}.mp3`]
-    });
-    sound.play();
+  const toggleMute = () => {
+    setMuted(!muted);
   };
 
   return (
-    <AudioContext.Provider value={{ playTitleMusic, playGameMusic, playSoundEffect }}>
+    <AudioContext.Provider value={{ muted, toggleMute }}>
       {children}
     </AudioContext.Provider>
   );
 };
 
-export const useAudio = (): AudioContextValue => {
+export const useAudio = () => {
   const context = useContext(AudioContext);
   if (!context) {
     throw new Error('useAudio must be used within an AudioProvider');

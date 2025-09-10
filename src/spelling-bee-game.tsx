@@ -6,7 +6,7 @@ import GameScreen from './GameScreen';
 import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
 import HistoryScreen from './HistoryScreen';
-import ShopScreen from '../ShopScreen';
+import ShopScreen from './ShopScreen';
 import useMusic from './utils/useMusic';
 import { AudioProvider } from './AudioContext';
 import { HelpSystemProvider } from './contexts/HelpSystemContext';

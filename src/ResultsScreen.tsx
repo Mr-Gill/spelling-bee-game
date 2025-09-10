@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { GameResults, GameConfig, LeaderboardEntry } from './types';
-import applauseSoundFile from `${process.env.PUBLIC_URL}/audio/applause.mp3`;
+import applauseSoundFile from './audio/applause.mp3';
 import { launchConfetti } from './utils/confetti';
 import { recordDailyCompletion, StreakInfo } from './DailyChallenge';
 import MorphologyCard from './components/MorphologyCard';
