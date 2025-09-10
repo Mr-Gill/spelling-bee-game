@@ -1,6 +1,6 @@
 import React from "react";
 import useSound from "../utils/useSound";
-import { loadAudioFiles } from "../utils/audioLoader";
+import letterCorrectSoundFile from "../audio/letter-correct.mp3";
 
 interface OnScreenKeyboardProps {
   onLetter: (letter: string) => void;
@@ -25,13 +25,10 @@ const OnScreenKeyboard: React.FC<OnScreenKeyboardProps> = ({
   currentWord,
   'aria-label': ariaLabel
 }) => {
-  const { playSound } = useSound();
+  const playLetterSound = useSound(letterCorrectSoundFile, soundEnabled);
   
-  const handleLetterClick = async (letter: string) => {
-    const audioFiles = await loadAudioFiles();
-    if (audioFiles.letterCorrectSoundFile && soundEnabled) {
-      playSound(audioFiles.letterCorrectSoundFile);
-    }
+  const handleLetterClick = (letter: string) => {
+    playLetterSound();
     onLetter(letter);
   };
 

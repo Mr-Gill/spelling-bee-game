@@ -31,17 +31,7 @@ const AchievementsScreen: React.FC<AchievementsScreenProps> = ({ onBack }) => {
     } catch {
       return [];
     }
-<<<<<<< Updated upstream
   }, []);
-=======
-  });
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
   return (
     <div className="screen-container bg-gradient-to-br from-green-600 to-teal-800 text-white">
