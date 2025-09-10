@@ -46,6 +46,8 @@
   "exclude": [
     "node_modules",
     "dist",
-    "build"
+    "build",
+    "src/components/BeeSelect.tsx",
+    "src/components/BeeToast.tsx"
   ]
 }
