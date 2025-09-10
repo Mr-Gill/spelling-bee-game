@@ -1,13 +1,25 @@
-import React, { useState, useEffect, useRef, ReactNode, Fragment } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
-import { Check, ChevronDown, ChevronUp } from 'react-feather';
+import { Check } from 'react-feather';
 import classNames from 'classnames';
+
+const ChevronDown = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="6 9 12 15 18 9"></polyline>
+  </svg>
+);
+
+const ChevronUp = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="6 15 12 9 18 15"></polyline>
+  </svg>
+);
 
 export interface SelectOption<T = string> {
   value: T;
   label: string;
   disabled?: boolean;
-  icon?: ReactNode;
+  icon?: React.ReactNode;
 }
 
 interface BeeSelectProps<T> {
@@ -24,7 +36,7 @@ interface BeeSelectProps<T> {
   buttonClassName?: string;
   optionsClassName?: string;
   optionClassName?: string;
-  leftIcon?: ReactNode;
+  leftIcon?: React.ReactNode;
   fullWidth?: boolean;
   required?: boolean;
   name?: string;
@@ -182,7 +194,7 @@ const BeeSelect = <T extends unknown>({
             
             <Transition
               show={isOpen}
-              as={Fragment}
+              as={React.Fragment}
               enter="transition ease-out duration-100"
               enterFrom="transform opacity-0 scale-95"
               enterTo="transform opacity-100 scale-100"

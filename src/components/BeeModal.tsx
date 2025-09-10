@@ -1,59 +1,89 @@
 import React, { useEffect, useRef, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'react-feather';
 import BeeButton from './BeeButton';
 
-interface ModalProps {
+interface BeeModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
-  children: ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
-  showCloseButton?: boolean;
-  closeOnOverlayClick?: boolean;
-  closeOnEscape?: boolean;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
   className?: string;
   overlayClassName?: string;
-  contentClassName?: string;
-  headerClassName?: string;
-  bodyClassName?: string;
-  footer?: ReactNode;
-  showFooterDivider?: boolean;
+  showCloseButton?: boolean;
   showHeaderDivider?: boolean;
+  showFooterDivider?: boolean;
+  headerClassName?: string;
+  footerClassName?: string;
 }
 
-const sizeClasses = {
-  sm: 'max-w-md',
-  md: 'max-w-2xl',
-  lg: 'max-w-4xl',
-  xl: 'max-w-6xl',
-  full: 'max-w-full w-full mx-4',
+interface CloseIconProps {
+}
+
+const CloseIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
+);
+
+interface MotionOverlayProps extends React.ComponentProps<typeof motion.div> {
+  overlayClassName?: string;
+  onClick?: () => void;
+}
+
+const MotionOverlay: React.FC<MotionOverlayProps> = ({ 
+  overlayClassName = '', 
+  onClick, 
+  ...props 
+}) => (
+  <div className={classNames(
+    'fixed inset-0 z-50 flex items-center justify-center p-4',
+    'bg-black/50 dark:bg-black/70 backdrop-blur-sm',
+    overlayClassName
+  )}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      {...props}
+    />
+  </div>
+);
+
+type MotionDialogProps = React.ComponentProps<typeof motion.div> & {
+  role?: 'dialog' | 'alertdialog' | 'document';
+  'aria-modal'?: boolean;
+  'aria-labelledby'?: string;
+  className?: string;
+  onClick?: (e: React.MouseEvent) => void;
 };
 
-const BeeModal: React.FC<ModalProps> = ({
+const MotionDialog: React.FC<MotionDialogProps> = (props) => (
+  <motion.div {...props} />
+);
+
+const BeeModal = ({
   isOpen,
   onClose,
   title,
   children,
-  size = 'md',
-  showCloseButton = true,
-  closeOnOverlayClick = true,
-  closeOnEscape = true,
+  footer,
   className = '',
   overlayClassName = '',
-  contentClassName = '',
-  headerClassName = '',
-  bodyClassName = '',
-  footer,
-  showFooterDivider = true,
+  showCloseButton = true,
   showHeaderDivider = true,
-}) => {
+  showFooterDivider = true,
+  headerClassName = '',
+  footerClassName = ''
+}: BeeModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
   
   // Close on escape key
   useEffect(() => {
-    if (!isOpen || !closeOnEscape) return;
+    if (!isOpen || !true) return;
     
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -63,7 +93,7 @@ const BeeModal: React.FC<ModalProps> = ({
     
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [isOpen, onClose, closeOnEscape]);
+  }, [isOpen, onClose]);
   
   // Disable body scroll when modal is open
   useEffect(() => {
@@ -122,43 +152,24 @@ const BeeModal: React.FC<ModalProps> = ({
       {isOpen && (
         <>
           {/* Overlay */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className={classNames(
-              'fixed inset-0 z-50 flex items-center justify-center p-4',
-              'bg-black/50 dark:bg-black/70 backdrop-blur-sm',
-              overlayClassName
-            )}
-            onClick={closeOnOverlayClick ? onClose : undefined}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={title ? 'modal-title' : undefined}
+          <MotionOverlay
+            onClick={true ? onClose : undefined}
+            overlayClassName={overlayClassName}
           >
-            {/* Modal */}
-            <motion.div
-              ref={modalRef}
-              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            <MotionDialog
+              role="dialog"
+              aria-modal={true}
+              aria-labelledby={title ? 'modal-title' : undefined}
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.98 }}
-              transition={{
-                type: 'spring',
-                damping: 25,
-                stiffness: 300,
-              }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 400 }}
               className={classNames(
-                'relative w-full max-h-[90vh] overflow-y-auto',
-                'bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg',
-                'rounded-2xl shadow-2xl',
-                'border border-gray-200 dark:border-gray-700',
-                'transform transition-all',
-                sizeClasses[size],
+                'relative w-full max-w-lg bg-surface-container-highest dark:bg-surface-container-high',
+                'rounded-xl shadow-elevation-3 overflow-hidden',
                 className
               )}
               onClick={(e) => e.stopPropagation()}
-              role="document"
             >
               {/* Header */}
               {(title || showCloseButton) && (
@@ -167,7 +178,7 @@ const BeeModal: React.FC<ModalProps> = ({
                     'sticky top-0 z-10',
                     'px-6 py-4',
                     'bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm',
-                    showHeaderDivider && 'border-b border-gray-200 dark:border-gray-700',
+                    showHeaderDivider ? 'border-b border-gray-200 dark:border-gray-700' : undefined,
                     'flex items-center justify-between',
                     headerClassName
                   )}
@@ -182,13 +193,13 @@ const BeeModal: React.FC<ModalProps> = ({
                   )}
                   {showCloseButton && (
                     <BeeButton
-                      variant="ghost"
+                      variant="text"
                       size="sm"
                       onClick={onClose}
                       className="ml-auto -mr-2"
                       aria-label="Close modal"
                     >
-                      <X className="w-5 h-5" />
+                      <CloseIcon />
                     </BeeButton>
                   )}
                 </div>
@@ -199,7 +210,6 @@ const BeeModal: React.FC<ModalProps> = ({
                 className={classNames(
                   'p-6',
                   'overflow-y-auto',
-                  bodyClassName
                 )}
               >
                 {children}
@@ -212,16 +222,16 @@ const BeeModal: React.FC<ModalProps> = ({
                     'sticky bottom-0',
                     'px-6 py-4',
                     'bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm',
-                    showFooterDivider && 'border-t border-gray-200 dark:border-gray-700',
-                    'flex items-center justify-end space-x-3',
-                    'rounded-b-2xl'
+                    showFooterDivider ? 'border-t border-gray-200 dark:border-gray-700' : undefined,
+                    'flex items-center justify-end gap-3',
+                    footerClassName
                   )}
                 >
                   {footer}
                 </div>
               )}
-            </motion.div>
-          </motion.div>
+            </MotionDialog>
+          </MotionOverlay>
           
           {/* Add focus trap for screen readers */}
           <div className="sr-only" aria-live="polite">

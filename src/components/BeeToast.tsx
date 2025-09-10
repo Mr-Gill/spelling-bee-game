@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, XCircle, AlertCircle, Info, X } from 'react-feather';
+import { CheckCircle, XCircle, AlertCircle, Info } from 'react-feather';
 
 interface ToastProps {
   id: string;
@@ -52,6 +52,13 @@ const positionClasses = {
   'bottom-left': 'bottom-4 left-4',
   'bottom-right': 'bottom-4 right-4',
 } as const;
+
+const CloseIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
+);
 
 const BeeToast: React.FC<ToastProps> = ({
   id,
@@ -123,7 +130,7 @@ const BeeToast: React.FC<ToastProps> = ({
                 aria-label="Dismiss"
               >
                 <span className="sr-only">Close</span>
-                <X className="h-5 w-5" aria-hidden="true" />
+                <CloseIcon className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
           </div>
