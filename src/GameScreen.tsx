@@ -1,519 +1,573 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useHelpSystem } from './contexts/HelpSystemContext';
-import { 
-  Word, 
-  GameScreenProps, 
-  GameScreenState
-} from '../types';
-
-// Components
-import CircularTimer from './components/CircularTimer';
+import React from 'react';
+import { SkipForward, Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { GameConfig, Word, Participant, GameResults, defaultAchievements } from './types';
+import correctSoundFile from './audio/correct.mp3';
+import wrongSoundFile from './audio/wrong.mp3';
+import timeoutSoundFile from './audio/timeout.mp3';
+import letterCorrectSoundFile from './audio/letter-correct.mp3';
+import letterWrongSoundFile from './audio/letter-wrong.mp3';
+import shopSoundFile from './audio/shop.mp3';
+import loseLifeSoundFile from './audio/lose-life.mp3';
+import { launchConfetti } from './utils/confetti';
+import { speak } from './utils/tts';
+import useSound from './utils/useSound';
+import useTimer from './utils/useTimer';
+import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
-import Button from './components/Button';
-// Progress components
-import BeeProgress from './components/BeeProgress';
-import BeeElement from './components/BeeElement';
+import AvatarSelector from './components/AvatarSelector';
 
-// Constants
-const initialTime = 60;
+const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
-// Default words
-const DEFAULT_WORDS = {
-  easy: [
-    { word: 'apple', difficulty: 'easy', syllables: ['ap', 'ple'], phonemes: ['/æ/', '/p/', '/əl/'], definition: 'a fruit', origin: 'Old English', example: 'I ate an apple.' },
-    { word: 'banana', difficulty: 'easy', syllables: ['ba', 'na', 'na'], phonemes: ['/b/', '/ə/', '/n/', '/ɑː/', '/n/', '/ə/'], definition: 'a fruit', origin: 'Spanish', example: 'I ate a banana.' },
-    { word: 'cherry', difficulty: 'easy', syllables: ['cher', 'ry'], phonemes: ['/tʃ/', '/ɛ/', '/r/', '/i/'], definition: 'a fruit', origin: 'Old English', example: 'I ate a cherry.' },
-    { word: 'date', difficulty: 'easy', syllables: ['date'], phonemes: ['/deɪt/'], definition: 'a fruit', origin: 'Old English', example: 'I ate a date.' },
-    { word: 'elderberry', difficulty: 'medium', syllables: ['el', 'der', 'ber', 'ry'], phonemes: ['/ɛ/', '/l/', '/d/', '/ə/', '/r/', '/b/', '/ɛ/', '/r/', '/i/'], definition: 'a fruit', origin: 'Old English', example: 'I ate an elderberry.' },
-    { word: 'fig', difficulty: 'medium', syllables: ['fig'], phonemes: ['/fɪɡ/'], definition: 'a fruit', origin: 'Old English', example: 'I ate a fig.' },
-    { word: 'grape', difficulty: 'medium', syllables: ['grape'], phonemes: ['/ɡ/', '/r/', '/eɪ/', '/p/'], definition: 'a fruit', origin: 'Old English', example: 'I ate a grape.' },
-    { word: 'honeydew', difficulty: 'hard', syllables: ['hon', 'ey', 'dew'], phonemes: ['/h/', '/ʌ/', '/n/', '/i/', '/d/', '/uː/'], definition: 'a fruit', origin: 'Old English', example: 'I ate a honeydew.' },
-  ],
-  medium: [
-    // ...
-  ],
-  hard: [
-    // ...
-  ]
-};
+interface GameScreenProps {
+  config: GameConfig;
+  onEndGame: (results: GameResults) => void;
+  musicStyle: string;
+  musicVolume: number;
+  onMusicStyleChange: (style: string) => void;
+  onMusicVolumeChange: (volume: number) => void;
+  soundEnabled: boolean;
+  onSoundEnabledChange: (enabled: boolean) => void;
+  isMusicPlaying: boolean;
+  onToggleMusicPlaying: () => void;
+}
 
-// Import custom hooks
-import { useGameState } from './hooks/useGameState';
-import { useParticipants } from './hooks/useParticipants';
-import { useWordQueue } from './hooks/useWordQueue';
-import { generateWordList } from './api/githubAIService';
+interface Feedback {
+  message: string;
+  type: string;
+}
 
-// Main GameScreen component
-export const GameScreen: React.FC<GameScreenProps> = ({ config }) => {
-  // Use custom hooks for state management
-  const { gameStarted, timeLeft } = useGameState();
-  const { participants, currentParticipantIndex, setParticipants, setCurrentParticipantIndex } = useParticipants(config.participants);
-  const { setWordQueues } = useWordQueue();
-  
-  // Remaining state
-  const [state, setState] = useState<GameScreenState>({
-    message: null,
-    showDefinition: false,
-    musicConfirmed: false
-  });
-  const [coins, setCoins] = useState(0);
-  const [usedLetters, setUsedLetters] = useState(new Set<string>());
-  const [revealedIndices, setRevealedIndices] = useState(new Set<number>());
-  const [feedback, setFeedback] = useState<{message: string, type: string} | null>(null);
-  const [letters, setLetters] = useState<string[]>([]);
-  const [totalWords, setTotalWords] = useState(0);
-  const [currentHelp, setCurrentHelp] = useState<string | null>(null);
-  const [gameProgress, setGameProgress] = useState(0);
+// difficultyOrder is imported from useWordSelection
 
-  const handleNextWord = useCallback(() => {
-    setCurrentParticipantIndex(prev => (prev + 1) % participants.length);
-    setLetters([]);
-    setRevealedIndices(new Set<number>());
-    setState(prev => ({ ...prev, showDefinition: false }));
-    setFeedback(null);
-    setUsedLetters(new Set<string>());
-  }, [participants]);
-
-  const { 
-    getDefinition: getDefinitionHelp, 
-    addTime: addTimeHelp, 
-    skipWord: skipWordHelp, 
-    isHelpUsed, 
-    setHelpUsed 
-  } = useHelpSystem();
-
-  const timerRef = useRef<any>(null);
-
-  // Calculate game progress
-  useEffect(() => {
-    // Update total words when word database is available
-    if (config?.wordDatabase) {
-      const words = Object.values(config.wordDatabase).flat();
-      setTotalWords(words.length);
-      
-      // Update participants' max score
-      setParticipants(prev => prev.map(p => ({
-        ...p,
-        maxScore: words.length * 10 // 10 points per word
-      })));
-    }
-  }, [config?.wordDatabase]);
-
-  useEffect(() => {
-    const gameProgress = totalWords > 0 
-      ? Math.min(100, Math.round((currentParticipantIndex / totalWords) * 100))
-      : 0;
-    setGameProgress(gameProgress);
-  }, [currentParticipantIndex, totalWords]);
-
-  const handleShowDefinition = useCallback(async (word: string) => {
-    setState(prev => ({ ...prev, showDefinition: true }));
+const GameScreen: React.FC<GameScreenProps> = ({
+  config,
+  onEndGame,
+  musicStyle,
+  musicVolume,
+  onMusicStyleChange,
+  onMusicVolumeChange,
+  soundEnabled,
+  onSoundEnabledChange,
+  isMusicPlaying,
+  onToggleMusicPlaying,
+}) => {
+  const [participants, setParticipants] = React.useState<Participant[]>(
+    config.participants.map(p => ({
+      ...p,
+      attempted: 0,
+      correct: 0,
+      wordsAttempted: 0,
+      wordsCorrect: 0
+    }))
+  );
+  const [currentParticipantIndex, setCurrentParticipantIndex] = React.useState(0);
+  const isTeamMode = config.gameMode === 'team';
+  const [showWord, setShowWord] = React.useState(true);
+  const [usedHint, setUsedHint] = React.useState(false);
+  const [letters, setLetters] = React.useState<string[]>([]);
+  const [feedback, setFeedback] = React.useState<Feedback>({ message: '', type: '' });
+  const [extraAttempt, setExtraAttempt] = React.useState(false);
+  const [isHelpOpen, setIsHelpOpen] = React.useState(false);
+  const { wordQueues, setWordQueues, currentWord, currentDifficulty, selectNextWord } =
+    useWordSelection(config.wordDatabase);
+  const [attemptedParticipants, setAttemptedParticipants] = React.useState<Set<number>>(new Set());
+  const [missedWords, setMissedWords] = React.useState<Word[]>([]);
+  const [unlockedAchievements, setUnlockedAchievements] = React.useState<string[]>(() => {
+    if (typeof window === 'undefined') return [];
     try {
-      const definition = await getDefinitionHelp(word);
-      setHelpUsed('hint-definition');
-      setCurrentHelp(`Definition: ${definition}`);
-      setState(prev => ({ ...prev, message: 'Definition shown' }));
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setState(prev => ({ ...prev, message: 'Failed to load definition' }));
-      }
+      return JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
+    } catch {
+      return [];
     }
-  }, [getDefinitionHelp, setHelpUsed]);
+  });
+  const [toast, setToast] = React.useState('');
+  const hiddenInputRef = React.useRef<HTMLInputElement>(null);
+  const [startTime] = React.useState(Date.now());
+  const [currentAvatar, setCurrentAvatar] = React.useState('');
+  const [theme, setTheme] = React.useState(() => localStorage.getItem('theme') || 'light');
 
-  const handleAddTimeHelp = useCallback(() => {
-    addTimeHelp(30);
-    setHelpUsed('extra-time');
-    setCurrentHelp('Added 30 seconds to the timer!');
-    setState(prev => ({ ...prev, message: 'Added 30 seconds to the timer!' }));
-  }, [addTimeHelp, setHelpUsed]);
+  const playCorrect = useSound(correctSoundFile, soundEnabled);
+  const playWrong = useSound(wrongSoundFile, soundEnabled);
+  const playTimeout = useSound(timeoutSoundFile, soundEnabled);
+  const playLetterCorrect = useSound(letterCorrectSoundFile, soundEnabled);
+  const playLetterWrong = useSound(letterWrongSoundFile, soundEnabled);
+  const playShop = useSound(shopSoundFile, soundEnabled);
+  const playLoseLife = useSound(loseLifeSoundFile, soundEnabled);
 
-  const handleSkipWordHelp = useCallback(() => {
-    skipWordHelp();
-    setHelpUsed('skip-word');
-    setCurrentHelp('Skipped to the next word!');
-    setState(prev => ({ ...prev, message: 'Skipped to the next word!' }));
-    handleNextWord();
-  }, [skipWordHelp, setHelpUsed]);
+  const {
+    timeLeft,
+    start: startTimer,
+    pause: pauseTimer,
+    resume: resumeTimer,
+    reset: resetTimer,
+    stop: stopTimer,
+    isPaused,
+  } = useTimer(config.timerDuration, () => {
+    playTimeout();
+    handleIncorrectAttempt();
+  });
+  React.useEffect(() => {
+    if (localStorage.getItem('teacherMode') === 'true') {
+      document.body.classList.add('teacher-mode');
+    } else {
+      document.body.classList.remove('teacher-mode');
+    }
+  }, []);
 
-  const currentParticipant = participants[currentParticipantIndex];
+  React.useEffect(() => {
+    if (currentWord) {
+      setLetters(Array.from({ length: currentWord.word.length }, () => ''));
+    }
+  }, [currentWord]);
 
-  const handleSpellingSubmit = useCallback(() => {
-    if (!currentParticipant?.currentWord) return;
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!currentWord || isPaused) return;
+      if (/^[a-zA-Z]$/.test(e.key)) {
+        typeLetter(e.key);
+      } else if (e.key === 'Backspace') {
+        handleVirtualBackspace();
+      } else if (e.key === 'Enter') {
+        handleSpellingSubmit();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentWord, isPaused, letters]);
 
-    const submittedWord = letters.join('');
-    const isCorrect = submittedWord.toLowerCase() === currentParticipant.currentWord.word.toLowerCase();
-    
-    setParticipants(prev => {
-      const updated = [...prev];
-      updated[currentParticipantIndex] = {
-        ...updated[currentParticipantIndex],
-        currentWord: currentParticipant.currentWord,
-        attempted: updated[currentParticipantIndex].attempted || 0,
-        correct: updated[currentParticipantIndex].correct || 0
-      };
-      return updated;
+  React.useEffect(() => {
+    document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
+    document.body.classList.add(`theme-${theme}`);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const selectNextWordForLevel = (level: number) => {
+    const nextWord = selectNextWord(level);
+    if (nextWord) {
+      setAttemptedParticipants(new Set());
+      setExtraAttempt(false);
+      setIsHelpOpen(false);
+      setUsedHint(false);
+      setLetters(Array(nextWord.word.length).fill(''));
+      if (hiddenInputRef.current) {
+        hiddenInputRef.current.focus();
+      }
+      speak(nextWord.word);
+      startTimer();
+    } else {
+      onEndGameWithMissedWords();
+    }
+  };
+
+  const nextTurn = () => {
+    setCurrentParticipantIndex(prevIndex => (prevIndex + 1) % participants.length);
+  };
+
+  function handleIncorrectAttempt() {
+    if (extraAttempt) {
+      setFeedback({ message: 'Incorrect. You still have one more attempt!', type: 'error' });
+      setExtraAttempt(false);
+      if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
+      startTimer();
+      return;
+    }
+
+    setFeedback({ message: 'Incorrect. Try again next time!', type: 'error' });
+    if (currentWord) setMissedWords(prev => [...prev, currentWord]);
+
+    const updatedParticipants = participants.map((p, index) => {
+      if (index === currentParticipantIndex) {
+        return {
+          ...p,
+          lives: p.lives - 1,
+          streak: 0,
+          difficultyLevel: Math.max(0, p.difficultyLevel - config.progressionSpeed)
+        };
+      }
+      return p;
     });
+    setParticipants(updatedParticipants);
+
+    playLoseLife();
+    if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
+
+    const newAttempted = new Set(attemptedParticipants);
+    newAttempted.add(currentParticipantIndex);
+
+    setTimeout(() => {
+      setFeedback({ message: '', type: '' });
+      if (newAttempted.size >= participants.length) {
+        if (currentWord) {
+          setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+        }
+        setAttemptedParticipants(new Set());
+        const nextIndex = (currentParticipantIndex + 1) % participants.length;
+        selectNextWordForLevel(updatedParticipants[nextIndex].difficultyLevel);
+        nextTurn();
+      } else {
+        setAttemptedParticipants(newAttempted);
+        setUsedHint(false);
+        nextTurn();
+        startTimer();
+      }
+    }, 2000);
+  }
+
+  const spendPoints = (participantIndex: number, cost: number) => {
+    setParticipants(prev =>
+      prev.map((p, index) => {
+        if (index === participantIndex) {
+          return { ...p, points: p.points - cost };
+        }
+        return p;
+      })
+    );
+    playShop();
+  };
+
+  const typeLetter = (letter: string) => {
+    if (!currentWord) return;
+    setLetters(prev => {
+      const index = prev.findIndex(l => l === '');
+      if (index === -1) return prev;
+      const newLetters = [...prev];
+      newLetters[index] = letter;
+      const isCorrectLetter = currentWord.word[index].toLowerCase() === letter.toLowerCase();
+      const play = isCorrectLetter ? playLetterCorrect : playLetterWrong;
+      play();
+      return newLetters;
+    });
+  };
+
+  const handleVirtualLetter = (letter: string) => {
+    typeLetter(letter);
+  };
+
+  const handleVirtualBackspace = () => {
+    setLetters(prev => {
+      const reverseIndex = [...prev].reverse().findIndex(l => l !== '');
+      if (reverseIndex === -1) return prev;
+      const index = prev.length - 1 - reverseIndex;
+      const newLetters = [...prev];
+      newLetters[index] = '';
+      return newLetters;
+    });
+  };
+
+  const handleSpellingSubmit = () => {
+    if (!currentWord) return;
+    stopTimer();
+
+    const guess = letters.join('').trim().toLowerCase();
+    const isCorrect = guess === currentWord.word.toLowerCase();
+    const shouldCountWord = isCorrect || !extraAttempt;
+
+    const updatedParticipants = participants.map((p, index) => {
+      if (index === currentParticipantIndex) {
+        const multipliers: Record<string, number> = { easy: 1, medium: 2, tricky: 3 };
+        const basePoints = 5;
+        const multiplier = multipliers[currentDifficulty] || 1;
+        const bonus = p.streak * 2;
+        const pointsEarned = basePoints * multiplier + bonus;
+        return {
+          ...p,
+          attempted: p.attempted + 1,
+          correct: p.correct + (isCorrect ? 1 : 0),
+          wordsAttempted: p.wordsAttempted + (shouldCountWord ? 1 : 0),
+          wordsCorrect: p.wordsCorrect + (shouldCountWord && isCorrect ? 1 : 0),
+          points: isCorrect ? p.points + pointsEarned : p.points,
+          streak: isCorrect ? p.streak + 1 : 0,
+          difficultyLevel: isCorrect ? (usedHint ? p.difficultyLevel : p.difficultyLevel + config.progressionSpeed) : p.difficultyLevel
+        };
+      }
+      return p;
+    });
+    setParticipants(updatedParticipants);
 
     if (isCorrect) {
-      setTimeout(handleNextWord, 1500);
-    }
-  }, [currentParticipant, letters, handleNextWord]);
+      const participant = updatedParticipants[currentParticipantIndex];
+      const newlyUnlocked = defaultAchievements.filter(
+        ach => participant.wordsCorrect >= ach.threshold && !unlockedAchievements.includes(ach.id)
+      );
 
-  const typeLetter = useCallback((letter: string) => {
-    if (!currentParticipant?.currentWord) return;
-    
-    setLetters([...letters, letter]);
-    setUsedLetters(new Set([...usedLetters, letter.toLowerCase()]));
-  }, [currentParticipant, letters, usedLetters]);
-
-  const handleRevealLetter = useCallback(() => {
-    if (!currentParticipant?.currentWord) return;
-    
-    const word = currentParticipant.currentWord.word;
-    const unrevealedIndices = word
-      .split('')
-      .map((_: string, i: number) => i)
-      .filter((i: number) => !revealedIndices.has(i));
-    
-    if (unrevealedIndices.length > 0) {
-      const randomIndex = unrevealedIndices[Math.floor(Math.random() * unrevealedIndices.length)];
-      setRevealedIndices(new Set([...revealedIndices, randomIndex]));
-      setCoins(coins - 2);
-      setCurrentHelp('Revealed a letter! -2 coins');
-      setState(prev => ({ ...prev, message: 'Revealed a letter!' }));
-    }
-  }, [currentParticipant, revealedIndices, coins]);
-
-  // Set up event listeners for help system
-  useEffect(() => {
-    const handleAddTime = (e: CustomEvent<{ seconds: number }>) => {
-      const { seconds } = e.detail;
-      if (timerRef.current) {
-        timerRef.current.addSeconds(seconds);
+      if (newlyUnlocked.length > 0) {
+        const updatedUnlocked = [...unlockedAchievements, ...newlyUnlocked.map(a => a.id)];
+        setUnlockedAchievements(updatedUnlocked);
+        localStorage.setItem('unlockedAchievements', JSON.stringify(updatedUnlocked));
+        const first = newlyUnlocked[0];
+        setToast(`Achievement unlocked: ${first.icon} ${first.name}!`);
+        setTimeout(() => setToast(''), 3000);
       }
-    };
-
-    const handleSkipWord = () => handleNextWord();
-
-    window.addEventListener('addTime', handleAddTime as EventListener);
-    window.addEventListener('skipWord', handleSkipWord);
-
-    return () => {
-      window.removeEventListener('addTime', handleAddTime as EventListener);
-      window.removeEventListener('skipWord', handleSkipWord);
-    };
-  }, [handleNextWord]);
-
-  // Clear current help and feedback after delay
-  useEffect(() => {
-    const timers: NodeJS.Timeout[] = [];
-    
-    if (currentHelp) {
-      const timer = setTimeout(() => 
-        setCurrentHelp(null), 3000);
-      timers.push(timer);
-    }
-    
-    if (state.message) {
-      const timer = setTimeout(() => 
-        setState(prev => ({ ...prev, message: null })), 3000);
-      timers.push(timer);
-    }
-    
-    return () => timers.forEach(clearTimeout);
-  }, [currentHelp, state.message]);
-
-  useEffect(() => {
-    const abortController = new AbortController();
-    
-    const loadWordList = async () => {
-      try {
-        const aiWordList = await generateWordList("Generate a list of spelling bee words for grade level");
-        if (!abortController.signal.aborted) {
-          setWordQueues(prev => ({
-            ...prev,
-            easy: aiWordList.map((w: Word) => ({
-              word: w.word,
-              difficulty: w.difficulty === 'easy' ? 'easy' : w.difficulty === 'medium' ? 'medium' : 'hard',
-              syllables: w.syllables || [],
-              phonemes: w.phonemes || [],
-              definition: w.definition || '',
-              origin: w.origin || '',
-              example: w.example || ''
-            }))
-          }));
-        }
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          if (error.name === 'AbortError') {
-            console.log('Fetch aborted');
-          } else if (!abortController.signal.aborted) {
-            console.error('Failed to load AI word list', error);
-            setWordQueues(prev => ({
-              ...prev,
-              easy: DEFAULT_WORDS.easy
-            }));
-            setState(prev => ({ ...prev, message: 'Failed to load word list. Using default words.' }));
-          }
-        }
+      
+      playCorrect();
+      
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (config.effectsEnabled && !prefersReducedMotion) {
+        launchConfetti();
       }
-    };
-
-    loadWordList();
+      
+      setFeedback({ message: 'Correct! 🎉', type: 'success' });
+      
+      setTimeout(() => {
+        const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
+        const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
+        setFeedback({ message: '', type: '' });
+        selectNextWordForLevel(nextDifficulty);
+        nextTurn();
+      }, 2000);
+      
+      return; // Stop execution for the correct case
+    }
     
-    return () => {
-      abortController.abort();
-    };
-  }, []);
+    // This part only runs if the answer was incorrect
+    playWrong();
+    handleIncorrectAttempt();
+  };
 
-  // Memoized components
-  const MemoizedProgress = React.memo(BeeProgress);
-  const MemoizedTimer = React.memo(CircularTimer);
-  const MemoizedButton = React.memo(Button);
-  const MemoizedHintPanel = React.memo(HintPanel);
+  const skipWord = () => {
+    stopTimer();
+    const isLivesPenalty = config.skipPenaltyType === 'lives';
+    const deduction = isLivesPenalty
+      ? `-${config.skipPenaltyValue} life${config.skipPenaltyValue > 1 ? 's' : ''}`
+      : `-${config.skipPenaltyValue} pts`;
 
-  // Optimized game loop
-  const gameLoop = useCallback(() => {
-    if (!gameStarted) return;
-    requestAnimationFrame(() => {
-      // updateGameState();
-      gameLoop();
+    const updatedParticipants = participants.map((p, index) => {
+      if (index === currentParticipantIndex) {
+        const updated = { ...p, streak: 0, wordsAttempted: p.wordsAttempted + 1 };
+        return isLivesPenalty
+          ? { ...updated, lives: p.lives - config.skipPenaltyValue }
+          : { ...updated, points: p.points - config.skipPenaltyValue };
+      }
+      return p;
     });
-  }, [gameStarted]);
+    setParticipants(updatedParticipants);
 
-  const handleLetter = useCallback((letter: string) => {
-    typeLetter(letter);
-  }, [typeLetter]);
+    if (isLivesPenalty) {
+      playLoseLife();
+    }
+    setFeedback({ message: `Word Skipped (${deduction})`, type: 'info' });
+    if (currentWord) {
+      setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+    }
+    setAttemptedParticipants(new Set());
 
-  // WordLetter component for displaying letters
-  const WordLetter = ({ letter, revealed }: { letter: string; revealed: boolean }) => (
-    <span className={`letter ${revealed ? 'revealed' : 'hidden'}`}>
-      {revealed ? letter : '_'}
-    </span>
-  );
+    setTimeout(() => {
+      const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
+      const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
+      setFeedback({ message: '', type: '' });
+      if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
+      selectNextWordForLevel(nextDifficulty);
+      nextTurn();
+    }, 1500);
+  };
 
-  const { playGameMusic } = useContext(AudioContext);
-  
-  useEffect(() => {
-    playGameMusic('Funk'); // Default to Funk genre
+  const onEndGameWithMissedWords = () => {
+    const lessonKey = new Date().toISOString().split('T')[0];
+    const stored = JSON.parse(localStorage.getItem('missedWordsCollection') || '{}');
+    const existing = stored[lessonKey] || [];
+    stored[lessonKey] = [...existing, ...missedWords];
+    localStorage.setItem('missedWordsCollection', JSON.stringify(stored));
+    const activeParticipants = participants.filter(p => p.lives > 0);
+    const finalParticipants = participants.map(p => ({
+      ...p,
+      accuracy: p.wordsAttempted > 0 ? (p.wordsCorrect / p.wordsAttempted) * 100 : 0
+    }));
+    onEndGame({
+      winner: activeParticipants.length === 1 ? activeParticipants[0] : null,
+      participants: finalParticipants,
+      gameMode: config.gameMode,
+      duration: Math.round((Date.now() - startTime) / 1000),
+      missedWords
+    });
+  };
+
+  React.useEffect(() => {
+    if (config.participants.length > 0) {
+      selectNextWordForLevel(config.participants[0].difficultyLevel);
+    }
   }, []);
 
+  React.useEffect(() => {
+    if (!participants || participants.length === 0) return;
+    const activeParticipants = participants.filter(p => p.lives > 0);
+    if (activeParticipants.length <= 1) {
+      onEndGameWithMissedWords();
+    }
+  }, [participants]);
+
+  const handleMuteToggle = () => {
+    audioManager.toggleMute();
+  };
+
   return (
-    <div className="game-screen">
-      <header className="flex items-center justify-between p-4 bg-primary text-on-primary">
-        <BeeElement variant="flying" size="medium" className="mr-2" />
-        <h1 className="text-2xl font-bold">Spelling Bee</h1>
-        <BeeElement size="medium" className="ml-2" />
-      </header>
-      <div className="game-area bg-surface-container p-6 rounded-lg">
-        <div className="absolute top-1/4 left-4 opacity-30">
-          <BeeElement size="small" />
+    <div className="relative screen-container bg-gradient-to-br from-indigo-600 to-purple-800 text-white flex flex-col items-center justify-center">
+      <input
+        ref={hiddenInputRef}
+        type="text"
+        className="absolute opacity-0 pointer-events-none"
+        aria-hidden="true"
+        tabIndex={-1}
+      />
+      {toast && (
+        <div className="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50">
+          {toast}
         </div>
-        <div className="absolute bottom-1/4 right-4 opacity-30">
-          <BeeElement variant="flying" size="small" />
-        </div>
-        <div className="game-header">
-          <div className="flex items-center gap-4 p-4 bg-surface-container-low rounded-xl">
-            <div className="flex flex-col items-center">
-              <MemoizedProgress 
-                value={gameProgress}
-                className="text-primary"
-                size="lg"
-              />
-              <span className="label-small text-on-surface-variant mt-1">Game Progress</span>
-            </div>
-            
-            <div className="flex flex-col items-center">
-              <MemoizedProgress 
-                value={currentParticipant?.score && currentParticipant?.maxScore 
-                  ? Math.round((currentParticipant.score / currentParticipant.maxScore) * 100)
-                  : 0}
-                className="text-secondary"
-                size="md"
-              />
-              <span className="label-small text-on-surface-variant mt-1">Score</span>
-            </div>
-            
-            <div className="flex-1">
-              <div className="flex justify-between label-medium text-on-surface">
-                <span>Words: {currentParticipantIndex}/{totalWords}</span>
-                <span>{currentParticipantIndex && totalWords 
-                  ? Math.round((currentParticipantIndex / totalWords) * 100)
-                  : 0}%</span>
-              </div>
-              <BeeProgress 
-                value={currentParticipantIndex && totalWords 
-                  ? Math.round((currentParticipantIndex / totalWords) * 100)
-                  : 0}
-                className="mt-1"
-              />
-            </div>
+      )}
+      <div className="absolute top-8 left-8 flex gap-8 items-center">
+        <img src="img/bee.svg" alt="Bee icon" className="w-12 h-12" />
+        {participants.map((p, index) => (
+          <div key={index} className="text-center scorecard">
+            <div className="text-2xl font-bold">{p.name}</div>
+            <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(p.lives)}</div>
+            <div className="text-xl font-bold text-green-400">{p.points} pts</div>
           </div>
-          <div className="timer-container">
-            <MemoizedTimer 
-              timeLeft={timeLeft}
-              total={initialTime}
-            />
-          </div>
-          <div className="coins-display">
-            {state.musicConfirmed && (
-              <img 
-                src={`
-                  ${process.env.PUBLIC_URL}/img/${
-                    Number(timeLeft) < 15 ? 'TimePressureBee' : 
-                    Number(letters.length) > 0 ? 'TypingBee' : 'DefaultBee'
-                  }.svg`} 
-                alt="Bee avatar"
-                className={!state.musicConfirmed ? 'hidden' : ''}
-                onError={(e) => e.currentTarget.src = `${process.env.PUBLIC_URL}/img/DefaultBee.svg`}
-              />
-            )}
-            {coins}
-          </div>
-        </div>
-
-        <div className="word-area">
-          <div className="p-6 bg-surface-container-high rounded-xl shadow-sm">
-            <div className="flex flex-col items-center gap-4">
-              <h2 className="headline-small text-on-surface">Current Word</h2>
-              
-              {state.showDefinition && currentParticipant?.currentWord && (
-                <div className="flex gap-2">
-                  {currentParticipant.currentWord.word.split('').map((letter, index) => (
-                    <WordLetter 
-                      key={index}
-                      letter={letter}
-                      revealed={revealedIndices.has(index)}
-                    />
-                  ))}
-                </div>
-              )}
-              
-              {currentParticipant?.currentWord && (
-                <div className="w-full">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="label-medium text-on-surface-variant">
-                      Difficulty: {currentParticipant.currentWord.difficulty}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <span className="label-medium text-on-surface-variant">
-                        {currentParticipant.currentWord.difficulty === 'easy' ? 'Simple' :
-                         currentParticipant.currentWord.difficulty === 'medium' ? 'Medium' : 'Challenging'}
-                      </span>
-                      <div className="w-24">
-                        <BeeProgress 
-                          value={currentParticipant.currentWord.difficulty === 'easy' ? 33 : 
-                                currentParticipant.currentWord.difficulty === 'medium' ? 66 : 100}
-                          variant={currentParticipant.currentWord.difficulty === 'easy' ? 'success' :
-                                  currentParticipant.currentWord.difficulty === 'medium' ? 'warning' : 'danger'}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-          <MemoizedHintPanel 
-            word={currentParticipant?.currentWord}
-            onRevealLetter={handleRevealLetter}
-            onShowDefinition={() => handleShowDefinition(currentParticipant?.currentWord?.word || '')}
-            onAddTime={handleAddTimeHelp}
-            onSkipWord={handleSkipWordHelp}
-            isHelpUsed={isHelpUsed}
-            coins={coins}
-          />
-
-          {feedback && (
-            <div className={`feedback ${feedback.type}`}>
-              {feedback.message}
-            </div>
-          )}
-
-          {currentHelp && (
-            <div className="help-message">
-              {currentHelp}
-            </div>
-          )}
-          {state.message && (
-            <div className="help-message">
-              {state.message}
-            </div>
-          )}
-          <div className="space-y-4">
-            <OnScreenKeyboard 
-              onLetter={handleLetter}
-              onBackspace={() => setLetters(letters.slice(0, -1))}
-              onSubmit={handleSpellingSubmit}
-              soundEnabled={false}
-              usedLetters={usedLetters}
-              currentWord={currentParticipant?.currentWord?.word || ''}
-              aria-label="Spelling keyboard"
-            />
-            
-            <div className="flex gap-4">
-              <MemoizedButton 
-                variant="filled"
-                onClick={handleSpellingSubmit}
-                disabled={letters.length === 0}
-                className="bg-primary-container text-on-primary-container px-4 py-2 rounded-full flex-1"
-                aria-label="Submit spelling"
-                aria-disabled={letters.length === 0}
-              >
-                Submit
-              </MemoizedButton>
-              
-              <MemoizedButton 
-                variant="outlined" 
-                onClick={() => setLetters([])}
-                disabled={letters.length === 0}
-                aria-label="Clear letters"
-                aria-disabled={letters.length === 0}
-              >
-                Clear
-              </MemoizedButton>
-            </div>
-          </div>
-        </div>
-
-        {state.showDefinition && (
-          <HelpShop 
-            onClose={() => setState(prev => ({ ...prev, showDefinition: false }))}
-            onPurchase={(cost) => setCoins(coins - cost)}
-          />
-        )}
+        ))}
       </div>
+      
+      {feedback.message && (
+        <div className={`absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${
+          feedback.type === 'success' ? 'bg-green-500' : feedback.type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+        }`}
+        >
+          {feedback.message}
+        </div>
+      )}
+
+      <div className="absolute top-8 right-8 text-center z-50">
+          <div className={`timer-display ${timeLeft <= 10 ? 'text-red-500' : 'text-yellow-300'}`}>{timeLeft}</div>
+        <div className="text-lg">seconds left</div>
+          <button
+            onClick={isPaused ? resumeTimer : pauseTimer}
+            className="mt-2 bg-yellow-300 text-black btn-responsive rounded-lg font-bold"
+          >
+            {isPaused ? 'Resume' : 'Pause'}
+          </button>
+      </div>
+      <div className="absolute bottom-8 left-8 bg-black/50 p-4 rounded-lg z-50 flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onToggleMusicPlaying}
+            className="bg-yellow-300 text-black p-2 rounded"
+            aria-label={isMusicPlaying ? 'Pause music' : 'Play music'}
+          >
+            {isMusicPlaying ? <Pause size={16} /> : <Play size={16} />}
+          </button>
+          <button
+            onClick={() => onSoundEnabledChange(!soundEnabled)}
+            className="bg-yellow-300 text-black p-2 rounded"
+            aria-label={soundEnabled ? 'Mute audio' : 'Unmute audio'}
+          >
+            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+          </button>
+        </div>
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.01}
+          value={musicVolume}
+          onChange={e => onMusicVolumeChange(parseFloat(e.target.value))}
+          className="w-32"
+        />
+        <select
+          value={musicStyle}
+          onChange={e => onMusicStyleChange(e.target.value)}
+          className="text-black rounded p-1"
+        >
+          {musicStyles.map(style => (
+            <option key={style} value={style}>{style}</option>
+          ))}
+        </select>
+      </div>
+
+      <AvatarSelector
+        currentAvatar={currentAvatar}
+        onSelect={(avatar) => setCurrentAvatar(avatar)}
+      />
+
+      <button
+        className="theme-toggle"
+        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      >
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
+
+      {currentWord && (
+        <div className="w-full max-w-4xl text-center">
+          <img src="img/books.svg" alt="Book icon" className="w-10 h-10 mx-auto mb-4" />
+          <h2 className="text-4xl font-bold mb-4">
+            Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
+          </h2>
+          <div className="relative mb-8 pt-10">
+            {showWord && (
+              <div className="inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg">
+                {currentWord.word}
+                {currentWord.pronunciation && (
+                  <span className="ml-4 text-5xl text-yellow-300">{currentWord.pronunciation}</span>
+                )}
+              </div>
+            )}
+            <button
+              onClick={() => speak(currentWord.word)}
+              className="absolute top-0 left-0 bg-yellow-300 text-black btn-responsive rounded-lg font-bold"
+            >
+              Replay Word
+            </button>
+            <button
+              onClick={() => setShowWord(!showWord)}
+              className="absolute top-0 right-0 bg-yellow-300 text-black btn-responsive rounded-lg font-bold"
+            >
+              {showWord ? 'Hide Word' : 'Show Word'}
+            </button>
+          </div>
+          <HintPanel
+            word={currentWord}
+            participantPoints={participants[currentParticipantIndex].points}
+            participantIndex={currentParticipantIndex}
+            spendPoints={spendPoints}
+            isTeamMode={isTeamMode}
+            showWord={showWord}
+            onHintUsed={() => setUsedHint(true)}
+            onExtraAttempt={() => setExtraAttempt(true)}
+          />
+          <div className="flex gap-2 justify-center mb-4">
+            {letters.map((letter, idx) => (
+              <div
+                key={idx}
+                className={`w-12 h-16 text-4xl flex items-center justify-center rounded-lg border-b-2 ${
+                  letter
+                    ? letter.toLowerCase() === currentWord.word[idx].toLowerCase()
+                      ? 'bg-green-500'
+                      : 'bg-red-500'
+                    : 'bg-white/20'
+                }`}
+              >
+                {letter.toUpperCase()}
+              </div>
+            ))}
+          </div>
+          <OnScreenKeyboard
+            onLetter={handleVirtualLetter}
+            onBackspace={handleVirtualBackspace}
+            onSubmit={handleSpellingSubmit}
+            soundEnabled={soundEnabled}
+          />
+        </div>
+      )}
+
+      <button
+        onClick={skipWord}
+        className="absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl"
+      >
+        <SkipForward size={24} />
+      </button>
+
+      {isPaused && (
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40">
+          Paused
+        </div>
+      )}
     </div>
-  );
-};
-
-// HelpShop component
-const HelpShop = ({ onClose, onPurchase }: { 
-  onClose: () => void; 
-  onPurchase: (cost: number) => void 
-}) => (
-  <div className="help-shop">
-    <button onClick={() => onPurchase(2)}>
-      Reveal Letter ({2} coins)
-    </button>
-    <button onClick={onClose}>
-      Close
-    </button>
-  </div>
-);
-
-// HelpSystemProvider component
-const HelpSystemProvider = ({ children }: { children: React.ReactNode }) => (
-  <div className="help-system">{children}</div>
-);
-
-// Wrap with HelpSystemProvider
-export const GameScreenWithProvider: React.FC<GameScreenProps> = (props) => {
-  return (
-    <HelpSystemProvider>
-      <GameScreen {...props} />
-    </HelpSystemProvider>
   );
 };
 
