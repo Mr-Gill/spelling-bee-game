@@ -35,6 +35,12 @@ const AchievementsScreen: React.FC<AchievementsScreenProps> = ({ onBack }) => {
   }, []);
 =======
   });
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
   return (
