@@ -5,6 +5,7 @@ import bookImg from './img/avatars/book.svg';
 import trophyImg from './img/avatars/trophy.svg';
 import { parseWordList as parseWordListUtil } from './utils/parseWordList';
 import { getMascotImage } from './utils/mascot';
+import { hasSavedGame, getSavedGameInfo, loadGameState, clearSavedGame } from './utils/gameStateManager';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -14,9 +15,12 @@ interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
   onAddCustomWords: (words: Word[]) => void;
   onViewAchievements: () => void;
+  onResumeGame?: (savedState: any) => void;
+  onViewHistory?: () => void;
+  onViewShop?: () => void;
 }
 
-const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
+const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onResumeGame, onViewHistory, onViewShop }) => {
   // Include both traditional avatars and mascot images
   const avatars = [beeImg, bookImg, trophyImg, getMascotImage({ isDefault: true }), getMascotImage({ isCelebrating: true })];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
@@ -62,6 +66,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [aiCount, setAiCount] = useState(10);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
+  
+  // Saved game state
+  const [savedGameAvailable, setSavedGameAvailable] = useState(false);
+  const [savedGameInfo, setSavedGameInfo] = useState<any>(null);
 
   const applyTheme = (t: string) => {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
@@ -94,6 +102,20 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   useEffect(() => localStorage.setItem('soundEnabled', String(soundEnabled)), [soundEnabled]);
   useEffect(() => localStorage.setItem('musicStyle', musicStyle), [musicStyle]);
   useEffect(() => localStorage.setItem('musicVolume', String(musicVolume)), [musicVolume]);
+
+  // Check for saved games on component mount
+  useEffect(() => {
+    const checkSavedGame = () => {
+      setSavedGameAvailable(hasSavedGame());
+      setSavedGameInfo(getSavedGameInfo());
+    };
+    
+    checkSavedGame();
+    
+    // Re-check when component becomes visible (in case user returned from game)
+    const interval = setInterval(checkSavedGame, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const updateTeams = (newTeams: Participant[]) => {
     setTeams(newTeams);
@@ -263,6 +285,21 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   }, []);
 
   const missedWordCount = Object.values(missedWordsCollection).reduce((acc, arr) => acc + arr.length, 0);
+
+  const handleResumeGame = () => {
+    const savedState = loadGameState();
+    if (savedState && onResumeGame) {
+      onResumeGame(savedState);
+    }
+  };
+
+  const handleDeleteSavedGame = () => {
+    if (window.confirm('Are you sure you want to delete the saved game? This cannot be undone.')) {
+      clearSavedGame();
+      setSavedGameAvailable(false);
+      setSavedGameInfo(null);
+    }
+  };
 
   const handleStart = async (isSessionChallenge = false) => {
     let challengeWords: Word[] = [];
@@ -537,6 +574,37 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         )}
 
         {error && <p className="text-red-300 text-center mb-4 animate-shake">{error}</p>}
+        
+        {/* Resume Game Section */}
+        {savedGameAvailable && savedGameInfo && (
+          <div className="mt-8 p-6 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-2xl border border-green-400/30 animate-scale-in">
+            <h2 className="text-2xl font-black mb-4 text-center bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+              🎮 Resume Previous Game
+            </h2>
+            <div className="text-center mb-4">
+              <p className="text-white mb-2">
+                You have a saved {savedGameInfo.gameMode} game with {savedGameInfo.participantCount} participants
+              </p>
+              <p className="text-gray-300 text-sm">
+                Saved: {new Date(savedGameInfo.savedAt).toLocaleString()}
+              </p>
+            </div>
+            <div className="flex flex-col md:flex-row gap-4 justify-center">
+              <button 
+                onClick={handleResumeGame}
+                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-xl text-xl font-bold shadow-lg transform transition-all duration-300 hover:scale-105"
+              >
+                ▶️ Resume Game
+              </button>
+              <button 
+                onClick={handleDeleteSavedGame}
+                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-3 rounded-xl text-xl font-bold shadow-lg transform transition-all duration-300 hover:scale-105"
+              >
+                🗑️ Delete Save
+              </button>
+            </div>
+          </div>
+        )}
         
         {/* Epic Game Start Buttons */}
         <div className="flex flex-col md:flex-row gap-6 mt-12 animate-scale-in delay-500">

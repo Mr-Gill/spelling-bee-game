@@ -94,6 +94,17 @@ const SpellingBeeGame = () => {
     setGameState('setup');
   };
 
+  const handleExitGame = () => {
+    // Return to setup when exiting game
+    setGameState('setup');
+  };
+
+  const handleResumeGame = (savedState: any) => {
+    // Resume game with saved state
+    setGameConfig(savedState.gameConfig);
+    setGameState('playing');
+  };
+
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
@@ -113,6 +124,7 @@ const SpellingBeeGame = () => {
         onStartGame={handleStartGame}
         onAddCustomWords={handleAddCustomWords}
         onViewAchievements={handleViewAchievements}
+        onResumeGame={handleResumeGame}
         onViewHistory={handleViewHistory}
         onViewShop={() => handleViewShop()}
       />
@@ -123,6 +135,7 @@ const SpellingBeeGame = () => {
       <GameScreen
         config={gameConfig}
         onEndGame={handleEndGame}
+        onExitGame={handleExitGame}
         musicStyle={musicStyle}
         musicVolume={musicVolume}
         onMusicStyleChange={setMusicStyle}
@@ -131,7 +144,6 @@ const SpellingBeeGame = () => {
         onSoundEnabledChange={setSoundEnabled}
         isMusicPlaying={isMusicPlaying}
         onToggleMusicPlaying={() => setIsMusicPlaying(prev => !prev)}
-        onQuit={handleQuitToSetup}
       />
     );
   }
