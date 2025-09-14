@@ -8,23 +8,21 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      # Enable step debugging
-      - name: Setup debug environment
-        run: |
-          echo "ACTIONS_STEP_DEBUG=${{ secrets.ACTIONS_STEP_DEBUG }}" >> $GITHUB_ENV
-          echo "ACTIONS_RUNNER_DEBUG=${{ secrets.ACTIONS_RUNNER_DEBUG }}" >> $GITHUB_ENV
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -43,85 +41,49 @@ jobs:
           GITHUB_MODELS_TOKEN: ${{ secrets.GITHUB_MODELS_TOKEN }}
           NODE_OPTIONS: --max_old_space_size=4096
         run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.API_TOKEN }}" > .npmrc
-          echo "@mr-gill:registry=https://npm.pkg.github.com" >> .npmrc
-          # Ensure all dependencies are properly installed
-          npm install
           npm run build
-          # Clean up .npmrc after build
-          rm -f .npmrc
         timeout-minutes: 10
 
-      # Fix asset paths for GitHub Pages; skip if files are missing
+      # Fix asset paths for GitHub Pages
       - name: Rewrite paths for Pages
         run: |
           set -euxo pipefail
           REPO_NAME=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f2)
           echo "Repository name: $REPO_NAME"
-          echo "Contents of dist/index.html before rewrite:"
-          cat dist/index.html
+          
           if [ -f dist/index.html ]; then
+            echo "Contents of dist/index.html before rewrite:"
+            cat dist/index.html
+            
+            # Update paths to include repository name for GitHub Pages
             sed -i "s,href=\"./tailwind.css\",href=\"/$REPO_NAME/tailwind.css\",g" dist/index.html
-            sed -i "s,src=\"./app.js\",src=\"/$REPO_NAME/app.js\",g" dist/index.html
-            sed -i "s,href=\"style.css\",href=\"/$REPO_NAME/style.css\",g" dist/index.html
-            sed -i "s,href=\"manifest.webmanifest\",href=\"/$REPO_NAME/manifest.webmanifest\",g" dist/index.html
-            sed -i "s,href=\"icons/,href=\"/$REPO_NAME/icons/,g" dist/index.html
+            sed -i "s,src=\"app.js\",src=\"/$REPO_NAME/app.js\",g" dist/index.html
+            sed -i "s,href=\"./style.css\",href=\"/$REPO_NAME/style.css\",g" dist/index.html
+            sed -i "s,href=\"./manifest.webmanifest\",href=\"/$REPO_NAME/manifest.webmanifest\",g" dist/index.html
+            sed -i "s,href=\"./icons/,href=\"/$REPO_NAME/icons/,g" dist/index.html
             sed -i "s,src=\"img/,src=\"/$REPO_NAME/img/,g" dist/index.html
             sed -i "s,src=\"icons/,src=\"/$REPO_NAME/icons/,g" dist/index.html
+            
+            # Update service worker paths
+            if [ -f dist/service-worker.js ]; then
+              sed -i "s,{{REPO_NAME}},$REPO_NAME,g" dist/service-worker.js
+            fi
+            
             echo "Contents of dist/index.html after rewrite:"
             cat dist/index.html
           else
-            echo "dist/index.html not found; skipping"
-          fi
-          if [ -f dist/service-worker.js ]; then
-            sed -i "s,{{REPO_NAME}},$REPO_NAME,g" dist/service-worker.js
-          else
-            echo "No dist/service-worker.js; skipping rewrite"
-          fi
-
-      - name: Check dist contents
-        run: |
-          if [ ! -d dist ] || [ -z "$(ls -A dist)" ]; then
-            echo "dist directory missing or empty"
+            echo "dist/index.html not found"
             exit 1
           fi
 
-      - name: List dist contents
-        run: ls -l dist
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v3
-
-  # Add post-failure diagnostics
-  diagnostics:
-    if: ${{ failure() }}
-    needs: [build, deploy]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download build artifacts
-        if: ${{ failure() && needs.build.result == 'failure' }}
-        uses: actions/download-artifact@v4
-        with:
-          name: pages-artifact
-          path: artifacts
-
-      - name: Show directory structure
-        run: ls -R artifacts
-
-      - name: Capture error logs
-        run: |
-          echo "BUILD FAILURE LOGS:"
-          find artifacts -type f -exec echo '{}' \; -exec cat '{}' \;
+        uses: actions/deploy-pages@v4
