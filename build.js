@@ -70,10 +70,22 @@ const copyAssets = (src, dest) => {
   }
 };
 
-// Copy static assets
-['index.html', 'style.css', 'manifest.webmanifest', 'service-worker.js', 'leaderboard.json', 'words.json'].forEach(file => {
+// Copy static assets (except service-worker.js which needs processing)
+['index.html', 'style.css', 'manifest.webmanifest', 'leaderboard.json', 'words.json'].forEach(file => {
   copyAssets(file, `dist/${file}`);
 });
+
+// Process service-worker.js template
+console.log('Processing service-worker.js template...');
+try {
+  const serviceWorkerTemplate = fs.readFileSync('service-worker.js', 'utf8');
+  const repoName = 'spelling-bee-game'; // From package.json homepage
+  const processedServiceWorker = serviceWorkerTemplate.replace(/\{\{REPO_NAME\}\}/g, repoName);
+  fs.writeFileSync('dist/service-worker.js', processedServiceWorker);
+  console.log('Service worker template processed successfully');
+} catch (err) {
+  console.error('Error processing service-worker.js:', err);
+}
 
 // Copy directories
 ['icons', 'img', 'wordlists'].forEach(dir => {

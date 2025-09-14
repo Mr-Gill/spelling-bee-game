@@ -498,8 +498,8 @@ const GameScreen: React.FC<GameScreenProps> = ({
         ref={hiddenInputRef}
         type="text"
         className="absolute opacity-0 pointer-events-none"
-        aria-hidden="true"
         tabIndex={-1}
+        aria-label="Hidden input for keyboard capture"
       />
       {toast && (
         <div className="fixed top-4 right-4 bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-white px-6 py-3 rounded-2xl shadow-2xl z-50 animate-bounce-in font-bold">
