@@ -550,7 +550,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               </div>
               <div className="mb-4">
                 <textarea value={bulkStudentText} onChange={e => setBulkStudentText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white mb-2" placeholder="Paste names, one per line or separated by commas" rows={4}></textarea>
-                <button onClick={() => addBulkStudents(bulkStudentText.split('\n').map(name => createParticipant(name, options.initialDifficulty)))} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add Names</button>
+                <button onClick={() => addBulkStudents([bulkStudentText.split('\n').map(name => createParticipant(name, options.initialDifficulty))])} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add Names</button>
                 {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
               </div>
               <div className="mb-4">
