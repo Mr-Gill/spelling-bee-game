@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'assert';
-import { handleSpellingSubmit } from '../src/GameScreen';
+import { handleSpellingSubmit } from '../src/utils/gameLogic';
 
 test('correct word submission', () => {
   const letters = ['a', 'p', 'p', 'l', 'e'];
