@@ -8,7 +8,7 @@ if (!fs.existsSync('dist')) {
 
 // Run esbuild
 console.log('Building application...');
-execSync(`npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file --define:process.env.NODE_ENV='"production"' --define:process.env.PUBLIC_URL='""' --define:process.env.GITHUB_TOKEN='""' --define:process.env.GITHUB_MODELS_TOKEN='""' --define:process.env.API_TOKEN='""'`, { stdio: 'inherit' });
+execSync(`npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file --define:process.env.NODE_ENV='"production"' --define:process.env.PUBLIC_URL='""' --define:process.env.GITHUB_TOKEN='""' --define:process.env.GITHUB_MODELS_TOKEN='""' --define:process.env.API_TOKEN='""' --define:process.env.VITE_WORDLIST_URL='""'`, { stdio: 'inherit' });
 
 // Build Tailwind CSS
 console.log('Building Tailwind CSS...');

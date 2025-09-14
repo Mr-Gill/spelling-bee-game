@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { loadHistory, clearHistory } from './utils/history';
 
 interface SessionEntry {
   date: string;
@@ -14,18 +15,11 @@ const HistoryScreen: React.FC<HistoryScreenProps> = ({ onBack }) => {
   const [history, setHistory] = useState<SessionEntry[]>([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem('sessionHistory');
-    if (stored) {
-      try {
-        setHistory(JSON.parse(stored));
-      } catch {
-        setHistory([]);
-      }
-    }
+    setHistory(loadHistory());
   }, []);
 
   const handleClearHistory = () => {
-    localStorage.removeItem('sessionHistory');
+    clearHistory();
     setHistory([]);
   };
 

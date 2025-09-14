@@ -1,6 +1,6 @@
 // hooks/useAudio.js
 import { useEffect, useRef } from 'react';
-import { audioManager } from '../utils/audio';
+import { audioManager } from '../src/utils/audio.ts';
 
 export function useAudio(key, { volume = 1, loop = false, playOnMount = false } = {}) {
   const audioRef = useRef(null);

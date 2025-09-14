@@ -1,4 +1,5 @@
 import { mcp0_text_to_speech } from '../../mcp/elevenlabs';
+import logger from './logger';
 
 interface ElevenLabsOptions {
   voiceId?: string;
@@ -45,7 +46,7 @@ export async function generateSpeech(
     
     return null;
   } catch (error) {
-    console.error('Error generating speech:', error);
+    logger.error('Error generating speech:', error);
     return null;
   }
 }
@@ -78,7 +79,7 @@ export async function saveAudioToFile(
     await fs.writeFile(filePath, Buffer.from(result.audioData));
     return true;
   } catch (error) {
-    console.error(`Error saving audio to ${filePath}:`, error);
+    logger.error(`Error saving audio to ${filePath}:`, error);
     return false;
   }
 }
@@ -105,18 +106,18 @@ export async function generateWordAudioFiles(
       // Skip if file already exists
       try {
         await fs.access(filePath);
-        console.log(`Skipping ${word} - already exists`);
+        logger.info(`Skipping ${word} - already exists`);
         return;
       } catch {
         // File doesn't exist, generate it
       }
       
-      console.log(`Generating audio for: ${word}`);
+      logger.info(`Generating audio for: ${word}`);
       const success = await saveAudioToFile(word, filePath, options);
       if (success) {
-        console.log(`Generated: ${filePath}`);
+        logger.info(`Generated: ${filePath}`);
       } else {
-        console.error(`Failed to generate: ${word}`);
+        logger.error(`Failed to generate: ${word}`);
       }
       
       // Add a small delay between requests

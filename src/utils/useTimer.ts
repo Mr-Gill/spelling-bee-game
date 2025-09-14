@@ -8,9 +8,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 const useTimer = (duration: number, onExpire: () => void) => {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [isPaused, setIsPaused] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const clear = () => clearInterval(intervalRef.current as NodeJS.Timeout);
+  const clear = () =>
+    clearInterval(intervalRef.current as ReturnType<typeof setInterval>);
 
   const tick = useCallback(() => {
     setTimeLeft(prev => {

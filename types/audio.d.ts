@@ -3,7 +3,7 @@ declare module '*.mp3' {
   export default src;
 }
 
-declare module './utils/audio' {
+declare module '../src/utils/audio.ts' {
   export class AudioManager {
     constructor();
     play(name: string): void;

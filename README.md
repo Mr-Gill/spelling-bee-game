@@ -301,6 +301,8 @@ This project includes scripts to generate high-quality audio files using ElevenL
 3. Create a `.env` file with the following content:
    ```
    GITHUB_TOKEN=your_token_here
+   # optional: override the word list generation endpoint
+   VITE_WORDLIST_URL=http://localhost:3001/generate-word-list
    ```
 4. Run `npm start` to start the development server
 
