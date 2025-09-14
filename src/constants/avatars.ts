@@ -1,9 +1,11 @@
+import { IMAGE_ASSETS } from '../assets';
+
 export const avatars = {
-  bee: { name: 'Bee', icon: '/img/avatars/bee.svg' },
-  book: { name: 'Book', icon: '/img/avatars/book.svg' },
-  trophy: { name: 'Trophy', icon: '/img/avatars/trophy.svg' },
-  wizard: { name: 'Wizard', icon: '/img/avatars/bee.svg' },
-  ninja: { name: 'Ninja', icon: '/img/avatars/book.svg' },
+  bee: { name: 'Bee', icon: IMAGE_ASSETS.avatars.bee },
+  book: { name: 'Book', icon: IMAGE_ASSETS.avatars.book },
+  trophy: { name: 'Trophy', icon: IMAGE_ASSETS.avatars.trophy },
+  wizard: { name: 'Wizard', icon: IMAGE_ASSETS.avatars.bee },
+  ninja: { name: 'Ninja', icon: IMAGE_ASSETS.avatars.book },
 };
 
 export function getRandomAvatar() {

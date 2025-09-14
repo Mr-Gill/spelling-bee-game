@@ -8,17 +8,13 @@ const validateVolume = (volume: number) => {
 // Check if the audio file is valid
 const checkAudioFile = async (url: string) => {
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { method: 'HEAD' });
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const contentType = response.headers.get('Content-Type');
-    if (!contentType || !contentType.startsWith('audio/')) {
-      throw new Error('Invalid audio content type');
+      throw new Error(`HTTP ${response.status} for ${url}`);
     }
     return true;
   } catch (error) {
-    console.error(`Audio file validation failed for ${url}:`, error);
+    console.warn(`Audio file not found: ${url}`);
     return false;
   }
 };
@@ -66,10 +62,10 @@ const useMusic = (
 
   // Function to build the correct audio file path
   const buildAudioPath = (style: string, variant: TrackVariant): string => {
-    const genre = style as MusicGenre;
+    const genre = style.toLowerCase().replace(' ', '-');
     const isInstrumental = variant === 'instrumental';
-    const suffix = isInstrumental ? ' Instrumental' : '';
-    return `/audio/It's a Spelling Bee! (${genre}${suffix}).mp3`;
+    const suffix = isInstrumental ? '-instrumental' : '';
+    return `assets/audio/spelling-bee-${genre}${suffix}.mp3`;
   };
 
   // Effect to handle music changes based on screen and settings

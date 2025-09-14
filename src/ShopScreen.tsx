@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import AvatarSelector from "./components/AvatarSelector";
 import { useFocusTrap } from "./hooks/useFocusTrap";
+import { IMAGE_ASSETS } from "./assets";
 
 interface ShopScreenProps {
   onBack: () => void;
@@ -24,7 +25,7 @@ const shopItems: ShopItem[] = [
     id: "wizard", 
     name: "Wizard Avatar", 
     description: "A magical wizard avatar with special powers",
-    icon: "/img/avatars/bee.svg", 
+    icon: IMAGE_ASSETS.avatars.bee, 
     price: 50, 
     type: "avatar" 
   },
@@ -32,7 +33,7 @@ const shopItems: ShopItem[] = [
     id: "top-hat", 
     name: "Top Hat", 
     description: "A fancy top hat for your avatar",
-    icon: "/img/avatars/book.svg", 
+    icon: IMAGE_ASSETS.avatars.book, 
     price: 30, 
     type: "accessory" 
   },

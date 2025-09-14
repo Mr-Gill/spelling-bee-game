@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Word, Participant, GameConfig } from './types';
-import beeImg from './img/avatars/bee.svg';
-import bookImg from './img/avatars/book.svg';
-import trophyImg from './img/avatars/trophy.svg';
+import { IMAGE_ASSETS } from './assets';
 import { parseWordList as parseWordListUtil } from './utils/parseWordList';
 import { getMascotImage } from './utils/mascot';
 import { hasSavedGame, getSavedGameInfo, loadGameState, clearSavedGame } from './utils/gameStateManager';
@@ -22,7 +20,7 @@ interface SetupScreenProps {
 
 const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onResumeGame, onViewHistory, onViewShop }) => {
   // Include both traditional avatars and mascot images
-  const avatars = [beeImg, bookImg, trophyImg, getMascotImage({ isDefault: true }), getMascotImage({ isCelebrating: true })];
+  const avatars = [IMAGE_ASSETS.avatars.bee, IMAGE_ASSETS.avatars.book, IMAGE_ASSETS.avatars.trophy, getMascotImage({ isDefault: true }), getMascotImage({ isCelebrating: true })];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
   const getDefaultTeams = (): Participant[] => [
