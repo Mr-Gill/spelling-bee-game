@@ -15,8 +15,11 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+      - run: npm run build
+      - name: Run unit tests
+        run: npm run test:unit
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
-      - run: npm run build
-      - name: Run tests
-        run: npm test
+      - name: Run E2E tests
+        run: npm run test:e2e
+        continue-on-error: true

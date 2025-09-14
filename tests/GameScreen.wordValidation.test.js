@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'assert';
-import { handleSpellingSubmit, validateWordSubmission, calculateWordPoints } from '../src/utils/gameLogic';
+import { handleSpellingSubmit, validateWordSubmission, calculateWordPoints } from '../src/utils/gameLogic.js';
 
 test('correct word submission', () => {
   const letters = ['a', 'p', 'p', 'l', 'e'];
