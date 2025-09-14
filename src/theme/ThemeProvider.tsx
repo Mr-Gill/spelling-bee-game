@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { colorTokens, type ThemeColor } from './colors';
 
 type ThemeMode = 'light' | 'dark' | 'system';
-type ThemeColor = 'yellow' | 'blue' | 'green' | 'purple' | 'pink';
 
 export interface ThemeContextType {
   mode: ThemeMode;
@@ -22,108 +22,6 @@ interface ThemeProviderProps {
   storageKey?: string;
 }
 
-const colorThemes = {
-  yellow: {
-    light: {
-      primary: 'hsl(42, 91%, 65%)',
-      'primary-foreground': 'hsl(0, 0%, 20%)',
-      'primary-hover': 'hsl(42, 91%, 60%)',
-      'primary-active': 'hsl(42, 91%, 55%)',
-      'primary-subtle': 'hsl(42, 91%, 95%)',
-    },
-    dark: {
-      primary: 'hsl(42, 91%, 55%)',
-      'primary-foreground': 'hsl(0, 0%, 98%)',
-      'primary-hover': 'hsl(42, 91%, 60%)',
-      'primary-active': 'hsl(42, 91%, 65%)',
-      'primary-subtle': 'hsla(42, 91%, 20%, 0.2)',
-    },
-  },
-  blue: {
-    light: {
-      primary: 'hsl(217, 91%, 65%)',
-      'primary-foreground': 'hsl(0, 0%, 98%)',
-      'primary-hover': 'hsl(217, 91%, 60%)',
-      'primary-active': 'hsl(217, 91%, 50%)',
-      'primary-subtle': 'hsl(217, 91%, 95%)',
-    },
-    dark: {
-      primary: 'hsl(217, 91%, 65%)',
-      'primary-foreground': 'hsl(0, 0%, 98%)',
-      'primary-hover': 'hsl(217, 91%, 70%)',
-      'primary-active': 'hsl(217, 91%, 75%)',
-      'primary-subtle': 'hsla(217, 91%, 20%, 0.2)',
-    },
-  },
-  green: {
-    light: {
-      primary: 'hsl(142, 76%, 45%)',
-      'primary-foreground': 'hsl(0, 0%, 98%)',
-      'primary-hover': 'hsl(142, 76%, 40%)',
-      'primary-active': 'hsl(142, 76%, 35%)',
-      'primary-subtle': 'hsl(142, 76%, 95%)',
-    },
-    dark: {
-      primary: 'hsl(142, 76%, 55%)',
-      'primary-foreground': 'hsl(0, 0%, 98%)',
-      'primary-hover': 'hsl(142, 76%, 60%)',
-      'primary-active': 'hsl(142, 76%, 65%)',
-      'primary-subtle': 'hsla(142, 76%, 20%, 0.2)',
-    },
-  },
-  purple: {
-    light: {
-      primary: 'hsl(272, 51%, 54%)',
-      'primary-foreground': 'hsl(0, 0%, 100%)',
-      'primary-hover': 'hsl(272, 51%, 49%)',
-      'primary-active': 'hsl(272, 51%, 44%)',
-      'primary-subtle': 'hsl(272, 51%, 95%)',
-      'primary-container': 'hsl(272, 51%, 90%)',
-      'on-primary-container': 'hsl(272, 51%, 20%)',
-      'surface': 'hsl(0, 0%, 100%)',
-      'surface-dim': 'hsl(0, 0%, 87%)',
-      'surface-bright': 'hsl(0, 0%, 98%)',
-      'surface-container-lowest': 'hsl(0, 0%, 100%)',
-      'surface-container-low': 'hsl(0, 0%, 96%)',
-      'surface-container': 'hsl(0, 0%, 94%)',
-      'surface-container-high': 'hsl(0, 0%, 92%)',
-      'surface-container-highest': 'hsl(0, 0%, 90%)',
-    },
-    dark: {
-      primary: 'hsl(272, 51%, 64%)',
-      'primary-foreground': 'hsl(0, 0%, 100%)',
-      'primary-hover': 'hsl(272, 51%, 69%)',
-      'primary-active': 'hsl(272, 51%, 74%)',
-      'primary-subtle': 'hsla(272, 51%, 20%, 0.2)',
-      'primary-container': 'hsl(272, 51%, 20%)',
-      'on-primary-container': 'hsl(272, 51%, 90%)',
-      'surface': 'hsl(0, 0%, 7%)',
-      'surface-dim': 'hsl(0, 0%, 13%)',
-      'surface-bright': 'hsl(0, 0%, 24%)',
-      'surface-container-lowest': 'hsl(0, 0%, 4%)',
-      'surface-container-low': 'hsl(0, 0%, 10%)',
-      'surface-container': 'hsl(0, 0%, 12%)',
-      'surface-container-high': 'hsl(0, 0%, 17%)',
-      'surface-container-highest': 'hsl(0, 0%, 22%)',
-    },
-  },
-  pink: {
-    light: {
-      primary: 'hsl(330, 81%, 65%)',
-      'primary-foreground': 'hsl(0, 0%, 98%)',
-      'primary-hover': 'hsl(330, 81%, 60%)',
-      'primary-active': 'hsl(330, 81%, 55%)',
-      'primary-subtle': 'hsl(330, 81%, 95%)',
-    },
-    dark: {
-      primary: 'hsl(330, 81%, 65%)',
-      'primary-foreground': 'hsl(0, 0%, 98%)',
-      'primary-hover': 'hsl(330, 81%, 70%)',
-      'primary-active': 'hsl(330, 81%, 75%)',
-      'primary-subtle': 'hsla(330, 81%, 20%, 0.2)',
-    },
-  },
-} as const;
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
@@ -150,7 +48,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     const root = window.document.documentElement;
     
     // Remove all color theme classes
-    Object.keys(colorThemes).forEach((themeColor) => {
+    Object.keys(colorTokens).forEach((themeColor) => {
       root.classList.remove(`theme-${themeColor}`);
     });
     
@@ -182,7 +80,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   useEffect(() => {
     const root = document.documentElement;
     const theme = isDark ? 'dark' : 'light';
-    const colors = colorThemes[color][theme];
+    const colors = colorTokens[color][theme];
     
     // Set primary color variables
     Object.entries(colors).forEach(([key, value]) => {
@@ -272,7 +170,7 @@ export const ColorPicker: React.FC = () => {
   
   return (
     <div className="flex space-x-2">
-      {Object.keys(colorThemes).map((themeColor) => (
+      {Object.keys(colorTokens).map((themeColor) => (
         <button
           key={themeColor}
           onClick={() => setColor(themeColor as ThemeColor)}
@@ -280,7 +178,7 @@ export const ColorPicker: React.FC = () => {
             color === themeColor ? 'ring-2 ring-offset-2 ring-gray-400' : ''
           }`}
           style={{
-            backgroundColor: colorThemes[themeColor as ThemeColor].light.primary,
+            backgroundColor: colorTokens[themeColor as ThemeColor].light.primary,
           }}
           aria-label={`Change theme to ${themeColor}`}
         />
