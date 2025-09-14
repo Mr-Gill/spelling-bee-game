@@ -9,6 +9,7 @@ interface BeeCardProps {
   padding?: 'none' | 'sm' | 'md' | 'lg';
   rounded?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   onClick?: () => void;
+  decorative?: boolean;
 }
 
 const BeeCard: React.FC<BeeCardProps> = ({
@@ -19,6 +20,7 @@ const BeeCard: React.FC<BeeCardProps> = ({
   padding = 'md',
   rounded = 'md',
   onClick,
+  decorative = false,
 }) => {
   const baseClasses = 'relative transition-all duration-medium1';
   
@@ -67,8 +69,12 @@ const BeeCard: React.FC<BeeCardProps> = ({
       onClick={onClick}
     >
       {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-32 h-32 -mr-16 -mt-16 bg-bee-yellow-400/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 dark:opacity-30" />
-      <div className="absolute bottom-0 left-0 w-32 h-32 -ml-16 -mb-16 bg-primary-400/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 dark:opacity-30" />
+      {decorative && (
+        <>
+          <div className="absolute top-0 right-0 w-32 h-32 -mr-16 -mt-16 bg-bee-yellow-400/10 rounded-full mix-blend-multiply filter blur-lg opacity-40 dark:opacity-20" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 -ml-16 -mb-16 bg-primary-400/10 rounded-full mix-blend-multiply filter blur-lg opacity-40 dark:opacity-20" />
+        </>
+      )}
       
       {/* Content */}
       <div className="relative z-10">
