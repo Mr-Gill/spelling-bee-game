@@ -4,7 +4,7 @@
   "description": "A comprehensive, classroom-ready spelling bee game with rich educational content and advanced features",
   "private": true,
   "main": "index.html",
-  "homepage": "https://squidgyg.github.io/spelling-bee-game/",
+  "homepage": "https://mr-gill.github.io/spelling-bee-game/",
   "scripts": {
     "start": "npx serve dist",
     "serve": "npx serve dist",
@@ -31,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SquidgyG/spelling-bee-game.git"
+    "url": "git+https://github.com/Mr-Gill/spelling-bee-game.git"
   },
   "keywords": [
     "education",
@@ -47,7 +47,7 @@
   "author": "Your Name <your.email@example.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/SquidgyG/spelling-bee-game/issues"
+    "url": "https://github.com/Mr-Gill/spelling-bee-game/issues"
   },
   "dependencies": {
     "@types/howler": "^2.2.12",
