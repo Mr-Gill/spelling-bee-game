@@ -8,6 +8,7 @@ interface BeeButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   isLoading?: boolean;
+  ripple?: boolean;
 }
 
 const BeeButton: React.FC<BeeButtonProps> = ({
@@ -18,11 +19,13 @@ const BeeButton: React.FC<BeeButtonProps> = ({
   leftIcon,
   rightIcon,
   isLoading = false,
+  ripple = false,
   className = '',
   disabled,
   ...props
 }) => {
-  const baseClasses = 'inline-flex items-center justify-center rounded-full transition-all duration-medium1 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-38 disabled:pointer-events-none';
+  const baseClasses =
+    'inline-flex items-center justify-center rounded-full transition-all duration-medium1 focus:outline-none focus:ring-2 focus:ring-primary-500 focus-visible:ring-4 focus-visible:transition focus-visible:duration-short2 disabled:opacity-38 disabled:pointer-events-none';
   
   const sizeClasses = {
     sm: 'h-8 px-4 text-label-medium',
@@ -68,6 +71,8 @@ const BeeButton: React.FC<BeeButtonProps> = ({
         variantClasses[variant],
         isFullWidth && 'w-full',
         'relative',
+        ripple &&
+          'overflow-hidden after:content-[""] after:absolute after:inset-0 after:rounded-full after:bg-current after:opacity-0 after:transition-transform after:duration-short4 after:scale-0 active:after:opacity-20 active:after:scale-125',
         className
       )}
       disabled={disabled || isLoading}
