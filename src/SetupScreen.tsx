@@ -237,19 +237,32 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setAiLoading(true);
     setAiError('');
     try {
+      // Check if the AI service is available first
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+      
       const res = await fetch('http://localhost:3001/wordlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: aiCount }),
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
+      
       if (!res.ok) throw new Error('Request failed');
       const data = await res.json();
       if (!Array.isArray(data)) throw new Error('Invalid response');
       setParsedCustomWords(prev => [...prev, ...data]);
       setAiError(`✅ Successfully generated ${data.length} words! Total words: ${parsedCustomWords.length + data.length}`);
     } catch (err) {
-      console.error('Failed to generate AI word list', err);
-      setAiError('Failed to generate words.');
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        setAiError('AI word generation service is currently unavailable. Please use the manual word list options instead.');
+      } else if (err.name === 'AbortError') {
+        setAiError('AI service request timed out. Please try again or use manual word list options.');
+      } else {
+        setAiError('Failed to generate words. Please try manual word list options.');
+      }
     } finally {
       setAiLoading(false);
     }

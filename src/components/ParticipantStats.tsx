@@ -10,7 +10,7 @@ interface ParticipantStatsProps {
 const ParticipantStats: React.FC<ParticipantStatsProps> = ({ participants, currentIndex }) => {
   return (
     <div className="absolute top-8 left-8 flex gap-6 items-center z-40">
-      <img src="img/bee.svg" alt="Bee icon" className="w-16 h-16 animate-wiggle" />
+      <img src="img/avatars/bee.svg" alt="Bee icon" className="w-16 h-16 animate-wiggle" />
       {participants.map((p, index) => (
         <ScoreCard key={index} participant={p} isActive={index === currentIndex} />
       ))}
