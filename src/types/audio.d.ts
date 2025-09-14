@@ -1,4 +1,4 @@
-declare module '../utils/audio' {
+declare module '../utils/audio.ts' {
   export interface AudioSettings {
     areSoundsMuted: boolean;
     isMusicMuted: boolean;

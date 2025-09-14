@@ -1,6 +1,6 @@
 // components/AudioSettings.jsx
 import React from 'react';
-import { audioManager } from '../utils/audio';
+import { audioManager } from '../utils/audio.ts';
 
 export function AudioSettings() {
   const [musicVolume, setMusicVolume] = React.useState(audioManager.volume.music * 100);
