@@ -30,19 +30,26 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
-        run: |
-          npm ci
-          # Ensure canvas-confetti is properly installed
-          npm list canvas-confetti || npm install canvas-confetti@latest
+        run: npm ci
+        timeout-minutes: 5
 
       - name: Build
         env:
           GITHUB_MODELS_TOKEN: ${{ secrets.GITHUB_MODELS_TOKEN }}
           NODE_OPTIONS: --max_old_space_size=4096
-        run: |
-          npm run build
-        timeout-minutes: 10
+        run: npm run build
+        timeout-minutes: 5
 
       # Fix asset paths for GitHub Pages
       - name: Rewrite paths for Pages
@@ -52,9 +59,6 @@ jobs:
           echo "Repository name: $REPO_NAME"
           
           if [ -f dist/index.html ]; then
-            echo "Contents of dist/index.html before rewrite:"
-            cat dist/index.html
-            
             # Update paths to include repository name for GitHub Pages
             sed -i "s,href=\"./tailwind.css\",href=\"/$REPO_NAME/tailwind.css\",g" dist/index.html
             sed -i "s,src=\"app.js\",src=\"/$REPO_NAME/app.js\",g" dist/index.html
@@ -68,9 +72,6 @@ jobs:
             if [ -f dist/service-worker.js ]; then
               sed -i "s,{{REPO_NAME}},$REPO_NAME,g" dist/service-worker.js
             fi
-            
-            echo "Contents of dist/index.html after rewrite:"
-            cat dist/index.html
           else
             echo "dist/index.html not found"
             exit 1
