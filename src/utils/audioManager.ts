@@ -1,5 +1,6 @@
 // Audio Manager Implementation
 import { Howl, Howler } from 'howler';
+import logger from './logger';
 
 const ensureAudioContext = () => {
   // Howler automatically creates context when needed
@@ -83,10 +84,10 @@ class AudioManager {
       volume,
       preload,
       onload: () => {
-        console.log(`Sound loaded: ${key}`);
+        logger.info(`Sound loaded: ${key}`);
       },
       onloaderror: (_, error) => {
-        console.error(`Error loading sound ${key}:`, error);
+        logger.error(`Error loading sound ${key}:`, error);
         if (onerror) onerror(new Error(`Failed to load sound: ${key}`));
       },
       onend: () => {
@@ -94,7 +95,7 @@ class AudioManager {
       },
       onplayerror: () => {
         const error = new Error(`Failed to play sound: ${key}`);
-        console.error(error.message);
+        logger.error(error.message);
         if (onerror) onerror(error);
       },
     });
@@ -175,7 +176,7 @@ class AudioManager {
       // If still not found, try to load it
       if (!sound) {
         this.loadSound(keyOrPath, keyOrPath, { ...options, preload: true });
-        console.warn(`Sound not preloaded: ${keyOrPath}, attempting to load...`);
+        logger.warn(`Sound not preloaded: ${keyOrPath}, attempting to load...`);
         return null;
       }
     }
@@ -247,10 +248,10 @@ class AudioManager {
       volume: this.settings.musicVolume,
       preload,
       onload: () => {
-        console.log(`Music loaded: ${key}`);
+        logger.info(`Music loaded: ${key}`);
       },
       onloaderror: (_, error) => {
-        console.error(`Error loading music ${key}:`, error);
+        logger.error(`Error loading music ${key}:`, error);
         if (onerror) onerror(new Error(`Failed to load music: ${key}`));
       },
       onend: () => {
@@ -258,7 +259,7 @@ class AudioManager {
       },
       onplayerror: () => {
         const error = new Error(`Failed to play music: ${key}`);
-        console.error(error.message);
+        logger.error(error.message);
         if (onerror) onerror(error);
       },
     });
@@ -284,7 +285,7 @@ class AudioManager {
     const music = this.music.get(key);
 
     if (!music) {
-      console.error(`Music not found: ${key}`);
+      logger.error(`Music not found: ${key}`);
       if (onerror) onerror(new Error(`Music not found: ${key}`));
       return null;
     }
@@ -402,7 +403,7 @@ class AudioManager {
         }
       }
     } catch (error) {
-      console.error('Error loading audio settings:', error);
+      logger.error('Error loading audio settings:', error);
     }
   }
 
@@ -413,7 +414,7 @@ class AudioManager {
     try {
       localStorage.setItem('audioSettings', JSON.stringify(this.settings));
     } catch (error) {
-      console.error('Error saving audio settings:', error);
+      logger.error('Error saving audio settings:', error);
     }
   }
 }
