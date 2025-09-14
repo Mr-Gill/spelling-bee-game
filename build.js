@@ -40,8 +40,11 @@ const copyAssets = (src, dest) => {
 });
 
 // Copy directories
-['audio', 'icons', 'img', 'wordlists'].forEach(dir => {
+['icons', 'img', 'wordlists'].forEach(dir => {
   copyAssets(dir, `dist/${dir}`);
 });
+
+// Copy audio from src/audio
+copyAssets('src/audio', 'dist/audio');
 
 console.log('Build completed successfully!');
