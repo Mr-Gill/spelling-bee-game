@@ -12,18 +12,107 @@ concurrency:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    outputs:
+      cache-hit: ${{ steps.cache-deps.outputs.cache-hit }}
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci
-      - run: npm run build
-      - name: Run unit tests
-        run: npm run test:unit
+          cache: 'npm'
+      
+      - name: Cache dependencies
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      
+      - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+          retention-days: 1
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-type: [unit, e2e]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      
+      - name: Restore dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      
+      - name: Install dependencies
+        if: needs.build.outputs.cache-hit != 'true'
+        run: npm ci
+      
+      - name: Download build artifacts
+        if: matrix.test-type == 'e2e'
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+      
+      - name: Cache Playwright browsers
+        if: matrix.test-type == 'e2e'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+      
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        if: matrix.test-type == 'e2e'
+        run: npx playwright install --with-deps chromium
+      
+      - name: Run unit tests
+        if: matrix.test-type == 'unit'
+        run: npm run test:unit
+        timeout-minutes: 5
+      
+      - name: Start server for E2E tests
+        if: matrix.test-type == 'e2e'
+        run: |
+          npm run serve &
+          sleep 5
+          curl -f http://localhost:5000 || exit 1
+        timeout-minutes: 2
+      
       - name: Run E2E tests
+        if: matrix.test-type == 'e2e'
         run: npm run test:e2e
-        continue-on-error: true
+        timeout-minutes: 10
+        env:
+          BASE_URL: http://localhost:5000

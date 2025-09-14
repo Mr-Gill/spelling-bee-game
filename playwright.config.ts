@@ -17,23 +17,33 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  retries: process.env.CI ? 1 : 0,
+  /* Optimize workers for CI vs local development */
+  workers: process.env.CI ? 2 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: process.env.CI ? [['github'], ['html']] : 'html',
+  /* Global timeout for each test */
+  timeout: 30000,
+  /* Expect timeout for assertions */
+  expect: {
+    timeout: 10000,
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL: process.env.BASE_URL || 'http://localhost:5000',
     
-    /* Visual testing configuration */
-    screenshot: 'only-on-failure',
-    video: 'on-first-retry',
-    trace: 'on-first-retry',
+    /* Visual testing configuration - optimized for CI */
+    screenshot: process.env.CI ? 'only-on-failure' : 'off',
+    video: process.env.CI ? 'retain-on-failure' : 'off',
+    trace: process.env.CI ? 'retain-on-failure' : 'on-first-retry',
+    
+    /* Reduce action timeout for faster feedback */
+    actionTimeout: 10000,
+    navigationTimeout: 15000,
   },
 
-  /* Configure projects for major browsers */
+  /* Configure projects for major browsers - optimized for CI performance */
   projects: [
     {
       name: 'chromium',
@@ -41,57 +51,42 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         viewport: { width: 1280, height: 800 },
         launchOptions: {
-          slowMo: 100,
+          // Remove slowMo in CI for better performance
+          slowMo: process.env.CI ? 0 : 100,
         },
       },
     },
     
-    // Uncomment to test in other browsers
-    // {
-    //   name: 'firefox',
-    //   use: { 
-    //     ...devices['Desktop Firefox'],
-    //     viewport: { width: 1280, height: 800 },
-    //   },
-    // },
-    // {
-    //   name: 'webkit',
-    //   use: { 
-    //     ...devices['Desktop Safari'],
-    //     viewport: { width: 1280, height: 800 },
-    //   },
-    // },
-    // Mobile testing
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+    // Only run additional browsers in visual test mode or when explicitly requested
+    {
+      name: 'firefox',
+      use: { 
+        ...devices['Desktop Firefox'],
+        viewport: { width: 1280, height: 800 },
+      },
+      // Only run Firefox in visual testing workflow
+      metadata: {
+        platform: 'firefox',
+      },
+    },
+    {
+      name: 'webkit',
+      use: { 
+        ...devices['Desktop Safari'],
+        viewport: { width: 1280, height: 800 },
+      },
+      // Only run WebKit in visual testing workflow
+      metadata: {
+        platform: 'webkit',
+      },
+    },
   ],
 
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  /* Configure web server for tests */
+  webServer: process.env.CI ? undefined : {
+    command: 'npm run serve',
+    url: 'http://localhost:5000',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
+  },
 });

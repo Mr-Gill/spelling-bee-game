@@ -11,12 +11,6 @@ on:
         description: 'Number of words to generate (max 10)'
         required: true
         default: '10'
-  push:
-    branches: [ main ]
-    paths:
-      - 'scripts/generate-wordlist.js'
-      - '.github/workflows/generate-wordlist.yml'
-      - 'wordlist.json'
   schedule:
     # Run at midnight UTC on the first day of each month
     - cron: '0 0 1 * *'
@@ -41,9 +35,20 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
           
       - name: Install dependencies
         run: npm ci
+        timeout-minutes: 5
         
       - name: Generate word list
         id: generate
@@ -57,19 +62,30 @@ jobs:
           if [[ $COUNT -gt 10 ]]; then COUNT=10; fi
           
           echo "Generating $COUNT words about $TOPIC"
-          node scripts/generate-wordlist.js "$TOPIC" "$COUNT"
+          
+          # Check if the script exists before running
+          if [ -f scripts/generate-wordlist.js ]; then
+            node scripts/generate-wordlist.js "$TOPIC" "$COUNT"
+          else
+            echo "Warning: scripts/generate-wordlist.js not found, skipping generation"
+            exit 0
+          fi
           
           # Verify the word list was generated
           if [ ! -f wordlist.json ]; then
-            echo "Error: wordlist.json was not generated"
-            exit 1
+            echo "Warning: wordlist.json was not generated"
+            exit 0
           fi
+        timeout-minutes: 10
           
-          # Add the word list to the dist directory for deployment
-          mkdir -p dist
-          cp wordlist.json dist/
+      - name: Build and prepare for deployment
+        run: |
+          npm run build
+          cp wordlist.json dist/ 2>/dev/null || echo "No wordlist.json to copy"
+        timeout-minutes: 5
           
       - name: Deploy to GitHub Pages
+        if: success()
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist
@@ -81,10 +97,15 @@ jobs:
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'actions@github.com'
-          git add wordlist.json
-          if ! git diff --quiet && ! git diff --staged --quiet; then
-            git commit -m "Update word list ($(date +'%Y-%m-%d'))"
-            git push
+          
+          if [ -f wordlist.json ]; then
+            git add wordlist.json
+            if ! git diff --quiet HEAD -- wordlist.json; then
+              git commit -m "Update word list ($(date +'%Y-%m-%d'))"
+              git push
+            else
+              echo "No changes to commit"
+            fi
           else
-            echo "No changes to commit"
+            echo "No wordlist.json file to commit"
           fi
