@@ -33,8 +33,7 @@
     -webkit-text-fill-color: transparent;
   }
   h2 { 
-    @apply text-3xl md:text-4xl;
-    color: theme('colors.primary.600');
+    @apply text-3xl md:text-4xl text-primary-600;
   }
   h3 { @apply text-2xl md:text-3xl; }
   h4 { @apply text-xl md:text-2xl; }
@@ -165,7 +164,7 @@
 
 @layer components {
   .card {
-    @apply bg-surface-container-high rounded-xl shadow-md p-6;
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-md p-6;
   }
   .btn {
     @apply font-readex uppercase px-4 py-2 rounded-full bg-primary-500 text-white;

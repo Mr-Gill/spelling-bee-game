@@ -12,11 +12,15 @@ execSync(`npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js -
 
 // Build Tailwind CSS
 console.log('Building Tailwind CSS...');
-execSync(`npx @tailwindcss/cli -i ./src/tailwind.css -o dist/tailwind.css --minify`, { stdio: 'inherit' });
+execSync(`npx tailwindcss -i ./src/tailwind.css -o dist/tailwind.css --minify`, { stdio: 'inherit' });
 
 // Function to copy files/directories
 const copyAssets = (src, dest) => {
   try {
+    if (!fs.existsSync(src)) {
+      console.log(`Skipping ${src} - doesn't exist`);
+      return;
+    }
     if (fs.lstatSync(src).isDirectory()) {
       if (!fs.existsSync(dest)) fs.mkdirSync(dest);
       fs.readdirSync(src).forEach(item => {

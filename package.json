@@ -9,7 +9,7 @@
     "start": "npx serve dist",
     "serve": "npx serve dist",
     "build:css": "npx tailwindcss -i ./src/tailwind.css -o ./tailwind.css --minify",
-    "build": "react-scripts build && cp -r audio build/ && cp -r wordlists build/",
+    "build": "node build.js",
     "watch": "npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --watch",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
