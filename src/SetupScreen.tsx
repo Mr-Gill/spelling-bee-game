@@ -19,12 +19,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const avatars = [beeImg, bookImg, trophyImg];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
-  const getDefaultTeams = (): Participant[] => [
-    { name: 'Team Alpha', lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
-    { name: 'Team Beta', lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
+  const getDefaultTeams = (isTeamMode: boolean = true): Participant[] => [
+    { name: 'Team Alpha', lives: isTeamMode ? 10 : 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
+    { name: 'Team Beta', lives: isTeamMode ? 10 : 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
   ];
 
-  const [teams, setTeams] = useState<Participant[]>(getDefaultTeams());
+  const [teams, setTeams] = useState<Participant[]>(getDefaultTeams(true));
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [timerDuration, setTimerDuration] = useState(30);
   const [customWordListText, setCustomWordListText] = useState('');
@@ -93,6 +93,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   useEffect(() => localStorage.setItem('musicStyle', musicStyle), [musicStyle]);
   useEffect(() => localStorage.setItem('musicVolume', String(musicVolume)), [musicVolume]);
 
+  // Update team lives when game mode changes
+  useEffect(() => {
+    setTeams(prevTeams => prevTeams.map(team => ({
+      ...team,
+      lives: gameMode === 'team' ? 10 : 5
+    })));
+  }, [gameMode]);
+
   const updateTeams = (newTeams: Participant[]) => {
     setTeams(newTeams);
     localStorage.setItem('teams', JSON.stringify(newTeams));
@@ -110,11 +118,20 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setStudents([]);
   };
 
-  const createParticipant = (name: string, difficulty: number): Participant => ({
-    name: name.trim(), lives: 5, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
+  const createParticipant = (name: string, difficulty: number, isTeamMode: boolean = false): Participant => ({
+    name: name.trim(), 
+    lives: isTeamMode ? 10 : 5, 
+    points: 0, 
+    difficultyLevel: difficulty, 
+    streak: 0, 
+    attempted: 0, 
+    correct: 0, 
+    wordsAttempted: 0, 
+    wordsCorrect: 0, 
+    avatar: getRandomAvatar()
   });
 
-  const addTeam = () => updateTeams([...teams, createParticipant('', 0)]);
+  const addTeam = () => updateTeams([...teams, createParticipant('', 0, gameMode === 'team')]);
   const removeTeam = (index: number) => updateTeams(teams.filter((_, i) => i !== index));
   const updateTeamName = (index: number, name: string) => {
     const newTeams = teams.map((team, i) => (i === index ? { ...team, name } : team));

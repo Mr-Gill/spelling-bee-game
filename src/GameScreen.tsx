@@ -172,9 +172,6 @@ const GameScreen: React.FC<GameScreenProps> = ({
       return;
     }
 
-    setFeedback({ message: 'Incorrect. Try again next time!', type: 'error' });
-    if (currentWord) setMissedWords(prev => [...prev, currentWord]);
-
     const updatedParticipants = participants.map((p, index) => {
       if (index === currentParticipantIndex) {
         return {
@@ -194,9 +191,21 @@ const GameScreen: React.FC<GameScreenProps> = ({
     const newAttempted = new Set(attemptedParticipants);
     newAttempted.add(currentParticipantIndex);
 
+    // Check if this is team mode and there are other teams that haven't attempted
+    const isTeamMode = config.gameMode === 'team';
+    const hasOtherTeamsToTry = isTeamMode && newAttempted.size < participants.length;
+
+    if (hasOtherTeamsToTry) {
+      setFeedback({ message: '❌ Incorrect. Next team can steal this word!', type: 'error' });
+    } else {
+      setFeedback({ message: 'Incorrect. Try again next time!', type: 'error' });
+      if (currentWord) setMissedWords(prev => [...prev, currentWord]);
+    }
+
     setTimeout(() => {
       setFeedback({ message: '', type: '' });
       if (newAttempted.size >= participants.length) {
+        // All teams/students have tried this word
         if (currentWord) {
           setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
         }
@@ -205,6 +214,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         selectNextWordForLevel(updatedParticipants[nextIndex].difficultyLevel);
         nextTurn();
       } else {
+        // Give next team/student a chance to steal/try
         setAttemptedParticipants(newAttempted);
         setUsedHint(false);
         nextTurn();

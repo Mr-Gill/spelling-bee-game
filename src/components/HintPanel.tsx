@@ -65,7 +65,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
   }, [word]);
 
   const handleRevealSyllable = (idx: number) => {
-    const cost = 3;
+    const cost = 2;
     if (coins < cost) return;
     onRevealLetter();
     setRevealedSyllables(prev => {
@@ -76,7 +76,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
   };
 
   const handleHangmanReveal = () => {
-    const cost = 6;
+    const cost = 3;
     if (coins < cost) return;
     onRevealLetter();
     const unrevealed = revealedLetters
@@ -165,10 +165,10 @@ const HintPanel: React.FC<HintPanelProps> = ({
                 <button
                   key={`reveal-${idx}`}
                   onClick={() => handleRevealSyllable(idx)}
-                  disabled={coins < 3}
+                  disabled={coins < 2}
                   className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
                 >
-                  {`Reveal syllable ${idx + 1} (-3)`}
+                  {`Reveal syllable ${idx + 1} (-2)`}
                 </button>
               )
             )}
@@ -225,14 +225,14 @@ const HintPanel: React.FC<HintPanelProps> = ({
         {!showSentence && (
           <button
             onClick={() => {
-              if (coins < 1) return;
+              if (coins < 2) return;
               onRevealLetter();
               setShowSentence(true);
             }}
-            disabled={coins < 1}
+            disabled={coins < 2}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            Buy Sentence (-1)
+            Buy Sentence (-2)
           </button>
         )}
       </div>
@@ -259,10 +259,10 @@ const HintPanel: React.FC<HintPanelProps> = ({
       <div className="mt-6 flex justify-center gap-4">
         <button
           onClick={handleHangmanReveal}
-          disabled={coins < 5}
+          disabled={coins < 3}
           className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
         >
-          Hangman Reveal (-5)
+          Hangman Reveal (-3)
         </button>
         <button
           onClick={handleVowelReveal}
@@ -281,9 +281,23 @@ const HintPanel: React.FC<HintPanelProps> = ({
       </div>
       {word && (
         <>
-          <div className="hint-section">
-            <h3>Syllables</h3>
-            <p>{syllableCount}</p>
+          <div className="hint-section mt-4 text-center">
+            <h3 className="text-lg font-bold text-yellow-300">Syllables</h3>
+            {showHint ? (
+              <p className="text-2xl">{syllableCount}</p>
+            ) : (
+              <button
+                onClick={() => {
+                  if (coins < 2) return;
+                  onRevealLetter();
+                  setShowHint(true);
+                }}
+                disabled={coins < 2}
+                className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50 mt-2"
+              >
+                Show Syllable Count (-2)
+              </button>
+            )}
           </div>
         </>
       )}
