@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { achievements } from '@constants/achievements';
-import { defaultAchievements } from './types';
+import { useMemo } from 'react';
+import { achievements } from './constants/achievements';
 
 interface AchievementsScreenProps {
   onBack: () => void;
@@ -21,10 +20,8 @@ const AchievementBadge = ({ unlocked, title, description, icon }: AchievementPro
   </div>
 );
 
-const AchievementsScreen: React.FC<AchievementsScreenProps> = ({ onBack }) => {
-  const [userAchievements, setUserAchievements] = useState<string[]>([]);
-
-  const unlocked = React.useMemo(() => {
+const AchievementsScreen = ({ onBack }: AchievementsScreenProps) => {
+  const unlocked = useMemo(() => {
     if (typeof window === 'undefined') return [] as string[];
     try {
       return JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
