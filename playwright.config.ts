@@ -33,10 +33,10 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env.BASE_URL || 'http://localhost:5000',
     
-    /* Visual testing configuration - optimized for CI */
-    screenshot: process.env.CI ? 'only-on-failure' : 'off',
-    video: process.env.CI ? 'retain-on-failure' : 'off',
-    trace: process.env.CI ? 'retain-on-failure' : 'on-first-retry',
+    /* Disable video/screenshots to avoid ffmpeg requirement */
+    screenshot: 'off',
+    video: 'off',
+    trace: 'off',
     
     /* Reduce action timeout for faster feedback */
     actionTimeout: 10000,
@@ -51,6 +51,9 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         viewport: { width: 1280, height: 800 },
         launchOptions: {
+          // Use system Chrome instead of downloading
+          executablePath: '/usr/bin/google-chrome',
+          args: ['--no-sandbox', '--disable-dev-shm-usage'],
           // Remove slowMo in CI for better performance
           slowMo: process.env.CI ? 0 : 100,
         },
