@@ -1,5 +1,9 @@
+const WORDLIST_URL =
+  process.env.VITE_WORDLIST_URL ||
+  'http://localhost:3001/generate-word-list';
+
 export async function generateWordList(prompt: string): Promise<string> {
-  const response = await fetch('http://localhost:3001/generate-word-list', {
+  const response = await fetch(WORDLIST_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
