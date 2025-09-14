@@ -4,16 +4,24 @@ import { speak } from '../utils/tts';
 
 interface HintPanelProps {
   word: Word | null;
-  coins: number;
-  onRevealLetter: () => void;
-  onAddTime: () => void;
+  participantPoints: number;
+  participantIndex: number;
+  spendPoints: (participantIndex: number, cost: number) => void;
+  isTeamMode: boolean;
+  showWord: boolean;
+  onHintUsed: () => void;
+  onExtraAttempt: () => void;
 }
 
 const HintPanel: React.FC<HintPanelProps> = ({
   word,
-  coins,
-  onRevealLetter,
-  onAddTime
+  participantPoints,
+  participantIndex,
+  spendPoints,
+  isTeamMode,
+  showWord,
+  onHintUsed,
+  onExtraAttempt
 }) => {
   if (!word) {
     return (
@@ -43,6 +51,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
   const example = safeAccess(word, 'example', '');
   const prefix = safeAccess(word, 'prefix', '');
   const suffix = safeAccess(word, 'suffix', '');
+  const prefixMeaning = safeAccess(word, 'prefixMeaning', '');
+  const suffixMeaning = safeAccess(word, 'suffixMeaning', '');
 
   const [showHint, setShowHint] = useState(false);
   const [showDefinition, setShowDefinition] = useState(false);
@@ -66,8 +76,9 @@ const HintPanel: React.FC<HintPanelProps> = ({
 
   const handleRevealSyllable = (idx: number) => {
     const cost = 3;
-    if (coins < cost) return;
-    onRevealLetter();
+    if (participantPoints < cost) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
     setRevealedSyllables(prev => {
       const updated = [...prev];
       updated[idx] = true;
@@ -76,9 +87,10 @@ const HintPanel: React.FC<HintPanelProps> = ({
   };
 
   const handleHangmanReveal = () => {
-    const cost = 6;
-    if (coins < cost) return;
-    onRevealLetter();
+    const cost = 5;
+    if (participantPoints < cost) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
     const unrevealed = revealedLetters
       .map((r, i) => (!r ? i : null))
       .filter(i => i !== null) as number[];
@@ -92,31 +104,59 @@ const HintPanel: React.FC<HintPanelProps> = ({
   };
 
   const handleVowelReveal = () => {
-    const cost = 4;
-    if (coins < cost) return;
-    onRevealLetter();
+    const cost = 3;
+    if (participantPoints < cost) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
     setRevealedLetters(word.word.split('').map((l, idx) => revealedLetters[idx] || 'aeiou'.includes(l.toLowerCase())));
   };
 
   const handleFriendSubstitution = () => {
     const cost = 4;
-    if (coins < cost) return;
-    onRevealLetter();
-    onAddTime();
+    if (participantPoints < cost) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
+    onExtraAttempt();
   };
 
   const handlePrefixReveal = () => {
     const cost = 3;
-    if (coins < cost || !prefix) return;
-    onRevealLetter();
+    if (participantPoints < cost || !prefix) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
     setShowPrefix(true);
   };
 
   const handleSuffixReveal = () => {
     const cost = 3;
-    if (coins < cost || !suffix) return;
-    onRevealLetter();
+    if (participantPoints < cost || !suffix) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
     setShowSuffix(true);
+  };
+
+  const handleDefinitionReveal = () => {
+    const cost = 1;
+    if (participantPoints < cost) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
+    setShowDefinition(true);
+  };
+
+  const handleOriginReveal = () => {
+    const cost = 1;
+    if (participantPoints < cost) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
+    setShowOrigin(true);
+  };
+
+  const handleSentenceReveal = () => {
+    const cost = 2;
+    if (participantPoints < cost) return;
+    spendPoints(participantIndex, cost);
+    onHintUsed();
+    setShowSentence(true);
   };
 
   const syllableCount = word?.syllables?.length || 0;
@@ -139,7 +179,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
       <button
         onClick={() => {
           setShowHint(!showHint);
-          if (!showHint) onRevealLetter();
+          if (!showHint) onHintUsed();
         }}
         className="mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
       >
@@ -186,24 +226,22 @@ const HintPanel: React.FC<HintPanelProps> = ({
         </p>
       )}
       {showPrefix && (
-        <p className="text-xl mb-2">
+        <div className="text-xl mb-2">
           <strong className="text-yellow-300">Prefix:</strong> {prefix || 'Prefix not available'}
-        </p>
+          {prefixMeaning && <span className="text-lg text-gray-300"> (meaning: {prefixMeaning})</span>}
+        </div>
       )}
       {showSuffix && (
-        <p className="text-xl mb-2">
+        <div className="text-xl mb-2">
           <strong className="text-yellow-300">Suffix:</strong> {suffix || 'Suffix not available'}
-        </p>
+          {suffixMeaning && <span className="text-lg text-gray-300"> (meaning: {suffixMeaning})</span>}
+        </div>
       )}
       <div className="mt-4 flex gap-4 justify-center">
         {!showDefinition && (
           <button
-            onClick={() => {
-              if (coins < 1) return;
-              onRevealLetter();
-              setShowDefinition(true);
-            }}
-            disabled={coins < 1}
+            onClick={handleDefinitionReveal}
+            disabled={participantPoints < 1}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
             Buy Definition (-1)
@@ -211,12 +249,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
         )}
         {!showOrigin && (
           <button
-            onClick={() => {
-              if (coins < 1) return;
-              onRevealLetter();
-              setShowOrigin(true);
-            }}
-            disabled={coins < 1}
+            onClick={handleOriginReveal}
+            disabled={participantPoints < 1}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
             Buy Origin (-1)
@@ -224,15 +258,11 @@ const HintPanel: React.FC<HintPanelProps> = ({
         )}
         {!showSentence && (
           <button
-            onClick={() => {
-              if (coins < 1) return;
-              onRevealLetter();
-              setShowSentence(true);
-            }}
-            disabled={coins < 1}
+            onClick={handleSentenceReveal}
+            disabled={participantPoints < 2}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            Buy Sentence (-1)
+            Buy Sentence (-2)
           </button>
         )}
       </div>
@@ -240,7 +270,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
         {!showPrefix && prefix && (
           <button
             onClick={handlePrefixReveal}
-            disabled={coins < 3}
+            disabled={participantPoints < 3}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
             Reveal Prefix (-3)
@@ -249,7 +279,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
         {!showSuffix && suffix && (
           <button
             onClick={handleSuffixReveal}
-            disabled={coins < 3}
+            disabled={participantPoints < 3}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
             Reveal Suffix (-3)
@@ -259,21 +289,21 @@ const HintPanel: React.FC<HintPanelProps> = ({
       <div className="mt-6 flex justify-center gap-4">
         <button
           onClick={handleHangmanReveal}
-          disabled={coins < 5}
+          disabled={participantPoints < 5}
           className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
         >
           Hangman Reveal (-5)
         </button>
         <button
           onClick={handleVowelReveal}
-          disabled={coins < 3}
+          disabled={participantPoints < 3}
           className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
         >
           Vowel Reveal (-3)
         </button>
         <button
           onClick={handleFriendSubstitution}
-          disabled={coins < 4}
+          disabled={participantPoints < 4}
           className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
         >
           Friend Sub (-4)

@@ -196,7 +196,16 @@ const GameScreen: React.FC<GameScreenProps> = ({
 
     setTimeout(() => {
       setFeedback({ message: '', type: '' });
-      if (newAttempted.size >= participants.length) {
+      
+      // In team mode, implement "steal" feature - if a team misspells, next team gets a chance
+      if (config.gameMode === 'team' && newAttempted.size < participants.length) {
+        setAttemptedParticipants(newAttempted);
+        setUsedHint(false);
+        setFeedback({ message: 'Next team can steal this word!', type: 'info' });
+        nextTurn();
+        startTimer();
+      } else if (newAttempted.size >= participants.length) {
+        // All participants have attempted this word, move to next word and add to review queue
         if (currentWord) {
           setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
         }
