@@ -20,8 +20,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
   const getDefaultTeams = (): Participant[] => [
-    { name: 'Team Alpha', lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
-    { name: 'Team Beta', lives: 5, difficultyLevel: 0, points: 0, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
+    { name: 'Team Alpha', lives: 10, difficultyLevel: 0, points: 5, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
+    { name: 'Team Beta', lives: 10, difficultyLevel: 0, points: 5, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
   ];
 
   const [teams, setTeams] = useState<Participant[]>(getDefaultTeams());
@@ -111,7 +111,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
 
   const createParticipant = (name: string, difficulty: number): Participant => ({
-    name: name.trim(), lives: 5, points: 0, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
+    name: name.trim(), lives: 5, points: 5, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
   });
 
   const addTeam = () => updateTeams([...teams, createParticipant('', 0)]);
@@ -550,6 +550,54 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             ⚡ SESSION CHALLENGE
           </button>
         </div>
+        
+        {/* Teacher Guidance Section */}
+        <div className="mt-12 bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-6 rounded-2xl border border-white/20 animate-scale-in delay-600">
+          <h2 className="text-2xl font-black mb-4 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            👩‍🏫 Teacher Guide: How to Run the Game
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6 text-sm">
+            <div>
+              <h3 className="text-lg font-bold mb-2 text-yellow-300">🎯 Gameplay Flow</h3>
+              <ol className="list-decimal list-inside space-y-1 text-gray-300">
+                <li>Read the word aloud to the student/team</li>
+                <li>Give definition, example sentence, or other context as needed</li>
+                <li>Student/team spells the word using on-screen keyboard</li>
+                <li>Click ✅ when they submit their spelling</li>
+                <li>Game automatically moves to next participant</li>
+              </ol>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-2 text-yellow-300">💡 Help Shop Tips</h3>
+              <ul className="list-disc list-inside space-y-1 text-gray-300">
+                <li><strong>Definition (-1 pt):</strong> Quick, affordable hint</li>
+                <li><strong>Origin (-1 pt):</strong> Word etymology and history</li>
+                <li><strong>Sentence (-2 pts):</strong> Context example</li>
+                <li><strong>Hangman (-5 pts):</strong> Reveals first & last letters</li>
+                <li><strong>Friend Sub (-4 pts):</strong> Tag in teammate (team mode)</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-2 text-yellow-300">🏆 Team Mode Features</h3>
+              <ul className="list-disc list-inside space-y-1 text-gray-300">
+                <li><strong>Shared Lives:</strong> Teams have 10 lives total</li>
+                <li><strong>"Steal" Mechanic:</strong> If one team fails, next team can steal the word</li>
+                <li><strong>Strategic Hints:</strong> Teams must decide when to spend points</li>
+                <li><strong>Redemption Round:</strong> Failed words return later</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-2 text-yellow-300">🧑‍🎓 Individual Mode</h3>
+              <ul className="list-disc list-inside space-y-1 text-gray-300">
+                <li><strong>Personal Challenge:</strong> Each student has 5 lives</li>
+                <li><strong>Individual Progress:</strong> Students advance at their own pace</li>
+                <li><strong>Classic Format:</strong> Traditional spelling bee experience</li>
+                <li><strong>Achievement Tracking:</strong> Personal milestones and goals</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
         <div className="mt-8 text-center animate-bounce-in delay-700">
           <button 
             onClick={onViewAchievements} 
