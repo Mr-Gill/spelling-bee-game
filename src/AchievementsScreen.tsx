@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { achievements } from '@constants/achievements';
+import { achievements } from '../constants/achievements';
 import { defaultAchievements } from './types';
 
 interface AchievementsScreenProps {
