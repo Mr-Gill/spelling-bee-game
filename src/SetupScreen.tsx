@@ -314,36 +314,82 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
   
   return (
-    <div className="screen-container text-white">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-3 mb-4">
-                <img src="icons/icon.svg" alt="Bee mascot" className="w-12 h-12 md:w-16 md:h-16" />
-                <h1 className="screen-title text-yellow-300">🏆 SPELLING BEE CHAMPIONSHIP</h1>
-            </div>
-            <p className="screen-subtitle">Get ready to spell your way to victory!</p>
+    <div className="screen-container text-white min-h-screen relative overflow-hidden">
+      {/* Animated background particles */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="floating-particle top-10 left-10 delay-100"></div>
+        <div className="floating-particle top-20 right-20 delay-200"></div>
+        <div className="floating-particle bottom-20 left-20 delay-300"></div>
+        <div className="floating-particle bottom-10 right-10 delay-400"></div>
+        <div className="floating-particle top-1/2 left-1/2 delay-500"></div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header with excitement */}
+        <div className="text-center mb-12 animate-bounce-in">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <img src="icons/icon.svg" alt="Bee mascot" className="w-12 h-12 md:w-16 md:h-16 animate-wiggle" />
+            <h1 className="screen-title excitement-glow animate-rainbow">🏆 SPELLING BEE CHAMPIONSHIP</h1>
+          </div>
+          <p className="screen-subtitle text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-kahoot-yellow-300 bg-clip-text text-transparent animate-sparkle">
+            Get ready to spell your way to victory!
+          </p>
         </div>
 
-        <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4 text-center">Select Game Mode 🎮</h2>
-          <div className="flex justify-center gap-4">
-            <button onClick={() => setGameMode('team')} className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'team' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}>Team</button>
-            <button onClick={() => setGameMode('individual')} className={`px-6 py-3 rounded-lg text-xl font-bold ${gameMode === 'individual' ? 'bg-yellow-300 text-black' : 'bg-blue-500 hover:bg-blue-400'}`}>Individual</button>
+        {/* Game Mode Selection - Kahoot Style */}
+        <div className="game-card mb-8 animate-scale-in delay-200">
+          <h2 className="text-3xl font-black mb-6 text-center bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent">
+            Select Game Mode 🎮
+          </h2>
+          <div className="flex flex-col md:flex-row justify-center gap-6">
+            <button 
+              onClick={() => setGameMode('team')} 
+              className={`team-selector ${gameMode === 'team' ? 'game-mode-active' : ''} animate-glow`}
+            >
+              👥 TEAM BATTLE
+            </button>
+            <button 
+              onClick={() => setGameMode('individual')} 
+              className={`individual-selector ${gameMode === 'individual' ? 'game-mode-active' : ''} animate-glow`}
+            >
+              🧑‍🎓 SOLO CHALLENGE
+            </button>
           </div>
         </div>
         
-        <div className="bg-white/10 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4">{gameMode === 'team' ? 'Teams 👥' : 'Students 🧑‍🎓'}</h2>
+        {/* Teams/Students Section - Enhanced */}
+        <div className="game-card mb-8 animate-scale-in delay-300">
+          <h2 className="text-3xl font-black mb-6 bg-gradient-to-r from-kahoot-blue-400 to-kahoot-green-400 bg-clip-text text-transparent">
+            {gameMode === 'team' ? '👥 TEAM ROSTER' : '🧑‍🎓 STUDENT LINEUP'}
+          </h2>
           {gameMode === 'team' ? (
             <>
               {teams.map((team, index) => (
-                <div key={index} className="flex items-center gap-2 mb-2">
-                  <img src={team.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
-                  <input type="text" value={team.name} onChange={e => updateTeamName(index, e.target.value)} placeholder={`Team ${index + 1} Name`} className="flex-grow p-2 rounded-md bg-white/20 text-white" />
-                  {teams.length > 1 && (<button onClick={() => removeTeam(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
+                <div key={index} className="flex items-center gap-4 mb-4 p-4 bg-white/10 rounded-2xl border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
+                  <img src={team.avatar || avatars[0]} alt="avatar" className="w-12 h-12 rounded-full border-2 border-kahoot-yellow-400 shadow-lg animate-float" />
+                  <input 
+                    type="text" 
+                    value={team.name} 
+                    onChange={e => updateTeamName(index, e.target.value)} 
+                    placeholder={`Team ${index + 1} Name`} 
+                    className="flex-grow p-3 rounded-xl bg-white/20 text-white placeholder-white/70 font-semibold text-lg border border-white/30 focus:border-kahoot-yellow-400 focus:ring-2 focus:ring-kahoot-yellow-300 transition-all duration-200" 
+                  />
+                  {teams.length > 1 && (
+                    <button 
+                      onClick={() => removeTeam(index)} 
+                      className="px-4 py-2 bg-gradient-to-r from-kahoot-red-500 to-kahoot-red-600 hover:from-kahoot-red-600 hover:to-kahoot-red-700 text-white font-bold rounded-xl transition-all duration-200 transform hover:scale-105"
+                    >
+                      Remove
+                    </button>
+                  )}
                 </div>
               ))}
-              <button onClick={addTeam} className="mt-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded">Add Team</button>
+              <button 
+                onClick={addTeam} 
+                className="mt-4 bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 hover:from-kahoot-green-600 hover:to-kahoot-green-700 text-white font-bold px-6 py-3 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg"
+              >
+                ➕ Add Team
+              </button>
             </>
           ) : (
             <>
@@ -487,14 +533,30 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             </div>
         )}
 
-        {error && <p className="text-red-300 text-center mb-4">{error}</p>}
+        {error && <p className="text-red-300 text-center mb-4 animate-shake">{error}</p>}
         
-        <div className="flex flex-col md:flex-row gap-4 mt-8">
-            <button onClick={() => handleStart(false)} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Custom Game</button>
-            <button onClick={() => handleStart(true)} className="w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-4 rounded-xl text-2xl font-bold">Start Session Challenge</button>
+        {/* Epic Game Start Buttons */}
+        <div className="flex flex-col md:flex-row gap-6 mt-12 animate-scale-in delay-500">
+          <button 
+            onClick={() => handleStart(false)} 
+            className="w-full bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-yellow-600 hover:from-kahoot-yellow-500 hover:to-kahoot-yellow-700 text-black px-8 py-6 rounded-3xl text-3xl font-black shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-4 border-white/20 excitement-glow animate-glow"
+          >
+            🚀 START CUSTOM GAME
+          </button>
+          <button 
+            onClick={() => handleStart(true)} 
+            className="w-full bg-gradient-to-r from-kahoot-red-400 to-kahoot-red-600 hover:from-kahoot-red-500 hover:to-kahoot-red-700 text-white px-8 py-6 rounded-3xl text-3xl font-black shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-4 border-white/20 animate-glow"
+          >
+            ⚡ SESSION CHALLENGE
+          </button>
         </div>
-        <div className="mt-4 text-center">
-            <button onClick={onViewAchievements} className="bg-purple-500 hover:bg-purple-600 text-white btn-responsive rounded-xl font-bold text-xl">View Achievements</button>
+        <div className="mt-8 text-center animate-bounce-in delay-700">
+          <button 
+            onClick={onViewAchievements} 
+            className="bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white px-8 py-4 rounded-2xl font-black text-2xl shadow-xl transform transition-all duration-300 hover:scale-105 animate-sparkle"
+          >
+            🏆 VIEW ACHIEVEMENTS
+          </button>
         </div>
       </div>
     </div>

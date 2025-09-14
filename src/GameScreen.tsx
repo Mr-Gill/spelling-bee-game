@@ -400,7 +400,17 @@ const GameScreen: React.FC<GameScreenProps> = ({
   };
 
   return (
-    <div className="relative screen-container bg-gradient-to-br from-indigo-600 to-purple-800 text-white flex flex-col items-center justify-center">
+    <div className="relative screen-container bg-gradient-to-br from-indigo-600 to-purple-800 text-white flex flex-col items-center justify-center min-h-screen overflow-hidden">
+      {/* Animated background particles */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="floating-particle top-10 left-10 delay-100"></div>
+        <div className="floating-particle top-20 right-20 delay-200"></div>
+        <div className="floating-particle bottom-20 left-20 delay-300"></div>
+        <div className="floating-particle bottom-10 right-10 delay-400"></div>
+        <div className="floating-particle top-1/2 left-1/4 delay-500"></div>
+        <div className="floating-particle top-1/3 right-1/4 delay-600"></div>
+      </div>
+      
       <input
         ref={hiddenInputRef}
         type="text"
@@ -409,39 +419,63 @@ const GameScreen: React.FC<GameScreenProps> = ({
         tabIndex={-1}
       />
       {toast && (
-        <div className="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50">
-          {toast}
+        <div className="fixed top-4 right-4 bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-white px-6 py-3 rounded-2xl shadow-2xl z-50 animate-bounce-in font-bold">
+          🎉 {toast}
         </div>
       )}
-      <div className="absolute top-8 left-8 flex gap-8 items-center">
-        <img src="img/bee.svg" alt="Bee icon" className="w-12 h-12" />
+      
+      {/* Enhanced Team Score Cards */}
+      <div className="absolute top-8 left-8 flex gap-6 items-center z-40">
+        <img src="img/bee.svg" alt="Bee icon" className="w-16 h-16 animate-wiggle" />
         {participants.map((p, index) => (
-          <div key={index} className="text-center scorecard">
-            <div className="text-2xl font-bold">{p.name}</div>
-            <div className="text-4xl font-bold text-yellow-300">{'❤️'.repeat(p.lives)}</div>
-            <div className="text-xl font-bold text-green-400">{p.points} pts</div>
+          <div 
+            key={index} 
+            className={`text-center game-card p-4 min-w-[140px] transform transition-all duration-500 ${
+              index === currentParticipantIndex ? 'scale-110 ring-4 ring-kahoot-yellow-400 animate-glow' : ''
+            }`}
+          >
+            <div className="text-xl font-black bg-gradient-to-r from-white to-kahoot-yellow-300 bg-clip-text text-transparent">
+              {p.name}
+            </div>
+            <div className="text-3xl font-bold my-2">{'❤️'.repeat(p.lives)}</div>
+            <div className="text-2xl font-black text-kahoot-green-400">{p.points} pts</div>
           </div>
         ))}
       </div>
       
+      {/* Enhanced Feedback Messages */}
       {feedback.message && (
-        <div className={`absolute top-8 text-2xl font-bold px-6 py-3 rounded-lg ${
-          feedback.type === 'success' ? 'bg-green-500' : feedback.type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+        <div className={`fixed top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-black px-8 py-4 rounded-3xl z-50 animate-bounce-in shadow-2xl ${
+          feedback.type === 'success' 
+            ? 'bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-white' 
+            : feedback.type === 'error' 
+            ? 'bg-gradient-to-r from-kahoot-red-500 to-kahoot-red-600 text-white animate-shake' 
+            : 'bg-gradient-to-r from-kahoot-blue-500 to-kahoot-blue-600 text-white'
         }`}
         >
+          {feedback.type === 'success' ? '🎉 ' : feedback.type === 'error' ? '💥 ' : '🎯 '}
           {feedback.message}
         </div>
       )}
 
-      <div className="absolute top-8 right-8 text-center z-50">
-          <div className={`timer-display ${timeLeft <= 10 ? 'text-red-500' : 'text-yellow-300'}`}>{timeLeft}</div>
-        <div className="text-lg">seconds left</div>
-          <button
-            onClick={isPaused ? resumeTimer : pauseTimer}
-            className="mt-2 bg-yellow-300 text-black btn-responsive rounded-lg font-bold"
-          >
-            {isPaused ? 'Resume' : 'Pause'}
-          </button>
+      {/* Exciting Timer Display */}
+      <div className="absolute top-8 right-8 text-center z-50 game-card">
+        <div className={`text-6xl md:text-8xl font-black mb-2 transition-all duration-300 ${
+          timeLeft <= 10 
+            ? 'text-kahoot-red-500 animate-pulse scale-110' 
+            : timeLeft <= 20 
+            ? 'text-kahoot-yellow-500 animate-bounce'
+            : 'text-kahoot-green-500'
+        }`}>
+          {timeLeft}
+        </div>
+        <div className="text-lg font-bold">seconds left</div>
+        <button
+          onClick={isPaused ? resumeTimer : pauseTimer}
+          className="mt-4 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-yellow-600 hover:from-kahoot-yellow-500 hover:to-kahoot-yellow-700 text-black px-6 py-3 rounded-2xl font-black text-lg shadow-lg transform transition-all duration-200 hover:scale-105"
+        >
+          {isPaused ? '▶️ Resume' : '⏸️ Pause'}
+        </button>
       </div>
       <div className="absolute bottom-8 left-8 bg-black/50 p-4 rounded-lg z-50 flex flex-col gap-2">
         <div className="flex items-center gap-2">
@@ -493,31 +527,35 @@ const GameScreen: React.FC<GameScreenProps> = ({
       </button>
 
       {currentWord && (
-        <div className="w-full max-w-4xl text-center">
-          <img src="img/books.svg" alt="Book icon" className="w-10 h-10 mx-auto mb-4" />
-          <h2 className="text-4xl font-bold mb-4">
-            Word for {isTeamMode ? 'Team' : 'Student'}: {participants[currentParticipantIndex]?.name || (isTeamMode ? 'Team' : 'Student')}
+        <div className="w-full max-w-6xl text-center z-30 animate-scale-in">
+          <img src="img/books.svg" alt="Book icon" className="w-16 h-16 mx-auto mb-6 animate-float" />
+          
+          {/* Epic Word Display Header */}
+          <h2 className="text-4xl md:text-5xl font-black mb-8 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent animate-sparkle">
+            🎯 WORD FOR {isTeamMode ? 'TEAM' : 'STUDENT'}: {participants[currentParticipantIndex]?.name?.toUpperCase() || (isTeamMode ? 'TEAM' : 'STUDENT')}
           </h2>
-          <div className="relative mb-8 pt-10">
+          
+          {/* Dramatic Word Display */}
+          <div className="relative mb-12 pt-10">
             {showWord && (
-              <div className="inline-block text-7xl font-extrabold text-white drop-shadow-lg bg-black/40 px-6 py-3 rounded-lg">
+              <div className="inline-block text-6xl md:text-8xl font-black text-white drop-shadow-2xl bg-gradient-to-r from-purple-900/80 to-indigo-900/80 backdrop-blur-sm px-8 py-6 rounded-3xl border-4 border-white/20 animate-bounce-in excitement-glow">
                 {currentWord.word}
                 {currentWord.pronunciation && (
-                  <span className="ml-4 text-5xl text-yellow-300">{currentWord.pronunciation}</span>
+                  <span className="ml-6 text-4xl md:text-5xl text-kahoot-yellow-300 font-bold">{currentWord.pronunciation}</span>
                 )}
               </div>
             )}
             <button
               onClick={() => speak(currentWord.word)}
-              className="absolute top-0 left-0 bg-yellow-300 text-black btn-responsive rounded-lg font-bold"
+              className="absolute top-0 left-0 bg-gradient-to-r from-kahoot-blue-500 to-kahoot-blue-600 hover:from-kahoot-blue-600 hover:to-kahoot-blue-700 text-white px-6 py-3 rounded-2xl font-black text-lg shadow-lg transform transition-all duration-200 hover:scale-105"
             >
-              Replay Word
+              🔊 Replay Word
             </button>
             <button
               onClick={() => setShowWord(!showWord)}
-              className="absolute top-0 right-0 bg-yellow-300 text-black btn-responsive rounded-lg font-bold"
+              className="absolute top-0 right-0 bg-gradient-to-r from-kahoot-yellow-500 to-kahoot-yellow-600 hover:from-kahoot-yellow-600 hover:to-kahoot-yellow-700 text-black px-6 py-3 rounded-2xl font-black text-lg shadow-lg transform transition-all duration-200 hover:scale-105"
             >
-              {showWord ? 'Hide Word' : 'Show Word'}
+              {showWord ? '👁️ Hide Word' : '👁️ Show Word'}
             </button>
           </div>
           <HintPanel
@@ -530,16 +568,16 @@ const GameScreen: React.FC<GameScreenProps> = ({
             onHintUsed={() => setUsedHint(true)}
             onExtraAttempt={() => setExtraAttempt(true)}
           />
-          <div className="flex gap-2 justify-center mb-4">
+          <div className="flex gap-3 justify-center mb-8 px-4">
             {letters.map((letter, idx) => (
               <div
                 key={idx}
-                className={`w-12 h-16 text-4xl flex items-center justify-center rounded-lg border-b-2 ${
+                className={`w-16 h-20 text-5xl font-black flex items-center justify-center rounded-2xl border-4 transition-all duration-300 transform ${
                   letter
                     ? letter.toLowerCase() === currentWord.word[idx].toLowerCase()
-                      ? 'bg-green-500'
-                      : 'bg-red-500'
-                    : 'bg-white/20'
+                      ? 'bg-gradient-to-br from-kahoot-green-400 to-kahoot-green-600 border-kahoot-green-300 text-white scale-110 animate-bounce shadow-2xl'
+                      : 'bg-gradient-to-br from-kahoot-red-400 to-kahoot-red-600 border-kahoot-red-300 text-white animate-shake'
+                    : 'bg-white/20 border-white/40 text-white hover:bg-white/30'
                 }`}
               >
                 {letter.toUpperCase()}
@@ -557,14 +595,22 @@ const GameScreen: React.FC<GameScreenProps> = ({
 
       <button
         onClick={skipWord}
-        className="absolute bottom-8 right-8 bg-orange-500 hover:bg-orange-600 p-4 rounded-lg text-xl"
+        className="absolute bottom-8 right-8 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 p-6 rounded-3xl text-2xl font-black text-white shadow-2xl transform transition-all duration-200 hover:scale-105 animate-glow"
+        title="Skip Word"
       >
-        <SkipForward size={24} />
+        ⏭️ <SkipForward size={32} />
       </button>
 
+      {/* Epic Pause Overlay */}
       {isPaused && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-6xl font-bold z-40">
-          Paused
+        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-40">
+          <div className="text-center animate-scale-in">
+            <div className="text-8xl md:text-9xl font-black text-white mb-4 animate-pulse">⏸️</div>
+            <div className="text-6xl md:text-8xl font-black bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent">
+              PAUSED
+            </div>
+            <div className="text-2xl text-white/80 mt-4">Game is paused. Click resume to continue!</div>
+          </div>
         </div>
       )}
     </div>
