@@ -1,5 +1,41 @@
 const fs = require('fs');
 const { execSync } = require('child_process');
+const path = require('path');
+
+// Load environment variables from .env file
+let envVars = {
+  NODE_ENV: 'production',
+  PUBLIC_URL: '',
+  GITHUB_TOKEN: '',
+  GITHUB_MODELS_TOKEN: '',
+  API_TOKEN: '',
+  VITE_WORDLIST_URL: ''
+};
+
+// Try to read .env file
+try {
+  const envPath = path.join(__dirname, '.env');
+  if (fs.existsSync(envPath)) {
+    const envFile = fs.readFileSync(envPath, 'utf8');
+    envFile.split('\n').forEach(line => {
+      const [key, ...valueParts] = line.split('=');
+      if (key && valueParts.length > 0) {
+        const value = valueParts.join('=').trim();
+        if (envVars.hasOwnProperty(key.trim())) {
+          envVars[key.trim()] = value.replace(/^["']|["']$/g, ''); // Remove quotes
+        }
+      }
+    });
+    console.log('Loaded environment variables from .env file');
+  }
+} catch (error) {
+  console.log('No .env file found, using defaults');
+}
+
+// Build define flags for esbuild
+const defineFlags = Object.entries(envVars)
+  .map(([key, value]) => `--define:process.env.${key}='"${value}"'`)
+  .join(' ');
 
 // Create dist directory if it doesn't exist
 if (!fs.existsSync('dist')) {
@@ -8,7 +44,7 @@ if (!fs.existsSync('dist')) {
 
 // Run esbuild
 console.log('Building application...');
-execSync(`npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file --define:process.env.NODE_ENV='"production"' --define:process.env.PUBLIC_URL='""' --define:process.env.GITHUB_TOKEN='""' --define:process.env.GITHUB_MODELS_TOKEN='""' --define:process.env.API_TOKEN='""' --define:process.env.VITE_WORDLIST_URL='""'`, { stdio: 'inherit' });
+execSync(`npx esbuild src/spelling-bee-game.tsx --bundle --outfile=dist/app.js --jsx=automatic --target=es2020 --format=esm --loader:.mp3=file --loader:.svg=file --loader:.png=file --loader:.jpg=file --loader:.jpeg=file ${defineFlags}`, { stdio: 'inherit' });
 
 // Build Tailwind CSS
 console.log('Building Tailwind CSS...');

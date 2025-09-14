@@ -1,5 +1,5 @@
 import React from 'react';
-import { SkipForward, Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { SkipForward, Play, Pause, Volume2, VolumeX, LogOut } from 'lucide-react';
 import { GameConfig, Word, Participant, GameResults, defaultAchievements } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
@@ -18,12 +18,14 @@ import AvatarSelector from './components/AvatarSelector';
 import { getContextualMascot } from './utils/mascot';
 import ParticipantStats from './components/ParticipantStats';
 import { HelpShop } from './components/HelpShop';
+import { saveGameState, generateGameId, autoSaveGameState, type SavedGameState } from './utils/gameStateManager';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
 interface GameScreenProps {
   config: GameConfig;
   onEndGame: (results: GameResults) => void;
+  onExitGame?: () => void;
   musicStyle: string;
   musicVolume: number;
   onMusicStyleChange: (style: string) => void;
@@ -32,6 +34,8 @@ interface GameScreenProps {
   onSoundEnabledChange: (enabled: boolean) => void;
   isMusicPlaying: boolean;
   onToggleMusicPlaying: () => void;
+  gameId?: string;
+  initialGameState?: SavedGameState;
 }
 
 interface Feedback {
@@ -43,6 +47,7 @@ interface Feedback {
 const GameScreen: React.FC<GameScreenProps> = ({
   config,
   onEndGame,
+  onExitGame,
   musicStyle,
   musicVolume,
   onMusicStyleChange,
@@ -51,6 +56,8 @@ const GameScreen: React.FC<GameScreenProps> = ({
   onSoundEnabledChange,
   isMusicPlaying,
   onToggleMusicPlaying,
+  gameId,
+  initialGameState,
 }) => {
   const [participants, setParticipants] = React.useState<Participant[]>(
     config.participants.map(p => ({
@@ -86,6 +93,12 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [startTime] = React.useState(Date.now());
   const [currentAvatar, setCurrentAvatar] = React.useState('');
   const [theme, setTheme] = React.useState(() => localStorage.getItem('theme') || 'light');
+  
+  // Game state management
+  const [currentGameId] = React.useState(gameId || generateGameId());
+  const [showExitConfirm, setShowExitConfirm] = React.useState(false);
+  const [wordIndex, setWordIndex] = React.useState(initialGameState?.currentWordIndex || 0);
+  const [totalWordsUsed, setTotalWordsUsed] = React.useState(initialGameState?.totalWordsUsed || 0);
 
   const playCorrect = useSound(correctSoundFile, soundEnabled);
   const playWrong = useSound(wrongSoundFile, soundEnabled);
@@ -137,6 +150,30 @@ const GameScreen: React.FC<GameScreenProps> = ({
     document.body.classList.add(`theme-${theme}`);
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  // Auto-save game state when key properties change
+  React.useEffect(() => {
+    if (currentWord && participants.length > 0) {
+      const gameState: SavedGameState = {
+        gameConfig: config,
+        currentParticipants: participants,
+        currentWordIndex: wordIndex,
+        currentWord,
+        currentParticipantIndex,
+        gameStartTime: startTime,
+        timeRemaining: timeLeft,
+        totalWordsUsed,
+        missedWords,
+        currentInput: letters.join(''),
+        gamePhase: 'spelling',
+        difficulty: currentDifficulty,
+        savedAt: new Date().toISOString(),
+        gameId: currentGameId,
+      };
+      
+      autoSaveGameState(gameState);
+    }
+  }, [participants, currentWord, currentParticipantIndex, timeLeft, letters, wordIndex, totalWordsUsed, missedWords, currentDifficulty]);
 
   const advanceToWord = (level: number) => {
     const nextWord = selectNextWord(level);
@@ -405,6 +442,46 @@ const GameScreen: React.FC<GameScreenProps> = ({
     audioManager.toggleMute();
   };
 
+  const handleExitGame = () => {
+    setShowExitConfirm(true);
+  };
+
+  const confirmExitGame = () => {
+    // Save the current game state before exiting
+    const gameState: SavedGameState = {
+      gameConfig: config,
+      currentParticipants: participants,
+      currentWordIndex: wordIndex,
+      currentWord,
+      currentParticipantIndex,
+      gameStartTime: startTime,
+      timeRemaining: timeLeft,
+      totalWordsUsed,
+      missedWords,
+      currentInput: letters.join(''),
+      gamePhase: 'spelling',
+      difficulty: currentDifficulty,
+      savedAt: new Date().toISOString(),
+      gameId: currentGameId,
+    };
+    
+    try {
+      saveGameState(gameState);
+      console.log('Game state saved before exit');
+    } catch (error) {
+      console.error('Failed to save game state on exit:', error);
+    }
+    
+    setShowExitConfirm(false);
+    if (onExitGame) {
+      onExitGame();
+    }
+  };
+
+  const cancelExitGame = () => {
+    setShowExitConfirm(false);
+  };
+
   return (
     <div className="relative screen-container bg-gradient-to-br from-indigo-600 to-purple-800 text-white flex flex-col items-center justify-center min-h-screen overflow-hidden">
       {/* Animated background particles */}
@@ -523,6 +600,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
           >
             {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
           </button>
+          <button
+            onClick={handleExitGame}
+            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded transition-colors"
+            aria-label="Exit game"
+            title="Exit and save game"
+          >
+            <LogOut size={16} />
+          </button>
         </div>
         <input
           type="range"
@@ -550,6 +635,35 @@ const GameScreen: React.FC<GameScreenProps> = ({
           coins={participants[currentParticipantIndex].points}
           onPurchase={cost => spendPoints(currentParticipantIndex, cost)}
         />
+      )}
+
+      {/* Exit Game Confirmation Modal */}
+      {showExitConfirm && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-2xl">
+            <div className="text-6xl mb-4">🚪</div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Exit Game?</h2>
+            <p className="text-gray-600 mb-6">
+              Your progress will be saved and you can resume this game later.
+              Are you sure you want to exit?
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={cancelExitGame}
+                className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-semibold transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmExitGame}
+                className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
+              >
+                <LogOut size={18} />
+                Exit & Save
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       <AvatarSelector
