@@ -5,6 +5,7 @@ import { launchConfetti } from './utils/confetti';
 import { recordDailyCompletion, StreakInfo } from './DailyChallenge';
 import MorphologyCard from './components/MorphologyCard';
 import { config } from './config';
+import { appendHistoryEntry } from './utils/history';
 
 interface ResultsScreenProps {
   results: GameResults;
@@ -52,11 +53,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
   }, [results, config.dailyChallenge, bonus]);
 
   useEffect(() => {
-    const history: { date: string; score: number; duration: number }[] = JSON.parse(
-      localStorage.getItem('sessionHistory') || '[]'
-    );
-    history.push({ date: new Date().toISOString(), score: totalScore, duration: results.duration || 0 });
-    localStorage.setItem('sessionHistory', JSON.stringify(history));
+    appendHistoryEntry({ score: totalScore, duration: results.duration || 0 });
 
     const storedBest = Number(localStorage.getItem('bestClassScore') || '0');
     if (totalScore > storedBest) {
