@@ -3,14 +3,14 @@ const CACHE_NAME = 'spelling-bee-v1';
 
 // Precache essential assets
 const PRECACHE_ASSETS = [
-  '/spelling-bee-game/',
-  '/spelling-bee-game/index.html',
-  '/spelling-bee-game/app.js',
-  '/spelling-bee-game/style.css',
-  '/spelling-bee-game/manifest.webmanifest',
-  '/spelling-bee-game/icons/icon-192x192.png',
-  '/spelling-bee-game/icons/icon-512x512.png',
-  '/spelling-bee-game/icons/icon-maskable.png'
+  '/{{REPO_NAME}}/',
+  '/{{REPO_NAME}}/index.html',
+  '/{{REPO_NAME}}/app.js',
+  '/{{REPO_NAME}}/style.css',
+  '/{{REPO_NAME}}/manifest.webmanifest',
+  '/{{REPO_NAME}}/icons/icon-192x192.png',
+  '/{{REPO_NAME}}/icons/icon-512x512.png',
+  '/{{REPO_NAME}}/icons/icon-maskable.png'
 ];
 
 // Install event: precache assets
