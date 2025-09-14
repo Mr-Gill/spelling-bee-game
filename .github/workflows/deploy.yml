@@ -79,6 +79,16 @@ jobs:
             echo "No dist/service-worker.js; skipping rewrite"
           fi
 
+      - name: Check dist contents
+        run: |
+          if [ ! -d dist ] || [ -z "$(ls -A dist)" ]; then
+            echo "dist directory missing or empty"
+            exit 1
+          fi
+
+      - name: List dist contents
+        run: ls -l dist
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
