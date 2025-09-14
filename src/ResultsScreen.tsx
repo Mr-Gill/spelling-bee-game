@@ -89,6 +89,43 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
     anchor.click();
   };
 
+  const handleExportMissedWords = () => {
+    if (!results.missedWords || results.missedWords.length === 0) {
+      alert('No missed words to export!');
+      return;
+    }
+
+    // Create a teacher-friendly format for missed words
+    const date = new Date().toLocaleDateString();
+    const gameMode = results.gameMode === 'team' ? 'Team Mode' : 'Individual Mode';
+    const duration = Math.floor(results.duration / 60);
+    
+    let csvContent = `Missed Words Report - ${date}\n`;
+    csvContent += `Game Mode: ${gameMode}\n`;
+    csvContent += `Duration: ${duration} minutes\n`;
+    csvContent += `Participants: ${results.participants.map(p => p.name).join(', ')}\n\n`;
+    csvContent += 'Word,Definition,Origin,Example,Prefix,Suffix,Pronunciation\n';
+    
+    results.missedWords.forEach(word => {
+      const row = [
+        word.word || '',
+        (word.definition || '').replace(/,/g, ';'),
+        (word.origin || '').replace(/,/g, ';'),
+        (word.example || '').replace(/,/g, ';'),
+        word.prefix || '',
+        word.suffix || '',
+        word.pronunciation || ''
+      ].join(',');
+      csvContent += row + '\n';
+    });
+
+    const dataStr = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
+    const anchor = document.createElement('a');
+    anchor.href = dataStr;
+    anchor.download = `missed-words-${date}.csv`;
+    anchor.click();
+  };
+
   const getWinnerMessage = () => {
     const { winner, participants } = results;
     if (winner) {
@@ -169,6 +206,14 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
         >
           📤 Export Results
         </button>
+        {results.missedWords && results.missedWords.length > 0 && (
+          <button 
+            onClick={handleExportMissedWords} 
+            className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full text-lg font-bold hover:shadow-elevation-1"
+          >
+            📝 Export Missed Words
+          </button>
+        )}
         <button 
           onClick={onViewLeaderboard} 
           className="bg-secondary-container text-on-secondary-container px-6 py-3 rounded-full text-lg font-bold hover:shadow-elevation-1"
