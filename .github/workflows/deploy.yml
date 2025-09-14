@@ -44,7 +44,7 @@ jobs:
           NODE_OPTIONS: --max_old_space_size=4096
         run: |
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.API_TOKEN }}" > .npmrc
-          echo "@squidgyg:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "@mr-gill:registry=https://npm.pkg.github.com" >> .npmrc
           # Ensure all dependencies are properly installed
           npm install
           npm run build
