@@ -2,8 +2,8 @@
 
 > **A comprehensive, classroom-ready spelling bee game designed for K-12 educators with rich phonics content, team competition, and seamless lesson plan integration.**
 
-[![Live Demo](https://img.shields.io/badge/🎮_Play_Now-Live_Demo-brightgreen?style=for-the-badge)](https://squidgyg.github.io/spelling-bee-game/)
-[![Education](https://img.shields.io/badge/📚_Built_for-Education-blue?style=for-the-badge)](https://squidgyg.github.io/spelling-bee-game/)
+[![Live Demo](https://img.shields.io/badge/🎮_Play_Now-Live_Demo-brightgreen?style=for-the-badge)](https://mr-gill.github.io/spelling-bee-game/)
+[![Education](https://img.shields.io/badge/📚_Built_for-Education-blue?style=for-the-badge)](https://mr-gill.github.io/spelling-bee-game/)
 [![Open Source](https://img.shields.io/badge/📖_License-MIT-orange?style=for-the-badge)](LICENSE)
 
 ---
@@ -119,7 +119,7 @@ To enable AI-powered word list generation, you'll need to set up a GitHub token 
    - Click "Add secret"
 
 ### 🌐 **Option 1: Use Online (Recommended)**
-1. **Visit**: [https://squidgyg.github.io/spelling-bee-game/](https://squidgyg.github.io/spelling-bee-game/)
+1. **Visit**: [https://mr-gill.github.io/spelling-bee-game/](https://mr-gill.github.io/spelling-bee-game/)
 2. **Project** on your classroom screen or smart board
 3. **Choose** Individual Students mode (5 lives each)
 4. **Add** your students by name
@@ -129,7 +129,7 @@ To enable AI-powered word list generation, you'll need to set up a GitHub token 
 ### 💻 **Option 2: Download for Offline Use**
 ```bash
 # Download files
-git clone https://github.com/SquidgyG/spelling-bee-game.git
+git clone https://github.com/Mr-Gill/spelling-bee-game.git
 cd spelling-bee-game
 
 # Install dependencies and build
@@ -519,8 +519,8 @@ const helpPrices = { reveal: 2, time: 1, hint: 1 };
 - **Accessibility** - Help make education accessible to all students
 
 ### 📧 **Get Support**
-- **📝 Report Issues**: [GitHub Issues](https://github.com/SquidgyG/spelling-bee-game/issues)
-- **💬 Discussions**: [GitHub Discussions](https://github.com/SquidgyG/spelling-bee-game/discussions)
+- **📝 Report Issues**: [GitHub Issues](https://github.com/Mr-Gill/spelling-bee-game/issues)
+- **💬 Discussions**: [GitHub Discussions](https://github.com/Mr-Gill/spelling-bee-game/discussions)
 - **📖 Documentation**: Check this README and code comments
 - **🌟 Feature Requests**: Open an issue with the "enhancement" label
 
@@ -543,7 +543,7 @@ This project is **open source** and available under the [MIT License](LICENSE).
 
 Whether you're teaching phonics to elementary students, vocabulary to middle schoolers, or preparing high schoolers for competitions, this spelling bee game adapts to your needs while maintaining the rich educational content that makes learning meaningful.
 
-**🎯 Ready to transform your spelling lessons? [Start playing now!](https://squidgyg.github.io/spelling-bee-game/)**
+**🎯 Ready to transform your spelling lessons? [Start playing now!](https://mr-gill.github.io/spelling-bee-game/)**
 
 ---
 
@@ -589,9 +589,9 @@ The server expects a `GITHUB_TOKEN` with the `models:read` scope.
 
 **Built with ❤️ for educators by educators**
 
-[![⭐ Star this repo](https://img.shields.io/github/stars/SquidgyG/spelling-bee-game?style=social)](https://github.com/SquidgyG/spelling-bee-game/stargazers)
-[![🍴 Fork this repo](https://img.shields.io/github/forks/SquidgyG/spelling-bee-game?style=social)](https://github.com/SquidgyG/spelling-bee-game/fork)
-[![📖 Follow updates](https://img.shields.io/github/watchers/SquidgyG/spelling-bee-game?style=social)](https://github.com/SquidgyG/spelling-bee-game/watchers)
+[![⭐ Star this repo](https://img.shields.io/github/stars/Mr-Gill/spelling-bee-game?style=social)](https://github.com/Mr-Gill/spelling-bee-game/stargazers)
+[![🍴 Fork this repo](https://img.shields.io/github/forks/Mr-Gill/spelling-bee-game?style=social)](https://github.com/Mr-Gill/spelling-bee-game/fork)
+[![📖 Follow updates](https://img.shields.io/github/watchers/Mr-Gill/spelling-bee-game?style=social)](https://github.com/Mr-Gill/spelling-bee-game/watchers)
 
 *Transform spelling lessons into engaging adventures that students remember forever!*
 
