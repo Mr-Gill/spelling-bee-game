@@ -72,6 +72,8 @@ const GameScreen: React.FC<GameScreenProps> = ({
     useWordSelection(config.wordDatabase);
   const [attemptedParticipants, setAttemptedParticipants] = React.useState<Set<number>>(new Set());
   const [missedWords, setMissedWords] = React.useState<Word[]>([]);
+  const [isRedemptionRound, setIsRedemptionRound] = React.useState(false);
+  const [redemptionWords, setRedemptionWords] = React.useState<Word[]>([]);
   const [unlockedAchievements, setUnlockedAchievements] = React.useState<string[]>(() => {
     if (typeof window === 'undefined') return [];
     try {
@@ -142,8 +144,33 @@ const GameScreen: React.FC<GameScreenProps> = ({
   }, [theme]);
 
   const selectNextWordForLevel = (level: number) => {
-    const nextWord = selectNextWord(level);
-    if (nextWord) {
+    if (isRedemptionRound) {
+      selectNextRedemptionWord();
+    } else {
+      const nextWord = selectNextWord(level);
+      if (nextWord) {
+        setAttemptedParticipants(new Set());
+        setExtraAttempt(false);
+        setIsHelpOpen(false);
+        setUsedHint(false);
+        setLetters(Array(nextWord.word.length).fill(''));
+        if (hiddenInputRef.current) {
+          hiddenInputRef.current.focus();
+        }
+        speak(nextWord.word);
+        startTimer();
+      } else {
+        onEndGameWithMissedWords();
+      }
+    }
+  };
+
+  const selectNextRedemptionWord = () => {
+    if (redemptionWords.length > 0) {
+      const nextWord = redemptionWords[0];
+      setRedemptionWords(prev => prev.slice(1));
+      setCurrentWord(nextWord);
+      setCurrentDifficulty('review');
       setAttemptedParticipants(new Set());
       setExtraAttempt(false);
       setIsHelpOpen(false);
@@ -155,6 +182,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       speak(nextWord.word);
       startTimer();
     } else {
+      // No more redemption words, end the game
       onEndGameWithMissedWords();
     }
   };
@@ -371,6 +399,38 @@ const GameScreen: React.FC<GameScreenProps> = ({
     }, 1500);
   };
 
+  const startRedemptionRound = () => {
+    // Give all teams their lives back for redemption round
+    const revivedParticipants = participants.map(p => ({
+      ...p,
+      lives: isTeamMode ? 3 : 2, // Fewer lives for redemption round
+    }));
+    setParticipants(revivedParticipants);
+    
+    // Set up redemption round
+    setIsRedemptionRound(true);
+    setRedemptionWords([...missedWords]);
+    setMissedWords([]); // Clear missed words for this round
+    setAttemptedParticipants(new Set());
+    
+    // Start with first redemption word
+    if (missedWords.length > 0) {
+      setCurrentWord(missedWords[0]);
+      setCurrentDifficulty('review');
+      setWordQueues(prev => ({ ...prev, review: missedWords }));
+    }
+    
+    // Reset to first participant
+    setCurrentParticipantIndex(0);
+    setFeedback({ message: '🎯 REDEMPTION ROUND! Second chance at missed words!', type: 'info' });
+    
+    // Start the timer
+    setTimeout(() => {
+      setFeedback({ message: '', type: '' });
+      startTimer();
+    }, 3000);
+  };
+
   const onEndGameWithMissedWords = () => {
     const lessonKey = new Date().toISOString().split('T')[0];
     const stored = JSON.parse(localStorage.getItem('missedWordsCollection') || '{}');
@@ -400,10 +460,20 @@ const GameScreen: React.FC<GameScreenProps> = ({
   React.useEffect(() => {
     if (!participants || participants.length === 0) return;
     const activeParticipants = participants.filter(p => p.lives > 0);
-    if (activeParticipants.length <= 1) {
+    
+    // Check if game should end or enter redemption round
+    if (activeParticipants.length <= 1 && !isRedemptionRound) {
+      // Before ending, check if there are missed words for redemption round
+      if (isTeamMode && missedWords.length > 0) {
+        startRedemptionRound();
+      } else {
+        onEndGameWithMissedWords();
+      }
+    } else if (activeParticipants.length === 0 && isRedemptionRound) {
+      // Redemption round is over, end the game
       onEndGameWithMissedWords();
     }
-  }, [participants]);
+  }, [participants, isRedemptionRound, isTeamMode, missedWords.length]);
 
   const handleMuteToggle = () => {
     audioManager.toggleMute();
