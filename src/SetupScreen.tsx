@@ -4,6 +4,7 @@ import beeImg from './img/avatars/bee.svg';
 import bookImg from './img/avatars/book.svg';
 import trophyImg from './img/avatars/trophy.svg';
 import { parseWordList as parseWordListUtil } from './utils/parseWordList';
+import { getMascotImage } from './utils/mascot';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -16,7 +17,8 @@ interface SetupScreenProps {
 }
 
 const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements }) => {
-  const avatars = [beeImg, bookImg, trophyImg];
+  // Include both traditional avatars and mascot images
+  const avatars = [beeImg, bookImg, trophyImg, getMascotImage({ isDefault: true }), getMascotImage({ isCelebrating: true })];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
   const getDefaultTeams = (): Participant[] => [

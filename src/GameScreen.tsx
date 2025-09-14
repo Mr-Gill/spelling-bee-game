@@ -16,6 +16,7 @@ import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
 import AvatarSelector from './components/AvatarSelector';
+import { getContextualMascot } from './utils/mascot';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -435,7 +436,18 @@ const GameScreen: React.FC<GameScreenProps> = ({
       
       {/* Enhanced Team Score Cards */}
       <div className="absolute top-8 left-8 flex gap-6 items-center z-40">
-        <img src="img/bee.svg" alt="Bee icon" className="w-16 h-16 animate-wiggle" />
+        <img 
+          src={getContextualMascot({
+            isCorrectAnswer: feedback.type === 'correct',
+            isWrongAnswer: feedback.type === 'incorrect',
+            timeRemaining: timeLeft,
+            maxTime: config.timerDuration,
+            isShowingHelp: isHelpOpen,
+            isTyping: letters.some(letter => letter !== '')
+          })} 
+          alt="Mascot" 
+          className="w-16 h-16 animate-wiggle" 
+        />
         {participants.map((p, index) => (
           <div 
             key={index} 
@@ -537,7 +549,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
 
       {currentWord && (
         <div className="w-full max-w-6xl text-center z-30 animate-scale-in">
-          <img src="img/books.svg" alt="Book icon" className="w-16 h-16 mx-auto mb-6 animate-float" />
+          <img 
+            src={getContextualMascot({
+              isHelping: true,
+              isShowingHelp: showWord
+            })} 
+            alt="Teaching Bee" 
+            className="w-16 h-16 mx-auto mb-6 animate-float" 
+          />
           
           {/* Epic Word Display Header */}
           <h2 className="text-4xl md:text-5xl font-black mb-8 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent animate-sparkle">
