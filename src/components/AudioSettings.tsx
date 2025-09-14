@@ -1,32 +1,45 @@
-// components/AudioSettings.jsx
+// components/AudioSettings.tsx
 import React from 'react';
 import { audioManager } from '../utils/audio';
+import type { AudioSettings as AudioSettingsType } from '../utils/audio';
 
-export function AudioSettings() {
-  const [musicVolume, setMusicVolume] = React.useState(audioManager.volume.music * 100);
-  const [sfxVolume, setSfxVolume] = React.useState(audioManager.volume.sfx * 100);
-  const [isMusicMuted, setIsMusicMuted] = React.useState(audioManager.isMusicMuted);
-  const [areSoundsMuted, setAreSoundsMuted] = React.useState(audioManager.areSoundsMuted);
+export function AudioSettings(): JSX.Element {
+  const [musicVolume, setMusicVolume] = React.useState<
+    AudioSettingsType['musicVolume']
+  >(audioManager.settings.musicVolume * 100);
+  const [sfxVolume, setSfxVolume] = React.useState<
+    AudioSettingsType['sfxVolume']
+  >(audioManager.settings.sfxVolume * 100);
+  const [isMusicMuted, setIsMusicMuted] = React.useState<
+    AudioSettingsType['isMusicMuted']
+  >(audioManager.settings.isMusicMuted);
+  const [areSoundsMuted, setAreSoundsMuted] = React.useState<
+    AudioSettingsType['areSoundsMuted']
+  >(audioManager.settings.areSoundsMuted);
 
-  const handleMusicVolumeChange = (e) => {
-    const volume = parseInt(e.target.value) / 100;
+  const handleMusicVolumeChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const volume = parseInt(e.target.value, 10) / 100;
     setMusicVolume(volume * 100);
     audioManager.setMusicVolume(volume);
   };
 
-  const handleSfxVolumeChange = (e) => {
-    const volume = parseInt(e.target.value) / 100;
+  const handleSfxVolumeChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const volume = parseInt(e.target.value, 10) / 100;
     setSfxVolume(volume * 100);
     audioManager.setSfxVolume(volume);
   };
 
-  const toggleMusicMute = () => {
+  const toggleMusicMute = (): void => {
     const isPlaying = audioManager.toggleMusic();
     setIsMusicMuted(!isPlaying);
   };
 
-  const toggleSoundsMute = () => {
-    const isEnabled = audioManager.toggleSound();
+  const toggleSoundsMute = (): void => {
+    const isEnabled = audioManager.toggleSounds();
     setAreSoundsMuted(!isEnabled);
   };
 

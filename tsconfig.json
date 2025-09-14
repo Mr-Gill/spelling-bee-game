@@ -41,7 +41,8 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "hooks/**/*.ts"
   ],
   "exclude": [
     "node_modules",

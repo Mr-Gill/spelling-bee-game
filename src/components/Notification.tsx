@@ -1,7 +1,21 @@
-// components/Notification.jsx
+// components/Notification.tsx
 import React, { useEffect } from 'react';
 
-export function Notification({ message, type = 'success', duration = 3000, onClose }) {
+export type NotificationType = 'success' | 'error' | 'warning';
+
+export interface NotificationProps {
+  message: string;
+  type?: NotificationType;
+  duration?: number;
+  onClose: () => void;
+}
+
+export function Notification({
+  message,
+  type = 'success',
+  duration = 3000,
+  onClose,
+}: NotificationProps): JSX.Element {
   useEffect(() => {
     if (duration > 0) {
       const timer = setTimeout(() => {
@@ -12,7 +26,7 @@ export function Notification({ message, type = 'success', duration = 3000, onClo
     }
   }, [duration, onClose]);
 
-  const getIcon = () => {
+  const getIcon = (): JSX.Element | null => {
     switch (type) {
       case 'success':
         return (
@@ -29,7 +43,12 @@ export function Notification({ message, type = 'success', duration = 3000, onClo
       case 'warning':
         return (
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
           </svg>
         );
       default:
@@ -63,12 +82,34 @@ export function Notification({ message, type = 'success', duration = 3000, onClo
 }
 
 // Notification Manager Hook
-export function useNotifications() {
-  const [notifications, setNotifications] = React.useState([]);
+export interface NotificationItem {
+  id: number;
+  message: string;
+  type: NotificationType;
+  duration: number;
+}
 
-  const addNotification = (message, type = 'success', duration = 3000) => {
+export interface UseNotificationsResult {
+  notifications: NotificationItem[];
+  addNotification: (
+    message: string,
+    type?: NotificationType,
+    duration?: number,
+  ) => number;
+  removeNotification: (id: number) => void;
+  clearAll: () => void;
+}
+
+export function useNotifications(): UseNotificationsResult {
+  const [notifications, setNotifications] = React.useState<NotificationItem[]>([]);
+
+  const addNotification = (
+    message: string,
+    type: NotificationType = 'success',
+    duration = 3000,
+  ): number => {
     const id = Date.now() + Math.random();
-    const notification = { id, message, type, duration };
+    const notification: NotificationItem = { id, message, type, duration };
 
     setNotifications(prev => [...prev, notification]);
 
@@ -81,11 +122,11 @@ export function useNotifications() {
     return id;
   };
 
-  const removeNotification = (id) => {
+  const removeNotification = (id: number): void => {
     setNotifications(prev => prev.filter(notification => notification.id !== id));
   };
 
-  const clearAll = () => {
+  const clearAll = (): void => {
     setNotifications([]);
   };
 
@@ -93,12 +134,20 @@ export function useNotifications() {
     notifications,
     addNotification,
     removeNotification,
-    clearAll
+    clearAll,
   };
 }
 
 // Notification Container Component
-export function NotificationContainer({ notifications, onRemove }) {
+export interface NotificationContainerProps {
+  notifications: NotificationItem[];
+  onRemove: (id: number) => void;
+}
+
+export function NotificationContainer({
+  notifications,
+  onRemove,
+}: NotificationContainerProps): JSX.Element | null {
   if (notifications.length === 0) return null;
 
   return (
