@@ -23,14 +23,22 @@ const checkAudioFile = async (url: string) => {
   }
 };
 
-type MusicGenre = 'Funk' | 'Country' | 'Rock' | 'Classical';
+type MusicGenre = 'Funk' | 'Country' | 'Deep Bass' | 'Rock' | 'Jazz' | 'Classical';
+type TrackVariant = 'vocal' | 'instrumental';
+type ScreenType = 'menu' | 'game';
 
 const DEFAULT_GENRE: MusicGenre = 'Funk';
 
-const useMusic = (initialVolume: number = 0.5) => {
+const useMusic = (
+  musicStyle: string,
+  trackVariant: TrackVariant,
+  musicVolume: number,
+  soundEnabled: boolean,
+  screen: ScreenType
+) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [currentVolume, setCurrentVolume] = useState<number>(validateVolume(initialVolume));
-  const [currentTrack, setCurrentTrack] = useState<string>(`${process.env.PUBLIC_URL}/audio/It's a Spelling Bee! (${DEFAULT_GENRE}).mp3`);
+  const [currentVolume, setCurrentVolume] = useState<number>(validateVolume(musicVolume));
+  const [currentTrack, setCurrentTrack] = useState<string>('');
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioBufferRef = useRef<AudioBuffer | null>(null);
   const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
@@ -55,6 +63,46 @@ const useMusic = (initialVolume: number = 0.5) => {
       }
     };
   }, []);
+
+  // Function to build the correct audio file path
+  const buildAudioPath = (style: string, variant: TrackVariant): string => {
+    const genre = style as MusicGenre;
+    const isInstrumental = variant === 'instrumental';
+    const suffix = isInstrumental ? ' Instrumental' : '';
+    return `/audio/It's a Spelling Bee! (${genre}${suffix}).mp3`;
+  };
+
+  // Effect to handle music changes based on screen and settings
+  useEffect(() => {
+    if (!soundEnabled) {
+      stop();
+      return;
+    }
+
+    const targetTrack = buildAudioPath(musicStyle, trackVariant);
+    
+    if (currentTrack !== targetTrack) {
+      setCurrentTrack(targetTrack);
+      if (isPlaying) {
+        play(targetTrack);
+      }
+    }
+  }, [musicStyle, trackVariant, soundEnabled, screen]);
+
+  // Effect to handle volume changes
+  useEffect(() => {
+    setCurrentVolume(validateVolume(musicVolume));
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = validateVolume(musicVolume);
+    }
+  }, [musicVolume]);
+
+  // Auto-start music when enabled
+  useEffect(() => {
+    if (soundEnabled && currentTrack && !isPlaying) {
+      play(currentTrack);
+    }
+  }, [soundEnabled, currentTrack]);
 
   const loadAudio = async (url: string) => {
     if (!audioContextRef.current) return null;
@@ -125,24 +173,11 @@ const useMusic = (initialVolume: number = 0.5) => {
     }
   };
 
-  const playTitleMusic = (genre: MusicGenre = DEFAULT_GENRE) => {
-    setCurrentTrack(`${process.env.PUBLIC_URL}/audio/It's a Spelling Bee! (${genre}).mp3`);
-    play(`${process.env.PUBLIC_URL}/audio/It's a Spelling Bee! (${genre}).mp3`);
-  };
-
-  const playGameMusic = (genre: MusicGenre = DEFAULT_GENRE) => {
-    setCurrentTrack(`${process.env.PUBLIC_URL}/audio/It's a Spelling Bee! (${genre} Instrumental).mp3`);
-    play(`${process.env.PUBLIC_URL}/audio/It's a Spelling Bee! (${genre} Instrumental).mp3`);
-  };
-
+  // The hook is used as a side effect, so we can return minimal info for debugging
   return {
     isPlaying,
     currentTrack,
-    playTitleMusic,
-    playGameMusic,
     volume: currentVolume,
-    setVolume,
-    stop,
   };
 };
 
