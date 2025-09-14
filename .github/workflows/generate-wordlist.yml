@@ -21,6 +21,10 @@ on:
     # Run at midnight UTC on the first day of each month
     - cron: '0 0 1 * *'
 
+concurrency:
+  group: wordlist-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   generate:
     runs-on: ubuntu-latest
