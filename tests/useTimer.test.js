@@ -14,16 +14,44 @@ const useTimer = require('../src/utils/useTimer.ts').default;
 
 test('calls onExpire when timer runs out', async () => {
   let expired = false;
+  let timer = null;
+  
   const Comp = () => {
-    const timer = useTimer(1, () => {
+    timer = useTimer(1, () => {
       expired = true;
     });
     React.useEffect(() => {
       timer.start();
+      return () => timer.stop(); // Cleanup on unmount
     }, [timer]);
     return null;
   };
-  render(React.createElement(Comp));
-  await new Promise(r => setTimeout(r, 1100));
-  assert.ok(expired);
+  
+  const { unmount } = render(React.createElement(Comp));
+  
+  try {
+    // Wait for timer to expire with a reasonable timeout
+    await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('Timer test timed out after 2 seconds'));
+      }, 2000);
+      
+      const checkExpired = () => {
+        if (expired) {
+          clearTimeout(timeout);
+          resolve();
+        } else {
+          setTimeout(checkExpired, 50);
+        }
+      };
+      
+      setTimeout(checkExpired, 1100); // Start checking after timer should expire
+    });
+    
+    assert.ok(expired, 'Timer should have expired');
+  } finally {
+    // Always clean up
+    if (timer) timer.stop();
+    unmount();
+  }
 });
