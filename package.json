@@ -15,7 +15,7 @@
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "node --test tests/history.test.js tests/parseWordList.test.js tests/helpShop.test.js tests/useTimer.test.js tests/achievement.test.js tests/BeeCard.test.js",
     "test:unit:fast": "node --test --test-concurrency=4 tests/history.test.js tests/parseWordList.test.js tests/helpShop.test.js",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --project=chromium",
     "test:e2e:chromium": "playwright test --project=chromium",
     "test:e2e:install": "npx playwright install --with-deps && npm run test:e2e",
     "test:ui": "playwright test --ui",
