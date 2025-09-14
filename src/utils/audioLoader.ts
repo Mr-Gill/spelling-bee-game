@@ -1,17 +1,14 @@
+import { AUDIO_ASSETS } from '../assets';
+
 export const loadAudioFiles = async () => {
   try {
-    const [correct, wrong, letterCorrect, letterWrong] = await Promise.all([
-      import('../audio/correct.mp3'),
-      import('../audio/wrong.mp3'),
-      import('../audio/letter-correct.mp3'),
-      import('../audio/letter-wrong.mp3')
-    ]);
-    
+    // Return the asset URLs directly since we're using a build system
+    // that will handle the asset copying
     return {
-      correctSoundFile: correct.default,
-      wrongSoundFile: wrong.default,
-      letterCorrectSoundFile: letterCorrect.default,
-      letterWrongSoundFile: letterWrong.default
+      correctSoundFile: AUDIO_ASSETS.sfx.correct,
+      wrongSoundFile: AUDIO_ASSETS.sfx.wrong,
+      letterCorrectSoundFile: AUDIO_ASSETS.sfx.letterCorrect,
+      letterWrongSoundFile: AUDIO_ASSETS.sfx.letterWrong
     };
   } catch (error) {
     console.error('Failed to load audio files:', error);

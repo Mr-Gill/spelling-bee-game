@@ -205,7 +205,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
                 <button
                   key={`reveal-${idx}`}
                   onClick={() => handleRevealSyllable(idx)}
-                  disabled={coins < 3}
+                  disabled={participantPoints < 3}
                   className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
                 >
                   {`Reveal syllable ${idx + 1} (-3)`}

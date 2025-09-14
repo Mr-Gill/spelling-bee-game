@@ -88,7 +88,7 @@ try {
 }
 
 // Copy directories
-['icons', 'img', 'wordlists'].forEach(dir => {
+['icons', 'img', 'wordlists', 'assets'].forEach(dir => {
   copyAssets(dir, `dist/${dir}`);
 });
 

@@ -1,4 +1,5 @@
 // Utility functions for selecting appropriate mascot images based on game context
+import { IMAGE_ASSETS } from '../assets';
 
 export interface MascotContext {
   isCorrect?: boolean;
@@ -12,19 +13,17 @@ export interface MascotContext {
 }
 
 export function getMascotImage(context: MascotContext): string {
-  const baseUrl = '/img/';
-  
   // Priority order for selecting appropriate mascot
-  if (context.isWinning) return `${baseUrl}WinningBee.png`;
-  if (context.isCelebrating) return `${baseUrl}CelebratoryBee.png`;
-  if (context.isWrong) return `${baseUrl}WrongAnswerBee.png`;
-  if (context.isHelping) return `${baseUrl}HelpBee.png`;
-  if (context.isTyping) return `${baseUrl}TypingBee.png`;
-  if (context.isUnderTimePressure) return `${baseUrl}TimePressureBee.png`;
-  if (context.isCorrect) return `${baseUrl}CelebratoryBee.png`;
+  if (context.isWinning) return IMAGE_ASSETS.bee.winning;
+  if (context.isCelebrating) return IMAGE_ASSETS.bee.celebratory;
+  if (context.isWrong) return IMAGE_ASSETS.bee.wrongAnswer;
+  if (context.isHelping) return IMAGE_ASSETS.bee.help;
+  if (context.isTyping) return IMAGE_ASSETS.bee.typing;
+  if (context.isUnderTimePressure) return IMAGE_ASSETS.bee.timePressure;
+  if (context.isCorrect) return IMAGE_ASSETS.bee.celebratory;
   
   // Default mascot
-  return `${baseUrl}DefaultBee.png`;
+  return IMAGE_ASSETS.bee.default;
 }
 
 export function getContextualMascot(
