@@ -3,7 +3,6 @@ import { SkipForward, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { GameConfig, Word, Participant, GameResults, defaultAchievements } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
-import timeoutSoundFile from './audio/timeout.mp3';
 import letterCorrectSoundFile from './audio/letter-correct.mp3';
 import letterWrongSoundFile from './audio/letter-wrong.mp3';
 import shopSoundFile from './audio/shop.mp3';
@@ -11,11 +10,13 @@ import loseLifeSoundFile from './audio/lose-life.mp3';
 import { launchConfetti } from './utils/confetti';
 import { speak } from './utils/tts';
 import useSound from './utils/useSound';
-import useTimer from './utils/useTimer';
-import useWordSelection, { difficultyOrder } from './utils/useWordSelection';
+import useGameTimer from './hooks/useGameTimer';
+import useWordProgression from './hooks/useWordProgression';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
 import AvatarSelector from './components/AvatarSelector';
+import ParticipantStats from './components/ParticipantStats';
+import { HelpShop } from './components/HelpShop';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -37,7 +38,6 @@ interface Feedback {
   type: string;
 }
 
-// difficultyOrder is imported from useWordSelection
 
 const GameScreen: React.FC<GameScreenProps> = ({
   config,
@@ -68,8 +68,8 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [feedback, setFeedback] = React.useState<Feedback>({ message: '', type: '' });
   const [extraAttempt, setExtraAttempt] = React.useState(false);
   const [isHelpOpen, setIsHelpOpen] = React.useState(false);
-  const { wordQueues, setWordQueues, currentWord, currentDifficulty, selectNextWord } =
-    useWordSelection(config.wordDatabase);
+  const { wordQueues, setWordQueues, currentWord, currentDifficulty, selectNextWordForLevel: selectNextWord } =
+    useWordProgression(config.wordDatabase);
   const [attemptedParticipants, setAttemptedParticipants] = React.useState<Set<number>>(new Set());
   const [missedWords, setMissedWords] = React.useState<Word[]>([]);
   const [unlockedAchievements, setUnlockedAchievements] = React.useState<string[]>(() => {
@@ -88,7 +88,6 @@ const GameScreen: React.FC<GameScreenProps> = ({
 
   const playCorrect = useSound(correctSoundFile, soundEnabled);
   const playWrong = useSound(wrongSoundFile, soundEnabled);
-  const playTimeout = useSound(timeoutSoundFile, soundEnabled);
   const playLetterCorrect = useSound(letterCorrectSoundFile, soundEnabled);
   const playLetterWrong = useSound(letterWrongSoundFile, soundEnabled);
   const playShop = useSound(shopSoundFile, soundEnabled);
@@ -102,10 +101,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
     reset: resetTimer,
     stop: stopTimer,
     isPaused,
-  } = useTimer(config.timerDuration, () => {
-    playTimeout();
-    handleIncorrectAttempt();
-  });
+  } = useGameTimer(config.timerDuration, soundEnabled, handleIncorrectAttempt);
   React.useEffect(() => {
     if (localStorage.getItem('teacherMode') === 'true') {
       document.body.classList.add('teacher-mode');
@@ -141,7 +137,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  const selectNextWordForLevel = (level: number) => {
+  const advanceToWord = (level: number) => {
     const nextWord = selectNextWord(level);
     if (nextWord) {
       setAttemptedParticipants(new Set());
@@ -211,7 +207,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         }
         setAttemptedParticipants(new Set());
         const nextIndex = (currentParticipantIndex + 1) % participants.length;
-        selectNextWordForLevel(updatedParticipants[nextIndex].difficultyLevel);
+        advanceToWord(updatedParticipants[nextIndex].difficultyLevel);
         nextTurn();
       } else {
         setAttemptedParticipants(newAttempted);
@@ -321,7 +317,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
         const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
         setFeedback({ message: '', type: '' });
-        selectNextWordForLevel(nextDifficulty);
+        advanceToWord(nextDifficulty);
         nextTurn();
       }, 2000);
       
@@ -365,7 +361,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
       setFeedback({ message: '', type: '' });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
-      selectNextWordForLevel(nextDifficulty);
+      advanceToWord(nextDifficulty);
       nextTurn();
     }, 1500);
   };
@@ -392,7 +388,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
 
   React.useEffect(() => {
     if (config.participants.length > 0) {
-      selectNextWordForLevel(config.participants[0].difficultyLevel);
+      advanceToWord(config.participants[0].difficultyLevel);
     }
   }, []);
 
@@ -433,24 +429,11 @@ const GameScreen: React.FC<GameScreenProps> = ({
         </div>
       )}
       
-      {/* Enhanced Team Score Cards */}
-      <div className="absolute top-8 left-8 flex gap-6 items-center z-40">
-        <img src="img/bee.svg" alt="Bee icon" className="w-16 h-16 animate-wiggle" />
-        {participants.map((p, index) => (
-          <div 
-            key={index} 
-            className={`text-center game-card p-4 min-w-[140px] transform transition-all duration-500 ${
-              index === currentParticipantIndex ? 'scale-110 ring-4 ring-kahoot-yellow-400 animate-glow' : ''
-            }`}
-          >
-            <div className="text-xl font-black bg-gradient-to-r from-white to-kahoot-yellow-300 bg-clip-text text-transparent">
-              {p.name}
-            </div>
-            <div className="text-3xl font-bold my-2">{'❤️'.repeat(p.lives)}</div>
-            <div className="text-2xl font-black text-kahoot-green-400">{p.points} pts</div>
-          </div>
-        ))}
-      </div>
+      {/* Participant statistics */}
+      <ParticipantStats
+        participants={participants}
+        currentIndex={currentParticipantIndex}
+      />
       
       {/* Enhanced Feedback Messages */}
       {feedback.message && (
@@ -489,6 +472,13 @@ const GameScreen: React.FC<GameScreenProps> = ({
       <div className="absolute bottom-8 left-8 bg-black/50 p-4 rounded-lg z-50 flex flex-col gap-2">
         <div className="flex items-center gap-2">
           <button
+            onClick={() => setIsHelpOpen(true)}
+            className="bg-yellow-300 text-black p-2 rounded"
+            aria-label="Open help shop"
+          >
+            ❓
+          </button>
+          <button
             onClick={onToggleMusicPlaying}
             className="bg-yellow-300 text-black p-2 rounded"
             aria-label={isMusicPlaying ? 'Pause music' : 'Play music'}
@@ -522,6 +512,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
           ))}
         </select>
       </div>
+
+      {isHelpOpen && (
+        <HelpShop
+          onClose={() => setIsHelpOpen(false)}
+          coins={participants[currentParticipantIndex].points}
+          onPurchase={cost => spendPoints(currentParticipantIndex, cost)}
+        />
+      )}
 
       <AvatarSelector
         currentAvatar={currentAvatar}
