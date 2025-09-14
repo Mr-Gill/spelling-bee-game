@@ -4,21 +4,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@700&family=Inclusive+Sans:wght@400;700&display=swap');
 
 :root {
-  --primary-color-light: #2563eb;
-  --text-color-light: #1e293b;
-  --bg-color-light: #f8fafc;
-
-  --primary-color-dark: #3b82f6;
-  --text-color-dark: #f1f5f9;
-  --bg-color-dark: #0f172a;
-
-  --primary-color-honeycomb: #d97706;
-  --text-color-honeycomb: #78350f;
-  --bg-color-honeycomb: #fef7cd;
-
-  --primary-color: var(--primary-color-light);
-  --text-color: var(--text-color-light);
-  --bg-color: var(--bg-color-light);
+  --primary-color: var(--color-primary);
+  --text-color: var(--color-text);
+  --bg-color: var(--color-bg);
 }
 
 *,
@@ -279,25 +267,6 @@ body.theme-dark .card {
 .mb-6 { margin-bottom: var(--spacing-lg); }
 .mb-8 { margin-bottom: var(--spacing-xl); }
 
-body.theme-light {
-    --primary-color: var(--primary-color-light);
-    --text-color: var(--text-color-light);
-    --bg-color: var(--bg-color-light);
-}
-
-body.theme-dark {
-    --primary-color: var(--primary-color-dark);
-    --text-color: var(--text-color-dark);
-    --bg-color: var(--bg-color-dark);
-}
-
-body.theme-honeycomb {
-    --primary-color: var(--primary-color-honeycomb);
-    --text-color: var(--text-color-honeycomb);
-    --bg-color: var(--bg-color-honeycomb);
-    background-image: radial-gradient(#fbbf24 1px, transparent 1px);
-    background-size: 20px 20px;
-}
 
 /* Shared layout utilities */
 .screen-container {
