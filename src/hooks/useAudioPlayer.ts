@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { audioManager } from '../utils/audio';
+import { audioManager } from '../utils/audio.ts';
 
 export interface AudioPlayer {
   // State
