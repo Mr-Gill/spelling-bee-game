@@ -16,8 +16,10 @@
   }
 
   body {
-    @apply font-sans font-body bg-gradient-to-br from-bee-yellow-50 to-bee-yellow-100 text-bee-black-500 dark:from-bee-black-900 dark:to-bee-black-800 dark:text-gray-100 transition-all duration-300;
+    @apply font-sans font-body text-bee-black-500 dark:text-gray-100 transition-all duration-300;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     background-attachment: fixed;
+    min-height: 100vh;
   }
 
   /* Typography */
@@ -27,10 +29,13 @@
   }
 
   h1 { 
-    @apply text-4xl md:text-5xl lg:text-6xl;
-    background: linear-gradient(135deg, #0044cc 0%, #8b5cf6 100%);
+    @apply text-4xl md:text-5xl lg:text-6xl font-black tracking-wider;
+    background: linear-gradient(135deg, #ffd700 0%, #ff6b35 50%, #f7931e 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
   }
   h2 { 
     @apply text-3xl md:text-4xl text-primary-600;
@@ -53,25 +58,34 @@
 
   /* Buttons */
   .btn {
-    @apply inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-semibold 
-           transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 
-           disabled:opacity-50 disabled:pointer-events-none shadow-sm hover:shadow-md;
+    @apply inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-bold
+           transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 
+           disabled:opacity-50 disabled:pointer-events-none shadow-lg hover:shadow-xl
+           transform hover:scale-105 active:scale-95;
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white 
-           hover:from-primary-600 hover:to-primary-700 
-           focus:ring-primary-500 dark:from-primary-600 dark:to-primary-700 
-           dark:hover:from-primary-700 dark:hover:to-primary-800
-           shadow-primary-500/30 hover:shadow-primary-500/40;
+    @apply bg-gradient-to-r from-kahoot-blue-500 to-kahoot-blue-600 text-white 
+           hover:from-kahoot-blue-600 hover:to-kahoot-blue-700 
+           focus:ring-kahoot-blue-500 shadow-kahoot-blue-500/30 hover:shadow-kahoot-blue-500/50;
   }
 
   .btn-secondary {
-    @apply bg-gradient-to-r from-secondary-500 to-secondary-600 text-white 
-           hover:from-secondary-600 hover:to-secondary-700 
-           focus:ring-secondary-500 dark:from-secondary-600 dark:to-secondary-700 
-           dark:hover:from-secondary-700 dark:hover:to-secondary-800
-           shadow-secondary-500/30 hover:shadow-secondary-500/40;
+    @apply bg-gradient-to-r from-kahoot-red-500 to-kahoot-red-600 text-white 
+           hover:from-kahoot-red-600 hover:to-kahoot-red-700 
+           focus:ring-kahoot-red-500 shadow-kahoot-red-500/30 hover:shadow-kahoot-red-500/50;
+  }
+  
+  .btn-success {
+    @apply bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-white 
+           hover:from-kahoot-green-600 hover:to-kahoot-green-700 
+           focus:ring-kahoot-green-500 shadow-kahoot-green-500/30 hover:shadow-kahoot-green-500/50;
+  }
+  
+  .btn-warning {
+    @apply bg-gradient-to-r from-kahoot-yellow-500 to-kahoot-yellow-600 text-black font-black
+           hover:from-kahoot-yellow-600 hover:to-kahoot-yellow-700 
+           focus:ring-kahoot-yellow-500 shadow-kahoot-yellow-500/30 hover:shadow-kahoot-yellow-500/50;
   }
 
   .btn-outline {
@@ -84,9 +98,15 @@
 
   /* Card styles */
   .card {
-    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg 
-           border border-gray-100 dark:border-gray-700 transition-all duration-300 
-           hover:shadow-xl hover:-translate-y-1;
+    @apply bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl p-6 shadow-2xl 
+           border border-white/20 dark:border-gray-700/20 transition-all duration-500 
+           hover:shadow-xl hover:-translate-y-2 hover:bg-white/95;
+  }
+  
+  .game-card {
+    @apply bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-3xl p-6 
+           border border-white/20 shadow-2xl transition-all duration-500 
+           hover:from-white/15 hover:to-white/10 hover:-translate-y-1 hover:shadow-xl;
   }
 
   /* Form elements */
@@ -187,4 +207,34 @@
   .delay-300 { animation-delay: 300ms; }
   .delay-400 { animation-delay: 400ms; }
   .delay-500 { animation-delay: 500ms; }
+  .delay-600 { animation-delay: 600ms; }
+  
+  /* Exciting game-specific styles */
+  .kahoot-button {
+    @apply font-black text-lg rounded-2xl px-8 py-4 shadow-lg transform transition-all duration-200 
+           hover:scale-105 active:scale-95 focus:outline-none focus:ring-4;
+  }
+  
+  .team-selector {
+    @apply kahoot-button bg-gradient-to-r from-kahoot-blue-400 to-kahoot-blue-600 text-white
+           hover:from-kahoot-blue-500 hover:to-kahoot-blue-700 focus:ring-kahoot-blue-300;
+  }
+  
+  .individual-selector {
+    @apply kahoot-button bg-gradient-to-r from-kahoot-green-400 to-kahoot-green-600 text-white
+           hover:from-kahoot-green-500 hover:to-kahoot-green-700 focus:ring-kahoot-green-300;
+  }
+  
+  .game-mode-active {
+    @apply ring-4 ring-white ring-opacity-50 scale-105 shadow-2xl;
+  }
+  
+  .floating-particle {
+    @apply absolute w-2 h-2 bg-kahoot-yellow-400 rounded-full animate-float;
+  }
+  
+  .excitement-glow {
+    @apply shadow-2xl;
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.6), 0 0 100px rgba(255, 107, 53, 0.4);
+  }
 }

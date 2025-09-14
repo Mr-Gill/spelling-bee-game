@@ -62,6 +62,17 @@ module.exports = {
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'fade-in': 'fadeIn 0.3s ease-in-out',
         'slide-up': 'slideUp 0.3s ease-out',
+        
+        // New exciting animations
+        'bounce-in': 'bounceIn 0.6s ease-out',
+        'scale-in': 'scaleIn 0.3s ease-out',
+        'wiggle': 'wiggle 1s ease-in-out infinite',
+        'party': 'party 2s ease-in-out infinite',
+        'rainbow': 'rainbow 3s linear infinite',
+        'glow': 'glow 2s ease-in-out infinite alternate',
+        'shake': 'shake 0.5s ease-in-out',
+        'victory': 'victory 1s ease-out',
+        'sparkle': 'sparkle 1.5s ease-in-out infinite',
       },
       transitionTimingFunction: {
         'emphasized': 'cubic-bezier(0.2, 0.0, 0.0, 1.0)',
@@ -96,6 +107,48 @@ module.exports = {
           '0%': { transform: 'translateY(10px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+        bounceIn: {
+          '0%': { transform: 'scale(0.3)', opacity: '0' },
+          '50%': { transform: 'scale(1.05)' },
+          '70%': { transform: 'scale(0.9)' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        scaleIn: {
+          '0%': { transform: 'scale(0)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' },
+        },
+        party: {
+          '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+          '25%': { transform: 'translateY(-5px) rotate(1deg)' },
+          '50%': { transform: 'translateY(-10px) rotate(0deg)' },
+          '75%': { transform: 'translateY(-5px) rotate(-1deg)' },
+        },
+        rainbow: {
+          '0%': { filter: 'hue-rotate(0deg)' },
+          '100%': { filter: 'hue-rotate(360deg)' },
+        },
+        glow: {
+          '0%': { boxShadow: '0 0 5px currentColor' },
+          '100%': { boxShadow: '0 0 20px currentColor' },
+        },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-2px)' },
+          '20%, 40%, 60%, 80%': { transform: 'translateX(2px)' },
+        },
+        victory: {
+          '0%': { transform: 'scale(0) rotate(-180deg)', opacity: '0' },
+          '50%': { transform: 'scale(1.2) rotate(-90deg)', opacity: '1' },
+          '100%': { transform: 'scale(1) rotate(0deg)', opacity: '1' },
+        },
+        sparkle: {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.5', transform: 'scale(1.1)' },
+        },
       },
       colors: {
         // Preserve existing bee theme colors
@@ -122,6 +175,56 @@ module.exports = {
           700: '#333333',
           800: '#262626',
           900: '#1a1a1a',
+        },
+        
+        // Kahoot-inspired vibrant colors
+        'kahoot-blue': {
+          50: '#e6f2ff',
+          100: '#cce5ff',
+          200: '#99ccff',
+          300: '#66b3ff',
+          400: '#3399ff',
+          500: '#0080ff',
+          600: '#0066cc',
+          700: '#004d99',
+          800: '#003366',
+          900: '#001a33',
+        },
+        'kahoot-red': {
+          50: '#ffebef',
+          100: '#ffd6df',
+          200: '#ffadbf',
+          300: '#ff849f',
+          400: '#ff5b7f',
+          500: '#ff3355',
+          600: '#d92b47',
+          700: '#b32239',
+          800: '#8c1a2b',
+          900: '#66111d',
+        },
+        'kahoot-yellow': {
+          50: '#fffbf0',
+          100: '#fff7e0',
+          200: '#ffefbf',
+          300: '#ffe79f',
+          400: '#ffdf7f',
+          500: '#ffd700',
+          600: '#e6c200',
+          700: '#ccad00',
+          800: '#b39800',
+          900: '#998300',
+        },
+        'kahoot-green': {
+          50: '#f0fff0',
+          100: '#e0ffe0',
+          200: '#c2ffc2',
+          300: '#a3ffa3',
+          400: '#85ff85',
+          500: '#66ff66',
+          600: '#52e052',
+          700: '#3dc23d',
+          800: '#29a329',
+          900: '#148514',
         },
         
         // Material 3 Color System
@@ -217,6 +320,7 @@ module.exports = {
         lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
         xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
         '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        '3xl': '0 35px 60px -12px rgba(0, 0, 0, 0.3)',
         inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
         none: 'none',
       },
