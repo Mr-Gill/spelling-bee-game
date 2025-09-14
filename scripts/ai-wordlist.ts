@@ -78,7 +78,7 @@ const server = http.createServer(async (req, res) => {
 
   req.on('end', async () => {
     try {
-      const { topic = '', count = 10, grade = 7 } = JSON.parse(body || '{}') as WordListRequest;
+      const { topic = '', count = 10 } = JSON.parse(body || '{}') as WordListRequest;
       
       // Validate count
       const wordCount = Math.min(Math.max(1, Number(count) || 10), 50);

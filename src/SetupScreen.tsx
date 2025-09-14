@@ -224,6 +224,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       const data = await res.json();
       if (!Array.isArray(data)) throw new Error('Invalid response');
       setParsedCustomWords(prev => [...prev, ...data]);
+      setAiError(`✅ Successfully generated ${data.length} words! Total words: ${parsedCustomWords.length + data.length}`);
     } catch (err) {
       console.error('Failed to generate AI word list', err);
       setAiError('Failed to generate words.');
