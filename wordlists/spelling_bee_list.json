@@ -1,0 +1,352 @@
+[
+  {
+    "word": "basketball",
+    "syllables": "[\"bas\",\"ket\",\"ball\"]",
+    "definition": "Game where two teams score by shooting a ball through a raised hoop.",
+    "origin": "English",
+    "example": "At lunch, our basketball bounced into the salad bar, achieving a slippery three-point vinaigrette.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "BAS-ket-ball"
+  },
+  {
+    "word": "crossover",
+    "syllables": "[\"cross\",\"o\",\"ver\"]",
+    "definition": "Quick hand-switch dribble that fakes a defender and opens space to drive.",
+    "origin": "English",
+    "example": "Her crossover made ankles squeak like startled mice fleeing the custodian's mop of destiny.",
+    "prefix": "cross-",
+    "suffix": "",
+    "pronunciation": "CROSS-oh-vuh"
+  },
+  {
+    "word": "family",
+    "syllables": "[\"fam\",\"i\",\"ly\"]",
+    "definition": "People related by blood, marriage, or care, who support, argue, and forgive.",
+    "origin": "Latin via Old French",
+    "example": "My family critiques free throws like food critics, then hugs me regardless of splatters.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "FAM-uh-lee"
+  },
+  {
+    "word": "brotherhood",
+    "syllables": "[\"bro\",\"ther\",\"hood\"]",
+    "definition": "A strong bond among peers built through shared challenges, commitments, jokes, and trust.",
+    "origin": "Old English",
+    "example": "Locker-room brotherhood survives squeaky shoes, soggy socks, and the coach's motivational whistle solos.",
+    "prefix": "",
+    "suffix": "-hood",
+    "pronunciation": "BRUH-thuh-hood"
+  },
+  {
+    "word": "tension",
+    "syllables": "[\"ten\",\"sion\"]",
+    "definition": "Tight feeling between people or muscles when stress or disagreement stretches patience thin.",
+    "origin": "Latin via Old French",
+    "example": "The gym held tension so thick even the scoreboard refused to blink first.",
+    "prefix": "",
+    "suffix": "-ion",
+    "pronunciation": "TEN-shun"
+  },
+  {
+    "word": "conflict",
+    "syllables": "[\"con\",\"flict\"]",
+    "definition": "A clash of needs, ideas, or elbows that requires decisions, apologies, or referees.",
+    "origin": "Latin via Old French",
+    "example": "Our conflict ended when the snack bar offered truce cookies shaped like tiny whistles.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "KON-flikt"
+  },
+  {
+    "word": "consequences",
+    "syllables": "[\"con\",\"se\",\"quen\",\"ces\"]",
+    "definition": "Outcomes that follow choices, sometimes delightful, sometimes sticky, occasionally wearing chewing gum.",
+    "origin": "Latin via French",
+    "example": "Consequences arrived like late buses: dramatic, inconvenient, and loudly announcing their own schedule.",
+    "prefix": "",
+    "suffix": "-ence",
+    "pronunciation": "KON-suh-kwen-siz"
+  },
+  {
+    "word": "adversity",
+    "syllables": "[\"ad\",\"ver\",\"si\",\"ty\"]",
+    "definition": "A rough patch that trips progress and demands patience, teamwork, grit, and snacks.",
+    "origin": "Latin via Old French",
+    "example": "Adversity tastes like shoelaces when you miss, then tastes like victory chips later.",
+    "prefix": "",
+    "suffix": "-ity",
+    "pronunciation": "ad-VER-suh-tee"
+  },
+  {
+    "word": "resilience",
+    "syllables": "[\"re\",\"sil\",\"i\",\"ence\"]",
+    "definition": "Ability to recover after setbacks, like a ball that keeps bouncing higher.",
+    "origin": "Latin via French",
+    "example": "Her resilience was springier than the floor; even the mop nodded respectfully.",
+    "prefix": "",
+    "suffix": "-ence",
+    "pronunciation": "ri-ZIL-yens"
+  },
+  {
+    "word": "hereditary",
+    "syllables": "[\"he\",\"red\",\"i\",\"tar\",\"y\"]",
+    "definition": "Passed down through genes or habits, travelling from relatives to you like freckles.",
+    "origin": "Latin via Old French",
+    "example": "Our hereditary height helps rebounds, but our hereditary dance moves frighten pep bands.",
+    "prefix": "",
+    "suffix": "-ary",
+    "pronunciation": "heh-RED-ih-tair-ee"
+  },
+  {
+    "word": "hypertension",
+    "syllables": "[\"hy\",\"per\",\"ten\",\"sion\"]",
+    "definition": "Persistently high blood pressure; doctors prefer calm lungs, not trombones, inside arteries.",
+    "origin": "Greek and Latin via French",
+    "example": "Coach measured his hypertension by whistle volume and the trajectory of flying clipboards.",
+    "prefix": "hyper-",
+    "suffix": "-sion",
+    "pronunciation": "hy-puh-TEN-shun"
+  },
+  {
+    "word": "jealousy",
+    "syllables": "[\"jeal\",\"ou\",\"sy\"]",
+    "definition": "Unhappy feeling when someone else has attention, achievements, or chips you wanted.",
+    "origin": "Old French via Latin",
+    "example": "Jealousy sounds like squeaky sneakers when your cousin borrows your lucky socks again.",
+    "prefix": "",
+    "suffix": "-y",
+    "pronunciation": "JEL-uh-see"
+  },
+  {
+    "word": "analytical",
+    "syllables": "[\"an\",\"a\",\"lyt\",\"i\",\"cal\"]",
+    "definition": "Careful thinking that breaks problems into pieces and tests ideas with evidence.",
+    "origin": "Greek via Latin",
+    "example": "Her analytical time-out plan had footnotes, diagrams, and snacks labelled by hypothesis.",
+    "prefix": "",
+    "suffix": "-ical",
+    "pronunciation": "an-uh-LIT-i-kuhl"
+  },
+  {
+    "word": "response",
+    "syllables": "[\"re\",\"sponse\"]",
+    "definition": "An answer or reaction to something said, done, yelled, or accidentally launched.",
+    "origin": "Latin via Old French",
+    "example": "His response to criticism was extra practice and a suspiciously inspirational sandwich.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "ri-SPONS"
+  },
+  {
+    "word": "evidence",
+    "syllables": "[\"ev\",\"i\",\"dence\"]",
+    "definition": "Information that supports a claim, like stats, quotes, or footprints in custard.",
+    "origin": "Latin via Old French",
+    "example": "The detective demanded evidence; we offered scuffed floors and a nervous basketball.",
+    "prefix": "",
+    "suffix": "-ence",
+    "pronunciation": "EV-ih-dens"
+  },
+  {
+    "word": "quotation",
+    "syllables": "[\"quo\",\"ta\",\"tion\"]",
+    "definition": "Exact words repeated from a source, used to support or explain ideas.",
+    "origin": "Latin via Old French",
+    "example": "Her quotation from the rulebook ended arguments and silenced even the snack machine.",
+    "prefix": "",
+    "suffix": "-tion",
+    "pronunciation": "kwoh-TAY-shun"
+  },
+  {
+    "word": "reference",
+    "syllables": "[\"ref\",\"er\",\"ence\"]",
+    "definition": "A mention of a source that shows where information or ideas came from.",
+    "origin": "Latin via Old French",
+    "example": "I included a reference to Mum, expert on oranges, sportsmanship, and snacks.",
+    "prefix": "",
+    "suffix": "-ence",
+    "pronunciation": "REF-uh-rens"
+  },
+  {
+    "word": "theme",
+    "syllables": "[\"theme\"]",
+    "definition": "The big idea in a text or season; what everything keeps pointing toward.",
+    "origin": "Greek via Latin",
+    "example": "This season's theme was pizza: circular strategy, slices of teamwork, and unstoppable delivery.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "THEME"
+  },
+  {
+    "word": "symbolism",
+    "syllables": "[\"sym\",\"bo\",\"lism\"]",
+    "definition": "Using objects or images to suggest bigger ideas without explaining them directly.",
+    "origin": "Greek via French",
+    "example": "The cracked backboard was symbolism for our courage and the janitor's overtime hours.",
+    "prefix": "",
+    "suffix": "-ism",
+    "pronunciation": "SIM-buh-liz-uhm"
+  },
+  {
+    "word": "metaphor",
+    "syllables": "[\"met\",\"a\",\"phor\"]",
+    "definition": "A comparison saying one thing is another to make meaning clearer or funnier.",
+    "origin": "Greek via Latin",
+    "example": "Our defence was a wall; unfortunately, it had a helpful door for opponents.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "MET-uh-for"
+  },
+  {
+    "word": "simile",
+    "syllables": "[\"sim\",\"i\",\"le\"]",
+    "definition": "A comparison using like or as to paint a quick mental picture.",
+    "origin": "Latin",
+    "example": "He ran like a caffeinated hamster escaping PE cones and afternoon algebra.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "SIM-uh-lee"
+  },
+  {
+    "word": "characterisation",
+    "syllables": "[\"char\",\"ac\",\"ter\",\"i\",\"sa\",\"tion\"]",
+    "definition": "How a writer reveals a character's traits through actions, dialogue, choices, and consequences.",
+    "origin": "Greek via French",
+    "example": "Authorial characterisation made the coach fierce yet kind, like lava wearing slippers.",
+    "prefix": "",
+    "suffix": "-isation",
+    "pronunciation": "kar-ak-tuh-ry-ZAY-shun"
+  },
+  {
+    "word": "technique",
+    "syllables": "[\"tech\",\"nique\"]",
+    "definition": "A skilled way of doing something, learned by practice, feedback, and stubborn patience.",
+    "origin": "Greek via French",
+    "example": "His free-throw technique included three breaths, a wink, and surprisingly accurate knees.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "tek-NEEK"
+  },
+  {
+    "word": "similarities",
+    "syllables": "[\"sim\",\"i\",\"lar\",\"i\",\"ties\"]",
+    "definition": "Ways things are alike; helpful for comparisons, debates, and sorting messy lunchboxes.",
+    "origin": "Latin via French",
+    "example": "The similarities between orange slices and basketballs were mostly peel, bounce, and enthusiasm.",
+    "prefix": "",
+    "suffix": "-ity",
+    "pronunciation": "sim-uh-LAIR-uh-teez"
+  },
+  {
+    "word": "observations",
+    "syllables": "[\"ob\",\"ser\",\"va\",\"tions\"]",
+    "definition": "Noticing carefully to learn patterns, causes, or pizza disappearing faster than expected.",
+    "origin": "Latin via French",
+    "example": "My observations showed defenders fear science projects, especially baking-soda volcanoes shaped like mascots.",
+    "prefix": "",
+    "suffix": "-ation",
+    "pronunciation": "ob-zer-VAY-shuns"
+  },
+  {
+    "word": "experience",
+    "syllables": "[\"ex\",\"per\",\"i\",\"ence\"]",
+    "definition": "Knowledge gained by doing things, especially after mistakes, adjustments, and stubborn optimism.",
+    "origin": "Latin via Old French",
+    "example": "Experience taught us that victory tastes better when the oranges aren't homework-flavoured.",
+    "prefix": "",
+    "suffix": "-ence",
+    "pronunciation": "eks-PEER-ee-ens"
+  },
+  {
+    "word": "significant",
+    "syllables": "[\"sig\",\"nif\",\"i\",\"cant\"]",
+    "definition": "Important enough to notice because it changes outcomes, plans, or your eyebrows.",
+    "origin": "Latin via French",
+    "example": "A significant squeak warned us the floor needed polish, tape, or an exorcist.",
+    "prefix": "",
+    "suffix": "-ant",
+    "pronunciation": "sig-NIF-ih-kunt"
+  },
+  {
+    "word": "represents",
+    "syllables": "[\"rep\",\"re\",\"sents\"]",
+    "definition": "Stands for something else, like a logo for a team or a promise.",
+    "origin": "Latin via French",
+    "example": "The trophy represents sweat, snacks, late buses, and strategic excuses for unwashed socks.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "rep-ri-ZENTS"
+  },
+  {
+    "word": "illustrates",
+    "syllables": "[\"il\",\"lus\",\"trates\"]",
+    "definition": "Explains or shows clearly, sometimes with diagrams, examples, arrows, or dramatic eyebrow choreography.",
+    "origin": "Latin via French",
+    "example": "This diagram illustrates how snacks orbit the bench like comets chasing water bottles.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "il-uh-STRAYTS"
+  },
+  {
+    "word": "perspective",
+    "syllables": "[\"per\",\"spec\",\"tive\"]",
+    "definition": "The viewpoint from which you see events; angle, distance, and mood change everything.",
+    "origin": "Latin via French",
+    "example": "From my perspective, the scoreboard was wrong, the whistle was opinionated, and gravity rude.",
+    "prefix": "",
+    "suffix": "-ive",
+    "pronunciation": "puh-SPEK-tiv"
+  },
+  {
+    "word": "important",
+    "syllables": "[\"im\",\"por\",\"tant\"]",
+    "definition": "Carrying real weight or value; something you must prioritise before snacks and daydreams.",
+    "origin": "Latin via French",
+    "example": "It's important to stretch, otherwise your calves write complaint letters to your knees.",
+    "prefix": "",
+    "suffix": "-ant",
+    "pronunciation": "im-POR-tuhnt"
+  },
+  {
+    "word": "team",
+    "syllables": "[\"team\"]",
+    "definition": "A group working together toward a shared goal, celebrating wins and repairing losses.",
+    "origin": "Old English",
+    "example": "Our team solved conflict with pizza, calculators, and a surprisingly persuasive rubber chicken.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "TEAM"
+  },
+  {
+    "word": "coach",
+    "syllables": "[\"coach\"]",
+    "definition": "Person who teaches skills, sets strategies, and somehow finds whistles in every pocket.",
+    "origin": "Hungarian via French",
+    "example": "The coach rewrote plays on napkins; we performed them and ordered fries accordingly.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "COACH"
+  },
+  {
+    "word": "rebound",
+    "syllables": "[\"re\",\"bound\"]",
+    "definition": "To recover a missed shot or situation by grabbing the ball and trying again.",
+    "origin": "French via Latin",
+    "example": "Her rebound launched a counterattack and three very surprised gum wrappers into orbit.",
+    "prefix": "re-",
+    "suffix": "",
+    "pronunciation": "REE-bound"
+  },
+  {
+    "word": "unfair",
+    "syllables": "[\"un\",\"fair\"]",
+    "definition": "Not following the rules or balance; favouring one side without good reason.",
+    "origin": "Old English",
+    "example": "Calling that foul was unfair, said my uncle, noted expert in armchair officiating.",
+    "prefix": "un-",
+    "suffix": "",
+    "pronunciation": "un-FAIR"
+  }
+]
