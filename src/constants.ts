@@ -1,4 +1,4 @@
-import { AUDIO_ASSETS } from '../assets';
+import { AUDIO_ASSETS } from './assets';
 
 export const musicFiles = {
   'victory': AUDIO_ASSETS.music.victory,
