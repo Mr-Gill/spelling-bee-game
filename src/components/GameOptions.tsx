@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { applyThemeClass } from '../utils/theme';
 
 interface OptionsState {
   soundEnabled: boolean;
@@ -20,11 +21,6 @@ interface GameOptionsProps {
 }
 
 const GameOptions: React.FC<GameOptionsProps> = ({ options, setOptions }) => {
-  const applyTheme = (t: string) => {
-    document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
-    document.body.classList.add(`theme-${t}`);
-  };
-
   useEffect(() => {
     localStorage.setItem('soundEnabled', String(options.soundEnabled));
   }, [options.soundEnabled]);
@@ -51,8 +47,8 @@ const GameOptions: React.FC<GameOptionsProps> = ({ options, setOptions }) => {
   }, [options.teacherMode]);
 
   useEffect(() => {
-    applyTheme(options.theme);
-    localStorage.setItem('theme', options.theme);
+    const normalized = applyThemeClass(options.theme);
+    localStorage.setItem('theme', normalized);
   }, [options.theme]);
 
   return (

@@ -4,6 +4,7 @@ import { IMAGE_ASSETS } from './assets';
 import { parseWordList as parseWordListUtil } from './utils/parseWordList';
 import { getMascotImage } from './utils/mascot';
 import { hasSavedGame, getSavedGameInfo, loadGameState, clearSavedGame } from './utils/gameStateManager';
+import { applyThemeClass, type ThemeName } from './utils/theme';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -57,7 +58,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [musicVolume, setMusicVolume] = useState<number>(() => parseFloat(localStorage.getItem('musicVolume') ?? '1'));
   const [initialDifficulty, setInitialDifficulty] = useState(0);
   const [progressionSpeed, setProgressionSpeed] = useState(1);
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState<ThemeName>('light');
   const [teacherMode, setTeacherMode] = useState<boolean>(() => localStorage.getItem('teacherMode') === 'true');
   const [aiGrade, setAiGrade] = useState(5);
   const [aiTopic, setAiTopic] = useState('');
@@ -68,11 +69,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   // Saved game state
   const [savedGameAvailable, setSavedGameAvailable] = useState(false);
   const [savedGameInfo, setSavedGameInfo] = useState<any>(null);
-
-  const applyTheme = (t: string) => {
-    document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
-    document.body.classList.add(`theme-${t}`);
-  };
 
   useEffect(() => {
     if (teacherMode) {
@@ -90,10 +86,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     if (savedStudents) try { setStudents(JSON.parse(savedStudents).map((s: Participant) => ({ ...s, avatar: s.avatar || getRandomAvatar() }))); } catch {}
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
-      setTheme(savedTheme);
-      applyTheme(savedTheme);
+      const normalized = applyThemeClass(savedTheme);
+      setTheme(normalized);
     } else {
-      applyTheme(theme);
+      applyThemeClass(theme);
     }
   }, []);
 
@@ -510,7 +506,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Theme 🎨</h2>
-                <select value={theme} onChange={e => { const t = e.target.value; setTheme(t); localStorage.setItem('theme', t); applyTheme(t); }} className="p-2 rounded-md bg-white/20 text-white">
+                <select value={theme} onChange={e => { const normalized = applyThemeClass(e.target.value); setTheme(normalized); localStorage.setItem('theme', normalized); }} className="p-2 rounded-md bg-white/20 text-white">
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                     <option value="honeycomb">Honeycomb</option>
