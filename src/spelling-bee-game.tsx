@@ -9,6 +9,7 @@ import HistoryScreen from './HistoryScreen';
 import ShopScreen from './ShopScreen';
 import useMusic from './utils/useMusic';
 import { applyThemeClass } from './utils/theme';
+import { audioManager } from './utils/audio.ts';
 import { AudioProvider } from './AudioContext';
 import { HelpSystemProvider } from './contexts/HelpSystemContext';
 
@@ -116,7 +117,29 @@ const SpellingBeeGame = () => {
   // Handle background music on different screens
   const screen = gameState === 'playing' ? 'game' : 'menu';
   const trackVariant = screen === 'game' ? 'instrumental' : 'vocal';
-  useMusic(musicStyle, trackVariant, musicVolume, soundEnabled, screen);
+  useMusic(musicStyle, trackVariant, musicVolume, soundEnabled, screen, isMusicPlaying);
+
+  const handleSoundEnabledChange = (enabled: boolean) => {
+    setSoundEnabled(enabled);
+
+    if (!enabled) {
+      audioManager.pauseMusic();
+    } else if (isMusicPlaying) {
+      audioManager.resumeMusic();
+    }
+  };
+
+  const handleToggleMusicPlaying = () => {
+    setIsMusicPlaying(prev => {
+      const next = !prev;
+      if (!next) {
+        audioManager.pauseMusic();
+      } else if (soundEnabled) {
+        audioManager.resumeMusic();
+      }
+      return next;
+    });
+  };
 
   if (gameState === 'setup') {
     return (
@@ -141,9 +164,9 @@ const SpellingBeeGame = () => {
         onMusicStyleChange={setMusicStyle}
         onMusicVolumeChange={setMusicVolume}
         soundEnabled={soundEnabled}
-        onSoundEnabledChange={setSoundEnabled}
+        onSoundEnabledChange={handleSoundEnabledChange}
         isMusicPlaying={isMusicPlaying}
-        onToggleMusicPlaying={() => setIsMusicPlaying(prev => !prev)}
+        onToggleMusicPlaying={handleToggleMusicPlaying}
       />
     );
   }
