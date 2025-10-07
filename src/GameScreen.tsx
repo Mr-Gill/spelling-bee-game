@@ -19,6 +19,7 @@ import { getContextualMascot } from './utils/mascot';
 import ParticipantStats from './components/ParticipantStats';
 import { HelpShop } from './components/HelpShop';
 import { saveGameState, generateGameId, autoSaveGameState, type SavedGameState } from './utils/gameStateManager';
+import { applyThemeClass } from './utils/theme';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -146,9 +147,8 @@ const GameScreen: React.FC<GameScreenProps> = ({
   }, [currentWord, isPaused, letters]);
 
   React.useEffect(() => {
-    document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
-    document.body.classList.add(`theme-${theme}`);
-    localStorage.setItem('theme', theme);
+    const normalized = applyThemeClass(theme);
+    localStorage.setItem('theme', normalized);
   }, [theme]);
 
   // Auto-save game state when key properties change

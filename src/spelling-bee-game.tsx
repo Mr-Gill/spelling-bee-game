@@ -8,6 +8,7 @@ import AchievementsScreen from './AchievementsScreen';
 import HistoryScreen from './HistoryScreen';
 import ShopScreen from './ShopScreen';
 import useMusic from './utils/useMusic';
+import { applyThemeClass } from './utils/theme';
 import { AudioProvider } from './AudioContext';
 import { HelpSystemProvider } from './contexts/HelpSystemContext';
 
@@ -108,8 +109,7 @@ const SpellingBeeGame = () => {
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
-      document.body.classList.remove('theme-light', 'theme-dark', 'theme-honeycomb');
-      document.body.classList.add(`theme-${savedTheme}`);
+      applyThemeClass(savedTheme);
     }
   }, []);
 
