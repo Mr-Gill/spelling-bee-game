@@ -51,8 +51,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         viewport: { width: 1280, height: 800 },
         launchOptions: {
-          // Use system Chrome instead of downloading
-          executablePath: '/usr/bin/google-chrome',
+          // Let Playwright use its installed chromium browser
           args: ['--no-sandbox', '--disable-dev-shm-usage'],
           // Remove slowMo in CI for better performance
           slowMo: process.env.CI ? 0 : 100,
