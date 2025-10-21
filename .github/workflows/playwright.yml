@@ -54,7 +54,7 @@ jobs:
             ${{ runner.os }}-playwright-browsers-
       
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium firefox webkit
+        run: bash scripts/install-playwright-browsers.sh chromium firefox webkit
       
       - name: Build application
         run: npm run build
