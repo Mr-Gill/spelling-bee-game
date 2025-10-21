@@ -15,21 +15,6 @@
     "pronunciation": "ej-oo-KAY-shun"
   },
   {
-    "word": "education",
-    "syllables": [
-      "ed",
-      "u",
-      "ca",
-      "tion"
-    ],
-    "definition": "The process of receiving or giving systematic instruction, especially at a school or university.",
-    "origin": "Latin 'educatio', from 'educare' meaning 'to bring up, rear, educate'.",
-    "example": "The school is committed to providing quality education to all its students.",
-    "prefix": "",
-    "suffix": "-tion",
-    "pronunciation": "ej-oo-KAY-shun"
-  },
-  {
     "word": "spelling",
     "syllables": [
       "spell",
@@ -144,5 +129,19 @@
     "prefix": "bio-",
     "suffix": "-logy",
     "pronunciation": "by-OL-uh-jee"
+  },
+  {
+    "word": "chemistry",
+    "syllables": [
+      "chem",
+      "is",
+      "try"
+    ],
+    "definition": "The branch of science that deals with the identification of substances.",
+    "origin": "From Greek 'khemeia' meaning 'art of alloying metals'.",
+    "example": "We conducted experiments in chemistry lab.",
+    "prefix": "",
+    "suffix": "-try",
+    "pronunciation": "KEM-uh-stree"
   }
 ]
