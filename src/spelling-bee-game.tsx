@@ -12,9 +12,10 @@ import { applyThemeClass } from './utils/theme';
 import { audioManager } from './utils/audio.ts';
 import { AudioProvider } from './AudioContext';
 import { HelpSystemProvider } from './contexts/HelpSystemContext';
+import { getWordList, clearWordListCache, type Word as WordListWord } from './services/wordlistService';
 
 // Import types
-import type { GameConfig } from './types';
+import type { GameConfig, Word } from './types';
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
@@ -28,12 +29,77 @@ const SpellingBeeGame = () => {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [isMusicPlaying, setIsMusicPlaying] = useState(true);
 
+  // Helper function to convert WordListWord to Word type
+  const convertWord = (w: WordListWord): Word => ({
+    word: w.word,
+    syllables: w.syllables || null,
+    phonemes: null,
+    definition: w.definition || null,
+    origin: w.origin || null,
+    example: w.example || null,
+    prefix: w.prefix || null,
+    suffix: w.suffix || null,
+    pronunciation: w.pronunciation || undefined,
+    difficulty: w.difficulty,
+  });
+
   useEffect(() => {
-    fetch('words.json')
-      .then(res => res.json())
-      .then(data => setWordDatabase(data))
-      .catch(err => console.error('Failed to load word list', err));
+    // Load word list from wordlistService (supports custom word lists)
+    const loadWordList = () => {
+      getWordList()
+        .then(wordsFromService => {
+          // Convert words to the expected type
+          const words = wordsFromService.map(convertWord);
+
+          // Convert flat word array to WordDatabase format
+          const wordDatabase: GameConfig['wordDatabase'] = {
+            easy: words.filter(w => w.difficulty === 'easy' || !w.difficulty),
+            medium: words.filter(w => w.difficulty === 'medium'),
+            tricky: words.filter(w => w.difficulty === 'hard'),
+          };
+
+          // If no words have difficulties, distribute by word length
+          if (wordDatabase.easy.length === 0 && wordDatabase.medium.length === 0 && wordDatabase.tricky.length === 0) {
+            wordDatabase.easy = words.filter(w => w.word.length <= 5);
+            wordDatabase.medium = words.filter(w => w.word.length > 5 && w.word.length <= 8);
+            wordDatabase.tricky = words.filter(w => w.word.length > 8);
+          }
+
+          setWordDatabase(wordDatabase);
+        })
+        .catch(err => console.error('Failed to load word list', err));
+    };
+
+    loadWordList();
   }, []);
+
+  // Reload word list when returning to setup screen
+  useEffect(() => {
+    if (gameState === 'setup') {
+      getWordList()
+        .then(wordsFromService => {
+          // Convert words to the expected type
+          const words = wordsFromService.map(convertWord);
+
+          // Convert flat word array to WordDatabase format
+          const wordDatabase: GameConfig['wordDatabase'] = {
+            easy: words.filter(w => w.difficulty === 'easy' || !w.difficulty),
+            medium: words.filter(w => w.difficulty === 'medium'),
+            tricky: words.filter(w => w.difficulty === 'hard'),
+          };
+
+          // If no words have difficulties, distribute by word length
+          if (wordDatabase.easy.length === 0 && wordDatabase.medium.length === 0 && wordDatabase.tricky.length === 0) {
+            wordDatabase.easy = words.filter(w => w.word.length <= 5);
+            wordDatabase.medium = words.filter(w => w.word.length > 5 && w.word.length <= 8);
+            wordDatabase.tricky = words.filter(w => w.word.length > 8);
+          }
+
+          setWordDatabase(wordDatabase);
+        })
+        .catch(err => console.error('Failed to load word list', err));
+    }
+  }, [gameState]);
 
   const handleAddCustomWords = (newWords: any[]) => {
     const easy = newWords.filter(w => w.word.length <= 5);
@@ -70,6 +136,8 @@ const SpellingBeeGame = () => {
     setGameState('setup');
     setGameConfig(null);
     setGameResults(null);
+    // Clear word list cache to reload the latest selected word list
+    clearWordListCache();
   };
 
   const handleViewLeaderboard = () => {
@@ -90,15 +158,21 @@ const SpellingBeeGame = () => {
 
   const handleBackToSetup = () => {
     setGameState('setup');
+    // Clear word list cache to reload the latest selected word list
+    clearWordListCache();
   };
 
   const handleQuitToSetup = () => {
     setGameState('setup');
+    // Clear word list cache to reload the latest selected word list
+    clearWordListCache();
   };
 
   const handleExitGame = () => {
     // Return to setup when exiting game
     setGameState('setup');
+    // Clear word list cache to reload the latest selected word list
+    clearWordListCache();
   };
 
   const handleResumeGame = (savedState: any) => {

@@ -63,6 +63,15 @@ export function setActiveListId(listId: string | null): void {
     activeListId = null;
     localStorage.removeItem('activeWordListId');
   }
+  // Clear cache to force reload on next getWordList() call
+  cachedWordList = null;
+}
+
+/**
+ * Clears the cached word list
+ */
+export function clearWordListCache(): void {
+  cachedWordList = null;
 }
 
 /**
