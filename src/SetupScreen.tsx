@@ -315,7 +315,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         const randomList = bundledWordLists[Math.floor(Math.random() * bundledWordLists.length)];
         const response = await fetch(`wordlists/${randomList.file}`);
         const text = await response.text();
-        challengeWords = JSON.parse(text);
+        challengeWords = parseWordListUtil(text);
       } catch (err) {
         console.error('Failed to load session challenge words', err);
         setError('Failed to load session challenge words.');
