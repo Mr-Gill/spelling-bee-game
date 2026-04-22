@@ -7,7 +7,7 @@ const ensureAudioContext = () => {
   // We just need to ensure it's available
   if (!Howler.ctx) {
     try {
-      // Play a tiny valid silent sound to initialize audio context
+      // Play a tiny valid silent 22.05kHz mono 16-bit WAV to initialize audio context
       const silentSound = new Howl({
         src: ['data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQAAAAA='],
         preload: true,
