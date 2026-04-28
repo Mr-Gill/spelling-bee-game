@@ -18,10 +18,11 @@ interface SetupScreenProps {
   onResumeGame?: (savedState: any) => void;
   onViewHistory?: () => void;
   onViewShop?: () => void;
+  onStartWarmup?: () => void;
   wordListsReady: boolean;
 }
 
-const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onResumeGame, onViewHistory, onViewShop, wordListsReady }) => {
+const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onResumeGame, onViewHistory, onViewShop, onStartWarmup, wordListsReady }) => {
   // Include both traditional avatars and mascot images
   const avatars = [IMAGE_ASSETS.avatars.bee, IMAGE_ASSETS.avatars.book, IMAGE_ASSETS.avatars.trophy, getMascotImage({ isDefault: true }), getMascotImage({ isCelebrating: true })];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
@@ -630,6 +631,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         
         {/* Epic Game Start Buttons */}
         <div className="flex flex-col md:flex-row gap-6 mt-12 animate-scale-in delay-500">
+          {onStartWarmup && (
+            <button
+              onClick={onStartWarmup}
+              disabled={!wordListsReady}
+              className="w-full bg-gradient-to-r from-emerald-400 to-sky-500 hover:from-emerald-500 hover:to-sky-600 text-white px-8 py-6 rounded-3xl text-3xl font-black shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-4 border-white/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+            >
+              🐝 WARM-UP
+            </button>
+          )}
           <button 
             onClick={() => handleStart(false)} 
             disabled={!wordListsReady}

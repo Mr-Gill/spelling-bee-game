@@ -17,6 +17,7 @@ test-results/
 playwright-report/
 playwright/.cache/
 .ai-codex/
+.serena/
 
 # Browser binaries (cached separately in CI)
 ~/.cache/ms-playwright/

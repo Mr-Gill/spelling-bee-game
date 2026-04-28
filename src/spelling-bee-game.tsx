@@ -7,6 +7,7 @@ import ResultsScreen from './ResultsScreen';
 import AchievementsScreen from './AchievementsScreen';
 import HistoryScreen from './HistoryScreen';
 import ShopScreen from './ShopScreen';
+import PracticeScreen from './PracticeScreen';
 import useMusic from './utils/useMusic';
 import { applyThemeClass } from './utils/theme';
 import { applyAccessibilitySettings } from './components/AccessibilitySettings';
@@ -163,6 +164,10 @@ const SpellingBeeGame = () => {
     clearWordListCache();
   };
 
+  const handleStartWarmup = () => {
+    setGameState('warmup');
+  };
+
   const handleQuitToSetup = () => {
     setGameState('setup');
     // Clear word list cache to reload the latest selected word list
@@ -228,9 +233,21 @@ const SpellingBeeGame = () => {
         onResumeGame={handleResumeGame}
         onViewHistory={handleViewHistory}
         onViewShop={() => handleViewShop()}
+        onStartWarmup={handleStartWarmup}
         wordListsReady={wordListsReady}
       />
     );
+  }
+  if (gameState === 'warmup') {
+    const practiceWords = [
+      ...wordDatabase.easy,
+      ...wordDatabase.medium,
+      ...wordDatabase.tricky,
+      ...customWords.easy,
+      ...customWords.medium,
+      ...customWords.tricky,
+    ];
+    return <PracticeScreen words={practiceWords} onBack={handleBackToSetup} />;
   }
   if (gameState === 'playing') {
     return (

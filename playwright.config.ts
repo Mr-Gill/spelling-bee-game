@@ -53,8 +53,7 @@ export default defineConfig({
         launchOptions: {
           // Let Playwright use its installed chromium browser
           args: ['--no-sandbox', '--disable-dev-shm-usage'],
-          // Remove slowMo in CI for better performance
-          slowMo: process.env.CI ? 0 : 100,
+          slowMo: 0,
         },
       },
     },

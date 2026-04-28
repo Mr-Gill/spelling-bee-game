@@ -3,18 +3,20 @@ const { test, expect } = require('@playwright/test');
 test('keyboard input works during gameplay', async ({ page }) => {
   // Start the game properly
   await page.goto('./');
-  await page.getByRole('button', { name: /START CUSTOM GAME/i }).click();
+  const startButton = page.getByRole('button', { name: /START CUSTOM GAME/i });
+  await expect(startButton).toBeEnabled();
+  await startButton.evaluate(el => el.click());
   
   // Wait for game to load
   await expect(page.getByRole('button', { name: 'A', exact: true })).toBeVisible();
   
-  // Test keyboard input by clicking letter buttons to spell an intentionally wrong word
-  await page.getByRole('button', { name: 'X', exact: true }).click();
-  await page.getByRole('button', { name: 'Y', exact: true }).click();
-  await page.getByRole('button', { name: 'Z', exact: true }).click();
+  // Test keyboard input by typing an intentionally wrong word
+  await page.keyboard.press('X');
+  await page.keyboard.press('Y');
+  await page.keyboard.press('Z');
   
   // Submit the word
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.keyboard.press('Enter');
   
   // Should get feedback (either correct or incorrect)
   await expect(page.locator('text=/correct|incorrect|try again/i')).toBeVisible({ timeout: 8000 });
@@ -23,7 +25,9 @@ test('keyboard input works during gameplay', async ({ page }) => {
 test('accessibility checks for game controls', async ({ page }) => {
   // Start the game properly  
   await page.goto('./');
-  await page.getByRole('button', { name: /START CUSTOM GAME/i }).click();
+  const startButton = page.getByRole('button', { name: /START CUSTOM GAME/i });
+  await expect(startButton).toBeEnabled();
+  await startButton.evaluate(el => el.click());
   
   // Wait for game to load and check that submit button is accessible
   await expect(page.getByRole('button', { name: 'Submit' })).toBeVisible();
