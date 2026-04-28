@@ -6,10 +6,18 @@ const ensureAudioContext = () => {
   // Howler automatically creates context when needed
   // We just need to ensure it's available
   if (!Howler.ctx) {
-    // Play silent sound to initialize audio context
-    const silentSound = new Howl({ src: ['data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...'] });
-    silentSound.play();
-    silentSound.stop();
+    try {
+      // Play a tiny valid silent 22.05kHz mono 16-bit WAV to initialize audio context
+      const silentSound = new Howl({
+        src: ['data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQAAAAA='],
+        preload: true,
+        volume: 0,
+      });
+      silentSound.play();
+      silentSound.stop();
+    } catch (error) {
+      logger.warn('Audio context warm-up skipped:', error);
+    }
   }
   return Howler.ctx;
 };

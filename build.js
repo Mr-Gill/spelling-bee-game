@@ -71,7 +71,7 @@ const copyAssets = (src, dest) => {
 };
 
 // Copy static assets (except service-worker.js which needs processing)
-['index.html', 'style.css', 'manifest.webmanifest', 'leaderboard.json', 'words.json'].forEach(file => {
+['index.html', 'style.css', 'manifest.webmanifest', 'leaderboard.json', 'words.json', 'wordlist.json'].forEach(file => {
   copyAssets(file, `dist/${file}`);
 });
 
