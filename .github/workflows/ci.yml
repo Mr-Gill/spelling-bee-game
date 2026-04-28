@@ -107,7 +107,7 @@ jobs:
         run: |
           npm run serve &
           sleep 5
-          curl -f http://localhost:5000 || exit 1
+          curl -f http://localhost:5173 || exit 1
         timeout-minutes: 2
       
       - name: Run E2E tests
@@ -115,4 +115,4 @@ jobs:
         run: npm run test:e2e
         timeout-minutes: 10
         env:
-          BASE_URL: http://localhost:5000
+          BASE_URL: http://localhost:5173

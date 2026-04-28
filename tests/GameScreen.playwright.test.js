@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 test('keyboard input works during gameplay', async ({ page }) => {
   // Start the game properly
-  await page.goto('/');
+  await page.goto('./');
   await page.getByRole('button', { name: /START CUSTOM GAME/i }).click();
   
   // Wait for game to load
@@ -22,7 +22,7 @@ test('keyboard input works during gameplay', async ({ page }) => {
 
 test('accessibility checks for game controls', async ({ page }) => {
   // Start the game properly  
-  await page.goto('/');
+  await page.goto('./');
   await page.getByRole('button', { name: /START CUSTOM GAME/i }).click();
   
   // Wait for game to load and check that submit button is accessible

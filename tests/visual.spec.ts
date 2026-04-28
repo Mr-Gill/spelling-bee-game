@@ -5,7 +5,7 @@ test.describe.configure({ mode: 'serial' });
 test.describe('Visual Regression Testing', () => {
 
   test('home page matches visual snapshot', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('./');
     
     // Wait for the page to be fully loaded
     await expect(page.getByRole('heading', { name: /spelling bee game/i })).toBeVisible();
@@ -19,7 +19,7 @@ test.describe('Visual Regression Testing', () => {
   });
 
   test('game screen matches visual snapshot', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('./');
     await page.getByRole('button', { name: /start game/i }).click();
     
     // Wait for the game to be ready
@@ -34,7 +34,7 @@ test.describe('Visual Regression Testing', () => {
   });
 
   test('letter buttons have consistent styling', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('./');
     await page.getByRole('button', { name: /start game/i }).click();
     
     // Get the first letter button
@@ -58,7 +58,7 @@ test.describe('Visual Regression Testing', () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 812 }); // iPhone X dimensions
     
-    await page.goto('/');
+    await page.goto('./');
     await page.getByRole('button', { name: /start game/i }).click();
     
     // Verify responsive layout

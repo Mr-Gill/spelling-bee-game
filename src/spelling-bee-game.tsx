@@ -215,6 +215,8 @@ const SpellingBeeGame = () => {
     });
   };
 
+  const wordListsReady = wordDatabase.easy.length + wordDatabase.medium.length + wordDatabase.tricky.length > 0;
+
   if (gameState === 'setup') {
     return (
       <SetupScreen
@@ -224,6 +226,7 @@ const SpellingBeeGame = () => {
         onResumeGame={handleResumeGame}
         onViewHistory={handleViewHistory}
         onViewShop={() => handleViewShop()}
+        wordListsReady={wordListsReady}
       />
     );
   }

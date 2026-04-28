@@ -16,6 +16,7 @@ app.js
 test-results/
 playwright-report/
 playwright/.cache/
+.ai-codex/
 
 # Browser binaries (cached separately in CI)
 ~/.cache/ms-playwright/

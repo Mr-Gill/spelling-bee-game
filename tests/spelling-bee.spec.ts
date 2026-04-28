@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Spelling Bee Game', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to the app before each test
-    await page.goto('/');
+    await page.goto('./');
   });
 
   test('should load the home page', async ({ page }) => {

@@ -62,7 +62,7 @@ jobs:
       - name: Run Playwright visual tests
         run: npx playwright test --project=chromium,firefox,webkit
         env:
-          BASE_URL: http://localhost:5000
+          BASE_URL: http://localhost:5173
       
       - uses: actions/upload-artifact@v4
         if: failure()

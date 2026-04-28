@@ -52,7 +52,7 @@ npm start
 # OR
 npm run serve
 ```
-**Access:** Application runs on `http://localhost:5000`
+**Access:** Application runs on `http://localhost:5173`
 **Timing:** Server starts in ~5 seconds. NEVER CANCEL - Set timeout to 30+ seconds.
 
 ### 4. Test Suite
@@ -75,7 +75,7 @@ npm test
    npm start
    ```
 
-2. **Load Application:** Navigate to `http://localhost:5000`
+2. **Load Application:** Navigate to `http://localhost:5173`
    - ✅ Verify: Page loads with "🏆 SPELLING BEE CHAMPIONSHIP" header
    - ✅ Verify: Setup screen shows game mode selection (Team/Individual)
    - ✅ Verify: No JavaScript console errors (except font loading warnings)
@@ -171,7 +171,7 @@ npm run test:report
 ### Manual Testing Checklist
 After ANY code change, ALWAYS verify:
 - [ ] Build completes without errors
-- [ ] Application loads at localhost:5000
+- [ ] Application loads at localhost:5173
 - [ ] Setup screen displays correctly
 - [ ] Game can be started
 - [ ] No blocking JavaScript errors

@@ -17,9 +17,10 @@ interface SetupScreenProps {
   onResumeGame?: (savedState: any) => void;
   onViewHistory?: () => void;
   onViewShop?: () => void;
+  wordListsReady: boolean;
 }
 
-const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onResumeGame, onViewHistory, onViewShop }) => {
+const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onResumeGame, onViewHistory, onViewShop, wordListsReady }) => {
   // Include both traditional avatars and mascot images
   const avatars = [IMAGE_ASSETS.avatars.bee, IMAGE_ASSETS.avatars.book, IMAGE_ASSETS.avatars.trophy, getMascotImage({ isDefault: true }), getMascotImage({ isCelebrating: true })];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
@@ -309,6 +310,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
 
   const handleStart = async (isSessionChallenge = false) => {
+    if (!isSessionChallenge && !wordListsReady) {
+      setError('Word lists are still loading. Please try again in a moment.');
+      return;
+    }
+
     let challengeWords: Word[] = [];
     if (isSessionChallenge) {
       try {
@@ -617,7 +623,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         <div className="flex flex-col md:flex-row gap-6 mt-12 animate-scale-in delay-500">
           <button 
             onClick={() => handleStart(false)} 
-            className="w-full bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-yellow-600 hover:from-kahoot-yellow-500 hover:to-kahoot-yellow-700 text-black px-8 py-6 rounded-3xl text-3xl font-black shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-4 border-white/20 excitement-glow animate-glow"
+            disabled={!wordListsReady}
+            className="w-full bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-yellow-600 hover:from-kahoot-yellow-500 hover:to-kahoot-yellow-700 text-black px-8 py-6 rounded-3xl text-3xl font-black shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-4 border-white/20 excitement-glow animate-glow disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
             🚀 START CUSTOM GAME
           </button>

@@ -304,7 +304,7 @@ This project includes scripts to generate high-quality audio files using ElevenL
    # optional: override the word list generation endpoint
    VITE_WORDLIST_URL=http://localhost:3001/generate-word-list
    ```
-4. Run `npm start` to start the development server
+4. Run `npm start` to serve the built app at `http://localhost:5173`
 
 ## Building for Production
 

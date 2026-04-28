@@ -1,7 +1,8 @@
 const assert = require('assert');
 const { test } = require('node:test');
 
-require('ts-node/register');
+process.env.TS_NODE_COMPILER_OPTIONS = JSON.stringify({ module: 'commonjs' });
+require('ts-node/register/transpile-only');
 const { appendHistoryEntry, loadHistory, clearHistory } = require('../src/utils/history');
 
 function createMockStorage() {
