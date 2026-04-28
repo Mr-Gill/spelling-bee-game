@@ -15,6 +15,7 @@ import { audioManager } from './utils/audio.ts';
 import { AudioProvider } from './AudioContext';
 import { HelpSystemProvider } from './contexts/HelpSystemContext';
 import { getWordList, clearWordListCache, type Word as WordListWord } from './services/wordlistService';
+import { getDueReviewWords } from './utils/reviewQueue';
 
 // Import types
 import type { GameConfig, Word } from './types';
@@ -239,6 +240,7 @@ const SpellingBeeGame = () => {
     );
   }
   if (gameState === 'warmup') {
+    const reviewWords = getDueReviewWords();
     const practiceWords = [
       ...wordDatabase.easy,
       ...wordDatabase.medium,
@@ -247,7 +249,7 @@ const SpellingBeeGame = () => {
       ...customWords.medium,
       ...customWords.tricky,
     ];
-    return <PracticeScreen words={practiceWords} onBack={handleBackToSetup} />;
+    return <PracticeScreen words={practiceWords} reviewWords={reviewWords} onBack={handleBackToSetup} />;
   }
   if (gameState === 'playing') {
     return (

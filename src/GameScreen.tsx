@@ -21,6 +21,7 @@ import { HelpShop } from './components/HelpShop';
 import { saveGameState, generateGameId, autoSaveGameState, type SavedGameState } from './utils/gameStateManager';
 import { applyThemeClass } from './utils/theme';
 import AccessibilitySettings from './components/AccessibilitySettings';
+import { addReviewWord } from './utils/reviewQueue';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -244,6 +245,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         // All participants have attempted this word, move to next word and add to review queue
         if (currentWord) {
           setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+          addReviewWord(currentWord);
         }
         setAttemptedParticipants(new Set());
         const nextIndex = (currentParticipantIndex + 1) % participants.length;
@@ -393,6 +395,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
     setFeedback({ message: `Word Skipped (${deduction})`, type: 'info' });
     if (currentWord) {
       setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+      addReviewWord(currentWord);
     }
     setAttemptedParticipants(new Set());
 
