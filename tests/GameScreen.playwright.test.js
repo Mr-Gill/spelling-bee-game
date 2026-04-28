@@ -31,6 +31,7 @@ test('accessibility checks for game controls', async ({ page }) => {
   
   // Wait for game to load and check that submit button is accessible
   await expect(page.getByRole('button', { name: 'Submit' })).toBeVisible();
+  await expect(page.getByText(/Session \d{1,2}:\d{2}/i)).toBeVisible();
   
   // Check that letter buttons are accessible (use exact match to avoid conflicts)
   await expect(page.getByRole('button', { name: 'A', exact: true })).toBeVisible();

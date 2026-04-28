@@ -71,6 +71,7 @@ export interface GameConfig {
   participants: Participant[] | Team[];
   gameMode: 'team' | 'individual';
   timerDuration: number;
+  sessionDuration: number;
   skipPenaltyType: 'lives' | 'points';
   skipPenaltyValue: number;
   musicStyle: string;

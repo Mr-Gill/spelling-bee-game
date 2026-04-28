@@ -35,6 +35,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [teams, setTeams] = useState<Participant[]>(getDefaultTeams());
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [timerDuration, setTimerDuration] = useState(30);
+  const [sessionDurationMinutes, setSessionDurationMinutes] = useState(20);
   const [customWordListText, setCustomWordListText] = useState('');
   const [parsedCustomWords, setParsedCustomWords] = useState<Word[]>([]);
   const [missedWordsCollection, setMissedWordsCollection] = useState<Record<string, Word[]>>({});
@@ -364,7 +365,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     
     const config: GameConfig = {
       participants: finalParticipants,
-      gameMode, timerDuration, skipPenaltyType, skipPenaltyValue, soundEnabled, effectsEnabled, difficultyLevel: initialDifficulty, progressionSpeed, musicStyle, musicVolume,
+      gameMode, timerDuration, sessionDuration: sessionDurationMinutes * 60, skipPenaltyType, skipPenaltyValue, soundEnabled, effectsEnabled, difficultyLevel: initialDifficulty, progressionSpeed, musicStyle, musicVolume,
     };
     onStartGame(config);
   };
@@ -507,6 +508,18 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                         <input type="number" min={1} value={progressionSpeed} onChange={e => setProgressionSpeed(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-24" />
                     </div>
                 </div>
+            </div>
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4">Session Timer ⏳</h2>
+                <label className="block mb-2">Session Length (minutes)</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={120}
+                  value={sessionDurationMinutes}
+                  onChange={e => setSessionDurationMinutes(Math.max(1, Number(e.target.value) || 1))}
+                  className="p-2 rounded-md bg-white/20 text-white w-28"
+                />
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Audio & Effects 🔊✨</h2>

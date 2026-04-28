@@ -120,6 +120,24 @@ const GameScreen: React.FC<GameScreenProps> = ({
     stop: stopTimer,
     isPaused,
   } = useGameTimer(config.timerDuration, soundEnabled, handleIncorrectAttempt);
+  const {
+    timeLeft: sessionTimeLeft,
+    start: startSessionTimer,
+    pause: pauseSessionTimer,
+    resume: resumeSessionTimer,
+    stop: stopSessionTimer,
+  } = useGameTimer(config.sessionDuration || 20 * 60, soundEnabled, onEndGameWithMissedWords);
+
+  const togglePause = () => {
+    if (isPaused) {
+      resumeTimer();
+      resumeSessionTimer();
+    } else {
+      pauseTimer();
+      pauseSessionTimer();
+    }
+  };
+
   React.useEffect(() => {
     if (localStorage.getItem('teacherMode') === 'true') {
       document.body.classList.add('teacher-mode');
@@ -409,7 +427,8 @@ const GameScreen: React.FC<GameScreenProps> = ({
     }, 1500);
   };
 
-  const onEndGameWithMissedWords = () => {
+  function onEndGameWithMissedWords() {
+    stopSessionTimer();
     const lessonKey = new Date().toISOString().split('T')[0];
     const stored = JSON.parse(localStorage.getItem('missedWordsCollection') || '{}');
     const existing = stored[lessonKey] || [];
@@ -427,11 +446,12 @@ const GameScreen: React.FC<GameScreenProps> = ({
       duration: Math.round((Date.now() - startTime) / 1000),
       missedWords
     });
-  };
+  }
 
   React.useEffect(() => {
     if (config.participants.length > 0) {
       advanceToWord(config.participants[0].difficultyLevel);
+      startSessionTimer();
     }
   }, []);
 
@@ -576,11 +596,16 @@ const GameScreen: React.FC<GameScreenProps> = ({
         </div>
         <div className="text-lg font-bold">seconds left</div>
         <button
-          onClick={isPaused ? resumeTimer : pauseTimer}
+          onClick={togglePause}
           className="mt-4 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-yellow-600 hover:from-kahoot-yellow-500 hover:to-kahoot-yellow-700 text-black px-6 py-3 rounded-2xl font-black text-lg shadow-lg transform transition-all duration-200 hover:scale-105"
         >
           {isPaused ? '▶️ Resume' : '⏸️ Pause'}
         </button>
+        <div className={`mt-3 rounded-xl bg-black/30 px-3 py-2 text-sm font-black ${
+          sessionTimeLeft <= 120 ? 'text-kahoot-red-400 animate-pulse' : 'text-white'
+        }`}>
+          Session {Math.floor(sessionTimeLeft / 60)}:{String(sessionTimeLeft % 60).padStart(2, '0')}
+        </div>
         <button
           onClick={() => setShowAccessibilitySettings(true)}
           className="mt-3 bg-white/90 hover:bg-white text-black px-5 py-2 rounded-2xl font-black text-base shadow-lg transition-all duration-200 hover:scale-105"
