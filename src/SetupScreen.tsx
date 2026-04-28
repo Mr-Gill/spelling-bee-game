@@ -5,6 +5,7 @@ import { parseWordList as parseWordListUtil } from './utils/parseWordList';
 import { getMascotImage } from './utils/mascot';
 import { hasSavedGame, getSavedGameInfo, loadGameState, clearSavedGame } from './utils/gameStateManager';
 import { applyThemeClass, type ThemeName } from './utils/theme';
+import AccessibilitySettings from './components/AccessibilitySettings';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -61,6 +62,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState<ThemeName>('light');
   const [teacherMode, setTeacherMode] = useState<boolean>(() => localStorage.getItem('teacherMode') === 'true');
+  const [showAccessibilitySettings, setShowAccessibilitySettings] = useState(false);
   const [aiGrade, setAiGrade] = useState(5);
   const [aiTopic, setAiTopic] = useState('');
   const [aiCount, setAiCount] = useState(10);
@@ -521,6 +523,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Teacher Mode 👩‍🏫</h2>
                 <label className="flex items-center gap-2 text-white"><input type="checkbox" checked={teacherMode} onChange={e => setTeacherMode(e.target.checked)} /><span>Enable larger fonts and spacing</span></label>
+                <button
+                  type="button"
+                  onClick={() => setShowAccessibilitySettings(true)}
+                  className="mt-4 w-full rounded-xl bg-yellow-300 px-4 py-3 font-black text-black transition hover:bg-yellow-400"
+                >
+                  Accessibility Settings
+                </button>
             </div>
              <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Music 🎵</h2>
@@ -692,6 +701,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           </button>
         </div>
       </div>
+      {showAccessibilitySettings && (
+        <AccessibilitySettings onClose={() => setShowAccessibilitySettings(false)} />
+      )}
     </div>
   );
 };

@@ -20,6 +20,7 @@ import ParticipantStats from './components/ParticipantStats';
 import { HelpShop } from './components/HelpShop';
 import { saveGameState, generateGameId, autoSaveGameState, type SavedGameState } from './utils/gameStateManager';
 import { applyThemeClass } from './utils/theme';
+import AccessibilitySettings from './components/AccessibilitySettings';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -98,6 +99,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   // Game state management
   const [currentGameId] = React.useState(gameId || generateGameId());
   const [showExitConfirm, setShowExitConfirm] = React.useState(false);
+  const [showAccessibilitySettings, setShowAccessibilitySettings] = React.useState(false);
   const [wordIndex, setWordIndex] = React.useState(initialGameState?.currentWordIndex || 0);
   const [totalWordsUsed, setTotalWordsUsed] = React.useState(initialGameState?.totalWordsUsed || 0);
 
@@ -576,6 +578,12 @@ const GameScreen: React.FC<GameScreenProps> = ({
         >
           {isPaused ? '▶️ Resume' : '⏸️ Pause'}
         </button>
+        <button
+          onClick={() => setShowAccessibilitySettings(true)}
+          className="mt-3 bg-white/90 hover:bg-white text-black px-5 py-2 rounded-2xl font-black text-base shadow-lg transition-all duration-200 hover:scale-105"
+        >
+          Accessibility
+        </button>
       </div>
       <div className="absolute bottom-8 left-8 bg-black/50 p-4 rounded-lg z-50 flex flex-col gap-2">
         <div className="flex items-center gap-2">
@@ -664,6 +672,10 @@ const GameScreen: React.FC<GameScreenProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {showAccessibilitySettings && (
+        <AccessibilitySettings onClose={() => setShowAccessibilitySettings(false)} />
       )}
 
       <AvatarSelector

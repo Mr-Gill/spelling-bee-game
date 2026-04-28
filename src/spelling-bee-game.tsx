@@ -9,6 +9,7 @@ import HistoryScreen from './HistoryScreen';
 import ShopScreen from './ShopScreen';
 import useMusic from './utils/useMusic';
 import { applyThemeClass } from './utils/theme';
+import { applyAccessibilitySettings } from './components/AccessibilitySettings';
 import { audioManager } from './utils/audio.ts';
 import { AudioProvider } from './AudioContext';
 import { HelpSystemProvider } from './contexts/HelpSystemContext';
@@ -182,6 +183,7 @@ const SpellingBeeGame = () => {
   };
 
   useEffect(() => {
+    applyAccessibilitySettings();
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       applyThemeClass(savedTheme);

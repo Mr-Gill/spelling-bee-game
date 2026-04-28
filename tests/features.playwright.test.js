@@ -30,3 +30,16 @@ test('achievements screen is accessible', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Achievements' })).toBeVisible();
   await expect(page.getByText(/First Victory/i)).toBeVisible();
 });
+
+test('accessibility settings can be changed from setup', async ({ page }) => {
+  await page.goto('./');
+
+  await page.getByRole('button', { name: /Accessibility Settings/i }).click();
+  await expect(page.getByRole('dialog', { name: /Accessibility Settings/i })).toBeVisible();
+
+  await page.getByRole('button', { name: '125%' }).click();
+  await page.getByLabel(/Reduce Motion/i).check();
+
+  await expect(page.locator('html')).toHaveAttribute('data-reduce-motion', 'true');
+  await expect(page.locator('html')).toHaveCSS('font-size', '20px');
+});
