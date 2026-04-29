@@ -133,7 +133,8 @@ const GameScreen: React.FC<GameScreenProps> = ({
   // undefined = no progression (all hints visible); empty array = progression active but none unlocked yet.
   // Here we pass undefined for individual mode so all hints are always available.
   const [teamCorrectCount, setTeamCorrectCount] = React.useState(0);
-  // getUnlockedPowerIds(0) returns [] since all powers require ≥1 correct answer — no powers start unlocked.
+  // getUnlockedPowerIds(0) returns the three starter powers (sentence, syllables, wordLength),
+  // which all have unlockAt: 0 and are immediately available in team mode.
   const [unlockedPowers, setUnlockedPowers] = React.useState<string[]>(() =>
     isTeamMode ? getUnlockedPowerIds(0) : []
   );

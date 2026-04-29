@@ -260,7 +260,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
 
   const handleAffixes = () => {
     if (!isPowerUnlocked('affixes') || showAffixes) return;
-    if (!isPowerUnlocked('affixes') || (!prefixText && !suffixText)) {
+    if (!prefixText && !suffixText) {
       showValidation('No prefix or suffix data is available for this word.');
       return;
     }
@@ -363,7 +363,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
           <div className="text-center">
             <p className="text-white/60 text-sm mb-2 uppercase tracking-widest font-bold">🔍 Quick Peek!</p>
             <p className="text-5xl font-black text-yellow-300 drop-shadow-2xl">{word.word}</p>
-            <p className="text-white/50 text-xs mt-3">Memorise it — it disappears in {QUICK_PEEK_DURATION_MS / 1000}s</p>
+            <p className="text-white/50 text-xs mt-3">Memorize it — it disappears in {QUICK_PEEK_DURATION_MS / 1000}s</p>
           </div>
         </div>
       )}
@@ -615,8 +615,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
               <div
                 key={p.id}
                 className="flex flex-col items-center gap-0.5 opacity-50 max-w-[60px]"
-                title={`${p.name} — unlocks at ${p.unlockAt} correct answer${p.unlockAt === 1 ? '' : 's'}: ${p.description}`}
-                aria-label={`${p.name} — locked. Unlocks after ${p.unlockAt} correct answer${p.unlockAt === 1 ? '' : 's'}. Costs ${p.cost} point${p.cost === 1 ? '' : 's'}.`}
+                aria-label={`${p.name} — locked. Unlocks after ${p.unlockAt} correct answer${p.unlockAt === 1 ? '' : 's'}. Costs ${p.cost} point${p.cost === 1 ? '' : 's'}. ${p.description}`}
               >
                 <span className="text-xl grayscale" aria-hidden="true">{p.icon}</span>
                 <span className="text-xs text-white/60 text-center leading-tight">

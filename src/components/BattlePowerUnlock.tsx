@@ -61,7 +61,7 @@ const BattlePowerUnlock: React.FC<BattlePowerUnlockProps> = ({ power, onDismiss 
           🚀 Unlock!
         </button>
 
-        {/* Progress bar showing time until auto-dismiss */}
+        {/* Progress bar countdown — animation duration must match AUTO_DISMISS_DURATION_MS (8s) */}
         <div className="mt-4 h-1 w-full bg-white/20 rounded-full overflow-hidden">
           {/* animate-[shrink_8s_linear_forwards] must stay as a static string for Tailwind JIT scanning */}
           <div className="h-full bg-kahoot-yellow-400 rounded-full animate-[shrink_8s_linear_forwards]" />
