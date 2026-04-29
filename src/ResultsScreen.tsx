@@ -5,7 +5,7 @@ import { launchConfetti } from './utils/confetti';
 import { recordDailyCompletion, StreakInfo } from './DailyChallenge';
 import MorphologyCard from './components/MorphologyCard';
 import { config } from './config';
-import { appendHistoryEntry } from './utils/history';
+import { appendHistoryEntry, updateHistoryComfort, type SessionHistoryEntry } from './utils/history';
 
 interface ResultsScreenProps {
   results: GameResults;
@@ -20,6 +20,8 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
   const [isBestScore, setIsBestScore] = useState(false);
   const [streakInfo, setStreakInfo] = useState<StreakInfo | null>(null);
   const [bonus, setBonus] = useState(0);
+  const [showComfortModal, setShowComfortModal] = useState(true);
+  const historyEntryDateRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (config.dailyChallenge) {
@@ -53,7 +55,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
   }, [results, config.dailyChallenge, bonus]);
 
   useEffect(() => {
-    appendHistoryEntry({ score: totalScore, duration: results.duration || 0 });
+    historyEntryDateRef.current = appendHistoryEntry({ score: totalScore, duration: results.duration || 0 });
 
     const storedBest = Number(localStorage.getItem('bestClassScore') || '0');
     if (totalScore > storedBest) {
@@ -64,6 +66,13 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
       setBestClassScore(storedBest);
     }
   }, [totalScore, results.duration]);
+
+  const handleComfortSelect = (comfort: SessionHistoryEntry['comfort']) => {
+    if (historyEntryDateRef.current) {
+      updateHistoryComfort(historyEntryDateRef.current, comfort);
+    }
+    setShowComfortModal(false);
+  };
 
   useEffect(() => {
     // Play sound and show confetti if there's a winner and effects are enabled
@@ -224,6 +233,29 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
           🔄 Play Again
         </button>
       </div>
+
+      {showComfortModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center text-gray-900 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="comfort-heading">
+            <h3 id="comfort-heading" className="mb-3 text-2xl font-black">How did the session feel?</h3>
+            <p className="mb-5 text-sm text-gray-600">This saves a simple class comfort check with the session history.</p>
+            <div className="grid grid-cols-3 gap-3">
+              <button onClick={() => handleComfortSelect('happy')} className="rounded-xl bg-green-100 px-3 py-4 text-3xl font-black text-green-800 hover:bg-green-200" aria-label="Comfort happy">
+                😊
+              </button>
+              <button onClick={() => handleComfortSelect('okay')} className="rounded-xl bg-yellow-100 px-3 py-4 text-3xl font-black text-yellow-800 hover:bg-yellow-200" aria-label="Comfort okay">
+                😐
+              </button>
+              <button onClick={() => handleComfortSelect('tough')} className="rounded-xl bg-blue-100 px-3 py-4 text-3xl font-black text-blue-800 hover:bg-blue-200" aria-label="Comfort tough">
+                😟
+              </button>
+            </div>
+            <button onClick={() => setShowComfortModal(false)} className="mt-5 rounded-xl bg-gray-200 px-5 py-2 font-bold text-gray-800 hover:bg-gray-300">
+              Skip
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
