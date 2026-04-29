@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Word } from '../types';
 import { speak } from '../utils/tts';
+import { BATTLE_POWERS } from '../utils/battleProgression';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface HintPanelProps {
   word: Word | null;
@@ -11,18 +14,124 @@ interface HintPanelProps {
   showWord: boolean;
   onHintUsed: () => void;
   onExtraAttempt: () => void;
+  /**
+   * When provided, only powers whose IDs appear in this array are available.
+   * Used in team battle mode to progressively unlock hints.
+   * When omitted (individual mode), all hints are available immediately.
+   */
+  unlockedPowers?: string[];
+  /**
+   * Whether the current team has already made at least one spelling attempt on
+   * this word. Used to enforce the 2-hint-before-first-attempt limit.
+   */
+  hasAttemptedCurrentWord?: boolean;
+  /** Adds 15 seconds to the current word timer. */
+  onAddTime?: () => void;
+  /** Skips the current word without deducting lives. */
+  onSkipWord?: () => void;
 }
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+/** Look up cost from the canonical BATTLE_POWERS list. */
+const getPowerCost = (id: string): number =>
+  BATTLE_POWERS.find(p => p.id === id)?.cost ?? 0;
+
+/**
+ * Powers that may only be used once per word per team.
+ * (Note: skipWord ends the word so it is implicitly once-per-word.)
+ */
+const ONCE_PER_WORD = new Set(['extraTime', 'multipleAttempts', 'vowels', 'quickPeek']);
+
+/** Maximum number of hints a team may use before their first attempt on a word. */
+const MAX_HINTS_BEFORE_ATTEMPT = 2;
+
+/** Duration (ms) the Quick Peek word flash stays visible. */
+const QUICK_PEEK_DURATION_MS = 1500;
+
+/**
+ * Derives a spelling-pattern clue for the given word using basic heuristics.
+ * Returns null if no recognisable pattern is found.
+ */
+function getSpellingPattern(word: string): string | null {
+  const w = word.toLowerCase();
+  if (w.includes('ph')) return 'This word uses "ph" for the /f/ sound.';
+  if (/tion$/.test(w)) return 'This word ends with "-tion" (sounds like "shun").';
+  if (/sion$/.test(w)) return 'This word ends with "-sion".';
+  if (/ough/.test(w)) return 'This word contains "-ough", which can sound different ways.';
+  if (/ight$/.test(w)) return 'This word ends with "-ight" — the "gh" is silent.';
+  if (/ness$/.test(w)) return 'This word ends with "-ness".';
+  if (/ment$/.test(w)) return 'This word ends with "-ment".';
+  if (/able$/.test(w)) return 'This word ends with "-able".';
+  if (/ible$/.test(w)) return 'This word ends with "-ible".';
+  if (/ful$/.test(w)) return 'This word ends with "-ful".';
+  const dc = /([bcdfghjklmnpqrstvwxyz])\1/i.exec(w);
+  if (dc) return `This word has a double "${dc[1].toUpperCase()}".`;
+  if (/[aeiou][^aeiou]e$/.test(w)) return 'This word follows the silent-e pattern (vowel → consonant → silent e).';
+  return null;
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 const HintPanel: React.FC<HintPanelProps> = ({
   word,
   participantPoints,
   participantIndex,
   spendPoints,
-  isTeamMode,
-  showWord,
   onHintUsed,
-  onExtraAttempt
+  onExtraAttempt,
+  unlockedPowers,
+  hasAttemptedCurrentWord = false,
+  onAddTime,
+  onSkipWord,
 }) => {
+  // ── Display states (revealed hint content) ──────────────────────────────────
+  const [showSentence, setShowSentence] = useState(false);
+  const [showSyllables, setShowSyllables] = useState(false);
+  const [showWordLength, setShowWordLength] = useState(false);
+  const [showDefinition, setShowDefinition] = useState(false);
+  const [showSoundItOut, setShowSoundItOut] = useState(false);
+  const [showAffixes, setShowAffixes] = useState(false);
+  const [showSpellingPattern, setShowSpellingPattern] = useState(false);
+  const [showOrigin, setShowOrigin] = useState(false);
+
+  // ── Letter-reveal state (vowels + hangman) ──────────────────────────────────
+  const [revealedLetters, setRevealedLetters] = useState<boolean[]>([]);
+
+  // ── Quick Peek flash ────────────────────────────────────────────────────────
+  const [quickPeekVisible, setQuickPeekVisible] = useState(false);
+  const quickPeekTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ── Usage tracking ──────────────────────────────────────────────────────────
+  /** Counts how many hints have been used before the first spelling attempt. */
+  const [hintsBeforeAttempt, setHintsBeforeAttempt] = useState(0);
+  /** Power IDs that have already been used once this word (once-per-word guard). */
+  const [usedOncePowers, setUsedOncePowers] = useState<Set<string>>(new Set());
+
+  // ── Validation messages ─────────────────────────────────────────────────────
+  const [validationMsg, setValidationMsg] = useState('');
+  const validationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ── Reset on word change ────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!word) return;
+    setShowSentence(false);
+    setShowSyllables(false);
+    setShowWordLength(false);
+    setShowDefinition(false);
+    setShowSoundItOut(false);
+    setShowAffixes(false);
+    setShowSpellingPattern(false);
+    setShowOrigin(false);
+    setRevealedLetters(Array(word.word.length).fill(false));
+    setQuickPeekVisible(false);
+    setHintsBeforeAttempt(0);
+    setUsedOncePowers(new Set());
+    setValidationMsg('');
+    if (quickPeekTimer.current) clearTimeout(quickPeekTimer.current);
+    if (validationTimer.current) clearTimeout(validationTimer.current);
+  }, [word]);
+
   if (!word) {
     return (
       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
@@ -33,289 +142,501 @@ const HintPanel: React.FC<HintPanelProps> = ({
             </svg>
           </div>
           <div className="ml-3">
-            <p className="text-sm text-yellow-700">
-              No word selected. Please wait for the next word.
-            </p>
+            <p className="text-sm text-yellow-700">No word selected. Please wait for the next word.</p>
           </div>
         </div>
       </div>
     );
   }
 
-  const safeAccess = (obj: any, path: string, fallback = 'N/A') => {
-    return path.split('.').reduce((acc, part) => (acc && acc[part] ? acc[part] : fallback), obj);
+  // ── Derived word data ───────────────────────────────────────────────────────
+  const sentenceText = word.example || '';
+  const syllableText = word.syllables?.join('-') || '';
+  const wordLengthCount = word.word.replace(/[^a-zA-Z]/g, '').length;
+  const wordLengthBlanks = word.word.split('').map(ch => (/[a-zA-Z]/.test(ch) ? '_' : ch)).join(' ');
+  const definitionText = word.definition || '';
+  const soundItOutText = word.pronunciation || (word.phonemes?.join('-') ?? '');
+  const originText = word.origin || '';
+  const prefixText = word.prefix || '';
+  const suffixText = word.suffix || '';
+  const prefixMeaning = word.prefixMeaning || '';
+  const suffixMeaning = word.suffixMeaning || '';
+  const spellingPatternText = getSpellingPattern(word.word);
+
+  // ── Helpers ─────────────────────────────────────────────────────────────────
+
+  const isPowerUnlocked = (id: string) =>
+    !unlockedPowers || unlockedPowers.includes(id);
+
+  const showValidation = (msg: string) => {
+    setValidationMsg(msg);
+    if (validationTimer.current) clearTimeout(validationTimer.current);
+    validationTimer.current = setTimeout(() => setValidationMsg(''), 4000);
   };
 
-  const definition = safeAccess(word, 'definition', '');
-  const origin = safeAccess(word, 'origin', '');
-  const example = safeAccess(word, 'example', '');
-  const prefix = safeAccess(word, 'prefix', '');
-  const suffix = safeAccess(word, 'suffix', '');
-  const prefixMeaning = safeAccess(word, 'prefixMeaning', '');
-  const suffixMeaning = safeAccess(word, 'suffixMeaning', '');
+  /**
+   * Validates and activates a power.
+   * @param powerId the power ID
+   * @param countAsHint whether this counts toward the pre-attempt hint limit
+   * @returns true if the power should proceed; false if validation failed
+   */
+  const tryUsePower = (powerId: string, countAsHint = true): boolean => {
+    const cost = getPowerCost(powerId);
 
-  const [showHint, setShowHint] = useState(false);
-  const [showDefinition, setShowDefinition] = useState(false);
-  const [showOrigin, setShowOrigin] = useState(false);
-  const [showSentence, setShowSentence] = useState(false);
-  const [showPrefix, setShowPrefix] = useState(false);
-  const [showSuffix, setShowSuffix] = useState(false);
-  const [revealedLetters, setRevealedLetters] = useState<boolean[]>([]);
-  const [revealedSyllables, setRevealedSyllables] = useState<boolean[]>([]);
+    if (participantPoints < cost) {
+      showValidation(
+        `Not enough points — this hint costs ${cost} point${cost === 1 ? '' : 's'} and you have ${participantPoints}.`
+      );
+      return false;
+    }
 
-  useEffect(() => {
-    setRevealedLetters(Array(word.word.length).fill(false));
-    setRevealedSyllables(Array(word.syllables?.length || 0).fill(false));
-    setShowHint(false);
-    setShowDefinition(false);
-    setShowOrigin(false);
-    setShowSentence(false);
-    setShowPrefix(false);
-    setShowSuffix(false);
-  }, [word]);
+    if (ONCE_PER_WORD.has(powerId) && usedOncePowers.has(powerId)) {
+      showValidation('You have already used this power for this word.');
+      return false;
+    }
 
-  const handleRevealSyllable = (idx: number) => {
-    const cost = 3;
-    if (participantPoints < cost) return;
+    if (countAsHint && unlockedPowers && !hasAttemptedCurrentWord && hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT) {
+      showValidation(
+        `You can only use ${MAX_HINTS_BEFORE_ATTEMPT} hints before your first attempt. Make a spelling attempt first!`
+      );
+      return false;
+    }
+
+    // All checks passed — deduct cost and record usage
     spendPoints(participantIndex, cost);
     onHintUsed();
-    setRevealedSyllables(prev => {
-      const updated = [...prev];
-      updated[idx] = true;
-      return updated;
-    });
+
+    if (countAsHint && unlockedPowers && !hasAttemptedCurrentWord) {
+      setHintsBeforeAttempt(prev => prev + 1);
+    }
+    if (ONCE_PER_WORD.has(powerId)) {
+      setUsedOncePowers(prev => new Set(prev).add(powerId));
+    }
+
+    return true;
   };
 
-  const handleHangmanReveal = () => {
-    const cost = 5;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    const unrevealed = revealedLetters
-      .map((r, i) => (!r ? i : null))
-      .filter(i => i !== null) as number[];
-    if (unrevealed.length === 0) return;
-    const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
-    setRevealedLetters(prev => {
-      const updated = [...prev];
-      updated[randomIndex] = true;
-      return updated;
-    });
-  };
+  // ── Power handlers ───────────────────────────────────────────────────────────
 
-  const handleVowelReveal = () => {
-    const cost = 3;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    setRevealedLetters(word.word.split('').map((l, idx) => revealedLetters[idx] || 'aeiou'.includes(l.toLowerCase())));
-  };
-
-  const handleFriendSubstitution = () => {
-    const cost = 4;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    onExtraAttempt();
-  };
-
-  const handlePrefixReveal = () => {
-    const cost = 3;
-    if (participantPoints < cost || !prefix) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    setShowPrefix(true);
-  };
-
-  const handleSuffixReveal = () => {
-    const cost = 3;
-    if (participantPoints < cost || !suffix) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    setShowSuffix(true);
-  };
-
-  const handleDefinitionReveal = () => {
-    const cost = 1;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    setShowDefinition(true);
-  };
-
-  const handleOriginReveal = () => {
-    const cost = 1;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    setShowOrigin(true);
-  };
-
-  const handleSentenceReveal = () => {
-    const cost = 2;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
+  const handleSentence = () => {
+    if (!isPowerUnlocked('sentence') || showSentence) return;
+    if (!tryUsePower('sentence')) return;
     setShowSentence(true);
   };
 
-  const syllableCount = word?.syllables?.length || 0;
+  const handleSyllables = () => {
+    if (!isPowerUnlocked('syllables') || showSyllables) return;
+    if (!tryUsePower('syllables')) return;
+    setShowSyllables(true);
+  };
+
+  const handleWordLength = () => {
+    if (!isPowerUnlocked('wordLength') || showWordLength) return;
+    if (!tryUsePower('wordLength')) return;
+    setShowWordLength(true);
+  };
+
+  const handleDefinition = () => {
+    if (!isPowerUnlocked('definition') || showDefinition) return;
+    if (!tryUsePower('definition')) return;
+    setShowDefinition(true);
+  };
+
+  const handleExtraTime = () => {
+    if (!isPowerUnlocked('extraTime')) return;
+    if (!tryUsePower('extraTime')) return;
+    onAddTime?.();
+  };
+
+  const handleSoundItOut = () => {
+    if (!isPowerUnlocked('soundItOut') || showSoundItOut) return;
+    if (!tryUsePower('soundItOut')) return;
+    setShowSoundItOut(true);
+  };
+
+  const handleAffixes = () => {
+    if (!isPowerUnlocked('affixes') || showAffixes) return;
+    if (!prefixText && !suffixText) {
+      showValidation('No prefix or suffix data is available for this word.');
+      return;
+    }
+    if (!tryUsePower('affixes')) return;
+    setShowAffixes(true);
+  };
+
+  const handleSpellingPattern = () => {
+    if (!isPowerUnlocked('spellingPattern') || showSpellingPattern) return;
+    if (!tryUsePower('spellingPattern')) return;
+    setShowSpellingPattern(true);
+  };
+
+  const handleOrigin = () => {
+    if (!isPowerUnlocked('origin') || showOrigin) return;
+    if (!tryUsePower('origin')) return;
+    setShowOrigin(true);
+  };
+
+  const handleMultipleAttempts = () => {
+    if (!isPowerUnlocked('multipleAttempts')) return;
+    if (!tryUsePower('multipleAttempts')) return;
+    onExtraAttempt();
+  };
+
+  const handleVowelReveal = () => {
+    if (!isPowerUnlocked('vowels')) return;
+    if (!tryUsePower('vowels')) return;
+    setRevealedLetters(word.word.split('').map((l, i) => revealedLetters[i] || 'aeiouAEIOU'.includes(l)));
+  };
+
+  const handleHangmanReveal = () => {
+    if (!isPowerUnlocked('hangman')) return;
+    // Only consider actual letter positions — never reveal spaces, hyphens, or punctuation
+    const unrevealedLetterIndices = revealedLetters
+      .map((r, i) => (!r && /[a-zA-Z]/.test(word.word[i]) ? i : null))
+      .filter((i): i is number => i !== null);
+    if (unrevealedLetterIndices.length === 0) {
+      showValidation('All letters are already revealed!');
+      return;
+    }
+    if (!tryUsePower('hangman')) return;
+    // If Vowel Reveal was already used, all vowels are already in revealedLetters,
+    // so unrevealedLetterIndices naturally only contains consonants. No extra filtering needed.
+    const pick = unrevealedLetterIndices[Math.floor(Math.random() * unrevealedLetterIndices.length)];
+    setRevealedLetters(prev => {
+      const next = [...prev];
+      next[pick] = true;
+      return next;
+    });
+  };
+
+  const handleQuickPeek = () => {
+    if (!isPowerUnlocked('quickPeek')) return;
+    if (!tryUsePower('quickPeek')) return;
+    setQuickPeekVisible(true);
+    if (quickPeekTimer.current) clearTimeout(quickPeekTimer.current);
+    quickPeekTimer.current = setTimeout(() => setQuickPeekVisible(false), QUICK_PEEK_DURATION_MS);
+  };
+
+  const handleFriendSub = () => {
+    if (!isPowerUnlocked('friendSub')) return;
+    showValidation('Friend Substitution is not available yet.');
+  };
+
+  const handleSkipWord = () => {
+    if (!isPowerUnlocked('skipWord')) return;
+    // Skip word doesn't count toward the pre-attempt hint limit
+    if (!tryUsePower('skipWord', false)) return;
+    onSkipWord?.();
+  };
+
+  // ── Locked powers strip data ─────────────────────────────────────────────────
+  const lockedPowers = unlockedPowers
+    ? BATTLE_POWERS.filter(p => !unlockedPowers.includes(p.id))
+    : [];
+  const nextLockedPower = lockedPowers[0] ?? null;
+
+  // ── Button style helpers ─────────────────────────────────────────────────────
+  const btnBase = 'flex items-center gap-1.5 px-3 py-2 rounded-xl font-bold text-sm transition-all duration-200';
+  const btnPrimary = `${btnBase} bg-yellow-300 hover:bg-yellow-400 text-black disabled:opacity-40`;
+  const btnBlue = `${btnBase} bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-40`;
+  const btnPurple = `${btnBase} bg-purple-500 hover:bg-purple-600 text-white disabled:opacity-40`;
+  const btnPink = `${btnBase} bg-pink-500 hover:bg-pink-600 text-white disabled:opacity-40`;
+  const btnOrange = `${btnBase} bg-orange-500 hover:bg-orange-600 text-white disabled:opacity-40`;
+  const btnTeal = `${btnBase} bg-teal-500 hover:bg-teal-600 text-white disabled:opacity-40`;
+  const btnRed = `${btnBase} bg-red-500 hover:bg-red-600 text-white disabled:opacity-40`;
+
+  const canAfford = (id: string) => participantPoints >= getPowerCost(id);
+  const isOnceUsed = (id: string) => ONCE_PER_WORD.has(id) && usedOncePowers.has(id);
 
   return (
-    <div className="bg-white/10 p-6 rounded-lg mb-8">
-      {revealedLetters.some(r => r) && (
-        <p className="text-3xl font-mono mb-4">
-          {word.word
-            .split('')
-            .map((letter, idx) => (revealedLetters[idx] ? letter : '_'))
-            .join(' ')}
-        </p>
-      )}
-      {showDefinition && (
-        <p className="text-2xl mb-2">
-          <strong className="text-yellow-300">Definition:</strong> {definition || 'Definition not available'}
-        </p>
-      )}
-      <button
-        onClick={() => {
-          setShowHint(!showHint);
-          if (!showHint) onHintUsed();
-        }}
-        className="mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
-      >
-        {showHint ? 'Hide Hint' : 'Show Hint'}
-      </button>
-      {showHint && (
-        <div className="mt-4 flex flex-col items-center gap-4">
-          <div className="flex flex-wrap gap-2 justify-center">
-            {word.syllables?.map((syllable, idx) => (
-              <button
-                key={idx}
-                onClick={() => speak(syllable)}
-                disabled={!revealedSyllables[idx]}
-                className="bg-yellow-100 text-black px-2 py-1 rounded disabled:opacity-50"
-              >
-                {revealedSyllables[idx] ? syllable : '???'}
-              </button>
-            ))}
+    <div className="bg-white/10 p-4 rounded-xl mb-6 space-y-3">
+
+      {/* ── Quick Peek flash overlay ─────────────────────────────────────── */}
+      {quickPeekVisible && (
+        <div
+          className="fixed inset-0 bg-black/85 flex items-center justify-center z-[70] pointer-events-none"
+          role="status"
+          aria-live="assertive"
+        >
+          <div className="text-center">
+            <p className="text-white/60 text-sm mb-2 uppercase tracking-widest font-bold">🔍 Quick Peek!</p>
+            <p className="text-5xl font-black text-yellow-300 drop-shadow-2xl">{word.word}</p>
+            <p className="text-white/50 text-xs mt-3">Memorize it — it disappears in {QUICK_PEEK_DURATION_MS / 1000}s</p>
           </div>
-          <div className="flex flex-wrap gap-2 justify-center">
-            {word.syllables?.map((_, idx) =>
-              !revealedSyllables[idx] && (
-                <button
-                  key={`reveal-${idx}`}
-                  onClick={() => handleRevealSyllable(idx)}
-                  disabled={participantPoints < 3}
-                  className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
-                >
-                  {`Reveal syllable ${idx + 1} (-3)`}
-                </button>
-              )
+        </div>
+      )}
+
+      {/* ── Validation / error message ───────────────────────────────────── */}
+      {validationMsg && (
+        <div className="bg-red-500/20 border border-red-400/50 rounded-lg px-3 py-2 text-sm text-red-200 font-medium" role="alert">
+          ⚠️ {validationMsg}
+        </div>
+      )}
+
+      {/* ── Hint limit indicator (team mode, before first attempt) ──────── */}
+      {!hasAttemptedCurrentWord && unlockedPowers && (
+        <div className={`text-xs text-center font-bold ${hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT ? 'text-red-300' : 'text-white/60'}`}>
+          {hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT
+            ? '🚫 Hint limit reached — make a spelling attempt first!'
+            : `💡 Hints used before attempt: ${hintsBeforeAttempt} / ${MAX_HINTS_BEFORE_ATTEMPT}`}
+        </div>
+      )}
+
+      {/* ── Revealed letters display (hangman / vowel reveals) ──────────── */}
+      {revealedLetters.some(r => r) && (
+        <p className="text-3xl font-mono text-center tracking-widest py-1">
+          {word.word.split('').map((ch, i) => {
+            if (!/[a-zA-Z]/.test(ch)) return ch; // preserve spaces, hyphens, apostrophes
+            return revealedLetters[i] ? ch : '_';
+          }).join(' ')}
+        </p>
+      )}
+
+      {/* ── Purchased hint content ───────────────────────────────────────── */}
+      <div className="space-y-2">
+        {showWordLength && (
+          <div className="bg-blue-500/20 rounded-lg px-3 py-2">
+            <span className="text-blue-200 font-bold text-sm">🔢 Word Length: </span>
+            <span className="text-white text-sm">
+              This word has <strong>{wordLengthCount}</strong> letter{wordLengthCount === 1 ? '' : 's'}.
+            </span>
+            <p className="font-mono text-lg text-white/80 mt-1 tracking-widest">{wordLengthBlanks}</p>
+          </div>
+        )}
+
+        {showSentence && (
+          <div className="bg-green-500/20 rounded-lg px-3 py-2">
+            <span className="text-green-200 font-bold text-sm">📝 Sentence: </span>
+            <span className="text-white text-sm italic">
+              "{sentenceText || 'No sentence hint is available for this word.'}"
+            </span>
+          </div>
+        )}
+
+        {showSyllables && (
+          <div className="bg-yellow-500/20 rounded-lg px-3 py-2">
+            <span className="text-yellow-200 font-bold text-sm">🧩 Syllables: </span>
+            {syllableText ? (
+              <span className="text-white text-sm">
+                {word.syllables!.map((syl, i) => (
+                  <button
+                    key={i}
+                    onClick={() => speak(syl)}
+                    className="inline-block mx-0.5 px-1.5 py-0.5 bg-yellow-300/30 hover:bg-yellow-300/50 text-yellow-100 rounded text-sm font-mono transition"
+                    title="Click to hear this syllable"
+                  >
+                    {syl}
+                  </button>
+                ))}
+              </span>
+            ) : (
+              <span className="text-white/70 text-sm italic">No syllable breakdown is available for this word.</span>
             )}
           </div>
-        </div>
-      )}
-      {showOrigin && (
-        <p className="text-xl mb-2">
-          <strong className="text-yellow-300">Origin:</strong> {origin || 'Origin not available'}
-        </p>
-      )}
-      {showSentence && (
-        <p className="text-xl">
-          <strong className="text-yellow-300">Example:</strong> "{example || 'Example not available'}"
-        </p>
-      )}
-      {showPrefix && (
-        <div className="text-xl mb-2">
-          <strong className="text-yellow-300">Prefix:</strong> {prefix || 'Prefix not available'}
-          {prefixMeaning && <span className="text-lg text-gray-300"> (meaning: {prefixMeaning})</span>}
-        </div>
-      )}
-      {showSuffix && (
-        <div className="text-xl mb-2">
-          <strong className="text-yellow-300">Suffix:</strong> {suffix || 'Suffix not available'}
-          {suffixMeaning && <span className="text-lg text-gray-300"> (meaning: {suffixMeaning})</span>}
-        </div>
-      )}
-      <div className="mt-4 flex gap-4 justify-center">
-        {!showDefinition && (
-          <button
-            onClick={handleDefinitionReveal}
-            disabled={participantPoints < 1}
-            className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
-          >
-            Buy Definition (-1)
-          </button>
         )}
-        {!showOrigin && (
-          <button
-            onClick={handleOriginReveal}
-            disabled={participantPoints < 1}
-            className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
-          >
-            Buy Origin (-1)
-          </button>
-        )}
-        {!showSentence && (
-          <button
-            onClick={handleSentenceReveal}
-            disabled={participantPoints < 2}
-            className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
-          >
-            Buy Sentence (-2)
-          </button>
-        )}
-      </div>
-      <div className="mt-4 flex gap-4 justify-center">
-        {!showPrefix && prefix && (
-          <button
-            onClick={handlePrefixReveal}
-            disabled={participantPoints < 3}
-            className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
-          >
-            Reveal Prefix (-3)
-          </button>
-        )}
-        {!showSuffix && suffix && (
-          <button
-            onClick={handleSuffixReveal}
-            disabled={participantPoints < 3}
-            className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
-          >
-            Reveal Suffix (-3)
-          </button>
-        )}
-      </div>
-      <div className="mt-6 flex justify-center gap-4">
-        <button
-          onClick={handleHangmanReveal}
-          disabled={participantPoints < 5}
-          className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
-        >
-          Hangman Reveal (-5)
-        </button>
-        <button
-          onClick={handleVowelReveal}
-          disabled={participantPoints < 3}
-          className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
-        >
-          Vowel Reveal (-3)
-        </button>
-        <button
-          onClick={handleFriendSubstitution}
-          disabled={participantPoints < 4}
-          className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
-        >
-          Friend Sub (-4)
-        </button>
-      </div>
-      {word && (
-        <>
-          <div className="hint-section">
-            <h3>Syllables</h3>
-            <p>{syllableCount}</p>
+
+        {showDefinition && (
+          <div className="bg-amber-500/20 rounded-lg px-3 py-2">
+            <span className="text-amber-200 font-bold text-sm">📖 Definition: </span>
+            <span className="text-white text-sm">
+              {definitionText || 'No definition is available for this word.'}
+            </span>
           </div>
-        </>
+        )}
+
+        {showSoundItOut && (
+          <div className="bg-cyan-500/20 rounded-lg px-3 py-2">
+            <span className="text-cyan-200 font-bold text-sm">🔊 Sound It Out: </span>
+            <span className="text-white text-sm font-mono">
+              {soundItOutText || 'No sound-it-out hint is available for this word.'}
+            </span>
+          </div>
+        )}
+
+        {showAffixes && (
+          <div className="bg-orange-500/20 rounded-lg px-3 py-2 space-y-1">
+            <span className="text-orange-200 font-bold text-sm block">🔠 Word Parts:</span>
+            {prefixText ? (
+              <p className="text-white text-sm">
+                <strong>Prefix:</strong> {prefixText}
+                {prefixMeaning && <span className="text-white/70"> — "{prefixMeaning}"</span>}
+              </p>
+            ) : null}
+            {suffixText ? (
+              <p className="text-white text-sm">
+                <strong>Suffix:</strong> {suffixText}
+                {suffixMeaning && <span className="text-white/70"> — "{suffixMeaning}"</span>}
+              </p>
+            ) : null}
+            {!prefixText && !suffixText && (
+              <p className="text-white/70 text-sm italic">No word-part hint is available for this word.</p>
+            )}
+          </div>
+        )}
+
+        {showSpellingPattern && (
+          <div className="bg-violet-500/20 rounded-lg px-3 py-2">
+            <span className="text-violet-200 font-bold text-sm">🧠 Spelling Pattern: </span>
+            <span className="text-white text-sm">
+              {spellingPatternText || 'No spelling pattern hint is available for this word.'}
+            </span>
+          </div>
+        )}
+
+        {showOrigin && (
+          <div className="bg-emerald-500/20 rounded-lg px-3 py-2">
+            <span className="text-emerald-200 font-bold text-sm">🌍 Origin: </span>
+            <span className="text-white text-sm">
+              {originText || 'No origin hint is available for this word.'}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* ── Available power buttons ──────────────────────────────────────── */}
+      <div className="flex flex-wrap gap-2 justify-center pt-1">
+
+        {/* Starter powers (unlockAt: 0) */}
+        {isPowerUnlocked('sentence') && !showSentence && (
+          <button onClick={handleSentence} disabled={!canAfford('sentence')} className={btnPrimary}>
+            📝 Sentence <span className="opacity-70 text-xs">(-{getPowerCost('sentence')})</span>
+          </button>
+        )}
+        {isPowerUnlocked('syllables') && !showSyllables && (
+          <button onClick={handleSyllables} disabled={!canAfford('syllables')} className={btnPrimary}>
+            🧩 Syllables <span className="opacity-70 text-xs">(-{getPowerCost('syllables')})</span>
+          </button>
+        )}
+        {isPowerUnlocked('wordLength') && !showWordLength && (
+          <button onClick={handleWordLength} disabled={!canAfford('wordLength')} className={btnPrimary}>
+            🔢 Word Length <span className="opacity-70 text-xs">(-{getPowerCost('wordLength')})</span>
+          </button>
+        )}
+
+        {/* Definition */}
+        {isPowerUnlocked('definition') && !showDefinition && (
+          <button onClick={handleDefinition} disabled={!canAfford('definition')} className={btnPrimary}>
+            📖 Definition <span className="opacity-70 text-xs">(-{getPowerCost('definition')})</span>
+          </button>
+        )}
+
+        {/* Extra Time (once per word) */}
+        {isPowerUnlocked('extraTime') && !isOnceUsed('extraTime') && (
+          <button onClick={handleExtraTime} disabled={!canAfford('extraTime')} className={btnBlue}>
+            ⏱️ +15s <span className="opacity-70 text-xs">(-{getPowerCost('extraTime')})</span>
+          </button>
+        )}
+
+        {/* Sound It Out */}
+        {isPowerUnlocked('soundItOut') && !showSoundItOut && (
+          <button onClick={handleSoundItOut} disabled={!canAfford('soundItOut')} className={btnBlue}>
+            🔊 Sound It Out <span className="opacity-70 text-xs">(-{getPowerCost('soundItOut')})</span>
+          </button>
+        )}
+
+        {/* Affixes */}
+        {isPowerUnlocked('affixes') && !showAffixes && (
+          <button onClick={handleAffixes} disabled={!canAfford('affixes')} className={btnOrange}>
+            🔠 Word Parts <span className="opacity-70 text-xs">(-{getPowerCost('affixes')})</span>
+          </button>
+        )}
+
+        {/* Spelling Pattern */}
+        {isPowerUnlocked('spellingPattern') && !showSpellingPattern && (
+          <button onClick={handleSpellingPattern} disabled={!canAfford('spellingPattern')} className={btnPurple}>
+            🧠 Pattern <span className="opacity-70 text-xs">(-{getPowerCost('spellingPattern')})</span>
+          </button>
+        )}
+
+        {/* Origin */}
+        {isPowerUnlocked('origin') && !showOrigin && (
+          <button onClick={handleOrigin} disabled={!canAfford('origin')} className={btnTeal}>
+            🌍 Origin <span className="opacity-70 text-xs">(-{getPowerCost('origin')})</span>
+          </button>
+        )}
+
+        {/* Multiple Attempts (once per word) */}
+        {isPowerUnlocked('multipleAttempts') && !isOnceUsed('multipleAttempts') && (
+          <button onClick={handleMultipleAttempts} disabled={!canAfford('multipleAttempts')} className={btnPink}>
+            🎯 Multiple Attempts <span className="opacity-70 text-xs">(-{getPowerCost('multipleAttempts')})</span>
+          </button>
+        )}
+
+        {/* Vowel Reveal (once per word) */}
+        {isPowerUnlocked('vowels') && !isOnceUsed('vowels') && (
+          <button onClick={handleVowelReveal} disabled={!canAfford('vowels')} className={btnPurple}>
+            🔤 Vowel Reveal <span className="opacity-70 text-xs">(-{getPowerCost('vowels')})</span>
+          </button>
+        )}
+
+        {/* Hangman Reveal */}
+        {isPowerUnlocked('hangman') && (
+          <button onClick={handleHangmanReveal} disabled={!canAfford('hangman')} className={btnBlue}>
+            🕵️ Reveal Letter <span className="opacity-70 text-xs">(-{getPowerCost('hangman')})</span>
+          </button>
+        )}
+
+        {/* Quick Peek (once per word) */}
+        {isPowerUnlocked('quickPeek') && !isOnceUsed('quickPeek') && (
+          <button onClick={handleQuickPeek} disabled={!canAfford('quickPeek')} className={btnOrange}>
+            🔍 Quick Peek <span className="opacity-70 text-xs">(-{getPowerCost('quickPeek')})</span>
+          </button>
+        )}
+
+        {/* Friend Substitution */}
+        {isPowerUnlocked('friendSub') && (
+          <button onClick={handleFriendSub} className={btnPink}>
+            👥 Friend Sub
+          </button>
+        )}
+
+        {/* Skip Word */}
+        {isPowerUnlocked('skipWord') && (
+          <button onClick={handleSkipWord} disabled={!canAfford('skipWord')} className={btnRed}>
+            ⏭️ Skip Word <span className="opacity-70 text-xs">(-{getPowerCost('skipWord')})</span>
+          </button>
+        )}
+      </div>
+
+      {/* ── Locked powers strip ──────────────────────────────────────────── */}
+      {unlockedPowers && lockedPowers.length > 0 && (
+        <div className="mt-4 border-t border-white/20 pt-3">
+          <p className="text-white/50 text-xs text-center mb-2 font-bold uppercase tracking-wider">
+            🔒 Coming up next…
+          </p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {lockedPowers.slice(0, 6).map((p, i) => (
+              <div
+                key={p.id}
+                className="flex flex-col items-center gap-0.5 opacity-50 max-w-[60px]"
+                aria-label={`${p.name} — locked. Unlocks after ${p.unlockAt} correct answer${p.unlockAt === 1 ? '' : 's'}. Costs ${p.cost} point${p.cost === 1 ? '' : 's'}. ${p.description}`}
+              >
+                <span className="text-xl grayscale" aria-hidden="true">{p.icon}</span>
+                <span className="text-xs text-white/60 text-center leading-tight">
+                  {i === 0 && (
+                    <span className="text-yellow-300 font-bold block" aria-hidden="true">
+                      @{p.unlockAt}✓
+                    </span>
+                  )}
+                  {p.name}
+                </span>
+                <span className="text-xs text-white/40">-{p.cost}pt</span>
+              </div>
+            ))}
+            {lockedPowers.length > 6 && (
+              <div className="flex flex-col items-center gap-0.5 opacity-40">
+                <span className="text-xl">…</span>
+                <span className="text-xs text-white/40">{lockedPowers.length - 6} more</span>
+              </div>
+            )}
+          </div>
+          {nextLockedPower && (
+            <p className="mt-2 text-white/40 text-xs text-center">
+              Next: <strong className="text-white/70">{nextLockedPower.icon} {nextLockedPower.name}</strong>{' '}
+              at {nextLockedPower.unlockAt} correct answer{nextLockedPower.unlockAt === 1 ? '' : 's'} · {nextLockedPower.cost}pt
+            </p>
+          )}
+        </div>
       )}
     </div>
   );
