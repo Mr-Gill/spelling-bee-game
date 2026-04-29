@@ -55,3 +55,52 @@ test('calls onExpire when timer runs out', async () => {
     unmount();
   }
 });
+
+test('addSeconds increases timeLeft while timer is stopped', async () => {
+  let timer = null;
+  const Comp = () => {
+    timer = useTimer(10, () => {});
+    return null;
+  };
+  const { unmount } = render(React.createElement(Comp));
+  try {
+    // Before start, timeLeft is the initial duration (10)
+    assert.strictEqual(timer.timeLeft, 10, 'Initial timeLeft should be 10');
+    timer.addSeconds(5);
+    // Give React a chance to flush the state update
+    await new Promise(resolve => setTimeout(resolve, 50));
+    assert.strictEqual(timer.timeLeft, 15, 'timeLeft should be 15 after addSeconds(5)');
+  } finally {
+    if (timer) timer.stop();
+    unmount();
+  }
+});
+
+test('addSeconds increases timeLeft while timer is running', async () => {
+  let addSecondsFn = null;
+  let timer = null;
+  const Comp = () => {
+    timer = useTimer(10, () => {});
+    // Capture addSeconds via ref so we don't depend on timer identity
+    addSecondsFn = timer.addSeconds;
+    React.useEffect(() => {
+      timer.start();
+      // Empty deps so start() is only called once (avoids timeLeft reset on re-render)
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    return null;
+  };
+  const { unmount } = render(React.createElement(Comp));
+  try {
+    // Timer is running; no tick has occurred yet (<1000ms)
+    addSecondsFn(15);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    assert.ok(
+      timer.timeLeft >= 20,
+      `timeLeft should be around 25 after addSeconds(15) on a fresh timer, got ${timer.timeLeft}`
+    );
+  } finally {
+    if (timer) timer.stop();
+    unmount();
+  }
+});

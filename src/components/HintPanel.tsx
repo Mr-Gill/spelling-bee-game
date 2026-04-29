@@ -78,8 +78,6 @@ const HintPanel: React.FC<HintPanelProps> = ({
   participantPoints,
   participantIndex,
   spendPoints,
-  isTeamMode,
-  showWord,
   onHintUsed,
   onExtraAttempt,
   unlockedPowers,
@@ -96,7 +94,6 @@ const HintPanel: React.FC<HintPanelProps> = ({
   const [showAffixes, setShowAffixes] = useState(false);
   const [showSpellingPattern, setShowSpellingPattern] = useState(false);
   const [showOrigin, setShowOrigin] = useState(false);
-  const [showFriendSub, setShowFriendSub] = useState(false);
 
   // ── Letter-reveal state (vowels + hangman) ──────────────────────────────────
   const [revealedLetters, setRevealedLetters] = useState<boolean[]>([]);
@@ -126,7 +123,6 @@ const HintPanel: React.FC<HintPanelProps> = ({
     setShowAffixes(false);
     setShowSpellingPattern(false);
     setShowOrigin(false);
-    setShowFriendSub(false);
     setRevealedLetters(Array(word.word.length).fill(false));
     setQuickPeekVisible(false);
     setHintsBeforeAttempt(0);
@@ -199,7 +195,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
       return false;
     }
 
-    if (countAsHint && !hasAttemptedCurrentWord && hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT) {
+    if (countAsHint && unlockedPowers && !hasAttemptedCurrentWord && hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT) {
       showValidation(
         `You can only use ${MAX_HINTS_BEFORE_ATTEMPT} hints before your first attempt. Make a spelling attempt first!`
       );
@@ -210,7 +206,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
     spendPoints(participantIndex, cost);
     onHintUsed();
 
-    if (countAsHint && !hasAttemptedCurrentWord) {
+    if (countAsHint && unlockedPowers && !hasAttemptedCurrentWord) {
       setHintsBeforeAttempt(prev => prev + 1);
     }
     if (ONCE_PER_WORD.has(powerId)) {
@@ -322,9 +318,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
   };
 
   const handleFriendSub = () => {
-    if (!isPowerUnlocked('friendSub') || showFriendSub) return;
-    if (!tryUsePower('friendSub')) return;
-    setShowFriendSub(true);
+    if (!isPowerUnlocked('friendSub')) return;
+    showValidation('Friend Substitution is not available yet.');
   };
 
   const handleSkipWord = () => {
@@ -496,13 +491,6 @@ const HintPanel: React.FC<HintPanelProps> = ({
             </span>
           </div>
         )}
-
-        {showFriendSub && (
-          <div className="bg-pink-500/20 border border-pink-400/40 rounded-lg px-3 py-2">
-            <p className="text-pink-200 font-bold text-sm">👥 Friend Substitution!</p>
-            <p className="text-white/90 text-sm mt-0.5">Choose a teammate to spell this word.</p>
-          </div>
-        )}
       </div>
 
       {/* ── Available power buttons ──────────────────────────────────────── */}
@@ -596,9 +584,9 @@ const HintPanel: React.FC<HintPanelProps> = ({
         )}
 
         {/* Friend Substitution */}
-        {isPowerUnlocked('friendSub') && !showFriendSub && (
-          <button onClick={handleFriendSub} disabled={!canAfford('friendSub')} className={btnPink}>
-            👥 Friend Sub <span className="opacity-70 text-xs">(-{getPowerCost('friendSub')})</span>
+        {isPowerUnlocked('friendSub') && (
+          <button onClick={handleFriendSub} className={btnPink}>
+            👥 Friend Sub
           </button>
         )}
 
