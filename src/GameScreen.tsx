@@ -32,6 +32,13 @@ import EncouragementBanner, {
 import { addReviewWord } from './utils/reviewQueue';
 import { publishTeamDisplayWord } from './TeamDisplay';
 import { publishScoreboard } from './ScoreboardScreen';
+import BattlePowerUnlock from './components/BattlePowerUnlock';
+import {
+  getNewlyUnlockedPowers,
+  getUnlockedPowerIds,
+  type BattlePower,
+} from './utils/battleProgression';
+
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -120,6 +127,13 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [wordIndex, setWordIndex] = React.useState(initialGameState?.currentWordIndex || 0);
   const [totalWordsUsed, setTotalWordsUsed] = React.useState(initialGameState?.totalWordsUsed || 0);
   const shouldHideNames = Boolean(config.hideNames);
+
+  // Battle progression (team mode only)
+  const [totalCorrectInGame, setTotalCorrectInGame] = React.useState(0);
+  const [unlockedPowers, setUnlockedPowers] = React.useState<string[]>(() =>
+    isTeamMode ? getUnlockedPowerIds(0) : []
+  );
+  const [pendingUnlocks, setPendingUnlocks] = React.useState<BattlePower[]>([]);
 
   const playCorrect = useSound(correctSoundFile, soundEnabled);
   const playWrong = useSound(wrongSoundFile, soundEnabled);
@@ -391,6 +405,18 @@ const GameScreen: React.FC<GameScreenProps> = ({
         const first = newlyUnlocked[0];
         setToast(`Achievement unlocked: ${first.icon} ${first.name}!`);
         setTimeout(() => setToast(''), 3000);
+      }
+
+      // Battle progression: check for newly unlocked powers in team mode
+      if (isTeamMode) {
+        const prevCount = totalCorrectInGame;
+        const newCount = prevCount + 1;
+        setTotalCorrectInGame(newCount);
+        const newPowers = getNewlyUnlockedPowers(prevCount, newCount);
+        if (newPowers.length > 0) {
+          setUnlockedPowers(getUnlockedPowerIds(newCount));
+          setPendingUnlocks(prev => [...prev, ...newPowers]);
+        }
       }
       
       playCorrect();
@@ -759,6 +785,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
         />
       )}
 
+      {/* Battle power unlock modal (team mode progression) */}
+      {pendingUnlocks.length > 0 && (
+        <BattlePowerUnlock
+          power={pendingUnlocks[0]}
+          onDismiss={() => setPendingUnlocks(prev => prev.slice(1))}
+        />
+      )}
+
       {/* Exit Game Confirmation Modal */}
       {showExitConfirm && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
@@ -906,6 +940,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
             showWord={showWord}
             onHintUsed={() => setUsedHint(true)}
             onExtraAttempt={() => setExtraAttempt(true)}
+            unlockedPowers={isTeamMode ? unlockedPowers : undefined}
           />
           {showPhonics && currentWord.phonemes && (
             <PhonicsBreakdown phonemes={currentWord.phonemes} />

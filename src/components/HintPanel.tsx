@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Word } from '../types';
 import { speak } from '../utils/tts';
+import { BATTLE_POWERS } from '../utils/battleProgression';
 
 interface HintPanelProps {
   word: Word | null;
@@ -11,6 +12,12 @@ interface HintPanelProps {
   showWord: boolean;
   onHintUsed: () => void;
   onExtraAttempt: () => void;
+  /**
+   * When provided, only powers whose IDs appear in this array are available.
+   * Used in team battle mode to progressively unlock hints.
+   * When omitted (individual mode), all hints are available immediately.
+   */
+  unlockedPowers?: string[];
 }
 
 const HintPanel: React.FC<HintPanelProps> = ({
@@ -21,8 +28,12 @@ const HintPanel: React.FC<HintPanelProps> = ({
   isTeamMode,
   showWord,
   onHintUsed,
-  onExtraAttempt
+  onExtraAttempt,
+  unlockedPowers,
 }) => {
+  // Helper: is a given power available?
+  const isPowerAvailable = (id: string) =>
+    !unlockedPowers || unlockedPowers.includes(id);
   if (!word) {
     return (
       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
@@ -161,6 +172,13 @@ const HintPanel: React.FC<HintPanelProps> = ({
 
   const syllableCount = word?.syllables?.length || 0;
 
+  // Powers that are still locked (only relevant in team mode with progression)
+  const lockedPowers = unlockedPowers
+    ? BATTLE_POWERS.filter(p => !unlockedPowers.includes(p.id))
+    : [];
+
+  const nextLockedPower = lockedPowers[0] ?? null;
+
   return (
     <div className="bg-white/10 p-6 rounded-lg mb-8">
       {revealedLetters.some(r => r) && (
@@ -176,16 +194,26 @@ const HintPanel: React.FC<HintPanelProps> = ({
           <strong className="text-yellow-300">Definition:</strong> {definition || 'Definition not available'}
         </p>
       )}
-      <button
-        onClick={() => {
-          setShowHint(!showHint);
-          if (!showHint) onHintUsed();
-        }}
-        className="mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
-      >
-        {showHint ? 'Hide Hint' : 'Show Hint'}
-      </button>
-      {showHint && (
+
+      {/* Show "no powers yet" message in team mode before first unlock */}
+      {unlockedPowers && unlockedPowers.length === 0 && (
+        <p className="text-white/70 text-sm text-center italic mb-2">
+          🔒 Get your first correct answer to unlock your first power!
+        </p>
+      )}
+
+      {isPowerAvailable('syllables') && (
+        <button
+          onClick={() => {
+            setShowHint(!showHint);
+            if (!showHint) onHintUsed();
+          }}
+          className="mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold"
+        >
+          {showHint ? 'Hide Hint' : 'Show Hint'}
+        </button>
+      )}
+      {showHint && isPowerAvailable('syllables') && (
         <div className="mt-4 flex flex-col items-center gap-4">
           <div className="flex flex-wrap gap-2 justify-center">
             {word.syllables?.map((syllable, idx) => (
@@ -215,99 +243,105 @@ const HintPanel: React.FC<HintPanelProps> = ({
           </div>
         </div>
       )}
-      {showOrigin && (
+      {showOrigin && isPowerAvailable('origin') && (
         <p className="text-xl mb-2">
           <strong className="text-yellow-300">Origin:</strong> {origin || 'Origin not available'}
         </p>
       )}
-      {showSentence && (
+      {showSentence && isPowerAvailable('sentence') && (
         <p className="text-xl">
           <strong className="text-yellow-300">Example:</strong> "{example || 'Example not available'}"
         </p>
       )}
-      {showPrefix && (
+      {showPrefix && isPowerAvailable('affixes') && (
         <div className="text-xl mb-2">
           <strong className="text-yellow-300">Prefix:</strong> {prefix || 'Prefix not available'}
           {prefixMeaning && <span className="text-lg text-gray-300"> (meaning: {prefixMeaning})</span>}
         </div>
       )}
-      {showSuffix && (
+      {showSuffix && isPowerAvailable('affixes') && (
         <div className="text-xl mb-2">
           <strong className="text-yellow-300">Suffix:</strong> {suffix || 'Suffix not available'}
           {suffixMeaning && <span className="text-lg text-gray-300"> (meaning: {suffixMeaning})</span>}
         </div>
       )}
-      <div className="mt-4 flex gap-4 justify-center">
-        {!showDefinition && (
+      <div className="mt-4 flex gap-4 justify-center flex-wrap">
+        {isPowerAvailable('definition') && !showDefinition && (
           <button
             onClick={handleDefinitionReveal}
             disabled={participantPoints < 1}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            Buy Definition (-1)
+            📖 Buy Definition (-1)
           </button>
         )}
-        {!showOrigin && (
+        {isPowerAvailable('origin') && !showOrigin && (
           <button
             onClick={handleOriginReveal}
             disabled={participantPoints < 1}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            Buy Origin (-1)
+            🌍 Buy Origin (-1)
           </button>
         )}
-        {!showSentence && (
+        {isPowerAvailable('sentence') && !showSentence && (
           <button
             onClick={handleSentenceReveal}
             disabled={participantPoints < 2}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            Buy Sentence (-2)
+            💬 Buy Sentence (-2)
           </button>
         )}
       </div>
-      <div className="mt-4 flex gap-4 justify-center">
-        {!showPrefix && prefix && (
+      <div className="mt-4 flex gap-4 justify-center flex-wrap">
+        {isPowerAvailable('affixes') && !showPrefix && prefix && (
           <button
             onClick={handlePrefixReveal}
             disabled={participantPoints < 3}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            Reveal Prefix (-3)
+            🔠 Reveal Prefix (-3)
           </button>
         )}
-        {!showSuffix && suffix && (
+        {isPowerAvailable('affixes') && !showSuffix && suffix && (
           <button
             onClick={handleSuffixReveal}
             disabled={participantPoints < 3}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            Reveal Suffix (-3)
+            🔠 Reveal Suffix (-3)
           </button>
         )}
       </div>
-      <div className="mt-6 flex justify-center gap-4">
-        <button
-          onClick={handleHangmanReveal}
-          disabled={participantPoints < 5}
-          className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
-        >
-          Hangman Reveal (-5)
-        </button>
-        <button
-          onClick={handleVowelReveal}
-          disabled={participantPoints < 3}
-          className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
-        >
-          Vowel Reveal (-3)
-        </button>
-        <button
-          onClick={handleFriendSubstitution}
-          disabled={participantPoints < 4}
-          className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
-        >
-          Friend Sub (-4)
-        </button>
+      <div className="mt-6 flex justify-center gap-4 flex-wrap">
+        {isPowerAvailable('hangman') && (
+          <button
+            onClick={handleHangmanReveal}
+            disabled={participantPoints < 5}
+            className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+          >
+            🕵️ Hangman Reveal (-5)
+          </button>
+        )}
+        {isPowerAvailable('vowels') && (
+          <button
+            onClick={handleVowelReveal}
+            disabled={participantPoints < 3}
+            className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+          >
+            🔤 Vowel Reveal (-3)
+          </button>
+        )}
+        {isPowerAvailable('extraAttempt') && (
+          <button
+            onClick={handleFriendSubstitution}
+            disabled={participantPoints < 4}
+            className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
+          >
+            🎯 Extra Attempt (-4)
+          </button>
+        )}
       </div>
       {word && (
         <>
@@ -316,6 +350,39 @@ const HintPanel: React.FC<HintPanelProps> = ({
             <p>{syllableCount}</p>
           </div>
         </>
+      )}
+
+      {/* Locked powers strip — shown only in team mode with progression */}
+      {unlockedPowers && lockedPowers.length > 0 && (
+        <div className="mt-6 border-t border-white/20 pt-4">
+          <p className="text-white/60 text-xs text-center mb-2 font-bold uppercase tracking-wider">
+            🔒 Coming up next…
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {lockedPowers.map((p, i) => (
+              <div
+                key={p.id}
+                className="flex flex-col items-center gap-1 opacity-50"
+                title={`Unlocks at ${p.unlockAt} correct answer${p.unlockAt === 1 ? '' : 's'}: ${p.description}`}
+              >
+                <span className="text-2xl grayscale">{p.icon}</span>
+                <span className="text-xs text-white/70 text-center max-w-[64px] leading-tight">
+                  {i === 0 ? (
+                    <span className="text-kahoot-yellow-300 font-bold not-italic">
+                      @{p.unlockAt}✓
+                    </span>
+                  ) : null}
+                  {' '}{p.name}
+                </span>
+              </div>
+            ))}
+          </div>
+          {nextLockedPower && (
+            <p className="mt-2 text-white/50 text-xs text-center">
+              Next: <strong className="text-white/80">{nextLockedPower.name}</strong> unlocks at {nextLockedPower.unlockAt} correct answer{nextLockedPower.unlockAt === 1 ? '' : 's'}
+            </p>
+          )}
+        </div>
       )}
     </div>
   );
