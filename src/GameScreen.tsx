@@ -154,6 +154,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
     reset: resetTimer,
     stop: stopTimer,
     isPaused,
+    addSeconds: addTimeToTimer,
   } = useGameTimer(config.timerDuration, soundEnabled, handleIncorrectAttempt);
   const {
     timeLeft: sessionTimeLeft,
@@ -497,6 +498,29 @@ const GameScreen: React.FC<GameScreenProps> = ({
     setTimeout(() => {
       const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
       const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
+      setFeedback({ message: '', type: '' });
+      if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
+      advanceToWord(nextDifficulty);
+      nextTurn();
+    }, 1500);
+  };
+
+  /**
+   * Skips the current word without applying any lives/points penalty.
+   * Used by the Skip Word battle power (team has already paid points to use it).
+   * The word is still tracked for review but the team does not lose a life.
+   */
+  const skipWordFree = () => {
+    stopTimer();
+    if (currentWord) {
+      setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+      addReviewWord(currentWord);
+    }
+    setAttemptedParticipants(new Set());
+    setFeedback({ message: 'Word Skipped ⏭️', type: 'info' });
+    setTimeout(() => {
+      const nextIndex = (currentParticipantIndex + 1) % participants.length;
+      const nextDifficulty = participants[nextIndex].difficultyLevel;
       setFeedback({ message: '', type: '' });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
       advanceToWord(nextDifficulty);
@@ -945,6 +969,9 @@ const GameScreen: React.FC<GameScreenProps> = ({
             onHintUsed={() => setUsedHint(true)}
             onExtraAttempt={() => setExtraAttempt(true)}
             unlockedPowers={isTeamMode ? unlockedPowers : undefined}
+            hasAttemptedCurrentWord={attemptedParticipants.has(currentParticipantIndex)}
+            onAddTime={() => addTimeToTimer(15)}
+            onSkipWord={skipWordFree}
           />
           {showPhonics && currentWord.phonemes && (
             <PhonicsBreakdown phonemes={currentWord.phonemes} />
