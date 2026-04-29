@@ -48,9 +48,13 @@ const useTimer = (duration: number, onExpire: () => void) => {
     clear();
   }, []);
 
+  const addSeconds = useCallback((seconds: number) => {
+    setTimeLeft(prev => prev + seconds);
+  }, []);
+
   useEffect(() => () => clear(), []);
 
-  return { timeLeft, start, pause, resume, reset, stop, isPaused };
+  return { timeLeft, start, pause, resume, reset, stop, isPaused, addSeconds };
 };
 
 export default useTimer;

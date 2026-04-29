@@ -32,6 +32,13 @@ import EncouragementBanner, {
 import { addReviewWord } from './utils/reviewQueue';
 import { publishTeamDisplayWord } from './TeamDisplay';
 import { publishScoreboard } from './ScoreboardScreen';
+import BattlePowerUnlock from './components/BattlePowerUnlock';
+import {
+  getNewlyUnlockedPowers,
+  getUnlockedPowerIds,
+  type BattlePower,
+} from './utils/battleProgression';
+
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -189,6 +196,18 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [totalWordsUsed, setTotalWordsUsed] = React.useState(initialGameState?.totalWordsUsed || 0);
   const shouldHideNames = Boolean(config.hideNames);
 
+  // Battle progression (team mode only): tracks collective correct answers to drive power unlocks.
+  // In individual mode, unlockedPowers stays empty — HintPanel treats undefined/empty differently:
+  // undefined = no progression (all hints visible); empty array = progression active but none unlocked yet.
+  // Here we pass undefined for individual mode so all hints are always available.
+  const [teamCorrectCount, setTeamCorrectCount] = React.useState(0);
+  // getUnlockedPowerIds(0) returns the three starter powers (sentence, syllables, wordLength),
+  // which all have unlockAt: 0 and are immediately available in team mode.
+  const [unlockedPowers, setUnlockedPowers] = React.useState<string[]>(() =>
+    isTeamMode ? getUnlockedPowerIds(0) : []
+  );
+  const [pendingUnlocks, setPendingUnlocks] = React.useState<BattlePower[]>([]);
+
   const playCorrect = useSound(correctSoundFile, soundEnabled);
   const playWrong = useSound(wrongSoundFile, soundEnabled);
   const playLetterCorrect = useSound(letterCorrectSoundFile, soundEnabled);
@@ -204,6 +223,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
     reset: resetTimer,
     stop: stopTimer,
     isPaused,
+    addSeconds: addTimeToTimer,
   } = useGameTimer(config.timerDuration, soundEnabled, handleIncorrectAttempt);
   const {
     timeLeft: sessionTimeLeft,
@@ -460,6 +480,18 @@ const GameScreen: React.FC<GameScreenProps> = ({
         setToast(`Achievement: ${first.icon} ${first.name}. The bee has noted this down formally.`);
         setTimeout(() => setToast(''), 3000);
       }
+
+      // Battle progression: check for newly unlocked powers in team mode
+      if (isTeamMode) {
+        const prevCount = teamCorrectCount;
+        const newCount = prevCount + 1;
+        setTeamCorrectCount(newCount);
+        const newPowers = getNewlyUnlockedPowers(prevCount, newCount);
+        if (newPowers.length > 0) {
+          setUnlockedPowers(getUnlockedPowerIds(newCount));
+          setPendingUnlocks(prev => [...prev, ...newPowers]);
+        }
+      }
       
       playCorrect();
       
@@ -535,6 +567,29 @@ const GameScreen: React.FC<GameScreenProps> = ({
     setTimeout(() => {
       const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
       const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
+      setFeedback({ message: '', type: '' });
+      if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
+      advanceToWord(nextDifficulty);
+      nextTurn();
+    }, 1500);
+  };
+
+  /**
+   * Skips the current word without applying any lives/points penalty.
+   * Used by the Skip Word battle power (team has already paid points to use it).
+   * The word is still tracked for review but the team does not lose a life.
+   */
+  const skipWordFree = () => {
+    stopTimer();
+    if (currentWord) {
+      setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+      addReviewWord(currentWord);
+    }
+    setAttemptedParticipants(new Set());
+    setFeedback({ message: 'Word Skipped ⏭️', type: 'info' });
+    setTimeout(() => {
+      const nextIndex = (currentParticipantIndex + 1) % participants.length;
+      const nextDifficulty = participants[nextIndex].difficultyLevel;
       setFeedback({ message: '', type: '' });
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
       advanceToWord(nextDifficulty);
@@ -829,6 +884,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
         />
       )}
 
+      {/* Battle power unlock modal (team mode progression) */}
+      {pendingUnlocks.length > 0 && (
+        <BattlePowerUnlock
+          power={pendingUnlocks[0]}
+          onDismiss={() => setPendingUnlocks(prev => prev.slice(1))}
+        />
+      )}
+
       {/* Exit Game Confirmation Modal */}
       {showExitConfirm && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
@@ -975,6 +1038,10 @@ const GameScreen: React.FC<GameScreenProps> = ({
             showWord={showWord}
             onHintUsed={() => setUsedHint(true)}
             onExtraAttempt={() => setExtraAttempt(true)}
+            unlockedPowers={isTeamMode ? unlockedPowers : undefined}
+            hasAttemptedCurrentWord={attemptedParticipants.has(currentParticipantIndex)}
+            onAddTime={() => addTimeToTimer(15)}
+            onSkipWord={skipWordFree}
           />
           {showPhonics && currentWord.phonemes && (
             <PhonicsBreakdown phonemes={currentWord.phonemes} />

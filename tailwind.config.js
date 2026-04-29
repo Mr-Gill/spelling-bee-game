@@ -149,6 +149,10 @@ module.exports = {
           '0%, 100%': { opacity: '1', transform: 'scale(1)' },
           '50%': { opacity: '0.5', transform: 'scale(1.1)' },
         },
+        shrink: {
+          '0%': { width: '100%' },
+          '100%': { width: '0%' },
+        },
       },
       colors: {
         // Preserve existing bee theme colors
