@@ -27,6 +27,7 @@ interface SetupPreset {
   progressionSpeed: number;
   theme: ThemeName;
   teacherMode: boolean;
+  hideNames: boolean;
 }
 
 const PRESETS_STORAGE_KEY = 'setupPresets';
@@ -84,6 +85,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState<ThemeName>('light');
   const [teacherMode, setTeacherMode] = useState<boolean>(() => localStorage.getItem('teacherMode') === 'true');
+  const [hideNames, setHideNames] = useState<boolean>(() => localStorage.getItem('hideNames') === 'true');
   const [showAccessibilitySettings, setShowAccessibilitySettings] = useState(false);
   const [presets, setPresets] = useState<Record<string, SetupPreset>>(() => {
     try {
@@ -113,6 +115,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
     localStorage.setItem('teacherMode', String(teacherMode));
   }, [teacherMode]);
+
+  useEffect(() => {
+    localStorage.setItem('hideNames', String(hideNames));
+  }, [hideNames]);
   
   useEffect(() => {
     const savedTeams = localStorage.getItem('teams');
@@ -364,6 +370,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     progressionSpeed,
     theme,
     teacherMode,
+    hideNames,
   });
 
   const handleSavePreset = () => {
@@ -401,6 +408,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setTheme(normalizedTheme);
     localStorage.setItem('theme', normalizedTheme);
     setTeacherMode(Boolean(preset.teacherMode));
+    setHideNames(Boolean(preset.hideNames));
     setPresetName(name);
     setPresetMessage(`Loaded "${name}".`);
   };
@@ -470,6 +478,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     
     const config: GameConfig = {
       participants: finalParticipants,
+      hideNames,
       gameMode, timerDuration, sessionDuration: sessionDurationMinutes * 60, skipPenaltyType, skipPenaltyValue, soundEnabled, effectsEnabled, difficultyLevel: initialDifficulty, progressionSpeed, musicStyle, musicVolume,
     };
     onStartGame(config);
@@ -693,6 +702,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 >
                   Accessibility Settings
                 </button>
+            </div>
+            <div className="bg-white/10 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4">Privacy Display 🙈</h2>
+                <label className="flex items-center gap-2 text-white"><input type="checkbox" checked={hideNames} onChange={e => setHideNames(e.target.checked)} /><span>Hide names on game and scoreboard displays</span></label>
             </div>
              <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Music 🎵</h2>

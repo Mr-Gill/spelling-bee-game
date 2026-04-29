@@ -4,16 +4,25 @@ import { Participant } from '../types';
 interface ScoreCardProps {
   participant: Participant;
   isActive: boolean;
+  displayName?: string;
+  hideName?: boolean;
 }
 
-const ScoreCard: React.FC<ScoreCardProps> = ({ participant, isActive }) => {
+const ScoreCard: React.FC<ScoreCardProps> = ({ participant, isActive, displayName, hideName }) => {
   return (
     <div
       className={`scorecard transition-transform text-center rounded-2xl border border-white/20 bg-white/10 px-6 py-4 backdrop-blur-md ${
         isActive ? 'border-yellow-300 shadow-lg scale-105' : 'shadow-md'
       }`}
     >
-      <div className="text-2xl font-bold text-white drop-shadow-sm">{participant.name}</div>
+      {hideName ? (
+        <div className="flex flex-col items-center gap-2">
+          {participant.avatar && <img src={participant.avatar} alt="" className="h-10 w-10 rounded-full border-2 border-yellow-300 bg-white/20 object-cover" />}
+          <div className="text-xl font-bold text-white drop-shadow-sm">{displayName}</div>
+        </div>
+      ) : (
+        <div className="text-2xl font-bold text-white drop-shadow-sm">{participant.name}</div>
+      )}
       <div
         className="mt-2 flex flex-wrap justify-center gap-1 text-4xl leading-none"
         aria-label={`${participant.lives} lives`}
@@ -32,4 +41,3 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ participant, isActive }) => {
 };
 
 export default ScoreCard;
-

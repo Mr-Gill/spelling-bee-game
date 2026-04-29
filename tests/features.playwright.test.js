@@ -88,3 +88,15 @@ test('scoreboard route opens in display mode', async ({ page }) => {
   await expect(page.getByText(/Live Scoreboard/i)).toBeVisible();
   await expect(page.getByText(/Waiting for scores/i)).toBeVisible();
 });
+
+test('privacy display hides names during gameplay', async ({ page }) => {
+  await page.goto('./');
+  await page.getByLabel('Hide names on game and scoreboard displays').check();
+  await page.getByRole('button', { name: /START CUSTOM GAME/i }).evaluate(el => el.click());
+
+  await expect(page.getByText(/WORD FOR TEAM: TEAM 1/i)).toBeVisible();
+  await expect(page.getByText('Team Alpha')).toHaveCount(0);
+
+  const hideScoreboardNames = await page.evaluate(() => localStorage.getItem('scoreboardHideNames'));
+  expect(hideScoreboardNames).toBe('true');
+});

@@ -78,6 +78,7 @@ export interface GameConfig {
   musicVolume: number;
   difficultyLevel: number;
   progressionSpeed: number;
+  hideNames?: boolean;
 }
 
 export interface GameResults {

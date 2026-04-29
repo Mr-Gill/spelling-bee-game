@@ -3,6 +3,7 @@ import type { Participant } from './types';
 
 const CHANNEL_NAME = 'spelling-bee-scoreboard';
 const STORAGE_KEY = 'scoreboardParticipants';
+const HIDE_NAMES_STORAGE_KEY = 'scoreboardHideNames';
 
 const readStoredParticipants = (): Participant[] => {
   if (typeof window === 'undefined') return [];
@@ -15,6 +16,10 @@ const readStoredParticipants = (): Participant[] => {
 
 const ScoreboardScreen: React.FC = () => {
   const [participants, setParticipants] = React.useState<Participant[]>(() => readStoredParticipants());
+  const [hideNames, setHideNames] = React.useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage.getItem(HIDE_NAMES_STORAGE_KEY) === 'true';
+  });
 
   React.useEffect(() => {
     if (typeof window === 'undefined' || typeof BroadcastChannel === 'undefined') return;
@@ -28,6 +33,7 @@ const ScoreboardScreen: React.FC = () => {
   React.useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
       if (event.key === STORAGE_KEY) setParticipants(readStoredParticipants());
+      if (event.key === HIDE_NAMES_STORAGE_KEY) setHideNames(event.newValue === 'true');
     };
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
@@ -39,10 +45,15 @@ const ScoreboardScreen: React.FC = () => {
         <p className="mb-8 text-center text-lg font-bold uppercase tracking-wide text-yellow-300">Live Scoreboard</p>
         {participants.length > 0 ? (
           <div className="grid gap-5">
-            {participants.map(participant => (
-              <div key={participant.name} className="rounded-3xl border border-white/20 bg-white/10 p-6">
+            {participants.map((participant, index) => (
+              <div key={`${participant.name}-${index}`} className="rounded-3xl border border-white/20 bg-white/10 p-6">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <div className="text-4xl font-black">{participant.name}</div>
+                  <div className="flex items-center gap-4 text-4xl font-black">
+                    {hideNames && participant.avatar && (
+                      <img src={participant.avatar} alt="" className="h-14 w-14 rounded-full border-2 border-yellow-300 bg-white/10 object-cover" />
+                    )}
+                    <span>{hideNames ? `Player ${index + 1}` : participant.name}</span>
+                  </div>
                   <div className="text-4xl font-black text-green-300">{participant.points} pts</div>
                 </div>
                 <div className="mt-4 text-3xl" aria-label={`${participant.lives} lives`}>
@@ -59,10 +70,11 @@ const ScoreboardScreen: React.FC = () => {
   );
 };
 
-export const publishScoreboard = (participants: Participant[]) => {
+export const publishScoreboard = (participants: Participant[], options?: { hideNames?: boolean }) => {
   if (typeof window === 'undefined') return;
 
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(participants));
+  window.localStorage.setItem(HIDE_NAMES_STORAGE_KEY, String(Boolean(options?.hideNames)));
   if (typeof BroadcastChannel !== 'undefined') {
     const channel = new BroadcastChannel(CHANNEL_NAME);
     channel.postMessage(participants);

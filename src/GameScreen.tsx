@@ -119,6 +119,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [showAccessibilitySettings, setShowAccessibilitySettings] = React.useState(false);
   const [wordIndex, setWordIndex] = React.useState(initialGameState?.currentWordIndex || 0);
   const [totalWordsUsed, setTotalWordsUsed] = React.useState(initialGameState?.totalWordsUsed || 0);
+  const shouldHideNames = Boolean(config.hideNames);
 
   const playCorrect = useSound(correctSoundFile, soundEnabled);
   const playWrong = useSound(wrongSoundFile, soundEnabled);
@@ -171,8 +172,8 @@ const GameScreen: React.FC<GameScreenProps> = ({
   }, [currentWord]);
 
   React.useEffect(() => {
-    publishScoreboard(participants);
-  }, [participants]);
+    publishScoreboard(participants, { hideNames: shouldHideNames });
+  }, [participants, shouldHideNames]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -597,9 +598,18 @@ const GameScreen: React.FC<GameScreenProps> = ({
               index === currentParticipantIndex ? 'scale-110 ring-4 ring-kahoot-yellow-400 animate-glow' : ''
             }`}
           >
-            <div className="text-xl font-black bg-gradient-to-r from-white to-kahoot-yellow-300 bg-clip-text text-transparent">
-              {p.name}
-            </div>
+            {shouldHideNames ? (
+              <div className="flex flex-col items-center gap-2">
+                {p.avatar && <img src={p.avatar} alt="" className="h-10 w-10 rounded-full border-2 border-kahoot-yellow-300 bg-white/20 object-cover" />}
+                <div className="text-lg font-black text-kahoot-yellow-200">
+                  {isTeamMode ? `Team ${index + 1}` : `Player ${index + 1}`}
+                </div>
+              </div>
+            ) : (
+              <div className="text-xl font-black bg-gradient-to-r from-white to-kahoot-yellow-300 bg-clip-text text-transparent">
+                {p.name}
+              </div>
+            )}
             <div className="text-3xl font-bold my-2">{'❤️'.repeat(p.lives)}</div>
             <div className="text-2xl font-black text-kahoot-green-400">{p.points} pts</div>
           </div>
@@ -610,6 +620,8 @@ const GameScreen: React.FC<GameScreenProps> = ({
       <ParticipantStats
         participants={participants}
         currentIndex={currentParticipantIndex}
+        hideNames={shouldHideNames}
+        isTeamMode={isTeamMode}
       />
       
       {/* Enhanced Feedback Messages */}
@@ -844,7 +856,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
           
           {/* Epic Word Display Header */}
           <h2 className="text-4xl md:text-5xl font-black mb-8 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent animate-sparkle">
-            🎯 WORD FOR {isTeamMode ? 'TEAM' : 'STUDENT'}: {participants[currentParticipantIndex]?.name?.toUpperCase() || (isTeamMode ? 'TEAM' : 'STUDENT')}
+            🎯 WORD FOR {isTeamMode ? 'TEAM' : 'STUDENT'}: {shouldHideNames ? `${isTeamMode ? 'TEAM' : 'PLAYER'} ${currentParticipantIndex + 1}` : (participants[currentParticipantIndex]?.name?.toUpperCase() || (isTeamMode ? 'TEAM' : 'STUDENT'))}
           </h2>
           
           {/* Dramatic Word Display */}
