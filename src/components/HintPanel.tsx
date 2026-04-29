@@ -156,7 +156,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
   // ── Derived word data ───────────────────────────────────────────────────────
   const sentenceText = word.example || '';
   const syllableText = word.syllables?.join('-') || '';
-  const wordLengthCount = word.word.replace(/\s/g, '').length;
+  const wordLengthCount = word.word.replace(/[^a-zA-Z]/g, '').length;
   const wordLengthBlanks = word.word.split('').map(ch => (/[a-zA-Z]/.test(ch) ? '_' : ch)).join(' ');
   const definitionText = word.definition || '';
   const soundItOutText = word.pronunciation || (word.phonemes?.join('-') ?? '');
@@ -294,15 +294,18 @@ const HintPanel: React.FC<HintPanelProps> = ({
 
   const handleHangmanReveal = () => {
     if (!isPowerUnlocked('hangman')) return;
-    const unrevealed = revealedLetters
-      .map((r, i) => (!r ? i : null))
+    // Only consider actual letter positions — never reveal spaces, hyphens, or punctuation
+    const unrevealedLetterIndices = revealedLetters
+      .map((r, i) => (!r && /[a-zA-Z]/.test(word.word[i]) ? i : null))
       .filter((i): i is number => i !== null);
-    if (unrevealed.length === 0) {
+    if (unrevealedLetterIndices.length === 0) {
       showValidation('All letters are already revealed!');
       return;
     }
     if (!tryUsePower('hangman')) return;
-    const pick = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+    // If Vowel Reveal was already used, all vowels are already in revealedLetters,
+    // so unrevealedLetterIndices naturally only contains consonants. No extra filtering needed.
+    const pick = unrevealedLetterIndices[Math.floor(Math.random() * unrevealedLetterIndices.length)];
     setRevealedLetters(prev => {
       const next = [...prev];
       next[pick] = true;
@@ -387,7 +390,10 @@ const HintPanel: React.FC<HintPanelProps> = ({
       {/* ── Revealed letters display (hangman / vowel reveals) ──────────── */}
       {revealedLetters.some(r => r) && (
         <p className="text-3xl font-mono text-center tracking-widest py-1">
-          {word.word.split('').map((ch, i) => (revealedLetters[i] ? ch : '_')).join(' ')}
+          {word.word.split('').map((ch, i) => {
+            if (!/[a-zA-Z]/.test(ch)) return ch; // preserve spaces, hyphens, apostrophes
+            return revealedLetters[i] ? ch : '_';
+          }).join(' ')}
         </p>
       )}
 
@@ -564,7 +570,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
         {/* Multiple Attempts (once per word) */}
         {isPowerUnlocked('multipleAttempts') && !isOnceUsed('multipleAttempts') && (
           <button onClick={handleMultipleAttempts} disabled={!canAfford('multipleAttempts')} className={btnPink}>
-            🎯 Extra Attempt <span className="opacity-70 text-xs">(-{getPowerCost('multipleAttempts')})</span>
+            🎯 Multiple Attempts <span className="opacity-70 text-xs">(-{getPowerCost('multipleAttempts')})</span>
           </button>
         )}
 
