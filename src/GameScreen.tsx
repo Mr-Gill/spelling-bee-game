@@ -679,7 +679,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         }`}>
           {timeLeft}
         </div>
-        <div className="text-lg font-bold">
+        <div className="text-lg font-bold" aria-live="polite" aria-atomic="true">
           {timeLeft <= 5 ? 'Final seconds.' : timeLeft <= 10 ? 'Time is getting rude.' : 'seconds left'}
         </div>
         <button

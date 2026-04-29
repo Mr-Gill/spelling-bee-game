@@ -208,7 +208,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
                   disabled={participantPoints < 3}
                   className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
                 >
-                  {`Syllable ${idx + 1} (−3 pts)`}
+                  {`Reveal Syllable ${idx + 1} (−3 pts)`}
                 </button>
               )
             )}

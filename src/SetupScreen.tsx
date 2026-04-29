@@ -953,7 +953,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <li><strong>Shared Lives:</strong> Teams have 10 lives total</li>
                 <li><strong>Steal Mechanic:</strong> If one team misspells, the next team may attempt the same word</li>
                 <li><strong>Strategic Hints:</strong> Teams decide when to spend points on clues</li>
-                <li><strong>Redemption Round:</strong> Missed words return later, probably with notes</li>
+                <li><strong>Redemption Round:</strong> Missed words return later in the game</li>
               </ul>
             </div>
             <div>
