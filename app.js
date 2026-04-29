@@ -10206,7 +10206,7 @@ var require_howler = __commonJS({
 });
 
 // src/spelling-bee-game.tsx
-var import_react26 = __toESM(require_react());
+var import_react27 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // src/LeaderboardScreen.tsx
@@ -11844,7 +11844,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onResume
 var SetupScreen_default = SetupScreen;
 
 // src/GameScreen.tsx
-var import_react15 = __toESM(require_react());
+var import_react16 = __toESM(require_react());
 
 // node_modules/lucide-react/dist/esm/createLucideIcon.js
 var import_react5 = __toESM(require_react());
@@ -12107,8 +12107,11 @@ var useTimer = (duration, onExpire) => {
   const stop = (0, import_react7.useCallback)(() => {
     clear();
   }, []);
+  const addSeconds = (0, import_react7.useCallback)((seconds) => {
+    setTimeLeft((prev) => prev + seconds);
+  }, []);
   (0, import_react7.useEffect)(() => () => clear(), []);
-  return { timeLeft, start, pause, resume, reset, stop, isPaused };
+  return { timeLeft, start, pause, resume, reset, stop, isPaused, addSeconds };
 };
 var useTimer_default = useTimer;
 
@@ -12261,281 +12264,642 @@ var OnScreenKeyboard_default = OnScreenKeyboard;
 
 // src/components/HintPanel.tsx
 var import_react10 = __toESM(require_react());
+
+// src/utils/battleProgression.ts
+var BATTLE_POWERS = [
+  // ── Available from the start of the game (unlockAt: 0) ──────────────────
+  {
+    id: "sentence",
+    name: "Sentence Hint",
+    description: "See the word used in a real sentence. Understanding the context helps you connect meaning to spelling.",
+    icon: "\u{1F4DD}",
+    cost: 1,
+    unlockAt: 0
+  },
+  {
+    id: "syllables",
+    name: "Syllable Breakdown",
+    description: "Break the word into smaller sound chunks. Spell one part at a time instead of guessing the whole word.",
+    icon: "\u{1F9E9}",
+    cost: 1,
+    unlockAt: 0
+  },
+  {
+    id: "wordLength",
+    name: "Word Length Hint",
+    description: "See how many letters are in the word. Knowing the length helps you plan your spelling from the start.",
+    icon: "\u{1F522}",
+    cost: 1,
+    unlockAt: 0
+  },
+  // ── Unlock at 2 combined correct ─────────────────────────────────────────
+  {
+    id: "definition",
+    name: "Definition Hint",
+    description: "See what the word means. Understanding the meaning helps you connect it to how it's spelled.",
+    icon: "\u{1F4D6}",
+    cost: 1,
+    unlockAt: 2
+  },
+  // ── Unlock at 4 combined correct ─────────────────────────────────────────
+  {
+    id: "extraTime",
+    name: "Extra Time",
+    description: "Add 15 seconds to the timer! Use this when your team needs more thinking time. Once per word.",
+    icon: "\u23F1\uFE0F",
+    cost: 2,
+    unlockAt: 4
+  },
+  // ── Unlock at 6 combined correct ─────────────────────────────────────────
+  {
+    id: "soundItOut",
+    name: "Sound It Out Hint",
+    description: "Get the phonetic breakdown of the word. Hearing each sound helps your team spell it correctly.",
+    icon: "\u{1F50A}",
+    cost: 2,
+    unlockAt: 6
+  },
+  // ── Unlock at 8 combined correct ─────────────────────────────────────────
+  {
+    id: "affixes",
+    name: "Prefix / Suffix / Root Hint",
+    description: "See the word broken into its parts \u2014 prefix, root, and suffix. Word structure reveals spelling patterns.",
+    icon: "\u{1F520}",
+    cost: 2,
+    unlockAt: 8
+  },
+  // ── Unlock at 10 combined correct ────────────────────────────────────────
+  {
+    id: "spellingPattern",
+    name: "Spelling Pattern Hint",
+    description: "Get a clue about the word's spelling pattern \u2014 like a silent letter, double consonant, or special ending.",
+    icon: "\u{1F9E0}",
+    cost: 2,
+    unlockAt: 10
+  },
+  // ── Unlock at 12 combined correct ────────────────────────────────────────
+  {
+    id: "origin",
+    name: "Origin Hint",
+    description: "Find out where the word comes from. A word's language of origin often explains why it's spelled the way it is.",
+    icon: "\u{1F30D}",
+    cost: 2,
+    unlockAt: 12
+  },
+  // ── Unlock at 14 combined correct ────────────────────────────────────────
+  {
+    id: "multipleAttempts",
+    name: "Multiple Attempts",
+    description: "Get one extra chance to spell the word. Use it wisely \u2014 your team only gets one bonus attempt per word.",
+    icon: "\u{1F3AF}",
+    cost: 3,
+    unlockAt: 14
+  },
+  // ── Unlock at 16 combined correct ────────────────────────────────────────
+  {
+    id: "vowels",
+    name: "Vowel Reveal",
+    description: "All vowels in the word are revealed! Use this to narrow down the spelling when the consonants are the hard part.",
+    icon: "\u{1F524}",
+    cost: 3,
+    unlockAt: 16
+  },
+  // ── Unlock at 18 combined correct ────────────────────────────────────────
+  {
+    id: "hangman",
+    name: "Hangman-Style Reveal",
+    description: "One hidden letter is revealed at random. If vowels are already shown, a consonant will be chosen first.",
+    icon: "\u{1F575}\uFE0F",
+    cost: 3,
+    unlockAt: 18
+  },
+  // ── Unlock at 20 combined correct ────────────────────────────────────────
+  {
+    id: "quickPeek",
+    name: "Quick Peek",
+    description: "The full word flashes on screen for 1.5 seconds! Your team must memorise it and spell it from memory. Once per word.",
+    icon: "\u{1F50D}",
+    cost: 4,
+    unlockAt: 20
+  },
+  // ── Unlock at 22 combined correct ────────────────────────────────────────
+  {
+    id: "friendSub",
+    name: "Friend Substitution",
+    description: "Swap the current speller with a teammate. A fresh perspective can make all the difference!",
+    icon: "\u{1F465}",
+    cost: 4,
+    unlockAt: 22
+  },
+  // ── Unlock at 24 combined correct ────────────────────────────────────────
+  {
+    id: "skipWord",
+    name: "Skip Word",
+    description: "Skip this word and move on \u2014 no life lost, but no points earned either. The word is saved for review.",
+    icon: "\u23ED\uFE0F",
+    cost: 5,
+    unlockAt: 24
+  }
+];
+function getNewlyUnlockedPowers(previousCount, newCount) {
+  return BATTLE_POWERS.filter(
+    (p) => p.unlockAt > previousCount && p.unlockAt <= newCount
+  );
+}
+function getUnlockedPowerIds(totalCorrect) {
+  return BATTLE_POWERS.filter((p) => p.unlockAt <= totalCorrect).map((p) => p.id);
+}
+
+// src/components/HintPanel.tsx
 var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+var getPowerCost = (id) => BATTLE_POWERS.find((p) => p.id === id)?.cost ?? 0;
+var ONCE_PER_WORD = /* @__PURE__ */ new Set(["extraTime", "multipleAttempts", "vowels", "quickPeek"]);
+var MAX_HINTS_BEFORE_ATTEMPT = 2;
+var QUICK_PEEK_DURATION_MS = 1500;
+function getSpellingPattern(word) {
+  const w = word.toLowerCase();
+  if (w.includes("ph")) return 'This word uses "ph" for the /f/ sound.';
+  if (/tion$/.test(w)) return 'This word ends with "-tion" (sounds like "shun").';
+  if (/sion$/.test(w)) return 'This word ends with "-sion".';
+  if (/ough/.test(w)) return 'This word contains "-ough", which can sound different ways.';
+  if (/ight$/.test(w)) return 'This word ends with "-ight" \u2014 the "gh" is silent.';
+  if (/ness$/.test(w)) return 'This word ends with "-ness".';
+  if (/ment$/.test(w)) return 'This word ends with "-ment".';
+  if (/able$/.test(w)) return 'This word ends with "-able".';
+  if (/ible$/.test(w)) return 'This word ends with "-ible".';
+  if (/ful$/.test(w)) return 'This word ends with "-ful".';
+  const dc = /([bcdfghjklmnpqrstvwxyz])\1/i.exec(w);
+  if (dc) return `This word has a double "${dc[1].toUpperCase()}".`;
+  if (/[aeiou][^aeiou]e$/.test(w)) return "This word follows the silent-e pattern (vowel \u2192 consonant \u2192 silent e).";
+  return null;
+}
 var HintPanel = ({
   word,
   participantPoints,
   participantIndex,
   spendPoints,
-  isTeamMode,
-  showWord,
   onHintUsed,
-  onExtraAttempt
+  onExtraAttempt,
+  unlockedPowers,
+  hasAttemptedCurrentWord = false,
+  onAddTime,
+  onSkipWord
 }) => {
+  const [showSentence, setShowSentence] = (0, import_react10.useState)(false);
+  const [showSyllables, setShowSyllables] = (0, import_react10.useState)(false);
+  const [showWordLength, setShowWordLength] = (0, import_react10.useState)(false);
+  const [showDefinition, setShowDefinition] = (0, import_react10.useState)(false);
+  const [showSoundItOut, setShowSoundItOut] = (0, import_react10.useState)(false);
+  const [showAffixes, setShowAffixes] = (0, import_react10.useState)(false);
+  const [showSpellingPattern, setShowSpellingPattern] = (0, import_react10.useState)(false);
+  const [showOrigin, setShowOrigin] = (0, import_react10.useState)(false);
+  const [revealedLetters, setRevealedLetters] = (0, import_react10.useState)([]);
+  const [quickPeekVisible, setQuickPeekVisible] = (0, import_react10.useState)(false);
+  const quickPeekTimer = (0, import_react10.useRef)(null);
+  const [hintsBeforeAttempt, setHintsBeforeAttempt] = (0, import_react10.useState)(0);
+  const [usedOncePowers, setUsedOncePowers] = (0, import_react10.useState)(/* @__PURE__ */ new Set());
+  const [validationMsg, setValidationMsg] = (0, import_react10.useState)("");
+  const validationTimer = (0, import_react10.useRef)(null);
+  (0, import_react10.useEffect)(() => {
+    if (!word) return;
+    setShowSentence(false);
+    setShowSyllables(false);
+    setShowWordLength(false);
+    setShowDefinition(false);
+    setShowSoundItOut(false);
+    setShowAffixes(false);
+    setShowSpellingPattern(false);
+    setShowOrigin(false);
+    setRevealedLetters(Array(word.word.length).fill(false));
+    setQuickPeekVisible(false);
+    setHintsBeforeAttempt(0);
+    setUsedOncePowers(/* @__PURE__ */ new Set());
+    setValidationMsg("");
+    if (quickPeekTimer.current) clearTimeout(quickPeekTimer.current);
+    if (validationTimer.current) clearTimeout(validationTimer.current);
+  }, [word]);
   if (!word) {
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex", children: [
       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "flex-shrink-0", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("svg", { className: "h-5 w-5 text-yellow-400", viewBox: "0 0 20 20", fill: "currentColor", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("path", { fillRule: "evenodd", d: "M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z", clipRule: "evenodd" }) }) }),
       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "ml-3", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-sm text-yellow-700", children: "No word selected. Please wait for the next word." }) })
     ] }) });
   }
-  const safeAccess = (obj, path, fallback = "N/A") => {
-    return path.split(".").reduce((acc, part) => acc && acc[part] ? acc[part] : fallback, obj);
+  const sentenceText = word.example || "";
+  const syllableText = word.syllables?.join("-") || "";
+  const wordLengthCount = word.word.replace(/[^a-zA-Z]/g, "").length;
+  const wordLengthBlanks = word.word.split("").map((ch) => /[a-zA-Z]/.test(ch) ? "_" : ch).join(" ");
+  const definitionText = word.definition || "";
+  const soundItOutText = word.pronunciation || (word.phonemes?.join("-") ?? "");
+  const originText = word.origin || "";
+  const prefixText = word.prefix || "";
+  const suffixText = word.suffix || "";
+  const prefixMeaning = word.prefixMeaning || "";
+  const suffixMeaning = word.suffixMeaning || "";
+  const spellingPatternText = getSpellingPattern(word.word);
+  const isPowerUnlocked = (id) => !unlockedPowers || unlockedPowers.includes(id);
+  const showValidation = (msg) => {
+    setValidationMsg(msg);
+    if (validationTimer.current) clearTimeout(validationTimer.current);
+    validationTimer.current = setTimeout(() => setValidationMsg(""), 4e3);
   };
-  const definition = safeAccess(word, "definition", "");
-  const origin = safeAccess(word, "origin", "");
-  const example = safeAccess(word, "example", "");
-  const prefix = safeAccess(word, "prefix", "");
-  const suffix = safeAccess(word, "suffix", "");
-  const prefixMeaning = safeAccess(word, "prefixMeaning", "");
-  const suffixMeaning = safeAccess(word, "suffixMeaning", "");
-  const [showHint, setShowHint] = (0, import_react10.useState)(false);
-  const [showDefinition, setShowDefinition] = (0, import_react10.useState)(false);
-  const [showOrigin, setShowOrigin] = (0, import_react10.useState)(false);
-  const [showSentence, setShowSentence] = (0, import_react10.useState)(false);
-  const [showPrefix, setShowPrefix] = (0, import_react10.useState)(false);
-  const [showSuffix, setShowSuffix] = (0, import_react10.useState)(false);
-  const [revealedLetters, setRevealedLetters] = (0, import_react10.useState)([]);
-  const [revealedSyllables, setRevealedSyllables] = (0, import_react10.useState)([]);
-  (0, import_react10.useEffect)(() => {
-    setRevealedLetters(Array(word.word.length).fill(false));
-    setRevealedSyllables(Array(word.syllables?.length || 0).fill(false));
-    setShowHint(false);
-    setShowDefinition(false);
-    setShowOrigin(false);
-    setShowSentence(false);
-    setShowPrefix(false);
-    setShowSuffix(false);
-  }, [word]);
-  const handleRevealSyllable = (idx) => {
-    const cost = 3;
-    if (participantPoints < cost) return;
+  const tryUsePower = (powerId, countAsHint = true) => {
+    const cost = getPowerCost(powerId);
+    if (participantPoints < cost) {
+      showValidation(
+        `Not enough points \u2014 this hint costs ${cost} point${cost === 1 ? "" : "s"} and you have ${participantPoints}.`
+      );
+      return false;
+    }
+    if (ONCE_PER_WORD.has(powerId) && usedOncePowers.has(powerId)) {
+      showValidation("You have already used this power for this word.");
+      return false;
+    }
+    if (countAsHint && unlockedPowers && !hasAttemptedCurrentWord && hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT) {
+      showValidation(
+        `You can only use ${MAX_HINTS_BEFORE_ATTEMPT} hints before your first attempt. Make a spelling attempt first!`
+      );
+      return false;
+    }
     spendPoints(participantIndex, cost);
     onHintUsed();
-    setRevealedSyllables((prev) => {
-      const updated = [...prev];
-      updated[idx] = true;
-      return updated;
-    });
+    if (countAsHint && unlockedPowers && !hasAttemptedCurrentWord) {
+      setHintsBeforeAttempt((prev) => prev + 1);
+    }
+    if (ONCE_PER_WORD.has(powerId)) {
+      setUsedOncePowers((prev) => new Set(prev).add(powerId));
+    }
+    return true;
   };
-  const handleHangmanReveal = () => {
-    const cost = 5;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    const unrevealed = revealedLetters.map((r, i) => !r ? i : null).filter((i) => i !== null);
-    if (unrevealed.length === 0) return;
-    const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
-    setRevealedLetters((prev) => {
-      const updated = [...prev];
-      updated[randomIndex] = true;
-      return updated;
-    });
-  };
-  const handleVowelReveal = () => {
-    const cost = 3;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    setRevealedLetters(word.word.split("").map((l, idx) => revealedLetters[idx] || "aeiou".includes(l.toLowerCase())));
-  };
-  const handleFriendSubstitution = () => {
-    const cost = 4;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    onExtraAttempt();
-  };
-  const handlePrefixReveal = () => {
-    const cost = 3;
-    if (participantPoints < cost || !prefix) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    setShowPrefix(true);
-  };
-  const handleSuffixReveal = () => {
-    const cost = 3;
-    if (participantPoints < cost || !suffix) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    setShowSuffix(true);
-  };
-  const handleDefinitionReveal = () => {
-    const cost = 1;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    setShowDefinition(true);
-  };
-  const handleOriginReveal = () => {
-    const cost = 1;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
-    setShowOrigin(true);
-  };
-  const handleSentenceReveal = () => {
-    const cost = 2;
-    if (participantPoints < cost) return;
-    spendPoints(participantIndex, cost);
-    onHintUsed();
+  const handleSentence = () => {
+    if (!isPowerUnlocked("sentence") || showSentence) return;
+    if (!tryUsePower("sentence")) return;
     setShowSentence(true);
   };
-  const syllableCount = word?.syllables?.length || 0;
-  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-6 rounded-lg mb-8", children: [
-    revealedLetters.some((r) => r) && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-3xl font-mono mb-4", children: word.word.split("").map((letter, idx) => revealedLetters[idx] ? letter : "_").join(" ") }),
-    showDefinition && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("p", { className: "text-2xl mb-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { className: "text-yellow-300", children: "Definition:" }),
-      " ",
-      definition || "Definition not available"
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-      "button",
+  const handleSyllables = () => {
+    if (!isPowerUnlocked("syllables") || showSyllables) return;
+    if (!tryUsePower("syllables")) return;
+    setShowSyllables(true);
+  };
+  const handleWordLength = () => {
+    if (!isPowerUnlocked("wordLength") || showWordLength) return;
+    if (!tryUsePower("wordLength")) return;
+    setShowWordLength(true);
+  };
+  const handleDefinition = () => {
+    if (!isPowerUnlocked("definition") || showDefinition) return;
+    if (!tryUsePower("definition")) return;
+    setShowDefinition(true);
+  };
+  const handleExtraTime = () => {
+    if (!isPowerUnlocked("extraTime")) return;
+    if (!tryUsePower("extraTime")) return;
+    onAddTime?.();
+  };
+  const handleSoundItOut = () => {
+    if (!isPowerUnlocked("soundItOut") || showSoundItOut) return;
+    if (!tryUsePower("soundItOut")) return;
+    setShowSoundItOut(true);
+  };
+  const handleAffixes = () => {
+    if (!isPowerUnlocked("affixes") || showAffixes) return;
+    if (!prefixText && !suffixText) {
+      showValidation("No prefix or suffix data is available for this word.");
+      return;
+    }
+    if (!tryUsePower("affixes")) return;
+    setShowAffixes(true);
+  };
+  const handleSpellingPattern = () => {
+    if (!isPowerUnlocked("spellingPattern") || showSpellingPattern) return;
+    if (!tryUsePower("spellingPattern")) return;
+    setShowSpellingPattern(true);
+  };
+  const handleOrigin = () => {
+    if (!isPowerUnlocked("origin") || showOrigin) return;
+    if (!tryUsePower("origin")) return;
+    setShowOrigin(true);
+  };
+  const handleMultipleAttempts = () => {
+    if (!isPowerUnlocked("multipleAttempts")) return;
+    if (!tryUsePower("multipleAttempts")) return;
+    onExtraAttempt();
+  };
+  const handleVowelReveal = () => {
+    if (!isPowerUnlocked("vowels")) return;
+    if (!tryUsePower("vowels")) return;
+    setRevealedLetters(word.word.split("").map((l, i) => revealedLetters[i] || "aeiouAEIOU".includes(l)));
+  };
+  const handleHangmanReveal = () => {
+    if (!isPowerUnlocked("hangman")) return;
+    const unrevealedLetterIndices = revealedLetters.map((r, i) => !r && /[a-zA-Z]/.test(word.word[i]) ? i : null).filter((i) => i !== null);
+    if (unrevealedLetterIndices.length === 0) {
+      showValidation("All letters are already revealed!");
+      return;
+    }
+    if (!tryUsePower("hangman")) return;
+    const pick = unrevealedLetterIndices[Math.floor(Math.random() * unrevealedLetterIndices.length)];
+    setRevealedLetters((prev) => {
+      const next = [...prev];
+      next[pick] = true;
+      return next;
+    });
+  };
+  const handleQuickPeek = () => {
+    if (!isPowerUnlocked("quickPeek")) return;
+    if (!tryUsePower("quickPeek")) return;
+    setQuickPeekVisible(true);
+    if (quickPeekTimer.current) clearTimeout(quickPeekTimer.current);
+    quickPeekTimer.current = setTimeout(() => setQuickPeekVisible(false), QUICK_PEEK_DURATION_MS);
+  };
+  const handleFriendSub = () => {
+    if (!isPowerUnlocked("friendSub")) return;
+    showValidation("Friend Substitution is not available yet.");
+  };
+  const handleSkipWord = () => {
+    if (!isPowerUnlocked("skipWord")) return;
+    if (!tryUsePower("skipWord", false)) return;
+    onSkipWord?.();
+  };
+  const lockedPowers = unlockedPowers ? BATTLE_POWERS.filter((p) => !unlockedPowers.includes(p.id)) : [];
+  const nextLockedPower = lockedPowers[0] ?? null;
+  const btnBase = "flex items-center gap-1.5 px-3 py-2 rounded-xl font-bold text-sm transition-all duration-200";
+  const btnPrimary = `${btnBase} bg-yellow-300 hover:bg-yellow-400 text-black disabled:opacity-40`;
+  const btnBlue = `${btnBase} bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-40`;
+  const btnPurple = `${btnBase} bg-purple-500 hover:bg-purple-600 text-white disabled:opacity-40`;
+  const btnPink = `${btnBase} bg-pink-500 hover:bg-pink-600 text-white disabled:opacity-40`;
+  const btnOrange = `${btnBase} bg-orange-500 hover:bg-orange-600 text-white disabled:opacity-40`;
+  const btnTeal = `${btnBase} bg-teal-500 hover:bg-teal-600 text-white disabled:opacity-40`;
+  const btnRed = `${btnBase} bg-red-500 hover:bg-red-600 text-white disabled:opacity-40`;
+  const canAfford = (id) => participantPoints >= getPowerCost(id);
+  const isOnceUsed = (id) => ONCE_PER_WORD.has(id) && usedOncePowers.has(id);
+  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white/10 p-4 rounded-xl mb-6 space-y-3", children: [
+    quickPeekVisible && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+      "div",
       {
-        onClick: () => {
-          setShowHint(!showHint);
-          if (!showHint) onHintUsed();
-        },
-        className: "mt-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold",
-        children: showHint ? "Hide Hint" : "Show Hint"
+        className: "fixed inset-0 bg-black/85 flex items-center justify-center z-[70] pointer-events-none",
+        role: "status",
+        "aria-live": "assertive",
+        children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-center", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-white/60 text-sm mb-2 uppercase tracking-widest font-bold", children: "\u{1F50D} Quick Peek!" }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-5xl font-black text-yellow-300 drop-shadow-2xl", children: word.word }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("p", { className: "text-white/50 text-xs mt-3", children: [
+            "Memorize it \u2014 it disappears in ",
+            QUICK_PEEK_DURATION_MS / 1e3,
+            "s"
+          ] })
+        ] })
       }
     ),
-    showHint && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mt-4 flex flex-col items-center gap-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: word.syllables?.map((syllable, idx) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-        "button",
-        {
-          onClick: () => speak(syllable),
-          disabled: !revealedSyllables[idx],
-          className: "bg-yellow-100 text-black px-2 py-1 rounded disabled:opacity-50",
-          children: revealedSyllables[idx] ? syllable : "???"
-        },
-        idx
-      )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "flex flex-wrap gap-2 justify-center", children: word.syllables?.map(
-        (_, idx) => !revealedSyllables[idx] && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    validationMsg && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-red-500/20 border border-red-400/50 rounded-lg px-3 py-2 text-sm text-red-200 font-medium", role: "alert", children: [
+      "\u26A0\uFE0F ",
+      validationMsg
+    ] }),
+    !hasAttemptedCurrentWord && unlockedPowers && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: `text-xs text-center font-bold ${hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT ? "text-red-300" : "text-white/60"}`, children: hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT ? "\u{1F6AB} Hint limit reached \u2014 make a spelling attempt first!" : `\u{1F4A1} Hints used before attempt: ${hintsBeforeAttempt} / ${MAX_HINTS_BEFORE_ATTEMPT}` }),
+    revealedLetters.some((r) => r) && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-3xl font-mono text-center tracking-widest py-1", children: word.word.split("").map((ch, i) => {
+      if (!/[a-zA-Z]/.test(ch)) return ch;
+      return revealedLetters[i] ? ch : "_";
+    }).join(" ") }),
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "space-y-2", children: [
+      showWordLength && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-blue-500/20 rounded-lg px-3 py-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-blue-200 font-bold text-sm", children: "\u{1F522} Word Length: " }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "text-white text-sm", children: [
+          "This word has ",
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: wordLengthCount }),
+          " letter",
+          wordLengthCount === 1 ? "" : "s",
+          "."
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "font-mono text-lg text-white/80 mt-1 tracking-widest", children: wordLengthBlanks })
+      ] }),
+      showSentence && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-green-500/20 rounded-lg px-3 py-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-green-200 font-bold text-sm", children: "\u{1F4DD} Sentence: " }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "text-white text-sm italic", children: [
+          '"',
+          sentenceText || "No sentence hint is available for this word.",
+          '"'
+        ] })
+      ] }),
+      showSyllables && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-yellow-500/20 rounded-lg px-3 py-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-yellow-200 font-bold text-sm", children: "\u{1F9E9} Syllables: " }),
+        syllableText ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm", children: word.syllables.map((syl, i) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
           "button",
           {
-            onClick: () => handleRevealSyllable(idx),
-            disabled: participantPoints < 3,
-            className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
-            children: `Reveal syllable ${idx + 1} (-3)`
+            onClick: () => speak(syl),
+            className: "inline-block mx-0.5 px-1.5 py-0.5 bg-yellow-300/30 hover:bg-yellow-300/50 text-yellow-100 rounded text-sm font-mono transition",
+            title: "Click to hear this syllable",
+            children: syl
           },
-          `reveal-${idx}`
-        )
-      ) })
-    ] }),
-    showOrigin && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("p", { className: "text-xl mb-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { className: "text-yellow-300", children: "Origin:" }),
-      " ",
-      origin || "Origin not available"
-    ] }),
-    showSentence && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("p", { className: "text-xl", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { className: "text-yellow-300", children: "Example:" }),
-      ' "',
-      example || "Example not available",
-      '"'
-    ] }),
-    showPrefix && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-xl mb-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { className: "text-yellow-300", children: "Prefix:" }),
-      " ",
-      prefix || "Prefix not available",
-      prefixMeaning && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "text-lg text-gray-300", children: [
-        " (meaning: ",
-        prefixMeaning,
-        ")"
+          i
+        )) }) : /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white/70 text-sm italic", children: "No syllable breakdown is available for this word." })
+      ] }),
+      showDefinition && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-amber-500/20 rounded-lg px-3 py-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-amber-200 font-bold text-sm", children: "\u{1F4D6} Definition: " }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm", children: definitionText || "No definition is available for this word." })
+      ] }),
+      showSoundItOut && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-cyan-500/20 rounded-lg px-3 py-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-cyan-200 font-bold text-sm", children: "\u{1F50A} Sound It Out: " }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm font-mono", children: soundItOutText || "No sound-it-out hint is available for this word." })
+      ] }),
+      showAffixes && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-orange-500/20 rounded-lg px-3 py-2 space-y-1", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-orange-200 font-bold text-sm block", children: "\u{1F520} Word Parts:" }),
+        prefixText ? /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("p", { className: "text-white text-sm", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: "Prefix:" }),
+          " ",
+          prefixText,
+          prefixMeaning && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "text-white/70", children: [
+            ' \u2014 "',
+            prefixMeaning,
+            '"'
+          ] })
+        ] }) : null,
+        suffixText ? /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("p", { className: "text-white text-sm", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { children: "Suffix:" }),
+          " ",
+          suffixText,
+          suffixMeaning && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "text-white/70", children: [
+            ' \u2014 "',
+            suffixMeaning,
+            '"'
+          ] })
+        ] }) : null,
+        !prefixText && !suffixText && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-white/70 text-sm italic", children: "No word-part hint is available for this word." })
+      ] }),
+      showSpellingPattern && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-violet-500/20 rounded-lg px-3 py-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-violet-200 font-bold text-sm", children: "\u{1F9E0} Spelling Pattern: " }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm", children: spellingPatternText || "No spelling pattern hint is available for this word." })
+      ] }),
+      showOrigin && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-emerald-500/20 rounded-lg px-3 py-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-emerald-200 font-bold text-sm", children: "\u{1F30D} Origin: " }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm", children: originText || "No origin hint is available for this word." })
       ] })
     ] }),
-    showSuffix && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "text-xl mb-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { className: "text-yellow-300", children: "Suffix:" }),
-      " ",
-      suffix || "Suffix not available",
-      suffixMeaning && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "text-lg text-gray-300", children: [
-        " (meaning: ",
-        suffixMeaning,
-        ")"
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-wrap gap-2 justify-center pt-1", children: [
+      isPowerUnlocked("sentence") && !showSentence && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleSentence, disabled: !canAfford("sentence"), className: btnPrimary, children: [
+        "\u{1F4DD} Sentence ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("sentence"),
+          ")"
+        ] })
+      ] }),
+      isPowerUnlocked("syllables") && !showSyllables && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleSyllables, disabled: !canAfford("syllables"), className: btnPrimary, children: [
+        "\u{1F9E9} Syllables ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("syllables"),
+          ")"
+        ] })
+      ] }),
+      isPowerUnlocked("wordLength") && !showWordLength && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleWordLength, disabled: !canAfford("wordLength"), className: btnPrimary, children: [
+        "\u{1F522} Word Length ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("wordLength"),
+          ")"
+        ] })
+      ] }),
+      isPowerUnlocked("definition") && !showDefinition && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleDefinition, disabled: !canAfford("definition"), className: btnPrimary, children: [
+        "\u{1F4D6} Definition ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("definition"),
+          ")"
+        ] })
+      ] }),
+      isPowerUnlocked("extraTime") && !isOnceUsed("extraTime") && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleExtraTime, disabled: !canAfford("extraTime"), className: btnBlue, children: [
+        "\u23F1\uFE0F +15s ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("extraTime"),
+          ")"
+        ] })
+      ] }),
+      isPowerUnlocked("soundItOut") && !showSoundItOut && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleSoundItOut, disabled: !canAfford("soundItOut"), className: btnBlue, children: [
+        "\u{1F50A} Sound It Out ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("soundItOut"),
+          ")"
+        ] })
+      ] }),
+      isPowerUnlocked("affixes") && !showAffixes && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleAffixes, disabled: !canAfford("affixes"), className: btnOrange, children: [
+        "\u{1F520} Word Parts ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("affixes"),
+          ")"
+        ] })
+      ] }),
+      isPowerUnlocked("spellingPattern") && !showSpellingPattern && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleSpellingPattern, disabled: !canAfford("spellingPattern"), className: btnPurple, children: [
+        "\u{1F9E0} Pattern ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("spellingPattern"),
+          ")"
+        ] })
+      ] }),
+      isPowerUnlocked("origin") && !showOrigin && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleOrigin, disabled: !canAfford("origin"), className: btnTeal, children: [
+        "\u{1F30D} Origin ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("origin"),
+          ")"
+        ] })
+      ] }),
+      isPowerUnlocked("multipleAttempts") && !isOnceUsed("multipleAttempts") && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleMultipleAttempts, disabled: !canAfford("multipleAttempts"), className: btnPink, children: [
+        "\u{1F3AF} Multiple Attempts ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("multipleAttempts"),
+          ")"
+        ] })
+      ] }),
+      isPowerUnlocked("vowels") && !isOnceUsed("vowels") && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleVowelReveal, disabled: !canAfford("vowels"), className: btnPurple, children: [
+        "\u{1F524} Vowel Reveal ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("vowels"),
+          ")"
+        ] })
+      ] }),
+      isPowerUnlocked("hangman") && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleHangmanReveal, disabled: !canAfford("hangman"), className: btnBlue, children: [
+        "\u{1F575}\uFE0F Reveal Letter ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("hangman"),
+          ")"
+        ] })
+      ] }),
+      isPowerUnlocked("quickPeek") && !isOnceUsed("quickPeek") && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleQuickPeek, disabled: !canAfford("quickPeek"), className: btnOrange, children: [
+        "\u{1F50D} Quick Peek ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("quickPeek"),
+          ")"
+        ] })
+      ] }),
+      isPowerUnlocked("friendSub") && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: handleFriendSub, className: btnPink, children: "\u{1F465} Friend Sub" }),
+      isPowerUnlocked("skipWord") && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("button", { onClick: handleSkipWord, disabled: !canAfford("skipWord"), className: btnRed, children: [
+        "\u23ED\uFE0F Skip Word ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "opacity-70 text-xs", children: [
+          "(-",
+          getPowerCost("skipWord"),
+          ")"
+        ] })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mt-4 flex gap-4 justify-center", children: [
-      !showDefinition && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-        "button",
-        {
-          onClick: handleDefinitionReveal,
-          disabled: participantPoints < 1,
-          className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
-          children: "Buy Definition (-1)"
-        }
-      ),
-      !showOrigin && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-        "button",
-        {
-          onClick: handleOriginReveal,
-          disabled: participantPoints < 1,
-          className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
-          children: "Buy Origin (-1)"
-        }
-      ),
-      !showSentence && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-        "button",
-        {
-          onClick: handleSentenceReveal,
-          disabled: participantPoints < 2,
-          className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
-          children: "Buy Sentence (-2)"
-        }
-      )
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mt-4 flex gap-4 justify-center", children: [
-      !showPrefix && prefix && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-        "button",
-        {
-          onClick: handlePrefixReveal,
-          disabled: participantPoints < 3,
-          className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
-          children: "Reveal Prefix (-3)"
-        }
-      ),
-      !showSuffix && suffix && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-        "button",
-        {
-          onClick: handleSuffixReveal,
-          disabled: participantPoints < 3,
-          className: "bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50",
-          children: "Reveal Suffix (-3)"
-        }
-      )
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mt-6 flex justify-center gap-4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-        "button",
-        {
-          onClick: handleHangmanReveal,
-          disabled: participantPoints < 5,
-          className: "bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg",
-          children: "Hangman Reveal (-5)"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-        "button",
-        {
-          onClick: handleVowelReveal,
-          disabled: participantPoints < 3,
-          className: "bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg",
-          children: "Vowel Reveal (-3)"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-        "button",
-        {
-          onClick: handleFriendSubstitution,
-          disabled: participantPoints < 4,
-          className: "bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg",
-          children: "Friend Sub (-4)"
-        }
-      )
-    ] }),
-    word && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(import_jsx_runtime5.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "hint-section", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h3", { children: "Syllables" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { children: syllableCount })
-    ] }) })
+    unlockedPowers && lockedPowers.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mt-4 border-t border-white/20 pt-3", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-white/50 text-xs text-center mb-2 font-bold uppercase tracking-wider", children: "\u{1F512} Coming up next\u2026" }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-wrap justify-center gap-2", children: [
+        lockedPowers.slice(0, 6).map((p, i) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+          "div",
+          {
+            className: "flex flex-col items-center gap-0.5 opacity-50 max-w-[60px]",
+            "aria-label": `${p.name} \u2014 locked. Unlocks after ${p.unlockAt} correct answer${p.unlockAt === 1 ? "" : "s"}. Costs ${p.cost} point${p.cost === 1 ? "" : "s"}. ${p.description}`,
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-xl grayscale", "aria-hidden": "true", children: p.icon }),
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "text-xs text-white/60 text-center leading-tight", children: [
+                i === 0 && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "text-yellow-300 font-bold block", "aria-hidden": "true", children: [
+                  "@",
+                  p.unlockAt,
+                  "\u2713"
+                ] }),
+                p.name
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "text-xs text-white/40", children: [
+                "-",
+                p.cost,
+                "pt"
+              ] })
+            ]
+          },
+          p.id
+        )),
+        lockedPowers.length > 6 && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-col items-center gap-0.5 opacity-40", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-xl", children: "\u2026" }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "text-xs text-white/40", children: [
+            lockedPowers.length - 6,
+            " more"
+          ] })
+        ] })
+      ] }),
+      nextLockedPower && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("p", { className: "mt-2 text-white/40 text-xs text-center", children: [
+        "Next: ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("strong", { className: "text-white/70", children: [
+          nextLockedPower.icon,
+          " ",
+          nextLockedPower.name
+        ] }),
+        " ",
+        "at ",
+        nextLockedPower.unlockAt,
+        " correct answer",
+        nextLockedPower.unlockAt === 1 ? "" : "s",
+        " \xB7 ",
+        nextLockedPower.cost,
+        "pt"
+      ] })
+    ] })
   ] });
 };
 var HintPanel_default = HintPanel;
@@ -13070,8 +13434,68 @@ var publishScoreboard = (participants, options) => {
 };
 var ScoreboardScreen_default = ScoreboardScreen;
 
-// src/GameScreen.tsx
+// src/components/BattlePowerUnlock.tsx
+var import_react15 = __toESM(require_react());
 var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+var AUTO_DISMISS_DURATION_MS = 8e3;
+var BattlePowerUnlock = ({ power, onDismiss }) => {
+  const timeoutRef = import_react15.default.useRef(null);
+  import_react15.default.useEffect(() => {
+    timeoutRef.current = setTimeout(onDismiss, AUTO_DISMISS_DURATION_MS);
+    return () => {
+      if (timeoutRef.current !== null) clearTimeout(timeoutRef.current);
+    };
+  }, [onDismiss]);
+  return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    "div",
+    {
+      className: "fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[60]",
+      role: "dialog",
+      "aria-modal": "true",
+      "aria-labelledby": "power-unlock-title",
+      children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "relative bg-gradient-to-br from-purple-700 via-indigo-700 to-blue-700 rounded-3xl p-8 max-w-sm w-full mx-4 text-white shadow-2xl text-center animate-bounce-in", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "absolute -inset-1 rounded-3xl bg-gradient-to-r from-kahoot-yellow-400 via-kahoot-red-400 to-kahoot-yellow-400 opacity-60 blur-sm -z-10" }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-xs font-black uppercase tracking-widest text-kahoot-yellow-300 mb-2", children: "\u{1F513} Power Unlocked!" }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-7xl my-4 animate-wiggle select-none", children: power.icon }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          "h2",
+          {
+            id: "power-unlock-title",
+            className: "text-2xl font-black mb-2 bg-gradient-to-r from-white to-kahoot-yellow-300 bg-clip-text text-transparent",
+            children: power.name
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "text-white/90 text-base mb-2", children: power.description }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { className: "text-kahoot-yellow-300 font-bold text-sm mb-6", children: [
+          "Cost: ",
+          power.cost,
+          " ",
+          power.cost === 1 ? "point" : "points",
+          " to use"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          "button",
+          {
+            onClick: onDismiss,
+            className: "w-full py-3 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-yellow-500 hover:from-kahoot-yellow-500 hover:to-kahoot-yellow-600 text-black font-black text-lg rounded-2xl shadow-lg transform transition-all duration-200 hover:scale-105",
+            autoFocus: true,
+            children: "\u{1F680} Unlock!"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "mt-4 h-1 w-full bg-white/20 rounded-full overflow-hidden", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "h-full bg-kahoot-yellow-400 rounded-full animate-[shrink_8s_linear_forwards]" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { className: "mt-1 text-white/50 text-xs", children: [
+          "Auto-dismisses in ",
+          AUTO_DISMISS_DURATION_MS / 1e3,
+          " seconds"
+        ] })
+      ] })
+    }
+  );
+};
+var BattlePowerUnlock_default = BattlePowerUnlock;
+
+// src/GameScreen.tsx
+var import_jsx_runtime16 = __toESM(require_jsx_runtime());
 var musicStyles2 = ["Funk", "Country", "Deep Bass", "Rock", "Jazz", "Classical"];
 var MIN_DIFFICULTY_LEVEL2 = 0;
 var MAX_DIFFICULTY_LEVEL2 = 2;
@@ -13094,7 +13518,7 @@ var GameScreen = ({
   gameId,
   initialGameState
 }) => {
-  const [participants, setParticipants] = import_react15.default.useState(
+  const [participants, setParticipants] = import_react16.default.useState(
     config2.participants.map((p) => ({
       ...p,
       difficultyLevel: clampDifficultyLevel2(p.difficultyLevel),
@@ -13104,24 +13528,24 @@ var GameScreen = ({
       wordsCorrect: 0
     }))
   );
-  const [currentParticipantIndex, setCurrentParticipantIndex] = import_react15.default.useState(0);
+  const [currentParticipantIndex, setCurrentParticipantIndex] = import_react16.default.useState(0);
   const isTeamMode = config2.gameMode === "team";
-  const [showWord, setShowWord] = import_react15.default.useState(false);
-  const [showPhonics, setShowPhonics] = import_react15.default.useState(false);
-  const [usedHint, setUsedHint] = import_react15.default.useState(false);
-  const [letters2, setLetters] = import_react15.default.useState([]);
-  const [feedback, setFeedback] = import_react15.default.useState({ message: "", type: "" });
-  const [encouragementMessage, setEncouragementMessage] = import_react15.default.useState("");
-  const [encouragementPhrases, setEncouragementPhrases] = import_react15.default.useState(loadEncouragementPhrases);
-  const [showEncouragementSettings, setShowEncouragementSettings] = import_react15.default.useState(false);
-  const [encouragementDraft, setEncouragementDraft] = import_react15.default.useState(() => loadEncouragementPhrases().join("\n"));
-  const [encouragementSaveMessage, setEncouragementSaveMessage] = import_react15.default.useState("");
-  const [extraAttempt, setExtraAttempt] = import_react15.default.useState(false);
-  const [isHelpOpen, setIsHelpOpen] = import_react15.default.useState(false);
+  const [showWord, setShowWord] = import_react16.default.useState(false);
+  const [showPhonics, setShowPhonics] = import_react16.default.useState(false);
+  const [usedHint, setUsedHint] = import_react16.default.useState(false);
+  const [letters2, setLetters] = import_react16.default.useState([]);
+  const [feedback, setFeedback] = import_react16.default.useState({ message: "", type: "" });
+  const [encouragementMessage, setEncouragementMessage] = import_react16.default.useState("");
+  const [encouragementPhrases, setEncouragementPhrases] = import_react16.default.useState(loadEncouragementPhrases);
+  const [showEncouragementSettings, setShowEncouragementSettings] = import_react16.default.useState(false);
+  const [encouragementDraft, setEncouragementDraft] = import_react16.default.useState(() => loadEncouragementPhrases().join("\n"));
+  const [encouragementSaveMessage, setEncouragementSaveMessage] = import_react16.default.useState("");
+  const [extraAttempt, setExtraAttempt] = import_react16.default.useState(false);
+  const [isHelpOpen, setIsHelpOpen] = import_react16.default.useState(false);
   const { wordQueues, setWordQueues, currentWord, currentDifficulty, selectNextWordForLevel: selectNextWord } = useWordProgression_default(config2.wordDatabase);
-  const [attemptedParticipants, setAttemptedParticipants] = import_react15.default.useState(/* @__PURE__ */ new Set());
-  const [missedWords, setMissedWords] = import_react15.default.useState([]);
-  const [unlockedAchievements, setUnlockedAchievements] = import_react15.default.useState(() => {
+  const [attemptedParticipants, setAttemptedParticipants] = import_react16.default.useState(/* @__PURE__ */ new Set());
+  const [missedWords, setMissedWords] = import_react16.default.useState([]);
+  const [unlockedAchievements, setUnlockedAchievements] = import_react16.default.useState(() => {
     if (typeof window === "undefined") return [];
     try {
       return JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
@@ -13129,17 +13553,22 @@ var GameScreen = ({
       return [];
     }
   });
-  const [toast, setToast] = import_react15.default.useState("");
-  const hiddenInputRef = import_react15.default.useRef(null);
-  const [startTime] = import_react15.default.useState(Date.now());
-  const [currentAvatar, setCurrentAvatar] = import_react15.default.useState("");
-  const [theme, setTheme] = import_react15.default.useState(() => localStorage.getItem("theme") || "light");
-  const [currentGameId] = import_react15.default.useState(gameId || generateGameId());
-  const [showExitConfirm, setShowExitConfirm] = import_react15.default.useState(false);
-  const [showAccessibilitySettings, setShowAccessibilitySettings] = import_react15.default.useState(false);
-  const [wordIndex, setWordIndex] = import_react15.default.useState(initialGameState?.currentWordIndex || 0);
-  const [totalWordsUsed, setTotalWordsUsed] = import_react15.default.useState(initialGameState?.totalWordsUsed || 0);
+  const [toast, setToast] = import_react16.default.useState("");
+  const hiddenInputRef = import_react16.default.useRef(null);
+  const [startTime] = import_react16.default.useState(Date.now());
+  const [currentAvatar, setCurrentAvatar] = import_react16.default.useState("");
+  const [theme, setTheme] = import_react16.default.useState(() => localStorage.getItem("theme") || "light");
+  const [currentGameId] = import_react16.default.useState(gameId || generateGameId());
+  const [showExitConfirm, setShowExitConfirm] = import_react16.default.useState(false);
+  const [showAccessibilitySettings, setShowAccessibilitySettings] = import_react16.default.useState(false);
+  const [wordIndex, setWordIndex] = import_react16.default.useState(initialGameState?.currentWordIndex || 0);
+  const [totalWordsUsed, setTotalWordsUsed] = import_react16.default.useState(initialGameState?.totalWordsUsed || 0);
   const shouldHideNames = Boolean(config2.hideNames);
+  const [teamCorrectCount, setTeamCorrectCount] = import_react16.default.useState(0);
+  const [unlockedPowers, setUnlockedPowers] = import_react16.default.useState(
+    () => isTeamMode ? getUnlockedPowerIds(0) : []
+  );
+  const [pendingUnlocks, setPendingUnlocks] = import_react16.default.useState([]);
   const playCorrect = useSound(correct_default, soundEnabled);
   const playWrong = useSound(wrong_default, soundEnabled);
   const playLetterCorrect = useSound(letter_correct_default, soundEnabled);
@@ -13153,7 +13582,8 @@ var GameScreen = ({
     resume: resumeTimer,
     reset: resetTimer,
     stop: stopTimer,
-    isPaused
+    isPaused,
+    addSeconds: addTimeToTimer
   } = useGameTimer_default(config2.timerDuration, soundEnabled, handleIncorrectAttempt);
   const {
     timeLeft: sessionTimeLeft,
@@ -13171,14 +13601,14 @@ var GameScreen = ({
       pauseSessionTimer();
     }
   };
-  import_react15.default.useEffect(() => {
+  import_react16.default.useEffect(() => {
     if (localStorage.getItem("teacherMode") === "true") {
       document.body.classList.add("teacher-mode");
     } else {
       document.body.classList.remove("teacher-mode");
     }
   }, []);
-  import_react15.default.useEffect(() => {
+  import_react16.default.useEffect(() => {
     if (currentWord) {
       setLetters(Array.from({ length: currentWord.word.length }, () => ""));
       publishTeamDisplayWord(currentWord.word);
@@ -13186,14 +13616,14 @@ var GameScreen = ({
       setShowWord(false);
     }
   }, [currentWord]);
-  import_react15.default.useEffect(() => {
+  import_react16.default.useEffect(() => {
     publishScoreboard(participants, { hideNames: shouldHideNames });
   }, [participants, shouldHideNames]);
-  import_react15.default.useEffect(() => {
+  import_react16.default.useEffect(() => {
     if (config2.gameMode !== "individual") return;
     participants.forEach(saveStudentProgress);
   }, [participants, config2.gameMode]);
-  import_react15.default.useEffect(() => {
+  import_react16.default.useEffect(() => {
     const handleKeyDown = (e) => {
       if (!currentWord || isPaused) return;
       if (/^[a-zA-Z]$/.test(e.key)) {
@@ -13207,14 +13637,14 @@ var GameScreen = ({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentWord, isPaused, letters2]);
-  import_react15.default.useEffect(() => {
+  import_react16.default.useEffect(() => {
     const normalized = applyThemeClass(theme);
     localStorage.setItem("theme", normalized);
   }, [theme]);
-  import_react15.default.useEffect(() => {
+  import_react16.default.useEffect(() => {
     setEncouragementDraft(encouragementPhrases.join("\n"));
   }, [encouragementPhrases]);
-  import_react15.default.useEffect(() => {
+  import_react16.default.useEffect(() => {
     if (currentWord && participants.length > 0) {
       const gameState = {
         gameConfig: config2,
@@ -13399,6 +13829,16 @@ var GameScreen = ({
       setToast(`Achievement unlocked: ${first.icon} ${first.name}!`);
       setTimeout(() => setToast(""), 3e3);
     }
+    if (isTeamMode) {
+      const prevCount = teamCorrectCount;
+      const newCount = prevCount + 1;
+      setTeamCorrectCount(newCount);
+      const newPowers = getNewlyUnlockedPowers(prevCount, newCount);
+      if (newPowers.length > 0) {
+        setUnlockedPowers(getUnlockedPowerIds(newCount));
+        setPendingUnlocks((prev) => [...prev, ...newPowers]);
+      }
+    }
     playCorrect();
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (config2.effectsEnabled && !prefersReducedMotion) {
@@ -13459,6 +13899,23 @@ var GameScreen = ({
       nextTurn();
     }, 1500);
   };
+  const skipWordFree = () => {
+    stopTimer();
+    if (currentWord) {
+      setWordQueues((prev) => ({ ...prev, review: [...prev.review, currentWord] }));
+      addReviewWord(currentWord);
+    }
+    setAttemptedParticipants(/* @__PURE__ */ new Set());
+    setFeedback({ message: "Word Skipped \u23ED\uFE0F", type: "info" });
+    setTimeout(() => {
+      const nextIndex = (currentParticipantIndex + 1) % participants.length;
+      const nextDifficulty = participants[nextIndex].difficultyLevel;
+      setFeedback({ message: "", type: "" });
+      if (currentWord) setLetters(Array(currentWord.word.length).fill(""));
+      advanceToWord(nextDifficulty);
+      nextTurn();
+    }, 1500);
+  };
   function onEndGameWithMissedWords() {
     stopSessionTimer();
     const lessonKey = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
@@ -13479,13 +13936,13 @@ var GameScreen = ({
       missedWords
     });
   }
-  import_react15.default.useEffect(() => {
+  import_react16.default.useEffect(() => {
     if (config2.participants.length > 0) {
       advanceToWord(config2.participants[0].difficultyLevel);
       startSessionTimer();
     }
   }, []);
-  import_react15.default.useEffect(() => {
+  import_react16.default.useEffect(() => {
     if (!participants || participants.length === 0) return;
     const activeParticipants = participants.filter((p) => p.lives > 0);
     if (activeParticipants.length <= 1) {
@@ -13529,16 +13986,16 @@ var GameScreen = ({
   const cancelExitGame = () => {
     setShowExitConfirm(false);
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "relative screen-container bg-gradient-to-br from-indigo-600 to-purple-800 text-white flex flex-col items-center justify-center min-h-screen overflow-hidden", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "absolute inset-0 pointer-events-none", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "floating-particle top-10 left-10 delay-100" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "floating-particle top-20 right-20 delay-200" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "floating-particle bottom-20 left-20 delay-300" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "floating-particle bottom-10 right-10 delay-400" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "floating-particle top-1/2 left-1/4 delay-500" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "floating-particle top-1/3 right-1/4 delay-600" })
+  return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "relative screen-container bg-gradient-to-br from-indigo-600 to-purple-800 text-white flex flex-col items-center justify-center min-h-screen overflow-hidden", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "absolute inset-0 pointer-events-none", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "floating-particle top-10 left-10 delay-100" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "floating-particle top-20 right-20 delay-200" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "floating-particle bottom-20 left-20 delay-300" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "floating-particle bottom-10 right-10 delay-400" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "floating-particle top-1/2 left-1/4 delay-500" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "floating-particle top-1/3 right-1/4 delay-600" })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
       "input",
       {
         ref: hiddenInputRef,
@@ -13548,12 +14005,12 @@ var GameScreen = ({
         "aria-label": "Hidden input for keyboard capture"
       }
     ),
-    toast && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "fixed top-4 right-4 bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-white px-6 py-3 rounded-2xl shadow-2xl z-50 animate-bounce-in font-bold", children: [
+    toast && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "fixed top-4 right-4 bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-white px-6 py-3 rounded-2xl shadow-2xl z-50 animate-bounce-in font-bold", children: [
       "\u{1F389} ",
       toast
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "absolute top-8 left-8 flex gap-6 items-center z-40", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "absolute top-8 left-8 flex gap-6 items-center z-40", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         "img",
         {
           src: getContextualMascot({
@@ -13568,17 +14025,17 @@ var GameScreen = ({
           className: "w-16 h-16 animate-wiggle"
         }
       ),
-      participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+      participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
         "div",
         {
           className: `text-center game-card p-4 min-w-[140px] transform transition-all duration-500 ${index === currentParticipantIndex ? "scale-110 ring-4 ring-kahoot-yellow-400 animate-glow" : ""}`,
           children: [
-            shouldHideNames ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex flex-col items-center gap-2", children: [
-              p.avatar && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("img", { src: p.avatar, alt: "", className: "h-10 w-10 rounded-full border-2 border-kahoot-yellow-300 bg-white/20 object-cover" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-lg font-black text-kahoot-yellow-200", children: isTeamMode ? `Team ${index + 1}` : `Player ${index + 1}` })
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-xl font-black bg-gradient-to-r from-white to-kahoot-yellow-300 bg-clip-text text-transparent", children: p.name }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-3xl font-bold my-2", children: "\u2764\uFE0F".repeat(p.lives) }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "text-2xl font-black text-kahoot-green-400", children: [
+            shouldHideNames ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex flex-col items-center gap-2", children: [
+              p.avatar && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("img", { src: p.avatar, alt: "", className: "h-10 w-10 rounded-full border-2 border-kahoot-yellow-300 bg-white/20 object-cover" }),
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-lg font-black text-kahoot-yellow-200", children: isTeamMode ? `Team ${index + 1}` : `Player ${index + 1}` })
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-xl font-black bg-gradient-to-r from-white to-kahoot-yellow-300 bg-clip-text text-transparent", children: p.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-3xl font-bold my-2", children: "\u2764\uFE0F".repeat(p.lives) }),
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "text-2xl font-black text-kahoot-green-400", children: [
               p.points,
               " pts"
             ] })
@@ -13587,7 +14044,7 @@ var GameScreen = ({
         index
       ))
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
       ParticipantStats_default,
       {
         participants,
@@ -13596,7 +14053,7 @@ var GameScreen = ({
         isTeamMode
       }
     ),
-    feedback.message && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+    feedback.message && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
       "div",
       {
         className: `fixed top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-black px-8 py-4 rounded-3xl z-50 animate-bounce-in shadow-2xl ${feedback.type === "success" ? "bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-white" : feedback.type === "error" ? "bg-gradient-to-r from-kahoot-red-500 to-kahoot-red-600 text-white animate-shake" : "bg-gradient-to-r from-kahoot-blue-500 to-kahoot-blue-600 text-white"}`,
@@ -13606,11 +14063,11 @@ var GameScreen = ({
         ]
       }
     ),
-    encouragementMessage && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(EncouragementBanner_default, { message: encouragementMessage }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "absolute top-8 right-8 text-center z-50 game-card", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: `text-6xl md:text-8xl font-black mb-2 transition-all duration-300 ${timeLeft <= 10 ? "text-kahoot-red-500 animate-pulse scale-110" : timeLeft <= 20 ? "text-kahoot-yellow-500 animate-bounce" : "text-kahoot-green-500"}`, children: timeLeft }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-lg font-bold", children: "seconds left" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    encouragementMessage && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EncouragementBanner_default, { message: encouragementMessage }),
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "absolute top-8 right-8 text-center z-50 game-card", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: `text-6xl md:text-8xl font-black mb-2 transition-all duration-300 ${timeLeft <= 10 ? "text-kahoot-red-500 animate-pulse scale-110" : timeLeft <= 20 ? "text-kahoot-yellow-500 animate-bounce" : "text-kahoot-green-500"}`, children: timeLeft }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-lg font-bold", children: "seconds left" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         "button",
         {
           onClick: togglePause,
@@ -13618,13 +14075,13 @@ var GameScreen = ({
           children: isPaused ? "\u25B6\uFE0F Resume" : "\u23F8\uFE0F Pause"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: `mt-3 rounded-xl bg-black/30 px-3 py-2 text-sm font-black ${sessionTimeLeft <= 120 ? "text-kahoot-red-400 animate-pulse" : "text-white"}`, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: `mt-3 rounded-xl bg-black/30 px-3 py-2 text-sm font-black ${sessionTimeLeft <= 120 ? "text-kahoot-red-400 animate-pulse" : "text-white"}`, children: [
         "Session ",
         Math.floor(sessionTimeLeft / 60),
         ":",
         String(sessionTimeLeft % 60).padStart(2, "0")
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         "button",
         {
           onClick: () => setShowAccessibilitySettings(true),
@@ -13633,9 +14090,9 @@ var GameScreen = ({
         }
       )
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "absolute bottom-8 left-8 bg-black/50 p-4 rounded-lg z-50 flex flex-col gap-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "absolute bottom-8 left-8 bg-black/50 p-4 rounded-lg z-50 flex flex-col gap-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
             onClick: () => setIsHelpOpen(true),
@@ -13644,45 +14101,45 @@ var GameScreen = ({
             children: "\u2753"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
             onClick: () => setShowEncouragementSettings(true),
             className: "bg-yellow-300 text-black p-2 rounded",
             "aria-label": "Edit encouragement phrases",
             title: "Edit encouragement phrases",
-            children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(MessageCircle, { size: 16 })
+            children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(MessageCircle, { size: 16 })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
             onClick: onToggleMusicPlaying,
             className: "bg-yellow-300 text-black p-2 rounded",
             "aria-label": isMusicPlaying ? "Pause music" : "Play music",
-            children: isMusicPlaying ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Pause, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Play, { size: 16 })
+            children: isMusicPlaying ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Pause, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Play, { size: 16 })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
             onClick: () => onSoundEnabledChange(!soundEnabled),
             className: "bg-yellow-300 text-black p-2 rounded",
             "aria-label": soundEnabled ? "Mute audio" : "Unmute audio",
-            children: soundEnabled ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Volume2, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(VolumeX, { size: 16 })
+            children: soundEnabled ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Volume2, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(VolumeX, { size: 16 })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
             onClick: handleExitGame,
             className: "bg-red-500 hover:bg-red-600 text-white p-2 rounded transition-colors",
             "aria-label": "Exit game",
             title: "Exit and save game",
-            children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(LogOut, { size: 16 })
+            children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(LogOut, { size: 16 })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
             onClick: () => window.open(`${window.location.pathname}?team=1`, "_blank", "noopener,noreferrer"),
@@ -13692,7 +14149,7 @@ var GameScreen = ({
             children: "\u{1F4FA}"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
             onClick: () => window.open(`${window.location.pathname}?scoreboard=1`, "_blank", "noopener,noreferrer"),
@@ -13703,7 +14160,7 @@ var GameScreen = ({
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         "input",
         {
           type: "range",
@@ -13715,17 +14172,17 @@ var GameScreen = ({
           className: "w-32"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         "select",
         {
           value: musicStyle,
           onChange: (e) => onMusicStyleChange(e.target.value),
           className: "text-black rounded p-1",
-          children: musicStyles2.map((style) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: style, children: style }, style))
+          children: musicStyles2.map((style) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: style, children: style }, style))
         }
       )
     ] }),
-    isHelpOpen && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    isHelpOpen && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
       HelpShop,
       {
         onClose: () => setIsHelpOpen(false),
@@ -13733,12 +14190,19 @@ var GameScreen = ({
         onPurchase: (cost) => spendPoints(currentParticipantIndex, cost)
       }
     ),
-    showExitConfirm && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "fixed inset-0 bg-black/70 flex items-center justify-center z-50", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-2xl", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-6xl mb-4", children: "\u{1F6AA}" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h2", { className: "text-2xl font-bold text-gray-800 mb-4", children: "Exit Game?" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "text-gray-600 mb-6", children: "Your progress will be saved and you can resume this game later. Are you sure you want to exit?" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex gap-3 justify-center", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    pendingUnlocks.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+      BattlePowerUnlock_default,
+      {
+        power: pendingUnlocks[0],
+        onDismiss: () => setPendingUnlocks((prev) => prev.slice(1))
+      }
+    ),
+    showExitConfirm && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "fixed inset-0 bg-black/70 flex items-center justify-center z-50", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-2xl", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-6xl mb-4", children: "\u{1F6AA}" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { className: "text-2xl font-bold text-gray-800 mb-4", children: "Exit Game?" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "text-gray-600 mb-6", children: "Your progress will be saved and you can resume this game later. Are you sure you want to exit?" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex gap-3 justify-center", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
             onClick: cancelExitGame,
@@ -13746,29 +14210,29 @@ var GameScreen = ({
             children: "Cancel"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
           "button",
           {
             onClick: confirmExitGame,
             className: "px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-colors flex items-center gap-2",
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(LogOut, { size: 18 }),
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(LogOut, { size: 18 }),
               "Exit & Save"
             ]
           }
         )
       ] })
     ] }) }),
-    showAccessibilitySettings && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(AccessibilitySettings_default, { onClose: () => setShowAccessibilitySettings(false) }),
-    showEncouragementSettings && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "w-full max-w-lg rounded-2xl bg-white p-6 text-gray-900 shadow-2xl", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h2", { className: "mb-2 text-2xl font-black", children: "Encouragement phrases" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { className: "mb-4 text-sm text-gray-600", children: [
+    showAccessibilitySettings && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(AccessibilitySettings_default, { onClose: () => setShowAccessibilitySettings(false) }),
+    showEncouragementSettings && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "w-full max-w-lg rounded-2xl bg-white p-6 text-gray-900 shadow-2xl", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { className: "mb-2 text-2xl font-black", children: "Encouragement phrases" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("p", { className: "mb-4 text-sm text-gray-600", children: [
         "One phrase per line. Use ",
         "{name}",
         " to include the current player or team."
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("label", { htmlFor: "encouragement-phrases", className: "sr-only", children: "Encouragement phrases" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("label", { htmlFor: "encouragement-phrases", className: "sr-only", children: "Encouragement phrases" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         "textarea",
         {
           id: "encouragement-phrases",
@@ -13777,9 +14241,9 @@ var GameScreen = ({
           className: "min-h-48 w-full rounded-xl border-2 border-gray-300 p-3 text-base text-gray-900 focus:border-kahoot-purple-500 focus:outline-none"
         }
       ),
-      encouragementSaveMessage && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "mt-3 rounded-lg bg-green-100 px-3 py-2 font-bold text-green-800", role: "status", children: encouragementSaveMessage }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "mt-5 flex flex-wrap justify-end gap-3", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      encouragementSaveMessage && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "mt-3 rounded-lg bg-green-100 px-3 py-2 font-bold text-green-800", role: "status", children: encouragementSaveMessage }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "mt-5 flex flex-wrap justify-end gap-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
             onClick: resetEncouragementSettings,
@@ -13787,7 +14251,7 @@ var GameScreen = ({
             children: "Reset"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
             onClick: () => setShowEncouragementSettings(false),
@@ -13795,7 +14259,7 @@ var GameScreen = ({
             children: "Close"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
             onClick: saveEncouragementSettings,
@@ -13805,14 +14269,14 @@ var GameScreen = ({
         )
       ] })
     ] }) }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
       AvatarSelector,
       {
         currentAvatar,
         onSelect: (avatar) => setCurrentAvatar(avatar)
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
       "button",
       {
         className: "theme-toggle",
@@ -13820,8 +14284,8 @@ var GameScreen = ({
         children: theme === "dark" ? "\u2600\uFE0F" : "\u{1F319}"
       }
     ),
-    currentWord && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "w-full max-w-6xl text-center z-30 animate-scale-in", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    currentWord && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "w-full max-w-6xl text-center z-30 animate-scale-in", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         "img",
         {
           src: getContextualMascot({
@@ -13832,15 +14296,15 @@ var GameScreen = ({
           className: "w-16 h-16 mx-auto mb-6 animate-float"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("h2", { className: "text-4xl md:text-5xl font-black mb-8 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent animate-sparkle", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("h2", { className: "text-4xl md:text-5xl font-black mb-8 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent animate-sparkle", children: [
         "\u{1F3AF} WORD FOR ",
         isTeamMode ? "TEAM" : "STUDENT",
         ": ",
         shouldHideNames ? `${isTeamMode ? "TEAM" : "PLAYER"} ${currentParticipantIndex + 1}` : participants[currentParticipantIndex]?.name?.toUpperCase().slice(0, 32) || (isTeamMode ? "TEAM" : "STUDENT")
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "relative mb-12", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "mb-6 flex flex-wrap justify-center gap-3", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "relative mb-12", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "mb-6 flex flex-wrap justify-center gap-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             "button",
             {
               onClick: () => speak(currentWord.word),
@@ -13848,7 +14312,7 @@ var GameScreen = ({
               children: "\u{1F50A} Replay Word"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             "button",
             {
               onClick: () => setShowWord(!showWord),
@@ -13857,12 +14321,12 @@ var GameScreen = ({
             }
           )
         ] }),
-        showWord && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "inline-block text-6xl md:text-8xl font-black text-white drop-shadow-2xl bg-gradient-to-r from-purple-900/80 to-indigo-900/80 backdrop-blur-sm px-8 py-6 rounded-3xl border-4 border-white/20 animate-bounce-in excitement-glow", children: [
+        showWord && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "inline-block text-6xl md:text-8xl font-black text-white drop-shadow-2xl bg-gradient-to-r from-purple-900/80 to-indigo-900/80 backdrop-blur-sm px-8 py-6 rounded-3xl border-4 border-white/20 animate-bounce-in excitement-glow", children: [
           currentWord.word,
-          currentWord.pronunciation && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "ml-6 text-4xl md:text-5xl text-kahoot-yellow-300 font-bold", children: currentWord.pronunciation })
+          currentWord.pronunciation && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "ml-6 text-4xl md:text-5xl text-kahoot-yellow-300 font-bold", children: currentWord.pronunciation })
         ] })
       ] }),
-      currentWord.phonemes && currentWord.phonemes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "mb-6", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      currentWord.phonemes && currentWord.phonemes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "mb-6", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         "button",
         {
           type: "button",
@@ -13871,7 +14335,7 @@ var GameScreen = ({
           children: showPhonics ? "Hide Phonics" : "Show Phonics"
         }
       ) }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         HintPanel_default,
         {
           word: currentWord,
@@ -13881,11 +14345,15 @@ var GameScreen = ({
           isTeamMode,
           showWord,
           onHintUsed: () => setUsedHint(true),
-          onExtraAttempt: () => setExtraAttempt(true)
+          onExtraAttempt: () => setExtraAttempt(true),
+          unlockedPowers: isTeamMode ? unlockedPowers : void 0,
+          hasAttemptedCurrentWord: attemptedParticipants.has(currentParticipantIndex),
+          onAddTime: () => addTimeToTimer(15),
+          onSkipWord: skipWordFree
         }
       ),
-      showPhonics && currentWord.phonemes && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(PhonicsBreakdown_default, { phonemes: currentWord.phonemes }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "flex gap-3 justify-center mb-8 px-4", children: letters2.map((letter, idx) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      showPhonics && currentWord.phonemes && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(PhonicsBreakdown_default, { phonemes: currentWord.phonemes }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "flex gap-3 justify-center mb-8 px-4", children: letters2.map((letter, idx) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         "div",
         {
           className: `w-16 h-20 text-5xl font-black flex items-center justify-center rounded-2xl border-4 transition-all duration-300 transform ${letter ? letter.toLowerCase() === currentWord.word[idx].toLowerCase() ? "bg-gradient-to-br from-kahoot-green-400 to-kahoot-green-600 border-kahoot-green-300 text-white scale-110 animate-bounce shadow-2xl" : "bg-gradient-to-br from-kahoot-red-400 to-kahoot-red-600 border-kahoot-red-300 text-white animate-shake" : "bg-white/20 border-white/40 text-white hover:bg-white/30"}`,
@@ -13893,7 +14361,7 @@ var GameScreen = ({
         },
         idx
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         OnScreenKeyboard_default,
         {
           onLetter: handleVirtualLetter,
@@ -13903,7 +14371,7 @@ var GameScreen = ({
         }
       )
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
       "button",
       {
         onClick: skipWord,
@@ -13911,28 +14379,28 @@ var GameScreen = ({
         title: "Skip Word",
         children: [
           "\u23ED\uFE0F ",
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(SkipForward, { size: 32 })
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SkipForward, { size: 32 })
         ]
       }
     ),
-    isPaused && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-40", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "text-center animate-scale-in", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-8xl md:text-9xl font-black text-white mb-4 animate-pulse", children: "\u23F8\uFE0F" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-6xl md:text-8xl font-black bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent", children: "PAUSED" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-2xl text-white/80 mt-4", children: "Game is paused. Click resume to continue!" })
+    isPaused && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-40", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "text-center animate-scale-in", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-8xl md:text-9xl font-black text-white mb-4 animate-pulse", children: "\u23F8\uFE0F" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-6xl md:text-8xl font-black bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent", children: "PAUSED" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-2xl text-white/80 mt-4", children: "Game is paused. Click resume to continue!" })
     ] }) })
   ] });
 };
 var GameScreen_default = GameScreen;
 
 // src/ResultsScreen.tsx
-var import_react18 = __toESM(require_react());
+var import_react19 = __toESM(require_react());
 
 // src/audio/applause.mp3
 var applause_default = "./applause-I345E7HE.mp3";
 
 // src/DailyChallenge.tsx
-var import_react16 = __toESM(require_react());
-var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+var import_react17 = __toESM(require_react());
+var import_jsx_runtime17 = __toESM(require_jsx_runtime());
 var DATE_KEY = "dailyChallengeDates";
 var HIGH_KEY = "dailyChallengeHighest";
 var computeCurrentStreak = (dates) => {
@@ -13984,41 +14452,41 @@ var recordDailyCompletion = () => {
 };
 
 // src/components/MorphologyCard.tsx
-var import_react17 = __toESM(require_react());
-var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+var import_react18 = __toESM(require_react());
+var import_jsx_runtime18 = __toESM(require_jsx_runtime());
 var MorphologyCard = ({ word, database }) => {
-  const allWords = (0, import_react17.useMemo)(
+  const allWords = (0, import_react18.useMemo)(
     () => Object.values(database).flat(),
     [database]
   );
-  const prefixExamples = (0, import_react17.useMemo)(() => {
+  const prefixExamples = (0, import_react18.useMemo)(() => {
     if (!word.prefix) return [];
     return allWords.filter((w) => w.word !== word.word && w.prefix === word.prefix).map((w) => w.word).slice(0, 3);
   }, [allWords, word]);
-  const suffixExamples = (0, import_react17.useMemo)(() => {
+  const suffixExamples = (0, import_react18.useMemo)(() => {
     if (!word.suffix) return [];
     return allWords.filter((w) => w.word !== word.word && w.suffix === word.suffix).map((w) => w.word).slice(0, 3);
   }, [allWords, word]);
   if (!word.prefix && !word.suffix) return null;
-  return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "bg-white/10 p-3 rounded-md mt-2 text-sm", children: [
-    word.prefix && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "mb-2", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "font-bold", children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "bg-white/10 p-3 rounded-md mt-2 text-sm", children: [
+    word.prefix && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "mb-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "font-bold", children: [
         "Prefix: ",
         word.prefix
       ] }),
-      word.prefixMeaning && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "text-gray-200", children: word.prefixMeaning }),
-      prefixExamples.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "text-gray-300", children: [
+      word.prefixMeaning && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "text-gray-200", children: word.prefixMeaning }),
+      prefixExamples.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "text-gray-300", children: [
         "Example words: ",
         prefixExamples.join(", ")
       ] })
     ] }),
-    word.suffix && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "font-bold", children: [
+    word.suffix && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "font-bold", children: [
         "Suffix: ",
         word.suffix
       ] }),
-      word.suffixMeaning && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "text-gray-200", children: word.suffixMeaning }),
-      suffixExamples.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "text-gray-300", children: [
+      word.suffixMeaning && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "text-gray-200", children: word.suffixMeaning }),
+      suffixExamples.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "text-gray-300", children: [
         "Example words: ",
         suffixExamples.join(", ")
       ] })
@@ -14058,31 +14526,31 @@ function clearHistory() {
 }
 
 // src/ResultsScreen.tsx
-var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+var import_jsx_runtime19 = __toESM(require_jsx_runtime());
 var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
-  const applauseAudio = (0, import_react18.useRef)(new Audio(applause_default));
+  const applauseAudio = (0, import_react19.useRef)(new Audio(applause_default));
   const totalScore = results.participants.reduce((sum, p) => sum + p.points, 0);
-  const [bestClassScore, setBestClassScore] = (0, import_react18.useState)(0);
-  const [isBestScore, setIsBestScore] = (0, import_react18.useState)(false);
-  const [streakInfo, setStreakInfo] = (0, import_react18.useState)(null);
-  const [bonus, setBonus] = (0, import_react18.useState)(0);
-  const [showComfortModal, setShowComfortModal] = (0, import_react18.useState)(true);
-  const historyEntryDateRef = (0, import_react18.useRef)(null);
-  (0, import_react18.useEffect)(() => {
+  const [bestClassScore, setBestClassScore] = (0, import_react19.useState)(0);
+  const [isBestScore, setIsBestScore] = (0, import_react19.useState)(false);
+  const [streakInfo, setStreakInfo] = (0, import_react19.useState)(null);
+  const [bonus, setBonus] = (0, import_react19.useState)(0);
+  const [showComfortModal, setShowComfortModal] = (0, import_react19.useState)(true);
+  const historyEntryDateRef = (0, import_react19.useRef)(null);
+  (0, import_react19.useEffect)(() => {
     if (config.dailyChallenge) {
       const info = recordDailyCompletion();
       setStreakInfo(info);
       setBonus(info.currentStreak > 1 ? (info.currentStreak - 1) * 10 : 0);
     }
   }, [config.dailyChallenge]);
-  (0, import_react18.useEffect)(() => {
+  (0, import_react19.useEffect)(() => {
     if (localStorage.getItem("teacherMode") === "true") {
       document.body.classList.add("teacher-mode");
     } else {
       document.body.classList.remove("teacher-mode");
     }
   }, []);
-  (0, import_react18.useEffect)(() => {
+  (0, import_react19.useEffect)(() => {
     const stored = JSON.parse(localStorage.getItem("leaderboard") || "[]");
     const newEntries = results.participants.map((p) => ({
       name: p.name,
@@ -14093,7 +14561,7 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
     const updated = [...stored, ...newEntries].sort((a, b) => b.score - a.score).slice(0, 10);
     localStorage.setItem("leaderboard", JSON.stringify(updated));
   }, [results, config.dailyChallenge, bonus]);
-  (0, import_react18.useEffect)(() => {
+  (0, import_react19.useEffect)(() => {
     historyEntryDateRef.current = appendHistoryEntry({ score: totalScore, duration: results.duration || 0 });
     const storedBest = Number(localStorage.getItem("bestClassScore") || "0");
     if (totalScore > storedBest) {
@@ -14110,7 +14578,7 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
     }
     setShowComfortModal(false);
   };
-  (0, import_react18.useEffect)(() => {
+  (0, import_react19.useEffect)(() => {
     if (results.winner) {
       if (config.soundEnabled) {
         applauseAudio.current.play();
@@ -14176,28 +14644,28 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
     }
     return "No one wins this round!";
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "min-h-screen bg-surface p-8 text-on-surface text-center flex flex-col items-center justify-center font-body", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h1", { className: "font-bold mb-4 text-primary uppercase font-sans", children: "\u{1F3C6} Game Over! \u{1F3C6}" }),
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h2", { className: "mb-8 uppercase font-sans", children: getWinnerMessage() }),
-    results?.duration && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "text-xl mb-6", children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "min-h-screen bg-surface p-8 text-on-surface text-center flex flex-col items-center justify-center font-body", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h1", { className: "font-bold mb-4 text-primary uppercase font-sans", children: "\u{1F3C6} Game Over! \u{1F3C6}" }),
+    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h2", { className: "mb-8 uppercase font-sans", children: getWinnerMessage() }),
+    results?.duration && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "text-xl mb-6", children: [
       "Game Duration: ",
       results.duration,
       " seconds"
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "text-xl mb-4", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "text-xl mb-4", children: [
       "Session Score: ",
       totalScore
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "text-xl mb-8", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "text-xl mb-8", children: [
       "Best Class Score: ",
       bestClassScore,
-      isBestScore && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-tertiary font-bold ml-2", children: "New High Score!" })
+      isBestScore && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-tertiary font-bold ml-2", children: "New High Score!" })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "bg-surface-container-high p-6 rounded-xl w-full max-w-2xl shadow-elevation-1", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { className: "font-bold mb-4 uppercase font-sans", children: "\u{1F4CA} Final Scores" }),
-      results && results.participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "text-left mb-4 p-3 rounded-lg bg-surface-container-low", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-3 mb-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "bg-surface-container-high p-6 rounded-xl w-full max-w-2xl shadow-elevation-1", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { className: "font-bold mb-4 uppercase font-sans", children: "\u{1F4CA} Final Scores" }),
+      results && results.participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "text-left mb-4 p-3 rounded-lg bg-surface-container-low", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-3 mb-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
             "img",
             {
               src: p === results.winner ? `${config.baseUrl}img/WinningBee.png` : p.points >= bestClassScore * 0.9 ? `${config.baseUrl}img/CelebratoryBee.png` : p.avatar || `${config.baseUrl}img/bee.png`,
@@ -14205,9 +14673,9 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
               className: "w-8 h-8 rounded-full"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "font-bold text-lg", children: p.name })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "font-bold text-lg", children: p.name })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "text-primary", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "text-primary", children: [
           p.wordsCorrect,
           "/",
           p.wordsAttempted,
@@ -14221,8 +14689,8 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
         ] })
       ] }, index))
     ] }),
-    config.dailyChallenge && streakInfo && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "bg-surface-container-high p-4 rounded-xl w-full max-w-2xl mt-4 shadow-elevation-1", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "text-lg", children: [
+    config.dailyChallenge && streakInfo && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "bg-surface-container-high p-4 rounded-xl w-full max-w-2xl mt-4 shadow-elevation-1", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "text-lg", children: [
         "\u{1F525} Streak: ",
         streakInfo.currentStreak,
         " day",
@@ -14231,22 +14699,22 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
         streakInfo.highestStreak,
         ")"
       ] }),
-      bonus > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "text-tertiary mt-2", children: [
+      bonus > 0 && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "text-tertiary mt-2", children: [
         "Bonus Points: +",
         bonus
       ] })
     ] }),
-    results.missedWords && results.missedWords.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "bg-surface-container-high p-6 rounded-xl w-full max-w-2xl mt-8 shadow-elevation-1", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { className: "font-bold mb-4 uppercase font-sans", children: "\u274C Missed Words" }),
-      results.missedWords.map((w, index) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "text-left mb-3 p-3 rounded-lg bg-surface-container-low", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "font-bold", children: w.word }),
+    results.missedWords && results.missedWords.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "bg-surface-container-high p-6 rounded-xl w-full max-w-2xl mt-8 shadow-elevation-1", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { className: "font-bold mb-4 uppercase font-sans", children: "\u274C Missed Words" }),
+      results.missedWords.map((w, index) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "text-left mb-3 p-3 rounded-lg bg-surface-container-low", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "font-bold", children: w.word }),
         " - ",
         w.definition,
-        (w.prefix || w.suffix) && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(MorphologyCard_default, { word: w, database: config.wordDatabase })
+        (w.prefix || w.suffix) && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(MorphologyCard_default, { word: w, database: config.wordDatabase })
       ] }, index))
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex gap-4 mt-8 flex-wrap justify-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex gap-4 mt-8 flex-wrap justify-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         "button",
         {
           onClick: handleExport,
@@ -14254,7 +14722,7 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
           children: "\u{1F4E4} Export Results"
         }
       ),
-      results.missedWords && results.missedWords.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      results.missedWords && results.missedWords.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         "button",
         {
           onClick: handleExportMissedWords,
@@ -14262,7 +14730,7 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
           children: "\u{1F4DD} Export Missed Words"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         "button",
         {
           onClick: onViewLeaderboard,
@@ -14270,7 +14738,7 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
           children: "\u{1F4C8} View Leaderboard"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         "button",
         {
           onClick: onRestart,
@@ -14279,22 +14747,22 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
         }
       )
     ] }),
-    showComfortModal && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "w-full max-w-md rounded-2xl bg-white p-6 text-center text-gray-900 shadow-2xl", role: "dialog", "aria-modal": "true", "aria-labelledby": "comfort-heading", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { id: "comfort-heading", className: "mb-3 text-2xl font-black", children: "How did the session feel?" }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "mb-5 text-sm text-gray-600", children: "This saves a simple class comfort check with the session history." }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "grid grid-cols-3 gap-3", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => handleComfortSelect("happy"), className: "rounded-xl bg-green-100 px-3 py-4 text-3xl font-black text-green-800 hover:bg-green-200", "aria-label": "Comfort happy", children: "\u{1F60A}" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => handleComfortSelect("okay"), className: "rounded-xl bg-yellow-100 px-3 py-4 text-3xl font-black text-yellow-800 hover:bg-yellow-200", "aria-label": "Comfort okay", children: "\u{1F610}" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => handleComfortSelect("tough"), className: "rounded-xl bg-blue-100 px-3 py-4 text-3xl font-black text-blue-800 hover:bg-blue-200", "aria-label": "Comfort tough", children: "\u{1F61F}" })
+    showComfortModal && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "w-full max-w-md rounded-2xl bg-white p-6 text-center text-gray-900 shadow-2xl", role: "dialog", "aria-modal": "true", "aria-labelledby": "comfort-heading", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { id: "comfort-heading", className: "mb-3 text-2xl font-black", children: "How did the session feel?" }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "mb-5 text-sm text-gray-600", children: "This saves a simple class comfort check with the session history." }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "grid grid-cols-3 gap-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => handleComfortSelect("happy"), className: "rounded-xl bg-green-100 px-3 py-4 text-3xl font-black text-green-800 hover:bg-green-200", "aria-label": "Comfort happy", children: "\u{1F60A}" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => handleComfortSelect("okay"), className: "rounded-xl bg-yellow-100 px-3 py-4 text-3xl font-black text-yellow-800 hover:bg-yellow-200", "aria-label": "Comfort okay", children: "\u{1F610}" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => handleComfortSelect("tough"), className: "rounded-xl bg-blue-100 px-3 py-4 text-3xl font-black text-blue-800 hover:bg-blue-200", "aria-label": "Comfort tough", children: "\u{1F61F}" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => setShowComfortModal(false), className: "mt-5 rounded-xl bg-gray-200 px-5 py-2 font-bold text-gray-800 hover:bg-gray-300", children: "Skip" })
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => setShowComfortModal(false), className: "mt-5 rounded-xl bg-gray-200 px-5 py-2 font-bold text-gray-800 hover:bg-gray-300", children: "Skip" })
     ] }) })
   ] });
 };
 var ResultsScreen_default = ResultsScreen;
 
 // src/AchievementsScreen.tsx
-var import_react19 = __toESM(require_react());
+var import_react20 = __toESM(require_react());
 
 // src/constants/achievements.ts
 var achievements = {
@@ -14326,14 +14794,14 @@ var achievements = {
 };
 
 // src/AchievementsScreen.tsx
-var import_jsx_runtime19 = __toESM(require_jsx_runtime());
-var AchievementBadge = ({ unlocked, title, description, icon }) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: `achievement ${unlocked ? "unlocked" : "locked"}`, children: [
-  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("img", { src: icon, alt: title }),
-  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { children: title }),
-  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: description })
+var import_jsx_runtime20 = __toESM(require_jsx_runtime());
+var AchievementBadge = ({ unlocked, title, description, icon }) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: `achievement ${unlocked ? "unlocked" : "locked"}`, children: [
+  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("img", { src: icon, alt: title }),
+  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: title }),
+  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { children: description })
 ] });
 var AchievementsScreen = ({ onBack }) => {
-  const unlocked = (0, import_react19.useMemo)(() => {
+  const unlocked = (0, import_react20.useMemo)(() => {
     if (typeof window === "undefined") return [];
     try {
       return JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
@@ -14341,9 +14809,9 @@ var AchievementsScreen = ({ onBack }) => {
       return [];
     }
   }, []);
-  return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "screen-container bg-gradient-to-br from-green-600 to-teal-800 text-white", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h1", { className: "screen-title text-center mb-8", children: "Achievements" }),
-    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "achievements-grid max-w-xl mx-auto", children: Object.entries(achievements).map(([key, achievement]) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "screen-container bg-gradient-to-br from-green-600 to-teal-800 text-white", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h1", { className: "screen-title text-center mb-8", children: "Achievements" }),
+    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "achievements-grid max-w-xl mx-auto", children: Object.entries(achievements).map(([key, achievement]) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
       AchievementBadge,
       {
         unlocked: unlocked.includes(key),
@@ -14353,7 +14821,7 @@ var AchievementsScreen = ({ onBack }) => {
       },
       key
     )) }),
-    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
       "button",
       {
         onClick: onBack,
@@ -14366,11 +14834,11 @@ var AchievementsScreen = ({ onBack }) => {
 var AchievementsScreen_default = AchievementsScreen;
 
 // src/HistoryScreen.tsx
-var import_react20 = __toESM(require_react());
-var import_jsx_runtime20 = __toESM(require_jsx_runtime());
+var import_react21 = __toESM(require_react());
+var import_jsx_runtime21 = __toESM(require_jsx_runtime());
 var HistoryScreen = ({ onBack }) => {
-  const [history, setHistory] = (0, import_react20.useState)([]);
-  (0, import_react20.useEffect)(() => {
+  const [history, setHistory] = (0, import_react21.useState)([]);
+  (0, import_react21.useEffect)(() => {
     setHistory(loadHistory());
   }, []);
   const handleClearHistory = () => {
@@ -14381,26 +14849,26 @@ var HistoryScreen = ({ onBack }) => {
     if (entry.comfort) counts[entry.comfort] = (counts[entry.comfort] || 0) + 1;
     return counts;
   }, {});
-  return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center font-body", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h1", { className: "font-bold mb-8 text-yellow-300 uppercase font-sans", children: "\u{1F4D8} Session History" }),
-    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md", children: history.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "text-xl", children: "No session history." }) : /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(import_jsx_runtime20.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "mb-5 grid grid-cols-3 gap-2 text-sm font-bold", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "rounded-lg bg-green-500/20 p-2", children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center font-body", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h1", { className: "font-bold mb-8 text-yellow-300 uppercase font-sans", children: "\u{1F4D8} Session History" }),
+    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md", children: history.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "text-xl", children: "No session history." }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "mb-5 grid grid-cols-3 gap-2 text-sm font-bold", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "rounded-lg bg-green-500/20 p-2", children: [
           "\u{1F60A} ",
           comfortCounts.happy || 0
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "rounded-lg bg-yellow-500/20 p-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "rounded-lg bg-yellow-500/20 p-2", children: [
           "\u{1F610} ",
           comfortCounts.okay || 0
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "rounded-lg bg-blue-500/20 p-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "rounded-lg bg-blue-500/20 p-2", children: [
           "\u{1F61F} ",
           comfortCounts.tough || 0
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("ul", { className: "text-xl space-y-2", children: history.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("li", { className: "flex justify-between gap-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: new Date(entry.date).toLocaleString() }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { className: "text-yellow-300", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("ul", { className: "text-xl space-y-2", children: history.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("li", { className: "flex justify-between gap-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { children: new Date(entry.date).toLocaleString() }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("span", { className: "text-yellow-300", children: [
           entry.score,
           " pts",
           entry.duration !== void 0 && ` / ${entry.duration}s`,
@@ -14409,22 +14877,22 @@ var HistoryScreen = ({ onBack }) => {
         ] })
       ] }, index)) })
     ] }) }),
-    /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex gap-4 mt-8", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("button", { onClick: onBack, className: "bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-xl text-2xl font-bold", children: "Back" }),
-      history.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("button", { onClick: handleClearHistory, className: "bg-red-500 hover:bg-red-600 px-8 py-4 rounded-xl text-2xl font-bold", children: "Clear History" })
+    /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex gap-4 mt-8", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("button", { onClick: onBack, className: "bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-xl text-2xl font-bold", children: "Back" }),
+      history.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("button", { onClick: handleClearHistory, className: "bg-red-500 hover:bg-red-600 px-8 py-4 rounded-xl text-2xl font-bold", children: "Clear History" })
     ] })
   ] });
 };
 var HistoryScreen_default = HistoryScreen;
 
 // src/ShopScreen.tsx
-var import_react22 = __toESM(require_react());
+var import_react23 = __toESM(require_react());
 
 // src/hooks/useFocusTrap.ts
-var import_react21 = __toESM(require_react());
+var import_react22 = __toESM(require_react());
 function useFocusTrap() {
-  const ref = (0, import_react21.useRef)(null);
-  (0, import_react21.useEffect)(() => {
+  const ref = (0, import_react22.useRef)(null);
+  (0, import_react22.useEffect)(() => {
     const element = ref.current;
     if (!element) return;
     const focusableElements = element.querySelectorAll(
@@ -14459,7 +14927,7 @@ function useFocusTrap() {
 }
 
 // src/ShopScreen.tsx
-var import_jsx_runtime21 = __toESM(require_jsx_runtime());
+var import_jsx_runtime22 = __toESM(require_jsx_runtime());
 var shopItems = [
   {
     id: "wizard",
@@ -14515,13 +14983,13 @@ var shopItems = [
   }
 ];
 var ShopScreen = ({ onBack }) => {
-  const [cooldowns, setCooldowns] = import_react22.default.useState({});
-  const [coins, setCoins] = import_react22.default.useState(() => {
+  const [cooldowns, setCooldowns] = import_react23.default.useState({});
+  const [coins, setCoins] = import_react23.default.useState(() => {
     if (typeof window === "undefined") return 0;
     const stored = localStorage.getItem("coins");
     return stored ? parseInt(stored, 10) : 0;
   });
-  const [ownedAvatars, setOwnedAvatars] = import_react22.default.useState(() => {
+  const [ownedAvatars, setOwnedAvatars] = import_react23.default.useState(() => {
     if (typeof window === "undefined") return ["bee", "book", "trophy"];
     try {
       return JSON.parse(
@@ -14531,7 +14999,7 @@ var ShopScreen = ({ onBack }) => {
       return ["bee", "book", "trophy"];
     }
   });
-  const [ownedAccessories, setOwnedAccessories] = import_react22.default.useState(() => {
+  const [ownedAccessories, setOwnedAccessories] = import_react23.default.useState(() => {
     if (typeof window === "undefined") return [];
     try {
       return JSON.parse(localStorage.getItem("ownedAccessories") || "[]");
@@ -14539,14 +15007,14 @@ var ShopScreen = ({ onBack }) => {
       return [];
     }
   });
-  const [currentAvatar, setCurrentAvatar] = import_react22.default.useState(() => {
+  const [currentAvatar, setCurrentAvatar] = import_react23.default.useState(() => {
     if (typeof window === "undefined") return "";
     return localStorage.getItem("equippedAvatar") || "";
   });
-  import_react22.default.useEffect(() => {
+  import_react23.default.useEffect(() => {
     localStorage.setItem("equippedAvatar", currentAvatar);
   }, [currentAvatar]);
-  import_react22.default.useEffect(() => {
+  import_react23.default.useEffect(() => {
     const timer = setInterval(() => {
       setCooldowns((prevCooldowns) => {
         const updated = { ...prevCooldowns };
@@ -14613,10 +15081,10 @@ var ShopScreen = ({ onBack }) => {
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
-  const mainHeadingRef = (0, import_react22.useRef)(null);
-  const backButtonRef = (0, import_react22.useRef)(null);
+  const mainHeadingRef = (0, import_react23.useRef)(null);
+  const backButtonRef = (0, import_react23.useRef)(null);
   const shopRef = useFocusTrap();
-  (0, import_react22.useEffect)(() => {
+  (0, import_react23.useEffect)(() => {
     if (mainHeadingRef.current) {
       mainHeadingRef.current.focus();
     }
@@ -14628,7 +15096,7 @@ var ShopScreen = ({ onBack }) => {
       lastFocused.focus();
     }
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
     "div",
     {
       ref: shopRef,
@@ -14636,7 +15104,7 @@ var ShopScreen = ({ onBack }) => {
       role: "region",
       "aria-label": "Shop",
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
           "button",
           {
             ref: backButtonRef,
@@ -14646,7 +15114,7 @@ var ShopScreen = ({ onBack }) => {
             children: "Back"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
           "h1",
           {
             ref: mainHeadingRef,
@@ -14655,24 +15123,24 @@ var ShopScreen = ({ onBack }) => {
             children: "Shop"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
           "div",
           {
             className: "mb-4 text-xl font-semibold",
             "aria-live": "polite",
             "aria-atomic": "true",
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "sr-only", children: "You have" }),
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { "aria-hidden": "true", children: "\u{1FA99}" }),
-              /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("span", { className: "ml-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "sr-only", children: "You have" }),
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { "aria-hidden": "true", children: "\u{1FA99}" }),
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "ml-2", children: [
                 coins,
                 " coins"
               ] })
             ]
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("section", { "aria-labelledby": "avatar-heading", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("section", { "aria-labelledby": "avatar-heading", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
             "h2",
             {
               id: "avatar-heading",
@@ -14680,7 +15148,7 @@ var ShopScreen = ({ onBack }) => {
               children: "Your Avatar"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
             AvatarSelector,
             {
               currentAvatar,
@@ -14690,8 +15158,8 @@ var ShopScreen = ({ onBack }) => {
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("section", { "aria-labelledby": "items-heading", className: "mt-8", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("section", { "aria-labelledby": "items-heading", className: "mt-8", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
             "h2",
             {
               id: "items-heading",
@@ -14699,32 +15167,32 @@ var ShopScreen = ({ onBack }) => {
               children: "Available Items"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
             "div",
             {
               className: "grid grid-cols-1 md:grid-cols-2 gap-4",
               role: "list",
               "aria-label": "List of available items for purchase",
-              children: shopItems.map((item) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+              children: shopItems.map((item) => /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
                 "div",
                 {
                   className: `p-4 border rounded-lg mb-4 ${isOwned(item) ? "bg-green-50 border-green-200" : isOnCooldown(item) ? "bg-gray-50 opacity-75" : "bg-white hover:shadow-md"} transition-all`,
-                  children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex items-start justify-between gap-4", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex items-start space-x-4 flex-1", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "w-12 h-12 flex-shrink-0 flex items-center justify-center bg-blue-100 rounded-lg", children: item.icon.startsWith("/") ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("img", { src: item.icon, alt: "", className: "w-8 h-8" }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "text-xl", children: item.icon }) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex-1 min-w-0", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { className: "font-medium text-gray-900", children: item.name }),
-                        item.description && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { className: "text-sm text-gray-600 mt-1", children: item.description }),
-                        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "mt-2 flex items-center justify-between", children: [
-                          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("span", { className: "text-sm font-medium text-blue-700", children: [
+                  children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-start justify-between gap-4", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-start space-x-4 flex-1", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "w-12 h-12 flex-shrink-0 flex items-center justify-center bg-blue-100 rounded-lg", children: item.icon.startsWith("/") ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("img", { src: item.icon, alt: "", className: "w-8 h-8" }) : /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "text-xl", children: item.icon }) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex-1 min-w-0", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h3", { className: "font-medium text-gray-900", children: item.name }),
+                        item.description && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "text-sm text-gray-600 mt-1", children: item.description }),
+                        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "mt-2 flex items-center justify-between", children: [
+                          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "text-sm font-medium text-blue-700", children: [
                             item.price,
                             " coins"
                           ] }),
-                          item.type === "help" && item.cooldown && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "text-xs text-gray-500", children: isOnCooldown(item) ? `Cooldown: ${formatCooldown(cooldowns[item.id])}` : `Cooldown: ${formatCooldown(item.cooldown)}` })
+                          item.type === "help" && item.cooldown && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "text-xs text-gray-500", children: isOnCooldown(item) ? `Cooldown: ${formatCooldown(cooldowns[item.id])}` : `Cooldown: ${formatCooldown(item.cooldown)}` })
                         ] })
                       ] })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "flex-shrink-0", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "flex-shrink-0", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
                       "button",
                       {
                         onClick: () => purchaseItem(item),
@@ -14748,8 +15216,8 @@ var ShopScreen = ({ onBack }) => {
 var ShopScreen_default = ShopScreen;
 
 // src/PracticeScreen.tsx
-var import_react23 = __toESM(require_react());
-var import_jsx_runtime22 = __toESM(require_jsx_runtime());
+var import_react24 = __toESM(require_react());
+var import_jsx_runtime23 = __toESM(require_jsx_runtime());
 var pickWord = (words, previousWord) => {
   if (words.length === 0) return null;
   if (words.length === 1) return words[0];
@@ -14760,7 +15228,7 @@ var pickWord = (words, previousWord) => {
   return next;
 };
 var PracticeScreen = ({ words, onBack, reviewWords = [] }) => {
-  const practiceWords = import_react23.default.useMemo(() => {
+  const practiceWords = import_react24.default.useMemo(() => {
     const seen = /* @__PURE__ */ new Set();
     return [...reviewWords, ...words].filter((word) => {
       const key = word.word.trim().toLowerCase();
@@ -14769,21 +15237,21 @@ var PracticeScreen = ({ words, onBack, reviewWords = [] }) => {
       return true;
     });
   }, [reviewWords, words]);
-  const [currentWord, setCurrentWord] = import_react23.default.useState(() => pickWord(practiceWords));
-  const [answer, setAnswer] = import_react23.default.useState("");
-  const [feedback, setFeedback] = import_react23.default.useState("");
-  const [correctCount, setCorrectCount] = import_react23.default.useState(0);
-  const inputRef = import_react23.default.useRef(null);
-  const moveToNextWord = import_react23.default.useCallback(() => {
+  const [currentWord, setCurrentWord] = import_react24.default.useState(() => pickWord(practiceWords));
+  const [answer, setAnswer] = import_react24.default.useState("");
+  const [feedback, setFeedback] = import_react24.default.useState("");
+  const [correctCount, setCorrectCount] = import_react24.default.useState(0);
+  const inputRef = import_react24.default.useRef(null);
+  const moveToNextWord = import_react24.default.useCallback(() => {
     setCurrentWord((previous) => pickWord(practiceWords, previous?.word));
     setAnswer("");
     setFeedback("");
     inputRef.current?.focus();
   }, [practiceWords]);
-  import_react23.default.useEffect(() => {
+  import_react24.default.useEffect(() => {
     setCurrentWord(pickWord(practiceWords));
   }, [practiceWords]);
-  import_react23.default.useEffect(() => {
+  import_react24.default.useEffect(() => {
     if (currentWord) speak(currentWord.word);
   }, [currentWord]);
   const checkAnswer = (event) => {
@@ -14800,15 +15268,15 @@ var PracticeScreen = ({ words, onBack, reviewWords = [] }) => {
     setFeedback("Not quite. Listen again and have another go.");
     speak(currentWord.word);
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "min-h-screen bg-gradient-to-br from-emerald-700 via-sky-800 to-indigo-900 p-6 text-white font-body", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "mx-auto flex min-h-[calc(100vh-3rem)] max-w-4xl flex-col items-center justify-center text-center", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "mb-8 w-full rounded-3xl border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-sm", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "mb-2 text-sm font-bold uppercase tracking-wide text-yellow-200", children: "Practice Mode" }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h1", { className: "mb-4 text-4xl font-black md:text-6xl", children: "Warm-Up Practice" }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "mx-auto max-w-2xl text-lg text-white/90", children: "Quick low-pressure spelling before the main game. Missed words appear first when they are due." })
+  return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "min-h-screen bg-gradient-to-br from-emerald-700 via-sky-800 to-indigo-900 p-6 text-white font-body", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "mx-auto flex min-h-[calc(100vh-3rem)] max-w-4xl flex-col items-center justify-center text-center", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "mb-8 w-full rounded-3xl border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-sm", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "mb-2 text-sm font-bold uppercase tracking-wide text-yellow-200", children: "Practice Mode" }),
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h1", { className: "mb-4 text-4xl font-black md:text-6xl", children: "Warm-Up Practice" }),
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "mx-auto max-w-2xl text-lg text-white/90", children: "Quick low-pressure spelling before the main game. Missed words appear first when they are due." })
     ] }),
-    currentWord ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("form", { onSubmit: checkAnswer, className: "w-full max-w-2xl rounded-3xl border border-white/20 bg-black/30 p-6 shadow-2xl", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "mb-6 flex flex-wrap items-center justify-center gap-3", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+    currentWord ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("form", { onSubmit: checkAnswer, className: "w-full max-w-2xl rounded-3xl border border-white/20 bg-black/30 p-6 shadow-2xl", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "mb-6 flex flex-wrap items-center justify-center gap-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
           "button",
           {
             type: "button",
@@ -14817,7 +15285,7 @@ var PracticeScreen = ({ words, onBack, reviewWords = [] }) => {
             children: "Hear Word"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
           "button",
           {
             type: "button",
@@ -14827,13 +15295,13 @@ var PracticeScreen = ({ words, onBack, reviewWords = [] }) => {
           }
         )
       ] }),
-      currentWord.definition && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "mb-5 rounded-2xl bg-white/10 p-4 text-left text-white/90", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "font-bold text-yellow-200", children: "Meaning:" }),
+      currentWord.definition && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("p", { className: "mb-5 rounded-2xl bg-white/10 p-4 text-left text-white/90", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "font-bold text-yellow-200", children: "Meaning:" }),
         " ",
         currentWord.definition
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("label", { htmlFor: "warmup-answer", className: "mb-2 block text-left text-lg font-bold", children: "Spell the word" }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("label", { htmlFor: "warmup-answer", className: "mb-2 block text-left text-lg font-bold", children: "Spell the word" }),
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
         "input",
         {
           id: "warmup-answer",
@@ -14845,7 +15313,7 @@ var PracticeScreen = ({ words, onBack, reviewWords = [] }) => {
           className: "mb-4 w-full rounded-2xl border-4 border-white/30 bg-white px-5 py-4 text-2xl font-bold text-gray-900"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
         "button",
         {
           type: "submit",
@@ -14853,14 +15321,14 @@ var PracticeScreen = ({ words, onBack, reviewWords = [] }) => {
           children: "Check"
         }
       ),
-      feedback && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "mt-5 text-xl font-bold text-yellow-200", role: "status", children: feedback })
-    ] }) : /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "w-full max-w-2xl rounded-3xl border border-white/20 bg-black/30 p-6 shadow-2xl", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "text-xl font-bold", children: "Words are still loading. Head back and try again in a moment." }) }),
-    /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "mt-8 flex flex-col items-center gap-4 sm:flex-row", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "rounded-2xl bg-white/10 px-5 py-3 font-bold", children: [
+      feedback && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "mt-5 text-xl font-bold text-yellow-200", role: "status", children: feedback })
+    ] }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "w-full max-w-2xl rounded-3xl border border-white/20 bg-black/30 p-6 shadow-2xl", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "text-xl font-bold", children: "Words are still loading. Head back and try again in a moment." }) }),
+    /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "mt-8 flex flex-col items-center gap-4 sm:flex-row", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "rounded-2xl bg-white/10 px-5 py-3 font-bold", children: [
         "Correct in warm-up: ",
         correctCount
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
         "button",
         {
           type: "button",
@@ -14875,7 +15343,7 @@ var PracticeScreen = ({ words, onBack, reviewWords = [] }) => {
 var PracticeScreen_default = PracticeScreen;
 
 // src/utils/useMusic.ts
-var import_react24 = __toESM(require_react());
+var import_react25 = __toESM(require_react());
 
 // src/utils/audioManager.ts
 var import_howler = __toESM(require_howler());
@@ -15296,20 +15764,20 @@ var registerPlaybackListeners = (howl, onPlay, onStop) => {
   };
 };
 var useMusic = (musicStyle = DEFAULT_STYLE, trackVariant = "vocal", musicVolume = 0.7, soundEnabled = true, screen = "menu", shouldPlay = true) => {
-  const [isPlaying, setIsPlaying] = (0, import_react24.useState)(false);
-  const [currentVolume, setCurrentVolume] = (0, import_react24.useState)(validateVolume(musicVolume));
-  const [currentTrack, setCurrentTrack] = (0, import_react24.useState)("");
-  const previousTrackKey = (0, import_react24.useRef)(null);
-  const trackKey = (0, import_react24.useMemo)(
+  const [isPlaying, setIsPlaying] = (0, import_react25.useState)(false);
+  const [currentVolume, setCurrentVolume] = (0, import_react25.useState)(validateVolume(musicVolume));
+  const [currentTrack, setCurrentTrack] = (0, import_react25.useState)("");
+  const previousTrackKey = (0, import_react25.useRef)(null);
+  const trackKey = (0, import_react25.useMemo)(
     () => buildTrackKey(musicStyle || DEFAULT_STYLE, trackVariant),
     [musicStyle, trackVariant]
   );
-  (0, import_react24.useEffect)(() => {
+  (0, import_react25.useEffect)(() => {
     const validatedVolume = validateVolume(musicVolume);
     setCurrentVolume(validatedVolume);
     audioManager2.setMusicVolume(validatedVolume);
   }, [musicVolume]);
-  (0, import_react24.useEffect)(() => {
+  (0, import_react25.useEffect)(() => {
     const trackSource = musicFiles[trackKey];
     if (!trackSource) {
       setIsPlaying(false);
@@ -15354,15 +15822,15 @@ var useMusic = (musicStyle = DEFAULT_STYLE, trackVariant = "vocal", musicVolume 
 var useMusic_default = useMusic;
 
 // src/AudioContext.tsx
-var import_react25 = __toESM(require_react());
-var import_jsx_runtime23 = __toESM(require_jsx_runtime());
-var AudioContext2 = (0, import_react25.createContext)(void 0);
+var import_react26 = __toESM(require_react());
+var import_jsx_runtime24 = __toESM(require_jsx_runtime());
+var AudioContext2 = (0, import_react26.createContext)(void 0);
 var AudioProvider = ({ children }) => {
-  const [muted, setMuted] = (0, import_react25.useState)(false);
+  const [muted, setMuted] = (0, import_react26.useState)(false);
   const toggleMute = () => {
     setMuted(!muted);
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(AudioContext2.Provider, { value: { muted, toggleMute }, children });
+  return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(AudioContext2.Provider, { value: { muted, toggleMute }, children });
 };
 
 // src/services/wordlistService.ts
@@ -15463,26 +15931,26 @@ function splitIntoSyllables(word) {
 }
 
 // src/spelling-bee-game.tsx
-var import_jsx_runtime24 = __toESM(require_jsx_runtime());
+var import_jsx_runtime25 = __toESM(require_jsx_runtime());
 var SpellingBeeGame = () => {
   if (typeof window !== "undefined") {
     const params = new URLSearchParams(window.location.search);
     if (params.get("team") === "1") {
-      return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(TeamDisplay_default, {});
+      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(TeamDisplay_default, {});
     }
     if (params.get("scoreboard") === "1") {
-      return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ScoreboardScreen_default, {});
+      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ScoreboardScreen_default, {});
     }
   }
-  const [gameState, setGameState] = (0, import_react26.useState)("setup");
-  const [gameConfig, setGameConfig] = (0, import_react26.useState)(null);
-  const [gameResults, setGameResults] = (0, import_react26.useState)(null);
-  const [customWords, setCustomWords] = (0, import_react26.useState)({ easy: [], medium: [], tricky: [] });
-  const [wordDatabase, setWordDatabase] = (0, import_react26.useState)({ easy: [], medium: [], tricky: [] });
-  const [musicStyle, setMusicStyle] = (0, import_react26.useState)("Funk");
-  const [musicVolume, setMusicVolume] = (0, import_react26.useState)(0.5);
-  const [soundEnabled, setSoundEnabled] = (0, import_react26.useState)(true);
-  const [isMusicPlaying, setIsMusicPlaying] = (0, import_react26.useState)(true);
+  const [gameState, setGameState] = (0, import_react27.useState)("setup");
+  const [gameConfig, setGameConfig] = (0, import_react27.useState)(null);
+  const [gameResults, setGameResults] = (0, import_react27.useState)(null);
+  const [customWords, setCustomWords] = (0, import_react27.useState)({ easy: [], medium: [], tricky: [] });
+  const [wordDatabase, setWordDatabase] = (0, import_react27.useState)({ easy: [], medium: [], tricky: [] });
+  const [musicStyle, setMusicStyle] = (0, import_react27.useState)("Funk");
+  const [musicVolume, setMusicVolume] = (0, import_react27.useState)(0.5);
+  const [soundEnabled, setSoundEnabled] = (0, import_react27.useState)(true);
+  const [isMusicPlaying, setIsMusicPlaying] = (0, import_react27.useState)(true);
   const convertWord = (w) => ({
     word: w.word,
     syllables: w.syllables || null,
@@ -15495,7 +15963,7 @@ var SpellingBeeGame = () => {
     pronunciation: w.pronunciation || void 0,
     difficulty: w.difficulty
   });
-  (0, import_react26.useEffect)(() => {
+  (0, import_react27.useEffect)(() => {
     const loadWordList = () => {
       getWordList().then((wordsFromService) => {
         const words = wordsFromService.map(convertWord);
@@ -15514,7 +15982,7 @@ var SpellingBeeGame = () => {
     };
     loadWordList();
   }, []);
-  (0, import_react26.useEffect)(() => {
+  (0, import_react27.useEffect)(() => {
     if (gameState === "setup") {
       getWordList().then((wordsFromService) => {
         const words = wordsFromService.map(convertWord);
@@ -15597,7 +16065,7 @@ var SpellingBeeGame = () => {
     setGameConfig(savedState.gameConfig);
     setGameState("playing");
   };
-  (0, import_react26.useEffect)(() => {
+  (0, import_react27.useEffect)(() => {
     applyAccessibilitySettings();
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
@@ -15628,7 +16096,7 @@ var SpellingBeeGame = () => {
   };
   const wordListsReady = wordDatabase.easy.length + wordDatabase.medium.length + wordDatabase.tricky.length > 0;
   if (gameState === "setup") {
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
       SetupScreen_default,
       {
         onStartGame: handleStartGame,
@@ -15652,10 +16120,10 @@ var SpellingBeeGame = () => {
       ...customWords.medium,
       ...customWords.tricky
     ];
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(PracticeScreen_default, { words: practiceWords, reviewWords, onBack: handleBackToSetup });
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(PracticeScreen_default, { words: practiceWords, reviewWords, onBack: handleBackToSetup });
   }
   if (gameState === "playing") {
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
       GameScreen_default,
       {
         config: gameConfig,
@@ -15673,7 +16141,7 @@ var SpellingBeeGame = () => {
     );
   }
   if (gameState === "results") {
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
       ResultsScreen_default,
       {
         results: gameResults,
@@ -15684,16 +16152,16 @@ var SpellingBeeGame = () => {
     );
   }
   if (gameState === "leaderboard") {
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(LeaderboardScreen_default, { onBack: handleBackToSetup });
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(LeaderboardScreen_default, { onBack: handleBackToSetup });
   }
   if (gameState === "achievements") {
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(AchievementsScreen_default, { onBack: handleBackToSetup });
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(AchievementsScreen_default, { onBack: handleBackToSetup });
   }
   if (gameState === "history") {
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(HistoryScreen_default, { onBack: handleBackToSetup });
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(HistoryScreen_default, { onBack: handleBackToSetup });
   }
   if (gameState === "shop") {
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ShopScreen_default, { onBack: handleBackToSetup });
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ShopScreen_default, { onBack: handleBackToSetup });
   }
   return null;
 };
@@ -15701,7 +16169,7 @@ var container = document.getElementById("root");
 if (container) {
   const root = import_client.default.createRoot(container);
   root.render(
-    /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(import_react26.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(AudioProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(HelpSystemProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(SpellingBeeGame, {}) }) }) })
+    /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(import_react27.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(AudioProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(HelpSystemProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(SpellingBeeGame, {}) }) }) })
   );
 }
 var spelling_bee_game_default = SpellingBeeGame;
