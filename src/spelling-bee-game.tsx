@@ -48,7 +48,7 @@ const SpellingBeeGame = () => {
   const convertWord = (w: WordListWord): Word => ({
     word: w.word,
     syllables: w.syllables || null,
-    phonemes: null,
+    phonemes: w.phonemes || Array.from(w.word.toUpperCase()),
     definition: w.definition || null,
     origin: w.origin || null,
     example: w.example || null,

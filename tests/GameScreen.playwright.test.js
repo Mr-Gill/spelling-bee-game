@@ -38,4 +38,8 @@ test('accessibility checks for game controls', async ({ page }) => {
   
   // Check that help shop button is accessible
   await expect(page.getByRole('button', { name: 'Open help shop' })).toBeVisible();
+
+  // Phonics support appears for words that include phoneme data
+  await page.getByRole('button', { name: /Show Phonics/i }).click();
+  await expect(page.getByText(/Phonics Breakdown/i)).toBeVisible();
 });

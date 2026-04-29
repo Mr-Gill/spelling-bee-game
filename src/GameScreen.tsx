@@ -15,6 +15,7 @@ import useWordProgression from './hooks/useWordProgression';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import HintPanel from './components/HintPanel';
 import AvatarSelector from './components/AvatarSelector';
+import PhonicsBreakdown from './components/PhonicsBreakdown';
 import { getContextualMascot } from './utils/mascot';
 import ParticipantStats from './components/ParticipantStats';
 import { HelpShop } from './components/HelpShop';
@@ -76,6 +77,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [currentParticipantIndex, setCurrentParticipantIndex] = React.useState(0);
   const isTeamMode = config.gameMode === 'team';
   const [showWord, setShowWord] = React.useState(true);
+  const [showPhonics, setShowPhonics] = React.useState(false);
   const [usedHint, setUsedHint] = React.useState(false);
   const [letters, setLetters] = React.useState<string[]>([]);
   const [feedback, setFeedback] = React.useState<Feedback>({ message: '', type: '' });
@@ -152,6 +154,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
     if (currentWord) {
       setLetters(Array.from({ length: currentWord.word.length }, () => ''));
       publishTeamDisplayWord(currentWord.word);
+      setShowPhonics(false);
     }
   }, [currentWord]);
 
@@ -780,6 +783,17 @@ const GameScreen: React.FC<GameScreenProps> = ({
               {showWord ? '👁️ Hide Word' : '👁️ Show Word'}
             </button>
           </div>
+          {currentWord.phonemes && currentWord.phonemes.length > 0 && (
+            <div className="mb-6">
+              <button
+                type="button"
+                onClick={() => setShowPhonics(value => !value)}
+                className="rounded-2xl bg-yellow-300 px-6 py-3 text-lg font-black text-black transition hover:bg-yellow-400"
+              >
+                {showPhonics ? 'Hide Phonics' : 'Show Phonics'}
+              </button>
+            </div>
+          )}
           <HintPanel
             word={currentWord}
             participantPoints={participants[currentParticipantIndex].points}
@@ -790,6 +804,9 @@ const GameScreen: React.FC<GameScreenProps> = ({
             onHintUsed={() => setUsedHint(true)}
             onExtraAttempt={() => setExtraAttempt(true)}
           />
+          {showPhonics && currentWord.phonemes && (
+            <PhonicsBreakdown phonemes={currentWord.phonemes} />
+          )}
           <div className="flex gap-3 justify-center mb-8 px-4">
             {letters.map((letter, idx) => (
               <div
