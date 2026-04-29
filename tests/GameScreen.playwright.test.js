@@ -19,7 +19,7 @@ test('keyboard input works during gameplay', async ({ page }) => {
   await page.keyboard.press('Enter');
   
   // Should get feedback (either correct or incorrect)
-  await expect(page.locator('text=/correct|incorrect|try again/i')).toBeVisible({ timeout: 8000 });
+  await expect(page.locator('text=/correct|incorrect|try again/i').first()).toBeVisible({ timeout: 8000 });
 });
 
 test('accessibility checks for game controls', async ({ page }) => {
