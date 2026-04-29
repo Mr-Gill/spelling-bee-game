@@ -11,24 +11,24 @@ interface PracticeScreenProps {
 
 const CORRECT_PRACTICE_FEEDBACK = [
   'Correct. Nice warm-up.',
-  'Correct. The alphabet is warming up nicely.',
-  'Correct. This word has been collected and filed.',
-  'Correct. The word posed no resistance during practice.',
+  'Good. The practice is beginning to look like practice.',
+  'That word is behind you now. Onto the next.',
+  'No resistance at all. The word came quietly.',
   'Correct. One word down. The rest are watching.',
+  'Right. Make a note of how that felt — that\'s how it goes.',
   'Correct. That one came out well.',
-  'Correct. The hive has been notified.',
-  'Correct. A small bee has approved this spelling.',
+  'Yes. Now do that again with the next one.',
   'Correct. The bee was watching. It looked pleased.',
 ];
 
 const INCORRECT_PRACTICE_FEEDBACK = [
   'Not quite. Listen again and have another go.',
   'Not quite. The word is still out there, waiting.',
-  'Not quite. One more attempt. The word remains available.',
+  'Try again. Practice is exactly for this.',
   'Not quite. It was close. The alphabet is not upset.',
   'Not quite. Give it another listen.',
   'Nearly. The word will wait.',
-  'Not quite. The bee has a second attempt ready.',
+  'Not yet. The word has patience. Use it.',
   'Nearly. The hive is not alarmed.',
 ];
 

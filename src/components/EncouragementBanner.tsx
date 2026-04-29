@@ -3,10 +3,10 @@ import React from 'react';
 export const ENCOURAGEMENT_STORAGE_KEY = 'encouragementPhrases';
 
 export const DEFAULT_ENCOURAGEMENT_PHRASES = [
-  'Correct. The dictionary has nodded respectfully.',
-  'Correct. A tiny bee has stamped the paperwork.',
-  'Nice spelling. The alphabet looks relieved.',
-  'Correct. The word has stopped pretending to be difficult.',
+  '{name} recognised that word on sight. The word didn\'t stand a chance.',
+  '{name} did not guess. {name} knew.',
+  '{name} put every letter exactly where it was supposed to go.',
+  '{name} handled that. Now everyone can move on.',
   'Beautifully done. {name} has handled that word with care.',
   'Sharp work, {name}. The alphabet approves.',
   'Correct. That word was watching, and {name} did not flinch.',
