@@ -35,6 +35,29 @@ import { publishScoreboard } from './ScoreboardScreen';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
+const CORRECT_FEEDBACK = [
+  'Correct. The dictionary has nodded respectfully.',
+  'Correct. The word has been handled with care.',
+  'Correct. The alphabet looks briefly organised.',
+  'Correct. A tiny bee has stamped the paperwork.',
+  'Correct. The word has stopped pretending to be difficult.',
+  'Beautifully done. The word was not expecting that.',
+  'Correct. That one is now properly filed.',
+  'Nice spelling. The alphabet looks relieved.',
+];
+
+const INCORRECT_FEEDBACK = [
+  'Not quite. One or two letters have made poor choices.',
+  'Close, but the word remains unconvinced.',
+  'Not this time. The spelling almost had its shoes on.',
+  'Good attempt. The word was being unnecessarily dramatic.',
+  'Not quite. Use the miss as a clue, not a disaster.',
+  'Nearly. One letter has wandered off with confidence.',
+  'Not quite. The word remains calm, which is rude of it.',
+];
+
+const pickRandom = (arr: string[]): string => arr[Math.floor(Math.random() * arr.length)];
+
 interface GameScreenProps {
   config: GameConfig;
   onEndGame: (results: GameResults) => void;
@@ -249,14 +272,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
 
   function handleIncorrectAttempt() {
     if (extraAttempt) {
-      setFeedback({ message: 'Incorrect. You still have one more attempt!', type: 'error' });
+      setFeedback({ message: 'Not quite. The word remains patient. One more attempt.', type: 'error' });
       setExtraAttempt(false);
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
       startTimer();
       return;
     }
 
-    setFeedback({ message: 'Incorrect. Try again next time!', type: 'error' });
+    setFeedback({ message: pickRandom(INCORRECT_FEEDBACK), type: 'error' });
     if (currentWord) setMissedWords(prev => [...prev, currentWord]);
 
     const updatedParticipants = participants.map((p, index) => {
@@ -285,7 +308,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       if (config.gameMode === 'team' && newAttempted.size < participants.length) {
         setAttemptedParticipants(newAttempted);
         setUsedHint(false);
-        setFeedback({ message: 'Next team can steal this word!', type: 'info' });
+        setFeedback({ message: 'The next team may now attempt this word.', type: 'info' });
         nextTurn();
         startTimer();
       } else if (newAttempted.size >= participants.length) {
@@ -400,7 +423,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         launchConfetti();
       }
       
-      setFeedback({ message: 'Correct! 🎉', type: 'success' });
+      setFeedback({ message: pickRandom(CORRECT_FEEDBACK), type: 'success' });
       setEncouragementMessage(pickEncouragementPhrase(encouragementPhrases, participant.name));
       
       setTimeout(() => {
@@ -457,7 +480,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
     if (isLivesPenalty) {
       playLoseLife();
     }
-    setFeedback({ message: `Word Skipped (${deduction})`, type: 'info' });
+    setFeedback({ message: `Word skipped (${deduction}). It will return later, probably with notes.`, type: 'info' });
     if (currentWord) {
       setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
       addReviewWord(currentWord);
@@ -656,7 +679,9 @@ const GameScreen: React.FC<GameScreenProps> = ({
         }`}>
           {timeLeft}
         </div>
-        <div className="text-lg font-bold">seconds left</div>
+        <div className="text-lg font-bold">
+          {timeLeft <= 5 ? 'Final seconds.' : timeLeft <= 10 ? 'Time is getting rude.' : 'seconds left'}
+        </div>
         <button
           onClick={togglePause}
           className="mt-4 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-yellow-600 hover:from-kahoot-yellow-500 hover:to-kahoot-yellow-700 text-black px-6 py-3 rounded-2xl font-black text-lg shadow-lg transform transition-all duration-200 hover:scale-105"
@@ -951,7 +976,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
             <div className="text-6xl md:text-8xl font-black bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent">
               PAUSED
             </div>
-            <div className="text-2xl text-white/80 mt-4">Game is paused. Click resume to continue!</div>
+            <div className="text-2xl text-white/80 mt-4">The words are waiting. Click Resume to continue.</div>
           </div>
         </div>
       )}

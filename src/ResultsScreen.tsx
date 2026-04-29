@@ -135,14 +135,14 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
   const getWinnerMessage = () => {
     const { winner, participants } = results;
     if (winner) {
-      return `Winner: ${winner.name}`;
+      return `${winner.name} wins. The dictionary has been briefly conquered.`;
     }
     const activeParticipants = participants.filter(p => p.lives > 0);
     if (activeParticipants.length > 1) {
       const names = activeParticipants.map(p => p.name).join(' and ');
-      return `It's a draw between ${names}!`;
+      return `It's a draw between ${names}. The alphabet remains neutral.`;
     }
-    return 'No one wins this round!';
+    return 'No one wins this round. The words remain undefeated.';
   };
 
   return (
@@ -238,7 +238,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center text-gray-900 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="comfort-heading">
             <h3 id="comfort-heading" className="mb-3 text-2xl font-black">How did the session feel?</h3>
-            <p className="mb-5 text-sm text-gray-600">This saves a simple class comfort check with the session history.</p>
+            <p className="mb-5 text-sm text-gray-600">This saves a simple comfort check alongside the session history.</p>
             <div className="grid grid-cols-3 gap-3">
               <button onClick={() => handleComfortSelect('happy')} className="rounded-xl bg-green-100 px-3 py-4 text-3xl font-black text-green-800 hover:bg-green-200" aria-label="Comfort happy">
                 😊

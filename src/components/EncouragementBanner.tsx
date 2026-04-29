@@ -3,11 +3,16 @@ import React from 'react';
 export const ENCOURAGEMENT_STORAGE_KEY = 'encouragementPhrases';
 
 export const DEFAULT_ENCOURAGEMENT_PHRASES = [
-  'Great spelling, {name}!',
-  'That one landed beautifully.',
-  'Sharp work. Keep going.',
-  'Nice focus, {name}.',
-  'You earned that one.',
+  'Correct. The dictionary has nodded respectfully.',
+  'Correct. A tiny bee has stamped the paperwork.',
+  'Nice spelling. The alphabet looks relieved.',
+  'Correct. The word has stopped pretending to be difficult.',
+  'Beautifully done. {name} has handled that word with care.',
+  'Sharp work, {name}. The alphabet approves.',
+  'Correct. That word was watching, and {name} did not flinch.',
+  'Correct. One more word filed in the correct drawer.',
+  'Well spelled. The word has sat down quietly.',
+  'Correct. {name} has briefly organised the alphabet.',
 ];
 
 export const normaliseEncouragementPhrases = (value: string): string[] =>

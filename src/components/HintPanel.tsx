@@ -34,7 +34,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
           </div>
           <div className="ml-3">
             <p className="text-sm text-yellow-700">
-              No word selected. Please wait for the next word.
+              No word selected. The next word is on its way.
             </p>
           </div>
         </div>
@@ -173,7 +173,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
       )}
       {showDefinition && (
         <p className="text-2xl mb-2">
-          <strong className="text-yellow-300">Definition:</strong> {definition || 'Definition not available'}
+          <strong className="text-yellow-300">Definition:</strong> {definition || 'No definition available for this word. It has chosen mystery.'}
         </p>
       )}
       <button
@@ -208,7 +208,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
                   disabled={participantPoints < 3}
                   className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
                 >
-                  {`Reveal syllable ${idx + 1} (-3)`}
+                  {`Syllable ${idx + 1} (−3 pts)`}
                 </button>
               )
             )}
@@ -217,23 +217,23 @@ const HintPanel: React.FC<HintPanelProps> = ({
       )}
       {showOrigin && (
         <p className="text-xl mb-2">
-          <strong className="text-yellow-300">Origin:</strong> {origin || 'Origin not available'}
+          <strong className="text-yellow-300">Origin:</strong> {origin || 'No origin available for this word. Its passport is currently missing.'}
         </p>
       )}
       {showSentence && (
         <p className="text-xl">
-          <strong className="text-yellow-300">Example:</strong> "{example || 'Example not available'}"
+          <strong className="text-yellow-300">Example:</strong> "{example || 'No example sentence is available. The word is keeping to itself.'}"
         </p>
       )}
       {showPrefix && (
         <div className="text-xl mb-2">
-          <strong className="text-yellow-300">Prefix:</strong> {prefix || 'Prefix not available'}
+          <strong className="text-yellow-300">Prefix:</strong> {prefix || 'No prefix information for this word.'}
           {prefixMeaning && <span className="text-lg text-gray-300"> (meaning: {prefixMeaning})</span>}
         </div>
       )}
       {showSuffix && (
         <div className="text-xl mb-2">
-          <strong className="text-yellow-300">Suffix:</strong> {suffix || 'Suffix not available'}
+          <strong className="text-yellow-300">Suffix:</strong> {suffix || 'No suffix information for this word.'}
           {suffixMeaning && <span className="text-lg text-gray-300"> (meaning: {suffixMeaning})</span>}
         </div>
       )}
@@ -244,7 +244,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
             disabled={participantPoints < 1}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            Buy Definition (-1)
+            Definition (−1 pt)
           </button>
         )}
         {!showOrigin && (
@@ -253,7 +253,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
             disabled={participantPoints < 1}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            Buy Origin (-1)
+            Origin (−1 pt)
           </button>
         )}
         {!showSentence && (
@@ -262,7 +262,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
             disabled={participantPoints < 2}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            Buy Sentence (-2)
+            Example Sentence (−2 pts)
           </button>
         )}
       </div>
@@ -273,7 +273,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
             disabled={participantPoints < 3}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            Reveal Prefix (-3)
+            Prefix (−3 pts)
           </button>
         )}
         {!showSuffix && suffix && (
@@ -282,7 +282,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
             disabled={participantPoints < 3}
             className="bg-yellow-300 text-black px-4 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            Reveal Suffix (-3)
+            Suffix (−3 pts)
           </button>
         )}
       </div>
@@ -292,21 +292,21 @@ const HintPanel: React.FC<HintPanelProps> = ({
           disabled={participantPoints < 5}
           className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 px-4 py-2 rounded-lg"
         >
-          Hangman Reveal (-5)
+          Reveal a Letter (−5 pts)
         </button>
         <button
           onClick={handleVowelReveal}
           disabled={participantPoints < 3}
           className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 px-4 py-2 rounded-lg"
         >
-          Vowel Reveal (-3)
+          Show Vowels (−3 pts)
         </button>
         <button
           onClick={handleFriendSubstitution}
           disabled={participantPoints < 4}
           className="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 px-4 py-2 rounded-lg"
         >
-          Friend Sub (-4)
+          Swap Speller (−4 pts)
         </button>
       </div>
       {word && (

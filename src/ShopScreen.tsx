@@ -24,7 +24,7 @@ const shopItems: ShopItem[] = [
   { 
     id: "wizard", 
     name: "Wizard Avatar", 
-    description: "A magical wizard avatar with special powers",
+    description: "A distinguished wizard avatar. The hat does most of the work.",
     icon: IMAGE_ASSETS.avatars.bee, 
     price: 50, 
     type: "avatar" 
@@ -32,15 +32,15 @@ const shopItems: ShopItem[] = [
   { 
     id: "top-hat", 
     name: "Top Hat", 
-    description: "A fancy top hat for your avatar",
+    description: "A formal top hat for your avatar. Spelling is a serious business.",
     icon: IMAGE_ASSETS.avatars.book, 
     price: 30, 
     type: "accessory" 
   },
   {
     id: "hint-letter",
-    name: "Hint: Reveal a Letter",
-    description: "Reveals one correct letter in the current word",
+    name: "Reveal a Letter",
+    description: "Reveal one correct letter in the current word. The alphabet does not usually hand out favours.",
     icon: "?",
     price: 20,
     type: "help",
@@ -48,8 +48,8 @@ const shopItems: ShopItem[] = [
   },
   {
     id: "hint-definition",
-    name: "Hint: Show Definition",
-    description: "Shows the definition of the current word",
+    name: "Show Definition",
+    description: "Find out what the word means. Definitions are the word's job description, usually with fewer meetings.",
     icon: "D",
     price: 15,
     type: "help",
@@ -58,7 +58,7 @@ const shopItems: ShopItem[] = [
   {
     id: "extra-time",
     name: "Extra Time",
-    description: "Adds 30 seconds to the current round's timer",
+    description: "Add 30 seconds. Time for a team huddle, a brave guess, or one deeply serious stare at the ceiling.",
     icon: "⏱️",
     price: 25,
     type: "help",
@@ -67,7 +67,7 @@ const shopItems: ShopItem[] = [
   {
     id: "skip-word",
     name: "Skip Word",
-    description: "Skip the current word without penalty",
+    description: "Skip this word and face a replacement. The skipped word will return later, probably with notes.",
     icon: "⏭️",
     price: 40,
     type: "help",
