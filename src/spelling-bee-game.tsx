@@ -9,6 +9,7 @@ import HistoryScreen from './HistoryScreen';
 import ShopScreen from './ShopScreen';
 import PracticeScreen from './PracticeScreen';
 import TeamDisplay from './TeamDisplay';
+import ScoreboardScreen from './ScoreboardScreen';
 import useMusic from './utils/useMusic';
 import { applyThemeClass } from './utils/theme';
 import { applyAccessibilitySettings } from './components/AccessibilitySettings';
@@ -27,6 +28,9 @@ const SpellingBeeGame = () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('team') === '1') {
       return <TeamDisplay />;
+    }
+    if (params.get('scoreboard') === '1') {
+      return <ScoreboardScreen />;
     }
   }
 

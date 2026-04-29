@@ -23,6 +23,7 @@ import { applyThemeClass } from './utils/theme';
 import AccessibilitySettings from './components/AccessibilitySettings';
 import { addReviewWord } from './utils/reviewQueue';
 import { publishTeamDisplayWord } from './TeamDisplay';
+import { publishScoreboard } from './ScoreboardScreen';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -153,6 +154,10 @@ const GameScreen: React.FC<GameScreenProps> = ({
       publishTeamDisplayWord(currentWord.word);
     }
   }, [currentWord]);
+
+  React.useEffect(() => {
+    publishScoreboard(participants);
+  }, [participants]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -653,6 +658,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
             title="Open team display"
           >
             📺
+          </button>
+          <button
+            onClick={() => window.open(`${window.location.pathname}?scoreboard=1`, '_blank', 'noopener,noreferrer')}
+            className="bg-green-500 hover:bg-green-600 text-white p-2 rounded transition-colors"
+            aria-label="Open scoreboard display"
+            title="Open scoreboard display"
+          >
+            🏆
           </button>
         </div>
         <input

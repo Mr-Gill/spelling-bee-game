@@ -81,3 +81,10 @@ test('team display route opens in display mode', async ({ page }) => {
   await expect(page.getByText(/Team Display/i)).toBeVisible();
   await expect(page.getByText(/Waiting for the next word/i)).toBeVisible();
 });
+
+test('scoreboard route opens in display mode', async ({ page }) => {
+  await page.goto('./?scoreboard=1');
+
+  await expect(page.getByText(/Live Scoreboard/i)).toBeVisible();
+  await expect(page.getByText(/Waiting for scores/i)).toBeVisible();
+});
