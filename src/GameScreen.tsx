@@ -858,7 +858,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
           
           {/* Epic Word Display Header */}
           <h2 className="text-4xl md:text-5xl font-black mb-8 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent animate-sparkle">
-            🎯 WORD FOR {isTeamMode ? 'TEAM' : 'STUDENT'}: {shouldHideNames ? `${isTeamMode ? 'TEAM' : 'PLAYER'} ${currentParticipantIndex + 1}` : (participants[currentParticipantIndex]?.name?.toUpperCase() || (isTeamMode ? 'TEAM' : 'STUDENT'))}
+            🎯 WORD FOR {isTeamMode ? 'TEAM' : 'STUDENT'}: {shouldHideNames ? `${isTeamMode ? 'TEAM' : 'PLAYER'} ${currentParticipantIndex + 1}` : (participants[currentParticipantIndex]?.name?.toUpperCase().slice(0, 32) || (isTeamMode ? 'TEAM' : 'STUDENT'))}
           </h2>
           
           {/* Dramatic Word Display */}

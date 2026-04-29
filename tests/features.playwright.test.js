@@ -111,3 +111,19 @@ test('pasted CSV word lists start with the word hidden', async ({ page }) => {
   await expect(page.getByRole('button', { name: /Show Word/i })).toBeVisible();
   await expect(page.getByText('harmony', { exact: true })).toHaveCount(0);
 });
+
+test('randomised team names stay short during gameplay', async ({ page }) => {
+  await page.goto('./');
+  await page.getByRole('button', { name: /SOLO CHALLENGE/i }).click();
+  await page.getByPlaceholder(/Paste names/i).fill('Alice, Bob, Charlie, Dakota');
+  await page.getByRole('button', { name: 'Add Names' }).click();
+  await page.getByPlaceholder('Number of teams').fill('2');
+  await page.getByRole('button', { name: 'Randomize' }).click();
+  await page.getByRole('button', { name: /TEAM BATTLE/i }).click();
+
+  await expect(page.locator('input[value="Team 1"]')).toBeVisible();
+  await expect(page.locator('input[value*="Alice"], input[value*="Bob"], input[value*="Charlie"], input[value*="Dakota"]')).toHaveCount(0);
+
+  await page.getByRole('button', { name: /START CUSTOM GAME/i }).click();
+  await expect(page.getByText(/WORD FOR TEAM: TEAM 1/i)).toBeVisible();
+});

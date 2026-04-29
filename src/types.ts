@@ -31,6 +31,8 @@ export interface Participant {
   avatar?: string;
   /** Optional team assignment used during setup */
   team?: string;
+  /** Names assigned to a generated team roster */
+  roster?: string[];
   /** Remaining skip turns available for this participant */
   skipsRemaining?: number;
   /** Remaining "ask a friend" opportunities */

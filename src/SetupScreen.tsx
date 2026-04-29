@@ -113,6 +113,17 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     { name: 'Team Beta', lives: 10, difficultyLevel: 0, points: 5, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
   ];
 
+  const normaliseTeam = (team: Participant): Participant => {
+    const [name, rosterText] = team.name.split(/:\s(.+)/);
+    const roster = team.roster || (rosterText ? rosterText.split(',').map(student => student.trim()).filter(Boolean) : undefined);
+    return {
+      ...team,
+      name: name.trim() || team.name,
+      roster,
+      avatar: team.avatar || getRandomAvatar()
+    };
+  };
+
   const [teams, setTeams] = useState<Participant[]>(getDefaultTeams());
   const [gameMode, setGameMode] = useState<'team' | 'individual'>('team');
   const [timerDuration, setTimerDuration] = useState(30);
@@ -183,7 +194,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   
   useEffect(() => {
     const savedTeams = localStorage.getItem('teams');
-    if (savedTeams) try { setTeams(JSON.parse(savedTeams).map((t: Participant) => ({ ...t, avatar: t.avatar || getRandomAvatar() }))); } catch {}
+    if (savedTeams) try { setTeams(JSON.parse(savedTeams).map((t: Participant) => normaliseTeam(t))); } catch {}
     const savedStudents = localStorage.getItem('students');
     if (savedStudents) try { setStudents(JSON.parse(savedStudents).map((s: Participant) => ({ ...s, avatar: s.avatar || getRandomAvatar() }))); } catch {}
     const savedTheme = localStorage.getItem('theme');
@@ -298,9 +309,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     const newTeams = groups
       .filter(group => group.length > 0)
       .map((group, index) => {
-        const teamName = `Team ${index + 1}: ${group.map(s => s.name).join(', ')}`;
+        const teamName = `Team ${index + 1}`;
         const participant = createParticipant(teamName, initialDifficulty);
         participant.avatar = teams[index]?.avatar || participant.avatar;
+        participant.roster = group.map(s => s.name);
         return participant;
       });
     updateTeams(newTeams);
@@ -519,7 +531,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             setError('Please add at least two teams with names.');
             return;
         }
-        finalParticipants = trimmedTeams.map(t => ({...t, difficultyLevel: initialDifficulty}));
+        finalParticipants = trimmedTeams.map(t => ({...normaliseTeam(t), difficultyLevel: initialDifficulty}));
     } else {
         const trimmedStudents = students.filter(student => student.name.trim() !== "");
         if (trimmedStudents.length < 1 && isSessionChallenge) {
@@ -645,14 +657,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           {gameMode === 'team' ? (
             <>
               {teams.map((team, index) => (
-                <div key={index} className="flex items-center gap-4 mb-4 p-4 bg-white/10 rounded-2xl border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
+                <div key={index} className="flex flex-wrap items-center gap-4 mb-4 p-4 bg-white/10 rounded-2xl border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
                   <img src={team.avatar || avatars[0]} alt="avatar" className="w-12 h-12 rounded-full border-2 border-kahoot-yellow-400 shadow-lg animate-float" />
                   <input 
                     type="text" 
                     value={team.name} 
                     onChange={e => updateTeamName(index, e.target.value)} 
                     placeholder={`Team ${index + 1} Name`} 
-                    className="flex-grow p-3 rounded-xl bg-white/20 text-white placeholder-white/70 font-semibold text-lg border border-white/30 focus:border-kahoot-yellow-400 focus:ring-2 focus:ring-kahoot-yellow-300 transition-all duration-200" 
+                    className="min-w-48 flex-grow p-3 rounded-xl bg-white/20 text-white placeholder-white/70 font-semibold text-lg border border-white/30 focus:border-kahoot-yellow-400 focus:ring-2 focus:ring-kahoot-yellow-300 transition-all duration-200" 
                   />
                   {teams.length > 1 && (
                     <button 
@@ -661,6 +673,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     >
                       Remove
                     </button>
+                  )}
+                  {team.roster && team.roster.length > 0 && (
+                    <div className="min-w-0 flex-1 text-sm text-white/75 md:max-w-md">
+                      <div className="truncate">
+                        {team.roster.join(', ')}
+                      </div>
+                    </div>
                   )}
                 </div>
               ))}

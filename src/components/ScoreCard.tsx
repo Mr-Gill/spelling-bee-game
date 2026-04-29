@@ -21,7 +21,7 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ participant, isActive, displayNam
           <div className="text-xl font-bold text-white drop-shadow-sm">{displayName}</div>
         </div>
       ) : (
-        <div className="text-2xl font-bold text-white drop-shadow-sm">{participant.name}</div>
+        <div className="max-w-48 truncate text-2xl font-bold text-white drop-shadow-sm" title={participant.name}>{participant.name}</div>
       )}
       <div
         className="mt-2 flex flex-wrap justify-center gap-1 text-4xl leading-none"
