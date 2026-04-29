@@ -11,6 +11,26 @@ import AccessibilitySettings from './components/AccessibilitySettings';
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
+interface SetupPreset {
+  gameMode: 'team' | 'individual';
+  teams: Participant[];
+  students: Participant[];
+  timerDuration: number;
+  sessionDurationMinutes: number;
+  skipPenaltyType: 'lives' | 'points';
+  skipPenaltyValue: number;
+  soundEnabled: boolean;
+  effectsEnabled: boolean;
+  musicStyle: string;
+  musicVolume: number;
+  initialDifficulty: number;
+  progressionSpeed: number;
+  theme: ThemeName;
+  teacherMode: boolean;
+}
+
+const PRESETS_STORAGE_KEY = 'setupPresets';
+
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
   onAddCustomWords: (words: Word[]) => void;
@@ -65,6 +85,16 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [theme, setTheme] = useState<ThemeName>('light');
   const [teacherMode, setTeacherMode] = useState<boolean>(() => localStorage.getItem('teacherMode') === 'true');
   const [showAccessibilitySettings, setShowAccessibilitySettings] = useState(false);
+  const [presets, setPresets] = useState<Record<string, SetupPreset>>(() => {
+    try {
+      return JSON.parse(localStorage.getItem(PRESETS_STORAGE_KEY) || '{}');
+    } catch {
+      return {};
+    }
+  });
+  const [selectedPreset, setSelectedPreset] = useState('');
+  const [presetName, setPresetName] = useState('');
+  const [presetMessage, setPresetMessage] = useState('');
   const [aiGrade, setAiGrade] = useState(5);
   const [aiTopic, setAiTopic] = useState('');
   const [aiCount, setAiCount] = useState(10);
@@ -313,6 +343,81 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
   };
 
+  const savePresets = (nextPresets: Record<string, SetupPreset>) => {
+    setPresets(nextPresets);
+    localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(nextPresets));
+  };
+
+  const buildPreset = (): SetupPreset => ({
+    gameMode,
+    teams,
+    students,
+    timerDuration,
+    sessionDurationMinutes,
+    skipPenaltyType,
+    skipPenaltyValue,
+    soundEnabled,
+    effectsEnabled,
+    musicStyle,
+    musicVolume,
+    initialDifficulty,
+    progressionSpeed,
+    theme,
+    teacherMode,
+  });
+
+  const handleSavePreset = () => {
+    const name = presetName.trim();
+    if (!name) {
+      setPresetMessage('Name the preset first.');
+      return;
+    }
+    savePresets({ ...presets, [name]: buildPreset() });
+    setSelectedPreset(name);
+    setPresetMessage(`Saved "${name}".`);
+  };
+
+  const handleLoadPreset = (name = selectedPreset) => {
+    const preset = presets[name];
+    if (!preset) {
+      setPresetMessage('Choose a preset to load.');
+      return;
+    }
+
+    setGameMode(preset.gameMode);
+    updateTeams(preset.teams?.length ? preset.teams : getDefaultTeams());
+    updateStudents(preset.students || []);
+    setTimerDuration(preset.timerDuration || 30);
+    setSessionDurationMinutes(preset.sessionDurationMinutes || 20);
+    setSkipPenaltyType(preset.skipPenaltyType || 'lives');
+    setSkipPenaltyValue(preset.skipPenaltyValue ?? 1);
+    setSoundEnabled(preset.soundEnabled !== false);
+    setEffectsEnabled(preset.effectsEnabled !== false);
+    setMusicStyle(preset.musicStyle || 'Funk');
+    setMusicVolume(typeof preset.musicVolume === 'number' ? preset.musicVolume : 1);
+    setInitialDifficulty(preset.initialDifficulty || 0);
+    setProgressionSpeed(preset.progressionSpeed || 1);
+    const normalizedTheme = applyThemeClass(preset.theme || 'light');
+    setTheme(normalizedTheme);
+    localStorage.setItem('theme', normalizedTheme);
+    setTeacherMode(Boolean(preset.teacherMode));
+    setPresetName(name);
+    setPresetMessage(`Loaded "${name}".`);
+  };
+
+  const handleDeletePreset = () => {
+    if (!selectedPreset || !presets[selectedPreset]) {
+      setPresetMessage('Choose a preset to delete.');
+      return;
+    }
+
+    const nextPresets = { ...presets };
+    delete nextPresets[selectedPreset];
+    savePresets(nextPresets);
+    setPresetMessage(`Deleted "${selectedPreset}".`);
+    setSelectedPreset('');
+  };
+
   const handleStart = async (isSessionChallenge = false) => {
     if (!isSessionChallenge && !wordListsReady) {
       setError('Word lists are still loading. Please try again in a moment.');
@@ -391,6 +496,49 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           <p className="screen-subtitle text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-kahoot-yellow-300 bg-clip-text text-transparent animate-sparkle">
             Get ready to spell your way to victory!
           </p>
+        </div>
+
+        <div className="game-card mb-8 animate-scale-in delay-100">
+          <h2 className="text-3xl font-black mb-6 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-green-400 bg-clip-text text-transparent">
+            Setup Presets 💾
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto_auto_auto] gap-3 items-end">
+            <div>
+              <label htmlFor="preset-name" className="block mb-2 font-bold">Preset Name</label>
+              <input
+                id="preset-name"
+                type="text"
+                value={presetName}
+                onChange={e => setPresetName(e.target.value)}
+                className="p-2 rounded-md bg-white/20 text-white"
+                placeholder="Friday groups"
+              />
+            </div>
+            <div>
+              <label htmlFor="preset-select" className="block mb-2 font-bold">Saved Presets</label>
+              <select
+                id="preset-select"
+                value={selectedPreset}
+                onChange={e => setSelectedPreset(e.target.value)}
+                className="p-2 rounded-md bg-white/20 text-white"
+              >
+                <option value="">-- Select preset --</option>
+                {Object.keys(presets).sort().map(name => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+            </div>
+            <button type="button" onClick={handleSavePreset} className="bg-green-500 hover:bg-green-600 px-4 py-3 rounded-lg font-bold">
+              Save
+            </button>
+            <button type="button" onClick={() => handleLoadPreset()} disabled={!selectedPreset} className="bg-blue-500 hover:bg-blue-600 px-4 py-3 rounded-lg font-bold disabled:opacity-50">
+              Load
+            </button>
+            <button type="button" onClick={handleDeletePreset} disabled={!selectedPreset} className="bg-red-500 hover:bg-red-600 px-4 py-3 rounded-lg font-bold disabled:opacity-50">
+              Delete
+            </button>
+          </div>
+          {presetMessage && <p className="mt-3 text-sm text-yellow-200" role="status">{presetMessage}</p>}
         </div>
 
         {/* Game Mode Selection - Kahoot Style */}
@@ -511,8 +659,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             </div>
             <div className="bg-white/10 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-4">Session Timer ⏳</h2>
-                <label className="block mb-2">Session Length (minutes)</label>
+                <label htmlFor="session-duration" className="block mb-2">Session Length (minutes)</label>
                 <input
+                  id="session-duration"
                   type="number"
                   min={1}
                   max={120}

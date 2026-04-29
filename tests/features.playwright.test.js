@@ -59,3 +59,18 @@ test('warm-up practice is available before the main game', async ({ page }) => {
   await page.getByRole('button', { name: /Back to Setup/i }).click();
   await expect(page.getByRole('button', { name: /START CUSTOM GAME/i })).toBeVisible();
 });
+
+test('setup presets save and load game options', async ({ page }) => {
+  await page.goto('./');
+
+  await page.getByLabel(/Session Length/i).fill('12');
+  await page.getByLabel(/Preset Name/i).fill('Friday groups');
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.getByText(/Saved "Friday groups"/i)).toBeVisible();
+
+  await page.getByLabel(/Session Length/i).fill('5');
+  await page.getByLabel(/Saved Presets/i).selectOption('Friday groups');
+  await page.getByRole('button', { name: 'Load', exact: true }).click();
+
+  await expect(page.getByLabel(/Session Length/i)).toHaveValue('12');
+});
