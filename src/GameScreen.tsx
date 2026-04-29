@@ -1,5 +1,5 @@
 import React from 'react';
-import { SkipForward, Play, Pause, Volume2, VolumeX, LogOut } from 'lucide-react';
+import { SkipForward, Play, Pause, Volume2, VolumeX, LogOut, MessageCircle } from 'lucide-react';
 import { GameConfig, Word, Participant, GameResults, defaultAchievements } from './types';
 import correctSoundFile from './audio/correct.mp3';
 import wrongSoundFile from './audio/wrong.mp3';
@@ -22,6 +22,13 @@ import { HelpShop } from './components/HelpShop';
 import { saveGameState, generateGameId, autoSaveGameState, type SavedGameState } from './utils/gameStateManager';
 import { applyThemeClass } from './utils/theme';
 import AccessibilitySettings from './components/AccessibilitySettings';
+import EncouragementBanner, {
+  DEFAULT_ENCOURAGEMENT_PHRASES,
+  loadEncouragementPhrases,
+  normaliseEncouragementPhrases,
+  pickEncouragementPhrase,
+  saveEncouragementPhrases,
+} from './components/EncouragementBanner';
 import { addReviewWord } from './utils/reviewQueue';
 import { publishTeamDisplayWord } from './TeamDisplay';
 import { publishScoreboard } from './ScoreboardScreen';
@@ -81,6 +88,11 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [usedHint, setUsedHint] = React.useState(false);
   const [letters, setLetters] = React.useState<string[]>([]);
   const [feedback, setFeedback] = React.useState<Feedback>({ message: '', type: '' });
+  const [encouragementMessage, setEncouragementMessage] = React.useState('');
+  const [encouragementPhrases, setEncouragementPhrases] = React.useState<string[]>(loadEncouragementPhrases);
+  const [showEncouragementSettings, setShowEncouragementSettings] = React.useState(false);
+  const [encouragementDraft, setEncouragementDraft] = React.useState(() => loadEncouragementPhrases().join('\n'));
+  const [encouragementSaveMessage, setEncouragementSaveMessage] = React.useState('');
   const [extraAttempt, setExtraAttempt] = React.useState(false);
   const [isHelpOpen, setIsHelpOpen] = React.useState(false);
   const { wordQueues, setWordQueues, currentWord, currentDifficulty, selectNextWordForLevel: selectNextWord } =
@@ -181,6 +193,10 @@ const GameScreen: React.FC<GameScreenProps> = ({
     const normalized = applyThemeClass(theme);
     localStorage.setItem('theme', normalized);
   }, [theme]);
+
+  React.useEffect(() => {
+    setEncouragementDraft(encouragementPhrases.join('\n'));
+  }, [encouragementPhrases]);
 
   // Auto-save game state when key properties change
   React.useEffect(() => {
@@ -382,11 +398,13 @@ const GameScreen: React.FC<GameScreenProps> = ({
       }
       
       setFeedback({ message: 'Correct! 🎉', type: 'success' });
+      setEncouragementMessage(pickEncouragementPhrase(encouragementPhrases, participant.name));
       
       setTimeout(() => {
         const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
         const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
         setFeedback({ message: '', type: '' });
+        setEncouragementMessage('');
         advanceToWord(nextDifficulty);
         nextTurn();
       }, 2000);
@@ -397,6 +415,22 @@ const GameScreen: React.FC<GameScreenProps> = ({
     // This part only runs if the answer was incorrect
     playWrong();
     handleIncorrectAttempt();
+  };
+
+  const saveEncouragementSettings = () => {
+    const phrases = normaliseEncouragementPhrases(encouragementDraft);
+    const nextPhrases = phrases.length > 0 ? phrases : DEFAULT_ENCOURAGEMENT_PHRASES;
+    setEncouragementPhrases(nextPhrases);
+    saveEncouragementPhrases(nextPhrases);
+    setEncouragementSaveMessage('Saved encouragement phrases.');
+    setTimeout(() => setEncouragementSaveMessage(''), 2500);
+  };
+
+  const resetEncouragementSettings = () => {
+    setEncouragementPhrases(DEFAULT_ENCOURAGEMENT_PHRASES);
+    saveEncouragementPhrases(DEFAULT_ENCOURAGEMENT_PHRASES);
+    setEncouragementSaveMessage('Restored default phrases.');
+    setTimeout(() => setEncouragementSaveMessage(''), 2500);
   };
 
   const skipWord = () => {
@@ -593,6 +627,10 @@ const GameScreen: React.FC<GameScreenProps> = ({
         </div>
       )}
 
+      {encouragementMessage && (
+        <EncouragementBanner message={encouragementMessage} />
+      )}
+
       {/* Exciting Timer Display */}
       <div className="absolute top-8 right-8 text-center z-50 game-card">
         <div className={`text-6xl md:text-8xl font-black mb-2 transition-all duration-300 ${
@@ -631,6 +669,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
             aria-label="Open help shop"
           >
             ❓
+          </button>
+          <button
+            onClick={() => setShowEncouragementSettings(true)}
+            className="bg-yellow-300 text-black p-2 rounded"
+            aria-label="Edit encouragement phrases"
+            title="Edit encouragement phrases"
+          >
+            <MessageCircle size={16} />
           </button>
           <button
             onClick={onToggleMusicPlaying}
@@ -730,6 +776,47 @@ const GameScreen: React.FC<GameScreenProps> = ({
 
       {showAccessibilitySettings && (
         <AccessibilitySettings onClose={() => setShowAccessibilitySettings(false)} />
+      )}
+
+      {showEncouragementSettings && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 text-gray-900 shadow-2xl">
+            <h2 className="mb-2 text-2xl font-black">Encouragement phrases</h2>
+            <p className="mb-4 text-sm text-gray-600">One phrase per line. Use {'{name}'} to include the current player or team.</p>
+            <label htmlFor="encouragement-phrases" className="sr-only">Encouragement phrases</label>
+            <textarea
+              id="encouragement-phrases"
+              value={encouragementDraft}
+              onChange={event => setEncouragementDraft(event.target.value)}
+              className="min-h-48 w-full rounded-xl border-2 border-gray-300 p-3 text-base text-gray-900 focus:border-kahoot-purple-500 focus:outline-none"
+            />
+            {encouragementSaveMessage && (
+              <div className="mt-3 rounded-lg bg-green-100 px-3 py-2 font-bold text-green-800" role="status">
+                {encouragementSaveMessage}
+              </div>
+            )}
+            <div className="mt-5 flex flex-wrap justify-end gap-3">
+              <button
+                onClick={resetEncouragementSettings}
+                className="rounded-xl bg-gray-200 px-4 py-2 font-bold text-gray-800 hover:bg-gray-300"
+              >
+                Reset
+              </button>
+              <button
+                onClick={() => setShowEncouragementSettings(false)}
+                className="rounded-xl bg-gray-200 px-4 py-2 font-bold text-gray-800 hover:bg-gray-300"
+              >
+                Close
+              </button>
+              <button
+                onClick={saveEncouragementSettings}
+                className="rounded-xl bg-kahoot-purple-600 px-4 py-2 font-bold text-white hover:bg-kahoot-purple-700"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       <AvatarSelector

@@ -38,8 +38,26 @@ test('accessibility checks for game controls', async ({ page }) => {
   
   // Check that help shop button is accessible
   await expect(page.getByRole('button', { name: 'Open help shop' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Edit encouragement phrases' })).toBeVisible();
 
   // Phonics support appears for words that include phoneme data
   await page.getByRole('button', { name: /Show Phonics/i }).click();
   await expect(page.getByText(/Phonics Breakdown/i)).toBeVisible();
+});
+
+test('teacher can customise encouragement phrases', async ({ page }) => {
+  await page.goto('./');
+  const startButton = page.getByRole('button', { name: /START CUSTOM GAME/i });
+  await expect(startButton).toBeEnabled();
+  await startButton.evaluate(el => el.click());
+
+  await page.getByRole('button', { name: 'Edit encouragement phrases' }).click();
+  await expect(page.getByRole('heading', { name: 'Encouragement phrases' })).toBeVisible();
+
+  await page.getByRole('textbox', { name: 'Encouragement phrases' }).fill('Brilliant, {name}!');
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page.getByText('Saved encouragement phrases.')).toBeVisible();
+
+  const stored = await page.evaluate(() => localStorage.getItem('encouragementPhrases'));
+  expect(stored).toBe(JSON.stringify(['Brilliant, {name}!']));
 });
