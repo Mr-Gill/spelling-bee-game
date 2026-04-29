@@ -8,6 +8,7 @@ import AchievementsScreen from './AchievementsScreen';
 import HistoryScreen from './HistoryScreen';
 import ShopScreen from './ShopScreen';
 import PracticeScreen from './PracticeScreen';
+import TeamDisplay from './TeamDisplay';
 import useMusic from './utils/useMusic';
 import { applyThemeClass } from './utils/theme';
 import { applyAccessibilitySettings } from './components/AccessibilitySettings';
@@ -22,6 +23,13 @@ import type { GameConfig, Word } from './types';
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('team') === '1') {
+      return <TeamDisplay />;
+    }
+  }
+
   const [gameState, setGameState] = useState('setup');
   const [gameConfig, setGameConfig] = useState<GameConfig | null>(null);
   const [gameResults, setGameResults] = useState<any>(null);

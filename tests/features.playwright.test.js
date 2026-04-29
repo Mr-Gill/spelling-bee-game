@@ -74,3 +74,10 @@ test('setup presets save and load game options', async ({ page }) => {
 
   await expect(page.getByLabel(/Session Length/i)).toHaveValue('12');
 });
+
+test('team display route opens in display mode', async ({ page }) => {
+  await page.goto('./?team=1');
+
+  await expect(page.getByText(/Team Display/i)).toBeVisible();
+  await expect(page.getByText(/Waiting for the next word/i)).toBeVisible();
+});

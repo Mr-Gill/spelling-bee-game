@@ -22,6 +22,7 @@ import { saveGameState, generateGameId, autoSaveGameState, type SavedGameState }
 import { applyThemeClass } from './utils/theme';
 import AccessibilitySettings from './components/AccessibilitySettings';
 import { addReviewWord } from './utils/reviewQueue';
+import { publishTeamDisplayWord } from './TeamDisplay';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -149,6 +150,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   React.useEffect(() => {
     if (currentWord) {
       setLetters(Array.from({ length: currentWord.word.length }, () => ''));
+      publishTeamDisplayWord(currentWord.word);
     }
   }, [currentWord]);
 
@@ -643,6 +645,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
             title="Exit and save game"
           >
             <LogOut size={16} />
+          </button>
+          <button
+            onClick={() => window.open(`${window.location.pathname}?team=1`, '_blank', 'noopener,noreferrer')}
+            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition-colors"
+            aria-label="Open team display"
+            title="Open team display"
+          >
+            📺
           </button>
         </div>
         <input
