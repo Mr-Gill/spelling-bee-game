@@ -138,7 +138,7 @@ npm start
 
 ### ➕ **Easy Custom Word Lists**
 1. Click **"+ Add Word List"** during setup
-2. Use the provided JSON template or the in-app **Download Template** button ([direct link](wordlists/example.csv))
+2. Use the in-app template downloads for CSV, TSV, TXT, or JSON ([CSV direct link](wordlists/template.csv))
 3. Each word requires:
    ```json
    {
@@ -385,6 +385,30 @@ Whether you're teaching phonics to elementary students, vocabulary to middle sch
 **🎯 Ready to transform your spelling lessons? [Start playing now!](https://mr-gill.github.io/spelling-bee-game/)**
 
 ---
+
+## Development
+
+### AI Word List Endpoint
+
+Run a local server that uses GitHub Models to generate word lists:
+
+```
+GITHUB_MODELS_TOKEN=your_token_here npm run ai:server
+```
+
+The server expects `GITHUB_MODELS_TOKEN` or `GITHUB_TOKEN` with the `models: read` permission. By default it calls `https://models.github.ai/inference/chat/completions` with `openai/gpt-4.1`.
+
+Optional settings:
+
+```
+GITHUB_MODELS_MODEL=openai/gpt-4.1
+GITHUB_MODELS_ORG=your-org-login
+PORT=3001
+```
+
+Then use **Generate with AI** in the setup screen. The frontend posts to `http://localhost:3001/wordlist`.
+
+On GitHub Pages, there is no server that can safely hold a secret. To generate directly from the static page, paste a fine-grained GitHub token with `models: read` into the **GitHub Models Token** field in setup. The token is kept only in browser `sessionStorage` and is not committed or built into the app.
 
 <div align="center">
 

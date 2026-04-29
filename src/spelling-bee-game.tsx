@@ -117,9 +117,9 @@ const SpellingBeeGame = () => {
   }, [gameState]);
 
   const handleAddCustomWords = (newWords: any[]) => {
-    const easy = newWords.filter(w => w.word.length <= 5);
-    const medium = newWords.filter(w => w.word.length > 5 && w.word.length <= 8);
-    const tricky = newWords.filter(w => w.word.length > 8);
+    const easy = newWords.filter(w => w.difficulty === 'easy' || (!w.difficulty && w.word.length <= 5));
+    const medium = newWords.filter(w => w.difficulty === 'medium' || (!w.difficulty && w.word.length > 5 && w.word.length <= 8));
+    const tricky = newWords.filter(w => w.difficulty === 'hard' || w.difficulty === 'tricky' || (!w.difficulty && w.word.length > 8));
     setCustomWords({ easy, medium, tricky });
   };
 

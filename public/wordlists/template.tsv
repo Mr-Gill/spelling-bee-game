@@ -1,0 +1,22 @@
+# ROLE: Generate a TSV for an AU Years 7-8 spelling bee on TOPIC.
+# INPUT: TOPIC string and N integer. If N is invalid or missing, use N=10.
+# OUTPUT: TSV only. No preface, no code fences, no blank lines.
+# HEADER: Exactly word, syllables, definition, origin, example, prefix, suffix, pronunciation.
+# RULES: ASCII only, AU/UK spelling, one word per row.
+# SYLLABLES: Use an escaped JSON string array such as [\"har\",\"mo\",\"ny\"].
+# CONTENT: This example uses TOPIC="weather and water" and N=10.
+# DIFFICULTY: Includes 3 one-syllable, 3+ stretch words, 3+ prefixes, and 3+ suffixes.
+# PREFIX/SUFFIX: Only productive derivational affixes. Do not invent affixes from stems.
+# PRONUNCIATION: Hyphenated with PRIMARY stress in CAPS. One syllable example: TRAM.
+# Upload note: Lines beginning with # are ignored by the game parser.
+word	syllables	definition	origin	example	prefix	suffix	pronunciation
+rain	[\"rain\"]	Water drops falling from clouds, often ruining hair and improving puddles.	Old English	Rain tapped the windows while a bee considered borrowing a tiny umbrella.			RAIN
+cloud	[\"cloud\"]	A floating mass of tiny water droplets that can shade a whole oval.	Old English	The cloud looked exactly like a kettle, according to two persuasive students.			CLOUD
+storm	[\"storm\"]	Violent weather with wind or rain that makes bins attempt travel.	Old English	During the storm, the scoreboard shivered and every chair faced north suddenly.			STORM
+vapour	[\"va\",\"pour\"]	Water as a gas, sneaking about invisibly until cooler air exposes it.	Latin via Old French	The vapour curled above the mug while the class debated cloud manners.			VAY-puh
+rehydrate	[\"re\",\"hy\",\"drate\"]	To restore water to something dry, especially a student after sport.	re- plus Greek via French	After spelling cyclone correctly, Priya rehydrated with heroic seriousness beside the whiteboard.	re-		ree-HY-drayt
+forecast	[\"fore\",\"cast\"]	A prediction about weather, famous for being blamed by picnic organisers.	Old English	The forecast promised sunshine, so naturally the oval prepared a puddle anyway.	fore-		FOR-kahst
+evaporation	[\"e\",\"vap\",\"o\",\"ra\",\"tion\"]	The change from liquid into vapour, usually after heat gets persuasive.	Latin	Evaporation made the puddle vanish before lunch, leaving only suspicious mud behind.		-tion	ee-vap-uh-RAY-shuhn
+unseasonal	[\"un\",\"sea\",\"son\",\"al\"]	Not typical for the season, like summer hail arriving rudely early.	un- plus Old French via Latin	The unseasonal hail bounced across the court while a bee postponed training.	un-	-al	un-SEE-zuh-nuhl
+condensation	[\"con\",\"den\",\"sa\",\"tion\"]	Water forming on cool surfaces when vapour crowds together into droplets.	Latin	Condensation fogged the jar until the label looked like secret code inside.	con-	-tion	kon-den-SAY-shuhn
+meteorology	[\"me\",\"te\",\"or\",\"ol\",\"o\",\"gy\"]	The scientific study of weather, beloved by people carrying many charts.	Greek	Meteorology explained the clouds, although the bee still blamed dramatic lighting choices.			mee-tee-uh-ROL-uh-jee

@@ -32,13 +32,31 @@ The workflow will:
 
 ### Local Development
 
-To generate a word list locally:
+To use the in-app **Generate with AI** button locally:
 
 ```bash
 # Install dependencies
 npm install
 
-# Generate word list (requires GITHUB_TOKEN in .env)
+# Start the GitHub Models proxy server
+GITHUB_MODELS_TOKEN=your_token_here npm run ai:server
+```
+
+The token needs the `models: read` permission. The server listens on `http://localhost:3001/wordlist`, which is what the setup screen calls.
+
+On GitHub Pages, the app cannot use repository secrets because it is a static site. Paste a fine-grained GitHub token with `models: read` into the setup screen's **GitHub Models Token** field to generate directly from the browser. The token is stored only in `sessionStorage` for the current browser session.
+
+Optional environment variables:
+
+```bash
+GITHUB_MODELS_MODEL=openai/gpt-4.1
+GITHUB_MODELS_ORG=your-org-login
+PORT=3001
+```
+
+To generate the static `wordlist.json` file instead:
+
+```bash
 GITHUB_TOKEN=your_token_here node scripts/generate-wordlist.js "education" 50
 
 # Build the project to include the new word list
@@ -51,7 +69,16 @@ You can customize the word generation by modifying the prompt in `WordList.promp
 
 ## Word List Format
 
-The word list is stored as a JSON array of word objects. Each word object has the following structure:
+Downloadable templates are available in:
+
+- `wordlists/template.csv`
+- `wordlists/template.tsv`
+- `wordlists/template.txt`
+- `wordlists/template.json`
+
+The CSV, TSV, and TXT templates include `#` instruction lines. These lines are ignored on upload, so the same downloaded files can be edited and uploaded back into the game.
+
+The word list can be stored as CSV, TSV, TXT, or a JSON object/array. Each word object has the following structure:
 
 ```typescript
 {

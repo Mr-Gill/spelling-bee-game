@@ -1,4 +1,5 @@
 const requiredFields = ['word', 'definition'];
+const validDifficulties = new Set(['easy', 'medium', 'hard']);
 
 function cleanHeader(value) {
   return value.trim().replace(/^"|"$/g, '');
@@ -76,6 +77,15 @@ function parseSyllables(value) {
   return null;
 }
 
+function normalizeDifficulty(value) {
+  if (typeof value === 'string') {
+    const lower = value.toLowerCase();
+    if (lower === 'tricky') return 'hard';
+    if (validDifficulties.has(lower)) return lower;
+  }
+  return undefined;
+}
+
 function normalizeWord(raw) {
   return {
     ...raw,
@@ -86,7 +96,8 @@ function normalizeWord(raw) {
     example: raw.example != null ? String(raw.example) : null,
     prefix: raw.prefix != null ? String(raw.prefix) : undefined,
     suffix: raw.suffix != null ? String(raw.suffix) : undefined,
-    pronunciation: raw.pronunciation != null ? String(raw.pronunciation) : undefined
+    pronunciation: raw.pronunciation != null ? String(raw.pronunciation) : undefined,
+    difficulty: normalizeDifficulty(raw.difficulty)
   };
 }
 
@@ -97,6 +108,22 @@ function parseWordList(content) {
       validateWords(parsed);
       return parsed.map(normalizeWord);
     }
+    if (parsed && typeof parsed === 'object') {
+      const flat = [];
+      for (const [category, items] of Object.entries(parsed)) {
+        if (Array.isArray(items)) {
+          for (const word of items) {
+            if (word && typeof word === 'object' && 'word' in word) {
+              flat.push({ ...word, difficulty: normalizeDifficulty(category) || normalizeDifficulty(word.difficulty) });
+            }
+          }
+        }
+      }
+      if (flat.length > 0) {
+        validateWords(flat);
+        return flat.map(normalizeWord);
+      }
+    }
   } catch (e) {
     if (e instanceof SyntaxError) {
       // Ignore JSON parse errors
@@ -105,7 +132,10 @@ function parseWordList(content) {
     }
   }
 
-  const lines = content.trim().split('\n');
+  const lines = content.trim().split('\n').filter(line => {
+    const trimmed = line.trim();
+    return trimmed && !trimmed.startsWith('#');
+  });
   if (lines.length < 2) {
     throw new Error('Invalid word list format.');
   }

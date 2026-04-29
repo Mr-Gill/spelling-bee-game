@@ -8,7 +8,11 @@ interface ScoreCardProps {
   hideName?: boolean;
 }
 
+const levelLabels = ['Easy', 'Medium', 'Tricky'];
+
 const ScoreCard: React.FC<ScoreCardProps> = ({ participant, isActive, displayName, hideName }) => {
+  const level = levelLabels[Math.max(0, Math.min(levelLabels.length - 1, participant.difficultyLevel || 0))];
+
   return (
     <div
       className={`scorecard transition-transform text-center rounded-2xl border border-white/20 bg-white/10 px-6 py-4 backdrop-blur-md ${
@@ -35,6 +39,9 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ participant, isActive, displayNam
       </div>
       <div className="mt-2 text-xl font-bold text-green-300 drop-shadow-sm">
         {participant.points} pts
+      </div>
+      <div className="mt-2 rounded-full bg-black/30 px-3 py-1 text-sm font-black uppercase tracking-wide text-yellow-200">
+        {level}
       </div>
     </div>
   );
