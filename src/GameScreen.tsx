@@ -61,6 +61,11 @@ const CORRECT_FEEDBACK = [
   'Correct. The letters arrived in order and remained there.',
   'Correct. One word, fully completed. The bee has made a note.',
   'Correct. The word posed no further problems.',
+  'Correct. The hive is pleased. Briefly, but genuinely.',
+  'Correct. The bee has given this a small waggle dance of approval.',
+  'Correct. That word has been returned to the hive, correctly labelled.',
+  'Correct. A bee somewhere has written this down in very small handwriting.',
+  'Correct. The queen has been informed. She seemed unsurprised.',
 ];
 
 const INCORRECT_FEEDBACK = [
@@ -89,6 +94,11 @@ const INCORRECT_FEEDBACK = [
   'Close. The word filled out an expression of interest but could not commit.',
   'Not quite. A responsible bee has quietly gathered the letters for next time.',
   'Incorrect. The letters attended, but not in an official capacity.',
+  'Not quite. The bee has seen this before. It is not worried.',
+  'Incorrect. The hive has logged this under "learning opportunities".',
+  'Not quite. A bee has gently nudged the word back into its correct formation.',
+  'Incorrect. The bee does not blame anyone. The bee is simply noting things down.',
+  'Close. The spelling buzzed near the right answer but did not land.',
 ];
 
 const pickRandom = (arr: string[]): string => arr[Math.floor(Math.random() * arr.length)];
@@ -447,7 +457,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         setUnlockedAchievements(updatedUnlocked);
         localStorage.setItem('unlockedAchievements', JSON.stringify(updatedUnlocked));
         const first = newlyUnlocked[0];
-        setToast(`Achievement unlocked: ${first.icon} ${first.name}!`);
+        setToast(`Achievement: ${first.icon} ${first.name}. The bee has noted this down formally.`);
         setTimeout(() => setToast(''), 3000);
       }
       
@@ -483,14 +493,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
     const nextPhrases = phrases.length > 0 ? phrases : DEFAULT_ENCOURAGEMENT_PHRASES;
     setEncouragementPhrases(nextPhrases);
     saveEncouragementPhrases(nextPhrases);
-    setEncouragementSaveMessage('Saved encouragement phrases.');
+    setEncouragementSaveMessage('Phrases saved. The bee approves.');
     setTimeout(() => setEncouragementSaveMessage(''), 2500);
   };
 
   const resetEncouragementSettings = () => {
     setEncouragementPhrases(DEFAULT_ENCOURAGEMENT_PHRASES);
     saveEncouragementPhrases(DEFAULT_ENCOURAGEMENT_PHRASES);
-    setEncouragementSaveMessage('Restored default phrases.');
+    setEncouragementSaveMessage('Default phrases restored. The original bee is back.');
     setTimeout(() => setEncouragementSaveMessage(''), 2500);
   };
 
@@ -824,24 +834,23 @@ const GameScreen: React.FC<GameScreenProps> = ({
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-2xl">
             <div className="text-6xl mb-4">🚪</div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Exit Game?</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Leave the words?</h2>
             <p className="text-gray-600 mb-6">
-              Your progress will be saved and you can resume this game later.
-              Are you sure you want to exit?
+              The game will wait. The words have nowhere else to be.
             </p>
             <div className="flex gap-3 justify-center">
               <button
                 onClick={cancelExitGame}
                 className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-semibold transition-colors"
               >
-                Cancel
+                Stay
               </button>
               <button
                 onClick={confirmExitGame}
                 className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
               >
                 <LogOut size={18} />
-                Exit & Save
+                Leave quietly
               </button>
             </div>
           </div>
@@ -1011,7 +1020,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
             <div className="text-6xl md:text-8xl font-black bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent">
               PAUSED
             </div>
-            <div className="text-2xl text-white/80 mt-4">The words are waiting. Click Resume to continue.</div>
+            <div className="text-2xl text-white/80 mt-4">The words are waiting. They're being very professional about it.</div>
           </div>
         </div>
       )}

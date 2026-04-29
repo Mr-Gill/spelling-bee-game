@@ -9,6 +9,31 @@ interface PracticeScreenProps {
   reviewWords?: Word[];
 }
 
+const CORRECT_PRACTICE_FEEDBACK = [
+  'Correct. Nice warm-up.',
+  'Correct. The alphabet is warming up nicely.',
+  'Correct. This word has been collected and filed.',
+  'Correct. The word posed no resistance during practice.',
+  'Correct. One word down. The rest are watching.',
+  'Correct. That one came out well.',
+  'Correct. The hive has been notified.',
+  'Correct. A small bee has approved this spelling.',
+  'Correct. The bee was watching. It looked pleased.',
+];
+
+const INCORRECT_PRACTICE_FEEDBACK = [
+  'Not quite. Listen again and have another go.',
+  'Not quite. The word is still out there, waiting.',
+  'Not quite. One more attempt. The word remains available.',
+  'Not quite. It was close. The alphabet is not upset.',
+  'Not quite. Give it another listen.',
+  'Nearly. The word will wait.',
+  'Not quite. The bee has a second attempt ready.',
+  'Nearly. The hive is not alarmed.',
+];
+
+const pickFromPool = (arr: string[]): string => arr[Math.floor(Math.random() * arr.length)];
+
 const pickWord = (words: Word[], previousWord?: string) => {
   if (words.length === 0) return null;
   if (words.length === 1) return words[0];
@@ -59,13 +84,13 @@ const PracticeScreen: React.FC<PracticeScreenProps> = ({ words, onBack, reviewWo
     if (answer.trim().toLowerCase() === currentWord.word.toLowerCase()) {
       rescheduleReviewWord(currentWord, true);
       setCorrectCount(count => count + 1);
-      setFeedback('Correct. Nice warm-up.');
+      setFeedback(pickFromPool(CORRECT_PRACTICE_FEEDBACK));
       window.setTimeout(moveToNextWord, 700);
       return;
     }
 
     rescheduleReviewWord(currentWord, false);
-    setFeedback('Not quite. Listen again and have another go.');
+    setFeedback(pickFromPool(INCORRECT_PRACTICE_FEEDBACK));
     speak(currentWord.word);
   };
 
@@ -133,7 +158,7 @@ const PracticeScreen: React.FC<PracticeScreenProps> = ({ words, onBack, reviewWo
           </form>
         ) : (
           <div className="w-full max-w-2xl rounded-3xl border border-white/20 bg-black/30 p-6 shadow-2xl">
-            <p className="text-xl font-bold">Words are still loading. Head back and try again in a moment.</p>
+            <p className="text-xl font-bold">The words are still arriving. They know where to go.</p>
           </div>
         )}
 

@@ -78,6 +78,7 @@ const shopItems: ShopItem[] = [
 const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
   // Cooldown timers for help items
   const [cooldowns, setCooldowns] = React.useState<Record<string, number>>({});
+  const [purchaseError, setPurchaseError] = React.useState('');
   const [coins, setCoins] = React.useState(() => {
     if (typeof window === "undefined") return 0;
     const stored = localStorage.getItem("coins");
@@ -134,13 +135,15 @@ const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
 
   const purchaseItem = (item: ShopItem) => {
     if (coins < item.price) {
-      alert('Not enough coins!');
+      setPurchaseError('Not enough coins. The bee suggests saving up.');
+      setTimeout(() => setPurchaseError(''), 3000);
       return;
     }
     
     // Check cooldown for help items
     if (item.type === 'help' && cooldowns[item.id]) {
-      alert(`This item is on cooldown for ${cooldowns[item.id]} more seconds`);
+      setPurchaseError('This one is resting. Try again in a moment.');
+      setTimeout(() => setPurchaseError(''), 3000);
       return;
     }
 
@@ -249,6 +252,16 @@ const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
         <span aria-hidden="true">🪙</span>
         <span className="ml-2">{coins} coins</span>
       </div>
+
+      {purchaseError && (
+        <div
+          className="mb-4 rounded-xl bg-red-100 px-4 py-3 text-sm font-bold text-red-800"
+          role="alert"
+          aria-live="assertive"
+        >
+          🐝 {purchaseError}
+        </div>
+      )}
 
       <section aria-labelledby="avatar-heading">
         <h2 

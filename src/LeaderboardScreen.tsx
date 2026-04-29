@@ -48,9 +48,9 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
       <h1 className="screen-title text-yellow-300 mb-8">🏅 Leaderboard</h1>
       <div className="bg-white/10 p-8 rounded-lg w-full max-w-md scorecard">
         {error ? (
-          <div className="text-xl text-error">{error}</div>
+          <div className="text-xl text-error">The leaderboard could not be retrieved. It may be on a break.</div>
         ) : entries.length === 0 ? (
-          <div className="text-xl text-on-surface-variant">No scores yet.</div>
+          <div className="text-xl text-on-surface-variant">No scores yet. The board is waiting. It has been waiting for some time.</div>
         ) : (
           <ol className="text-lg space-y-3">
             {entries.map((entry, index) => (
