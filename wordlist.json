@@ -1,148 +1,343 @@
 [
   {
-    "word": "education",
-    "syllables": [
-      "ed",
-      "u",
-      "ca",
-      "tion"
-    ],
-    "definition": "The process of receiving or giving systematic instruction, especially at a school or university.",
-    "origin": "Latin 'educatio', from 'educare' meaning 'to bring up, rear, educate'.",
-    "example": "The school is committed to providing quality education to all its students.",
+    "word": "cat",
+    "syllables": ["cat"],
+    "definition": "A small domesticated carnivorous mammal",
+    "origin": "Old English 'catt'",
+    "example": "The cat sat on the mat.",
     "prefix": "",
-    "suffix": "-tion",
-    "pronunciation": "ej-oo-KAY-shun"
+    "suffix": "",
+    "pronunciation": "KAT",
+    "difficulty": "easy"
   },
   {
-    "word": "education",
-    "syllables": [
-      "ed",
-      "u",
-      "ca",
-      "tion"
-    ],
-    "definition": "The process of receiving or giving systematic instruction, especially at a school or university.",
-    "origin": "Latin 'educatio', from 'educare' meaning 'to bring up, rear, educate'.",
-    "example": "The school is committed to providing quality education to all its students.",
+    "word": "dog",
+    "syllables": ["dog"],
+    "definition": "A domesticated carnivorous mammal kept as a pet or for work",
+    "origin": "Old English 'docga'",
+    "example": "The dog wagged its tail happily.",
     "prefix": "",
-    "suffix": "-tion",
-    "pronunciation": "ej-oo-KAY-shun"
+    "suffix": "",
+    "pronunciation": "DAWG",
+    "difficulty": "easy"
   },
   {
-    "word": "spelling",
-    "syllables": [
-      "spell",
-      "ing"
-    ],
-    "definition": "The process of writing or naming the letters of a word.",
-    "origin": "Old English 'spellian' meaning 'to tell, speak, utter'.",
-    "example": "She won first place in the school spelling competition.",
+    "word": "bird",
+    "syllables": ["bird"],
+    "definition": "A warm-blooded vertebrate animal with feathers, wings, and a beak",
+    "origin": "Old English 'bridd' meaning young bird",
+    "example": "A bird sang in the tree outside my window.",
     "prefix": "",
-    "suffix": "-ing",
-    "pronunciation": "SPEL-ing"
+    "suffix": "",
+    "pronunciation": "BURD",
+    "difficulty": "easy"
   },
   {
-    "word": "vocabulary",
-    "syllables": [
-      "vo",
-      "cab",
-      "u",
-      "lar",
-      "y"
-    ],
-    "definition": "The body of words used in a particular language or known to a particular person.",
-    "origin": "Late Latin 'vocabularium', from Latin 'vocabulum' meaning 'name, word'.",
-    "example": "Reading regularly helps to expand your vocabulary.",
-    "prefix": "",
-    "suffix": "-ary",
-    "pronunciation": "voh-KAB-yuh-lair-ee"
+    "word": "happy",
+    "syllables": ["hap", "py"],
+    "definition": "Feeling or showing pleasure and contentment",
+    "origin": "Middle English 'happy', from 'hap' meaning luck or fortune",
+    "example": "The children were happy to see the circus.",
+    "prefix": "hap",
+    "suffix": "py",
+    "pronunciation": "HAP-ee",
+    "difficulty": "easy"
   },
   {
-    "word": "mathematics",
-    "syllables": [
-      "math",
-      "e",
-      "mat",
-      "ics"
-    ],
-    "definition": "The abstract science of number, quantity, and space.",
-    "origin": "From Greek 'mathēmatikē' meaning 'mathematical, scientific'.",
-    "example": "She excelled in mathematics and won several awards.",
+    "word": "friend",
+    "syllables": ["friend"],
+    "definition": "A person you know well and like",
+    "origin": "Old English 'freond', from Germanic root meaning 'to love'",
+    "example": "My best friend and I love to play together.",
     "prefix": "",
-    "suffix": "-ics",
-    "pronunciation": "math-uh-MAT-iks"
+    "suffix": "",
+    "pronunciation": "FREND",
+    "difficulty": "easy"
+  },
+  {
+    "word": "smile",
+    "syllables": ["smile"],
+    "definition": "To form your features into a pleased or happy expression",
+    "origin": "Middle English, probably of Scandinavian origin",
+    "example": "She gave a warm smile to everyone she met.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "SMYL",
+    "difficulty": "easy"
+  },
+  {
+    "word": "light",
+    "syllables": ["light"],
+    "definition": "The natural agent that stimulates sight and makes things visible",
+    "origin": "Old English 'leoht'",
+    "example": "Turn on the light so we can see.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "LYT",
+    "difficulty": "easy"
+  },
+  {
+    "word": "brave",
+    "syllables": ["brave"],
+    "definition": "Ready to face and endure danger or pain; showing courage",
+    "origin": "French 'brave', from Italian 'bravo'",
+    "example": "The brave firefighter rescued the child.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "BRAYV",
+    "difficulty": "easy"
+  },
+  {
+    "word": "plant",
+    "syllables": ["plant"],
+    "definition": "A living organism that grows in the ground and has leaves",
+    "origin": "Old English 'plante', from Latin 'planta'",
+    "example": "She watered the plant every morning.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "PLANT",
+    "difficulty": "easy"
+  },
+  {
+    "word": "water",
+    "syllables": ["wa", "ter"],
+    "definition": "A colourless, transparent, odourless liquid that forms rain and fills rivers",
+    "origin": "Old English 'waeter'",
+    "example": "She drank a glass of cold water.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "WAW-ter",
+    "difficulty": "easy"
+  },
+  {
+    "word": "garden",
+    "syllables": ["gar", "den"],
+    "definition": "A piece of ground where flowers, vegetables, or fruit are grown",
+    "origin": "Old French 'gardin', from Old North French 'gardin'",
+    "example": "We grow tomatoes in our garden every summer.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "GAR-den",
+    "difficulty": "easy"
+  },
+  {
+    "word": "school",
+    "syllables": ["school"],
+    "definition": "An institution for educating children",
+    "origin": "Old English 'scol', from Latin 'schola'",
+    "example": "She walks to school every day.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "SKOOL",
+    "difficulty": "easy"
+  },
+  {
+    "word": "necessary",
+    "syllables": ["nec", "es", "sar", "y"],
+    "definition": "Required to be done, achieved, or present; essential",
+    "origin": "Latin 'necessarius', from 'necesse' meaning unavoidable",
+    "example": "It is necessary to study hard for the test.",
+    "prefix": "necess",
+    "suffix": "ary",
+    "pronunciation": "NES-uh-ser-ee",
+    "difficulty": "medium"
+  },
+  {
+    "word": "atmosphere",
+    "syllables": ["at", "mos", "phere"],
+    "definition": "The envelope of gases surrounding the Earth or another planet",
+    "origin": "Modern Latin 'atmosphaera', from Greek 'atmos' (steam) + 'sphaira' (sphere)",
+    "example": "Pollution damages the atmosphere around our planet.",
+    "prefix": "atmo",
+    "suffix": "sphere",
+    "pronunciation": "AT-mus-feer",
+    "difficulty": "medium"
+  },
+  {
+    "word": "adventure",
+    "syllables": ["ad", "ven", "ture"],
+    "definition": "An unusual and exciting or daring experience",
+    "origin": "Old French 'aventure', from Latin 'adventura' meaning about to happen",
+    "example": "Going hiking in the mountains was a great adventure.",
+    "prefix": "ad",
+    "suffix": "ture",
+    "pronunciation": "ad-VEN-cher",
+    "difficulty": "medium"
+  },
+  {
+    "word": "beautiful",
+    "syllables": ["beau", "ti", "ful"],
+    "definition": "Pleasing the senses or mind aesthetically",
+    "origin": "Old French 'beau' (beautiful) + '-ful' suffix",
+    "example": "The sunset was absolutely beautiful.",
+    "prefix": "beauty",
+    "suffix": "ful",
+    "pronunciation": "BYOO-tuh-ful",
+    "difficulty": "medium"
+  },
+  {
+    "word": "champion",
+    "syllables": ["cham", "pi", "on"],
+    "definition": "A person who has defeated or surpassed all rivals in a competition",
+    "origin": "Old French 'champion', from Medieval Latin 'campio'",
+    "example": "She became the spelling bee champion of her school.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "CHAM-pee-un",
+    "difficulty": "medium"
   },
   {
     "word": "science",
-    "syllables": [
-      "sci",
-      "ence"
-    ],
-    "definition": "The systematic study of the structure and behavior of the physical and natural world.",
-    "origin": "From Latin 'scientia' meaning 'knowledge'.",
+    "syllables": ["sci", "ence"],
+    "definition": "The systematic study of the structure and behaviour of the physical and natural world",
+    "origin": "Latin 'scientia' meaning knowledge",
     "example": "The science fair showcased many innovative student projects.",
     "prefix": "",
-    "suffix": "-ence",
-    "pronunciation": "SY-uhns"
+    "suffix": "ence",
+    "pronunciation": "SY-uhns",
+    "difficulty": "medium"
   },
   {
-    "word": "literature",
-    "syllables": [
-      "lit",
-      "er",
-      "a",
-      "ture"
-    ],
-    "definition": "Written works, especially those considered of superior or lasting artistic merit.",
-    "origin": "From Latin 'litteratura' meaning 'writing, grammar'.",
-    "example": "She studied English literature in college.",
+    "word": "journey",
+    "syllables": ["jour", "ney"],
+    "definition": "An act of travelling from one place to another",
+    "origin": "Old French 'journée', from 'jour' meaning day",
+    "example": "The journey across the desert took three days.",
     "prefix": "",
-    "suffix": "-ture",
-    "pronunciation": "LIT-er-uh-cher"
+    "suffix": "",
+    "pronunciation": "JUR-nee",
+    "difficulty": "medium"
   },
   {
-    "word": "history",
-    "syllables": [
-      "his",
-      "to",
-      "ry"
-    ],
-    "definition": "The study of past events, particularly in human affairs.",
-    "origin": "From Greek 'historia' meaning 'inquiry, knowledge acquired by investigation'.",
-    "example": "We learned about ancient civilizations in history class.",
+    "word": "triangle",
+    "syllables": ["tri", "an", "gle"],
+    "definition": "A plane figure with three straight sides and three angles",
+    "origin": "Latin 'triangulum', from 'tri' (three) + 'angulus' (angle)",
+    "example": "A triangle has exactly three sides and three angles.",
+    "prefix": "tri",
+    "suffix": "angle",
+    "pronunciation": "TRY-ang-gul",
+    "difficulty": "medium"
+  },
+  {
+    "word": "celebrate",
+    "syllables": ["cel", "e", "brate"],
+    "definition": "To acknowledge a significant or happy day or event with a social gathering",
+    "origin": "Latin 'celebrare', from 'celeber' meaning frequented or famous",
+    "example": "We celebrate birthdays with cake and candles.",
     "prefix": "",
-    "suffix": "-story",
-    "pronunciation": "HIS-tuh-ree"
+    "suffix": "",
+    "pronunciation": "SEL-uh-brayt",
+    "difficulty": "medium"
   },
   {
-    "word": "geography",
-    "syllables": [
-      "ge",
-      "og",
-      "ra",
-      "phy"
-    ],
-    "definition": "The study of the physical features of the earth and its atmosphere.",
-    "origin": "From Greek 'geographia' meaning 'earth description'.",
-    "example": "We're studying European geography this semester.",
-    "prefix": "geo-",
-    "suffix": "-graphy",
-    "pronunciation": "jee-OG-ruh-fee"
+    "word": "discover",
+    "syllables": ["dis", "cov", "er"],
+    "definition": "Find out or become aware of something unexpectedly or in the course of a search",
+    "origin": "Old French 'descovrir', from Latin 'dis-' (apart) + 'cooperire' (to cover)",
+    "example": "Columbus was among the first Europeans to discover America.",
+    "prefix": "dis",
+    "suffix": "",
+    "pronunciation": "dis-KUV-er",
+    "difficulty": "medium"
   },
   {
-    "word": "biology",
-    "syllables": [
-      "bi",
-      "ol",
-      "o",
-      "gy"
-    ],
-    "definition": "The study of living organisms, divided into many specialized fields.",
-    "origin": "From Greek 'bios' (life) + 'logia' (study of).",
-    "example": "Biology class taught us about the human body and ecosystems.",
-    "prefix": "bio-",
-    "suffix": "-logy",
-    "pronunciation": "by-OL-uh-jee"
+    "word": "chrysanthemum",
+    "syllables": ["chry", "san", "the", "mum"],
+    "definition": "A type of flower with many thin petals arranged in layers",
+    "origin": "Greek 'chrysos' (gold) + 'anthemon' (flower)",
+    "example": "The chrysanthemum bloomed beautifully in autumn.",
+    "prefix": "chryso",
+    "suffix": "anthemum",
+    "pronunciation": "kri-SAN-thuh-mum",
+    "difficulty": "hard"
+  },
+  {
+    "word": "mathematics",
+    "syllables": ["math", "e", "mat", "ics"],
+    "definition": "The abstract science of number, quantity, and space",
+    "origin": "Greek 'mathēmatikē' meaning mathematical, scientific",
+    "example": "She excelled in mathematics and won several awards.",
+    "prefix": "",
+    "suffix": "ics",
+    "pronunciation": "math-uh-MAT-iks",
+    "difficulty": "hard"
+  },
+  {
+    "word": "enthusiastic",
+    "syllables": ["en", "thu", "si", "as", "tic"],
+    "definition": "Having or showing intense enjoyment, interest, or approval",
+    "origin": "Greek 'enthousiastes', from 'entheos' meaning possessed by a god",
+    "example": "The enthusiastic crowd cheered the performers.",
+    "prefix": "en",
+    "suffix": "astic",
+    "pronunciation": "en-thyoo-zee-AS-tik",
+    "difficulty": "hard"
+  },
+  {
+    "word": "phenomenon",
+    "syllables": ["phe", "nom", "e", "non"],
+    "definition": "A fact or situation that is observed to exist or happen",
+    "origin": "Greek 'phainomenon' meaning thing appearing to view",
+    "example": "The northern lights are a stunning natural phenomenon.",
+    "prefix": "",
+    "suffix": "",
+    "pronunciation": "fuh-NOM-uh-non",
+    "difficulty": "hard"
+  },
+  {
+    "word": "bibliography",
+    "syllables": ["bib", "li", "og", "ra", "phy"],
+    "definition": "A list of the books referred to in a scholarly work",
+    "origin": "Greek 'biblion' (book) + 'graphia' (writing)",
+    "example": "The essay included a bibliography of ten sources.",
+    "prefix": "biblio",
+    "suffix": "graphy",
+    "pronunciation": "bib-lee-OG-ruh-fee",
+    "difficulty": "hard"
+  },
+  {
+    "word": "conscience",
+    "syllables": ["con", "science"],
+    "definition": "An inner feeling or voice viewed as acting as a guide to the rightness or wrongness of behaviour",
+    "origin": "Latin 'conscientia', from 'conscire' meaning to be mutually aware",
+    "example": "His conscience told him it was wrong to cheat.",
+    "prefix": "con",
+    "suffix": "",
+    "pronunciation": "KON-shunts",
+    "difficulty": "hard"
+  },
+  {
+    "word": "questionnaire",
+    "syllables": ["ques", "tion", "naire"],
+    "definition": "A set of printed questions with a choice of answers, devised for the purposes of a survey",
+    "origin": "French 'questionnaire', from 'question'",
+    "example": "Please fill out this questionnaire about your experience.",
+    "prefix": "question",
+    "suffix": "naire",
+    "pronunciation": "kwes-chun-AIR",
+    "difficulty": "hard"
+  },
+  {
+    "word": "miscellaneous",
+    "syllables": ["mis", "cel", "la", "ne", "ous"],
+    "definition": "Consisting of a mixture of various things that are not usually connected",
+    "origin": "Latin 'miscellaneus', from 'miscellus' meaning mixed",
+    "example": "The box contained a miscellaneous collection of old toys.",
+    "prefix": "",
+    "suffix": "ous",
+    "pronunciation": "mis-uh-LAY-nee-us",
+    "difficulty": "hard"
+  },
+  {
+    "word": "pronunciation",
+    "syllables": ["pro", "nun", "ci", "a", "tion"],
+    "definition": "The way in which a word is pronounced",
+    "origin": "Latin 'pronuntiatio', from 'pronuntiare' meaning to proclaim",
+    "example": "The teacher corrected his pronunciation of the word.",
+    "prefix": "pro",
+    "suffix": "tion",
+    "pronunciation": "pruh-NUN-see-AY-shun",
+    "difficulty": "hard"
   }
 ]

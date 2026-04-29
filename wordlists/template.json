@@ -1,0 +1,121 @@
+{
+  "instructions": {
+    "role": "Generate a word list for an AU Years 7-8 spelling bee on TOPIC.",
+    "input": "TOPIC string and N integer. If N is invalid or missing, use N=10.",
+    "output": "Use the words array below. The game also accepts CSV, TSV, and TXT templates.",
+    "rules": [
+      "AU/UK spelling.",
+      "ASCII only and straight quotes.",
+      "Definitions should be 10-18 words.",
+      "Examples should be 12-25 words and exactly one sentence.",
+      "Only use productive derivational prefixes and suffixes.",
+      "Pronunciation should be hyphenated with PRIMARY stress in CAPS."
+    ],
+    "exampleTopic": "weather and water",
+    "exampleN": 10,
+    "csvHeader": "\"word\",\"syllables\",\"definition\",\"origin\",\"example\",\"prefix\",\"suffix\",\"pronunciation\"",
+    "csvSyllablesExample": "\"[\\\"har\\\",\\\"mo\\\",\\\"ny\\\"]\""
+  },
+  "words": [
+    {
+      "word": "rain",
+      "syllables": ["rain"],
+      "definition": "Water drops falling from clouds, often ruining hair and improving puddles.",
+      "origin": "Old English",
+      "example": "Rain tapped the windows while a bee considered borrowing a tiny umbrella.",
+      "prefix": "",
+      "suffix": "",
+      "pronunciation": "RAIN"
+    },
+    {
+      "word": "cloud",
+      "syllables": ["cloud"],
+      "definition": "A floating mass of tiny water droplets that can shade a whole oval.",
+      "origin": "Old English",
+      "example": "The cloud looked exactly like a kettle, according to two persuasive students.",
+      "prefix": "",
+      "suffix": "",
+      "pronunciation": "CLOUD"
+    },
+    {
+      "word": "storm",
+      "syllables": ["storm"],
+      "definition": "Violent weather with wind or rain that makes bins attempt travel.",
+      "origin": "Old English",
+      "example": "During the storm, the scoreboard shivered and every chair faced north suddenly.",
+      "prefix": "",
+      "suffix": "",
+      "pronunciation": "STORM"
+    },
+    {
+      "word": "vapour",
+      "syllables": ["va", "pour"],
+      "definition": "Water as a gas, sneaking about invisibly until cooler air exposes it.",
+      "origin": "Latin via Old French",
+      "example": "The vapour curled above the mug while the class debated cloud manners.",
+      "prefix": "",
+      "suffix": "",
+      "pronunciation": "VAY-puh"
+    },
+    {
+      "word": "rehydrate",
+      "syllables": ["re", "hy", "drate"],
+      "definition": "To restore water to something dry, especially a student after sport.",
+      "origin": "re- plus Greek via French",
+      "example": "After spelling cyclone correctly, Priya rehydrated with heroic seriousness beside the whiteboard.",
+      "prefix": "re-",
+      "suffix": "",
+      "pronunciation": "ree-HY-drayt"
+    },
+    {
+      "word": "forecast",
+      "syllables": ["fore", "cast"],
+      "definition": "A prediction about weather, famous for being blamed by picnic organisers.",
+      "origin": "Old English",
+      "example": "The forecast promised sunshine, so naturally the oval prepared a puddle anyway.",
+      "prefix": "fore-",
+      "suffix": "",
+      "pronunciation": "FOR-kahst"
+    },
+    {
+      "word": "evaporation",
+      "syllables": ["e", "vap", "o", "ra", "tion"],
+      "definition": "The change from liquid into vapour, usually after heat gets persuasive.",
+      "origin": "Latin",
+      "example": "Evaporation made the puddle vanish before lunch, leaving only suspicious mud behind.",
+      "prefix": "",
+      "suffix": "-tion",
+      "pronunciation": "ee-vap-uh-RAY-shuhn"
+    },
+    {
+      "word": "unseasonal",
+      "syllables": ["un", "sea", "son", "al"],
+      "definition": "Not typical for the season, like summer hail arriving rudely early.",
+      "origin": "un- plus Old French via Latin",
+      "example": "The unseasonal hail bounced across the court while a bee postponed training.",
+      "prefix": "un-",
+      "suffix": "-al",
+      "pronunciation": "un-SEE-zuh-nuhl"
+    },
+    {
+      "word": "condensation",
+      "syllables": ["con", "den", "sa", "tion"],
+      "definition": "Water forming on cool surfaces when vapour crowds together into droplets.",
+      "origin": "Latin",
+      "example": "Condensation fogged the jar until the label looked like secret code inside.",
+      "prefix": "con-",
+      "suffix": "-tion",
+      "pronunciation": "kon-den-SAY-shuhn"
+    },
+    {
+      "word": "meteorology",
+      "syllables": ["me", "te", "or", "ol", "o", "gy"],
+      "definition": "The scientific study of weather, beloved by people carrying many charts.",
+      "origin": "Greek",
+      "example": "Meteorology explained the clouds, although the bee still blamed dramatic lighting choices.",
+      "prefix": "",
+      "suffix": "",
+      "pronunciation": "mee-tee-uh-ROL-uh-jee"
+    }
+  ]
+}
