@@ -65,11 +65,11 @@ const server = http_1.default.createServer(async (req, res) => {
     });
     req.on('end', async () => {
         try {
-            const { topic = '', count = 10, grade = 7 } = JSON.parse(body || '{}');
+            const { topic = '', count = 10, prompt: requestPrompt } = JSON.parse(body || '{}');
             // Validate count
             const wordCount = Math.min(Math.max(1, Number(count) || 10), 50);
             // Generate prompt from template
-            const prompt = PROMPT_TEMPLATE
+            const prompt = requestPrompt || PROMPT_TEMPLATE
                 .replace('{{topic}}', topic)
                 .replace('{{number}}', wordCount.toString());
             // Call GitHub Models API
@@ -98,30 +98,12 @@ const server = http_1.default.createServer(async (req, res) => {
             if (data.error) {
                 throw new Error(data.error);
             }
-            // Extract and parse the response
-            const content = data.choices?.[0]?.message?.content || '[]';
-            let words;
-            try {
-                // Try to parse as JSON first
-                words = JSON.parse(content);
-            }
-            catch (err) {
-                // If JSON parsing fails, try to extract JSON from markdown code blocks
-                const jsonMatch = content.match(/```(?:json)?\n([\s\S]*?)\n```/);
-                if (jsonMatch) {
-                    words = JSON.parse(jsonMatch[1]);
-                }
-                else {
-                    throw new Error('Failed to parse response as JSON');
-                }
-            }
-            // Validate words array
-            if (!Array.isArray(words) || words.length === 0) {
-                throw new Error('Invalid response format: expected an array of words');
-            }
+            const content = data.choices?.[0]?.message?.content?.trim() || '';
+            if (!content)
+                throw new Error('Empty model response');
             // Send successful response
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(words));
+            res.end(JSON.stringify({ wordList: content }));
         }
         catch (error) {
             console.error('Error processing request:', error);

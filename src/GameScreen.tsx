@@ -83,7 +83,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   );
   const [currentParticipantIndex, setCurrentParticipantIndex] = React.useState(0);
   const isTeamMode = config.gameMode === 'team';
-  const [showWord, setShowWord] = React.useState(true);
+  const [showWord, setShowWord] = React.useState(false);
   const [showPhonics, setShowPhonics] = React.useState(false);
   const [usedHint, setUsedHint] = React.useState(false);
   const [letters, setLetters] = React.useState<string[]>([]);
@@ -168,6 +168,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       setLetters(Array.from({ length: currentWord.word.length }, () => ''));
       publishTeamDisplayWord(currentWord.word);
       setShowPhonics(false);
+      setShowWord(false);
     }
   }, [currentWord]);
 
@@ -230,6 +231,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       setExtraAttempt(false);
       setIsHelpOpen(false);
       setUsedHint(false);
+      setShowWord(false);
       setLetters(Array(nextWord.word.length).fill(''));
       if (hiddenInputRef.current) {
         hiddenInputRef.current.focus();
@@ -860,7 +862,21 @@ const GameScreen: React.FC<GameScreenProps> = ({
           </h2>
           
           {/* Dramatic Word Display */}
-          <div className="relative mb-12 pt-10">
+          <div className="relative mb-12">
+            <div className="mb-6 flex flex-wrap justify-center gap-3">
+              <button
+                onClick={() => speak(currentWord.word)}
+                className="bg-gradient-to-r from-kahoot-blue-500 to-kahoot-blue-600 hover:from-kahoot-blue-600 hover:to-kahoot-blue-700 text-white px-6 py-3 rounded-2xl font-black text-lg shadow-lg transform transition-all duration-200 hover:scale-105"
+              >
+                🔊 Replay Word
+              </button>
+              <button
+                onClick={() => setShowWord(!showWord)}
+                className="bg-gradient-to-r from-kahoot-yellow-500 to-kahoot-yellow-600 hover:from-kahoot-yellow-600 hover:to-kahoot-yellow-700 text-black px-6 py-3 rounded-2xl font-black text-lg shadow-lg transform transition-all duration-200 hover:scale-105"
+              >
+                {showWord ? '👁️ Hide Word' : '👁️ Show Word'}
+              </button>
+            </div>
             {showWord && (
               <div className="inline-block text-6xl md:text-8xl font-black text-white drop-shadow-2xl bg-gradient-to-r from-purple-900/80 to-indigo-900/80 backdrop-blur-sm px-8 py-6 rounded-3xl border-4 border-white/20 animate-bounce-in excitement-glow">
                 {currentWord.word}
@@ -869,18 +885,6 @@ const GameScreen: React.FC<GameScreenProps> = ({
                 )}
               </div>
             )}
-            <button
-              onClick={() => speak(currentWord.word)}
-              className="absolute top-0 left-0 bg-gradient-to-r from-kahoot-blue-500 to-kahoot-blue-600 hover:from-kahoot-blue-600 hover:to-kahoot-blue-700 text-white px-6 py-3 rounded-2xl font-black text-lg shadow-lg transform transition-all duration-200 hover:scale-105"
-            >
-              🔊 Replay Word
-            </button>
-            <button
-              onClick={() => setShowWord(!showWord)}
-              className="absolute top-0 right-0 bg-gradient-to-r from-kahoot-yellow-500 to-kahoot-yellow-600 hover:from-kahoot-yellow-600 hover:to-kahoot-yellow-700 text-black px-6 py-3 rounded-2xl font-black text-lg shadow-lg transform transition-all duration-200 hover:scale-105"
-            >
-              {showWord ? '👁️ Hide Word' : '👁️ Show Word'}
-            </button>
           </div>
           {currentWord.phonemes && currentWord.phonemes.length > 0 && (
             <div className="mb-6">

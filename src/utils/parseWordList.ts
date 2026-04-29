@@ -3,6 +3,55 @@ import { Word } from '../types';
 const REQUIRED_FIELDS = ['word', 'definition'];
 const VALID_DIFFICULTIES = new Set<string>(['easy', 'medium', 'hard']);
 
+function cleanHeader(value: string): string {
+  return value.trim().replace(/^"|"$/g, '');
+}
+
+function parseDelimitedLine(line: string, delimiter: string): string[] {
+  const values: string[] = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    const next = line[i + 1];
+
+    if (char === '\\' && next === '"') {
+      current += '"';
+      i++;
+      continue;
+    }
+
+    if (char === '"') {
+      if (inQuotes && next === '"') {
+        current += '"';
+        i++;
+        continue;
+      }
+
+      const following = line[i + 1];
+      const isBoundary = following === delimiter || following === undefined || following === '\r';
+      if (!inQuotes || isBoundary) {
+        inQuotes = !inQuotes;
+      } else {
+        current += char;
+      }
+      continue;
+    }
+
+    if (char === delimiter && !inQuotes) {
+      values.push(current.trim());
+      current = '';
+      continue;
+    }
+
+    current += char;
+  }
+
+  values.push(current.trim());
+  return values.map(value => value.replace(/^"|"$/g, '').trim());
+}
+
 function parseSyllables(value: unknown): string[] | null {
   if (Array.isArray(value)) return value as string[];
   if (typeof value === 'string' && value.trim()) {
@@ -95,12 +144,12 @@ export function parseWordList(content: string): Word[] {
     throw new Error('Invalid word list format.');
   }
   const delimiter = lines[0].includes('\t') ? '\t' : ',';
-  const headers = lines[0].split(delimiter).map((h) => h.trim());
+  const headers = parseDelimitedLine(lines[0], delimiter).map(cleanHeader);
   const words: Record<string, unknown>[] = lines
     .slice(1)
     .filter((line) => line.trim())
     .map((line) => {
-      const values = line.split(delimiter);
+      const values = parseDelimitedLine(line, delimiter);
       const wordObj: Record<string, unknown> = {};
       headers.forEach((header, idx) => {
         wordObj[header] = values[idx] ? values[idx].trim() : '';

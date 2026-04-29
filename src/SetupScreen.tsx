@@ -11,6 +11,66 @@ import AccessibilitySettings from './components/AccessibilitySettings';
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
+const buildAIWordListPrompt = (topic: string, count: number) => `ROLE
+Generate a CSV for an AU Years 7-8 spelling bee on TOPIC. Your voice is a witty, knowledgeable lexicographer making a fun but challenging list.
+
+INPUT
+TOPIC (string) and N (int). If N invalid/missing -> N=10.
+
+OUTPUT (CSV ONLY)
+
+One CSV. No preface, no code fences, no blank lines.
+
+Header EXACTLY: "word","syllables","definition","origin","example","prefix","suffix","pronunciation"
+
+Then exactly N rows.
+
+ASCII only; straight quotes (").
+
+Quote every field.
+
+The syllables field is a JSON string of a string array.
+
+CORRECT: "[\\"har\\",\\"mo\\",\\"ny\\"]"
+
+INCORRECT: [""har"",""mo"",""ny""]
+
+CONTENT
+
+AU/UK spelling. At least 70% headwords clearly fit TOPIC (others closely related).
+
+Difficulty: about 30% 1-2 syllables (foundational), about 50% 2-3 (core), about 20% 4+ (stretch).
+
+Minima when N>=10: at least 3 one-syllable; at least 3 with 4+ syllables; at least 3 with prefixes; at least 3 with suffixes.
+
+Definition: 10-18 words; witty, accurate, student-friendly. Define by job, ingredients, effect, or an unexpected sensation (not flowery/abstract).
+
+Origin: Real and specific (e.g., Latin; Greek; Old French via Latin). No jokes or speculation.
+
+Example: 12-25 words; exactly one sentence; vividly funny or gently surreal. Bee humour only in examples and in at most floor(N/2) rows.
+
+Bee headwords: Bee words appear only in examples unless TOPIC is bees.
+
+Prefix/Suffix: Include only productive, meaningful derivational affixes (e.g., "re-" in "remake", "-tion" in "creation").
+
+Do not treat compounds as suffixes (e.g., laneway, skyline -> suffix="").
+
+Do not invent prefixes from stems (e.g., federation != "fed-").
+
+Only include a prefix if it carries its usual meaning in the headword (e.g., "im-" in "impossible").
+
+Pronunciation: Hyphenated with PRIMARY stress in CAPS (e.g., par-muh-ZAN, mot-suh-REL-uh).
+
+One-syllable exception: write the syllable in CAPS (e.g., TRAM).
+
+Headwords: standard dictionary items; no brands or proper names (unless TOPIC explicitly requires them - then at most 1 such row).
+
+VALIDATION (silent)
+Before printing, fix any violations and output only the valid CSV. Per-row checks: non-empty fields; definition 10-18 words; example 12-25 words; syllables is a JSON string with backslash-escaped inner quotes; real origin; derivational prefix/suffix only; pronunciation format obeyed. After N rows: counts satisfied (one-syllable, 4+ syllables, prefixes, suffixes), at least 70% on-topic, bee examples at most floor(N/2), ASCII-only, no blank lines. If any check fails, regenerate offending rows and re-validate.
+
+TOPIC: ${topic.trim() || 'general classroom vocabulary'}
+N: ${Number.isFinite(count) && count > 0 ? count : 10}`;
+
 interface SetupPreset {
   gameMode: 'team' | 'individual';
   teams: Participant[];
@@ -102,6 +162,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [aiCount, setAiCount] = useState(10);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
+  const [aiPrompt, setAiPrompt] = useState('');
   
   // Saved game state
   const [savedGameAvailable, setSavedGameAvailable] = useState(false);
@@ -271,15 +332,17 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const generateAIWords = async () => {
     setAiLoading(true);
     setAiError('');
+    const wordCount = Math.min(Math.max(1, Number(aiCount) || 10), 50);
+    const prompt = buildAIWordListPrompt(aiTopic, wordCount);
+    setAiPrompt(prompt);
     try {
-      // Check if the AI service is available first
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
       
       const res = await fetch('http://localhost:3001/wordlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: aiCount }),
+        body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: wordCount, prompt }),
         signal: controller.signal
       });
       
@@ -287,16 +350,19 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       
       if (!res.ok) throw new Error('Request failed');
       const data = await res.json();
-      if (!Array.isArray(data)) throw new Error('Invalid response');
-      setParsedCustomWords(prev => [...prev, ...data]);
-      setAiError(`✅ Successfully generated ${data.length} words! Total words: ${parsedCustomWords.length + data.length}`);
+      const generatedWords = Array.isArray(data)
+        ? data
+        : parseWordListUtil(String(data.wordList || data.csv || data.content || ''));
+      if (!Array.isArray(generatedWords) || generatedWords.length === 0) throw new Error('Invalid response');
+      setParsedCustomWords(prev => [...prev, ...generatedWords]);
+      setCustomWordListText('');
+      setAiError(`Generated ${generatedWords.length} words. Total words: ${parsedCustomWords.length + generatedWords.length}`);
     } catch (err) {
-      if (err instanceof TypeError && err.message.includes('fetch')) {
-        setAiError('AI word generation service is currently unavailable. Please use the manual word list options instead.');
-      } else if (err.name === 'AbortError') {
-        setAiError('AI service request timed out. Please try again or use manual word list options.');
-      } else {
-        setAiError('Failed to generate words. Please try manual word list options.');
+      try {
+        await navigator.clipboard?.writeText(prompt);
+        setAiError('AI service is not running here, so I copied the exact word-list prompt. Paste the AI CSV output into the box above.');
+      } catch {
+        setAiError('AI service is not running here. Use the template prompt below, then paste the AI CSV output into the box above.');
       }
     } finally {
       setAiLoading(false);
@@ -734,13 +800,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label htmlFor="file-upload" className="block text-lg font-medium mb-2">Upload File</label>
-                    <p className="text-sm text-gray-300 mb-2">Upload a JSON or TSV file.</p>
+                    <p className="text-sm text-gray-300 mb-2">Upload a CSV, TSV, TXT, or JSON word list.</p>
                     <input id="file-upload" type="file" accept=".json,.tsv,.txt,.csv" onChange={handleFileChange} className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-300 file:text-black hover:file:bg-yellow-400" />
                 </div>
                 <div>
-                    <label htmlFor="paste-area" className="block text-lg font-medium mb-2">Or Paste Spreadsheet Data</label>
-                    <p className="text-sm text-gray-300 mb-2">Paste data from Excel or Google Sheets (tab-separated).</p>
-                    <textarea id="paste-area" rows={4} value={customWordListText} onChange={e => setCustomWordListText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white" placeholder="Paste your tab-separated values here..."></textarea>
+                    <label htmlFor="paste-area" className="block text-lg font-medium mb-2">Or Paste Word List Data</label>
+                    <p className="text-sm text-gray-300 mb-2">Paste the AI CSV output or spreadsheet data here.</p>
+                    <textarea id="paste-area" rows={4} value={customWordListText} onChange={e => setCustomWordListText(e.target.value)} className="w-full p-2 rounded-md bg-white/20 text-white" placeholder={'"word","syllables","definition","origin","example","prefix","suffix","pronunciation"'}></textarea>
                 </div>
             </div>
             <div className="mt-6">
@@ -750,10 +816,16 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="# Words" />
                     <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
                 </div>
-                {aiError && <p className="text-red-300 mt-2">{aiError}</p>}
+                {aiError && <p className="text-yellow-200 mt-2">{aiError}</p>}
+                {aiPrompt && (
+                  <details className="mt-3 rounded-xl bg-black/30 p-3 text-sm text-gray-100">
+                    <summary className="cursor-pointer font-bold">AI prompt</summary>
+                    <textarea readOnly value={aiPrompt} className="mt-3 min-h-40 w-full rounded-lg bg-white/90 p-3 text-xs text-gray-900" />
+                  </details>
+                )}
             </div>
             <div className="mt-4 text-sm text-gray-300">
-                <p><strong>Format:</strong> The first row should be headers: `word`, `syllables`, `definition`, `origin`, `example`, `prefix`, `suffix`, `pronunciation`.</p>
+                <p><strong>Format:</strong> use the exact CSV header: "word","syllables","definition","origin","example","prefix","suffix","pronunciation". Quote every field.</p>
             </div>
             <div className="mt-2">
               <a href="wordlists/example.csv" download className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">

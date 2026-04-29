@@ -92,11 +92,22 @@ test('scoreboard route opens in display mode', async ({ page }) => {
 test('privacy display hides names during gameplay', async ({ page }) => {
   await page.goto('./');
   await page.getByLabel('Hide names on game and scoreboard displays').check();
-  await page.getByRole('button', { name: /START CUSTOM GAME/i }).evaluate(el => el.click());
+  await page.getByRole('button', { name: /START CUSTOM GAME/i }).click();
 
   await expect(page.getByText(/WORD FOR TEAM: TEAM 1/i)).toBeVisible();
   await expect(page.getByText('Team Alpha')).toHaveCount(0);
 
   const hideScoreboardNames = await page.evaluate(() => localStorage.getItem('scoreboardHideNames'));
   expect(hideScoreboardNames).toBe('true');
+});
+
+test('pasted CSV word lists start with the word hidden', async ({ page }) => {
+  await page.goto('./');
+  const csv = '"word","syllables","definition","origin","example","prefix","suffix","pronunciation"\n"harmony","[\\"har\\",\\"mo\\",\\"ny\\"]","A pleasing blend of sounds that makes chaos behave politely.","Greek via Latin","The classroom found harmony after one bee loudly inspected the xylophone.","","","HAR-muh-nee"';
+
+  await page.getByLabel(/Or Paste Word List Data/i).fill(csv);
+  await page.getByRole('button', { name: /START CUSTOM GAME/i }).click();
+
+  await expect(page.getByRole('button', { name: /Show Word/i })).toBeVisible();
+  await expect(page.getByText('harmony', { exact: true })).toHaveCount(0);
 });
