@@ -6,15 +6,18 @@ interface BattlePowerUnlockProps {
   onDismiss: () => void;
 }
 
+/** Milliseconds before the modal auto-dismisses. */
+const AUTO_DISMISS_DURATION_MS = 8000;
+
 /**
  * Celebratory modal shown when a new battle power is unlocked.
- * Auto-dismisses after 8 seconds.
+ * Auto-dismisses after AUTO_DISMISS_DURATION_MS milliseconds.
  */
 const BattlePowerUnlock: React.FC<BattlePowerUnlockProps> = ({ power, onDismiss }) => {
   const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   React.useEffect(() => {
-    timeoutRef.current = setTimeout(onDismiss, 8000);
+    timeoutRef.current = setTimeout(onDismiss, AUTO_DISMISS_DURATION_MS);
     return () => {
       if (timeoutRef.current !== null) clearTimeout(timeoutRef.current);
     };
@@ -60,9 +63,10 @@ const BattlePowerUnlock: React.FC<BattlePowerUnlockProps> = ({ power, onDismiss 
 
         {/* Progress bar showing time until auto-dismiss */}
         <div className="mt-4 h-1 w-full bg-white/20 rounded-full overflow-hidden">
+          {/* animate-[shrink_8s_linear_forwards] must stay as a static string for Tailwind JIT scanning */}
           <div className="h-full bg-kahoot-yellow-400 rounded-full animate-[shrink_8s_linear_forwards]" />
         </div>
-        <p className="mt-1 text-white/50 text-xs">Auto-dismisses in 8 seconds</p>
+        <p className="mt-1 text-white/50 text-xs">Auto-dismisses in {AUTO_DISMISS_DURATION_MS / 1000} seconds</p>
       </div>
     </div>
   );

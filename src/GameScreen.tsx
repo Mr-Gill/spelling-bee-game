@@ -128,8 +128,12 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [totalWordsUsed, setTotalWordsUsed] = React.useState(initialGameState?.totalWordsUsed || 0);
   const shouldHideNames = Boolean(config.hideNames);
 
-  // Battle progression (team mode only)
-  const [totalCorrectInGame, setTotalCorrectInGame] = React.useState(0);
+  // Battle progression (team mode only): tracks collective correct answers to drive power unlocks.
+  // In individual mode, unlockedPowers stays empty — HintPanel treats undefined/empty differently:
+  // undefined = no progression (all hints visible); empty array = progression active but none unlocked yet.
+  // Here we pass undefined for individual mode so all hints are always available.
+  const [teamCorrectCount, setTeamCorrectCount] = React.useState(0);
+  // getUnlockedPowerIds(0) returns [] since all powers require ≥1 correct answer — no powers start unlocked.
   const [unlockedPowers, setUnlockedPowers] = React.useState<string[]>(() =>
     isTeamMode ? getUnlockedPowerIds(0) : []
   );
@@ -409,9 +413,9 @@ const GameScreen: React.FC<GameScreenProps> = ({
 
       // Battle progression: check for newly unlocked powers in team mode
       if (isTeamMode) {
-        const prevCount = totalCorrectInGame;
+        const prevCount = teamCorrectCount;
         const newCount = prevCount + 1;
-        setTotalCorrectInGame(newCount);
+        setTeamCorrectCount(newCount);
         const newPowers = getNewlyUnlockedPowers(prevCount, newCount);
         if (newPowers.length > 0) {
           setUnlockedPowers(getUnlockedPowerIds(newCount));

@@ -31,8 +31,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
   onExtraAttempt,
   unlockedPowers,
 }) => {
-  // Helper: is a given power available?
-  const isPowerAvailable = (id: string) =>
+  // Helper: is a given power unlocked (or progression is not active)?
+  const isPowerUnlocked = (id: string) =>
     !unlockedPowers || unlockedPowers.includes(id);
   if (!word) {
     return (
@@ -198,11 +198,11 @@ const HintPanel: React.FC<HintPanelProps> = ({
       {/* Show "no powers yet" message in team mode before first unlock */}
       {unlockedPowers && unlockedPowers.length === 0 && (
         <p className="text-white/70 text-sm text-center italic mb-2">
-          🔒 Get your first correct answer to unlock your first power!
+          🔒 Get a correct answer to unlock your first power!
         </p>
       )}
 
-      {isPowerAvailable('syllables') && (
+      {isPowerUnlocked('syllables') && (
         <button
           onClick={() => {
             setShowHint(!showHint);
@@ -213,7 +213,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
           {showHint ? 'Hide Hint' : 'Show Hint'}
         </button>
       )}
-      {showHint && isPowerAvailable('syllables') && (
+      {showHint && isPowerUnlocked('syllables') && (
         <div className="mt-4 flex flex-col items-center gap-4">
           <div className="flex flex-wrap gap-2 justify-center">
             {word.syllables?.map((syllable, idx) => (
@@ -243,30 +243,30 @@ const HintPanel: React.FC<HintPanelProps> = ({
           </div>
         </div>
       )}
-      {showOrigin && isPowerAvailable('origin') && (
+      {showOrigin && isPowerUnlocked('origin') && (
         <p className="text-xl mb-2">
           <strong className="text-yellow-300">Origin:</strong> {origin || 'Origin not available'}
         </p>
       )}
-      {showSentence && isPowerAvailable('sentence') && (
+      {showSentence && isPowerUnlocked('sentence') && (
         <p className="text-xl">
           <strong className="text-yellow-300">Example:</strong> "{example || 'Example not available'}"
         </p>
       )}
-      {showPrefix && isPowerAvailable('affixes') && (
+      {showPrefix && isPowerUnlocked('affixes') && (
         <div className="text-xl mb-2">
           <strong className="text-yellow-300">Prefix:</strong> {prefix || 'Prefix not available'}
           {prefixMeaning && <span className="text-lg text-gray-300"> (meaning: {prefixMeaning})</span>}
         </div>
       )}
-      {showSuffix && isPowerAvailable('affixes') && (
+      {showSuffix && isPowerUnlocked('affixes') && (
         <div className="text-xl mb-2">
           <strong className="text-yellow-300">Suffix:</strong> {suffix || 'Suffix not available'}
           {suffixMeaning && <span className="text-lg text-gray-300"> (meaning: {suffixMeaning})</span>}
         </div>
       )}
       <div className="mt-4 flex gap-4 justify-center flex-wrap">
-        {isPowerAvailable('definition') && !showDefinition && (
+        {isPowerUnlocked('definition') && !showDefinition && (
           <button
             onClick={handleDefinitionReveal}
             disabled={participantPoints < 1}
@@ -275,7 +275,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
             📖 Buy Definition (-1)
           </button>
         )}
-        {isPowerAvailable('origin') && !showOrigin && (
+        {isPowerUnlocked('origin') && !showOrigin && (
           <button
             onClick={handleOriginReveal}
             disabled={participantPoints < 1}
@@ -284,7 +284,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
             🌍 Buy Origin (-1)
           </button>
         )}
-        {isPowerAvailable('sentence') && !showSentence && (
+        {isPowerUnlocked('sentence') && !showSentence && (
           <button
             onClick={handleSentenceReveal}
             disabled={participantPoints < 2}
@@ -295,7 +295,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
         )}
       </div>
       <div className="mt-4 flex gap-4 justify-center flex-wrap">
-        {isPowerAvailable('affixes') && !showPrefix && prefix && (
+        {isPowerUnlocked('affixes') && !showPrefix && prefix && (
           <button
             onClick={handlePrefixReveal}
             disabled={participantPoints < 3}
@@ -304,7 +304,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
             🔠 Reveal Prefix (-3)
           </button>
         )}
-        {isPowerAvailable('affixes') && !showSuffix && suffix && (
+        {isPowerUnlocked('affixes') && !showSuffix && suffix && (
           <button
             onClick={handleSuffixReveal}
             disabled={participantPoints < 3}
@@ -315,7 +315,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
         )}
       </div>
       <div className="mt-6 flex justify-center gap-4 flex-wrap">
-        {isPowerAvailable('hangman') && (
+        {isPowerUnlocked('hangman') && (
           <button
             onClick={handleHangmanReveal}
             disabled={participantPoints < 5}
@@ -324,7 +324,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
             🕵️ Hangman Reveal (-5)
           </button>
         )}
-        {isPowerAvailable('vowels') && (
+        {isPowerUnlocked('vowels') && (
           <button
             onClick={handleVowelReveal}
             disabled={participantPoints < 3}
@@ -333,7 +333,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
             🔤 Vowel Reveal (-3)
           </button>
         )}
-        {isPowerAvailable('extraAttempt') && (
+        {isPowerUnlocked('extraAttempt') && (
           <button
             onClick={handleFriendSubstitution}
             disabled={participantPoints < 4}
@@ -364,11 +364,12 @@ const HintPanel: React.FC<HintPanelProps> = ({
                 key={p.id}
                 className="flex flex-col items-center gap-1 opacity-50"
                 title={`Unlocks at ${p.unlockAt} correct answer${p.unlockAt === 1 ? '' : 's'}: ${p.description}`}
+                aria-label={`${p.name} — locked. Unlocks after ${p.unlockAt} correct answer${p.unlockAt === 1 ? '' : 's'}`}
               >
-                <span className="text-2xl grayscale">{p.icon}</span>
+                <span className="text-2xl grayscale" aria-hidden="true">{p.icon}</span>
                 <span className="text-xs text-white/70 text-center max-w-[64px] leading-tight">
                   {i === 0 ? (
-                    <span className="text-kahoot-yellow-300 font-bold not-italic">
+                    <span className="text-kahoot-yellow-300 font-bold not-italic" aria-hidden="true">
                       @{p.unlockAt}✓
                     </span>
                   ) : null}
