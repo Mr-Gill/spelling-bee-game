@@ -1,38 +1,10 @@
 # 🏆 Interactive Spelling Bee Championship
 
-> **A comprehensive, classroom-ready spelling bee game designed for K-12 educators with rich phonics content, team competition, and seamless lesson plan integration.**
+> **A classroom-ready spelling bee game for K-12 educators — team or individual play, rich phonics content, a strategic help shop, and AI-powered word list generation.**
 
 [![Live Demo](https://img.shields.io/badge/🎮_Play_Now-Live_Demo-brightgreen?style=for-the-badge)](https://mr-gill.github.io/spelling-bee-game/)
 [![Education](https://img.shields.io/badge/📚_Built_for-Education-blue?style=for-the-badge)](https://mr-gill.github.io/spelling-bee-game/)
 [![Open Source](https://img.shields.io/badge/📖_License-MIT-orange?style=for-the-badge)](LICENSE)
-
----
-
-## 🤖 **AI-Powered Word Lists**
-
-Generate custom spelling word lists tailored to your classroom needs using GitHub's AI models. The system can create word lists on any topic with rich educational content including definitions, origins, and pronunciation guides.
-
-### Key Features:
-- **Custom Topics** - Generate words on any subject or theme
-- **Curriculum-Aligned** - Words are selected based on grade-level appropriateness
-- **Rich Content** - Each word includes definition, origin, example, and pronunciation
-- **Automatic Updates** - Word lists are generated and deployed automatically
-
-[Learn more about word list generation](WORDLIST.md)
-
----
-
-## 🎯 **Perfect for Educators**
-
-Transform your spelling lessons into engaging, interactive competitions that students love! This isn't just a game—it's a comprehensive educational tool designed by teachers, for teachers.
-
-### ✨ **Why Teachers Choose This Tool**
-- 📋 **Lesson Plan Ready** - Matches educational standards and curriculum goals
-- 🧠 **Rich Learning Content** - Etymology, phonics, and morphology for every word
-- 👥 **Flexible Classroom Use** - Individual students or team competitions
-- 📊 **Built-in Assessment** - Real-time progress tracking and accuracy metrics
-- 🎨 **Projection Optimized** - High contrast design perfect for classroom displays
-- 🔊 **Audio Support** - Text-to-speech for pronunciation and accessibility
 
 ---
 
@@ -96,6 +68,21 @@ Students earn points for correct answers and can strategically spend them on ass
 
 ---
 
+## 🎯 **Perfect for Educators**
+
+Transform your spelling lessons into engaging, interactive competitions that students love. This isn't just a game — it's a comprehensive educational tool designed by teachers, for teachers.
+
+### ✨ **Why Teachers Choose This Tool**
+- 📋 **Lesson Plan Ready** - Matches educational standards and curriculum goals
+- 🧠 **Rich Learning Content** - Etymology, phonics, and morphology for every word
+- 👥 **Flexible Classroom Use** - Individual students or team competitions
+- 📊 **Built-in Assessment** - Real-time progress tracking and accuracy metrics
+- 🎨 **Projection Optimized** - High contrast design perfect for classroom displays
+- 🔊 **Audio Support** - Text-to-speech for pronunciation and accessibility
+- 🤖 **AI Word Lists** - Generate custom word lists on any topic using GitHub Models
+
+---
+
 ## 🚀 **Quick Start for Teachers**
 
 ### 🔑 **GitHub Token Setup (Required for AI Features)**
@@ -126,7 +113,7 @@ To enable AI-powered word list generation, you'll need to set up a GitHub token 
 5. **Select** a word list (August 27th lesson included!)
 6. **Start** your engaging spelling bee!
 
-### 💻 **Option 2: Download for Offline Use**
+### 💻 **Option 2: Run Locally**
 ```bash
 # Download files
 git clone https://github.com/Mr-Gill/spelling-bee-game.git
@@ -136,8 +123,9 @@ cd spelling-bee-game
 npm install
 npm run build
 
-# Open in browser
-open dist/index.html
+# Serve locally
+npm start
+# Then open http://localhost:5173 in your browser
 ```
 
 ---
@@ -285,9 +273,9 @@ This project includes scripts to generate high-quality audio files using ElevenL
    This will generate both sound effects and word pronunciations
 
 ### Audio File Structure
-- `public/audio/words/` - Word pronunciation files (e.g., `apple.mp3`)
-- `public/audio/sfx/` - Sound effects (e.g., `correct.mp3`, `wrong.mp3`)
-- `public/audio/ui/` - UI interaction sounds (e.g., `click.mp3`)
+- `assets/audio/` - Music tracks and sound effects served at runtime
+- `assets/audio/spelling-bee-{style}.mp3` - Background music (funk, rock, country, etc.)
+- `assets/audio/correct.mp3`, `wrong.mp3`, etc. - Feedback sound effects
 
 ### Customizing Audio
 - Edit `scripts/generate-audio.ts` to modify word pronunciations
