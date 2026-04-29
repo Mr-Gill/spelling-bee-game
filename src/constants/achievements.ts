@@ -6,22 +6,22 @@ export const achievements = {
   },
   perfectGame: {
     title: 'Perfect Game',
-    description: 'Complete a game without a single mistake. The bees have convened and decided this counts.',
+    description: 'Complete a game without a single mistake. The words never saw it coming.',
     icon: '/spelling-bee-game/img/achievements/perfect-game.svg'
   },
   speedDemon: {
     title: 'Speed Demon',
-    description: 'Complete a game in under two minutes. The words did not have time to prepare.',
+    description: 'Complete a game in under two minutes. The words had no time to prepare.',
     icon: '/spelling-bee-game/img/achievements/speed-demon.svg'
   },
   wordMaster: {
     title: 'Word Master',
-    description: 'Spell 100 words correctly. One hundred words have been handled. The alphabet is exhausted.',
+    description: 'Spell 100 words correctly. The alphabet is quietly impressed.',
     icon: '/spelling-bee-game/img/achievements/word-master.svg'
   },
   dailyStreak: {
     title: 'Daily Streak',
-    description: 'Seven daily challenges completed in a row. A bee has drawn a small calendar and circled today.',
+    description: 'Seven daily challenges in a row. The word today is "commitment".',
     icon: '/spelling-bee-game/img/achievements/daily-streak.svg'
   }
 };

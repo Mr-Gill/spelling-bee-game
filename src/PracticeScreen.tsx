@@ -10,26 +10,26 @@ interface PracticeScreenProps {
 }
 
 const CORRECT_PRACTICE_FEEDBACK = [
-  'Correct. Nice warm-up.',
-  'Good. The practice is beginning to look like practice.',
-  'That word is behind you now. Onto the next.',
-  'No resistance at all. The word came quietly.',
-  'Correct. One word down. The rest are watching.',
-  'Right. Make a note of how that felt — that\'s how it goes.',
-  'Correct. That one came out well.',
-  'Yes. Now do that again with the next one.',
-  'Correct. The bee was watching. It looked pleased.',
+  'Correct. That\'s the one.',
+  'Right. Now do it again with the next word.',
+  'Yes. That\'s how it feels when it goes right. Remember that.',
+  'The word came quietly. Good.',
+  'Practice is doing its job.',
+  'That one landed. Keep going.',
+  'Right. On to the next.',
+  'Correct. Nice and clean.',
+  'Good. The word never had a chance.',
 ];
 
 const INCORRECT_PRACTICE_FEEDBACK = [
-  'Not quite. Listen again and have another go.',
-  'Not quite. The word is still out there, waiting.',
-  'Try again. Practice is exactly for this.',
-  'Not quite. It was close. The alphabet is not upset.',
-  'Not quite. Give it another listen.',
-  'Nearly. The word will wait.',
-  'Not yet. The word has patience. Use it.',
-  'Nearly. The hive is not alarmed.',
+  'Not yet. The word is still here. Try again.',
+  'Try again. That\'s what practice is for.',
+  'Close. Listen again and have another go.',
+  'Not quite. The word is patient. Use that.',
+  'Nearly. One more listen.',
+  'Not this time. The word is not alarmed. Go again.',
+  'That miss was useful. Annoying, but useful.',
+  'Try again. The word hasn\'t gone anywhere.',
 ];
 
 const pickFromPool = (arr: string[]): string => arr[Math.floor(Math.random() * arr.length)];

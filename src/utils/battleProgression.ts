@@ -30,7 +30,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'sentence',
     name: 'Sentence Hint',
     description:
-      'See the word used in a full sentence. If you know what it means, the spelling often follows. If you don\'t, the sentence will at least give you a clue about the kind of word you\'re dealing with.',
+      'See the word in a full sentence. Context helps when the word is acting innocent.',
     icon: '📝',
     cost: 1,
     unlockAt: 0,
@@ -39,7 +39,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'syllables',
     name: 'Syllable Breakdown',
     description:
-      'Break the word into syllables and tackle each piece separately. Big words are small words waiting to be taken apart.',
+      'Break the word into chunks. Long words are less frightening when handled one piece at a time.',
     icon: '🧩',
     cost: 1,
     unlockAt: 0,
@@ -48,7 +48,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'wordLength',
     name: 'Word Length Hint',
     description:
-      'See how many letters the word contains. This won\'t tell you which letters they are. It will tell you how many there are. That already narrows it down.',
+      'See how many letters you\'re dealing with. The word can\'t hide its length.',
     icon: '🔢',
     cost: 1,
     unlockAt: 0,
@@ -59,7 +59,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'definition',
     name: 'Definition Hint',
     description:
-      "Knowing what a word means and knowing how it's spelled are different skills, but they talk to each other. The definition appears.",
+      'Find out what the word means. Knowing the meaning and knowing the spelling are different skills — but they talk to each other.',
     icon: '📖',
     cost: 1,
     unlockAt: 2,
@@ -70,7 +70,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'extraTime',
     name: 'Extra Time',
     description:
-      'Adds 15 seconds to the timer. The clock did not agree to this, but the bee has the authority.',
+      'Add 15 seconds. Enough time for a team huddle and one dramatic stare at the ceiling.',
     icon: '⏱️',
     cost: 2,
     unlockAt: 4,
@@ -81,7 +81,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'soundItOut',
     name: 'Sound It Out Hint',
     description:
-      "Every sound in the word is displayed phonetically. Some words sound exactly like they're spelled. Others have been lying about this for centuries.",
+      'See every sound in the word written out. Some words sound exactly like they\'re spelled. Others have been misleading people for centuries.',
     icon: '🔊',
     cost: 2,
     unlockAt: 6,
@@ -92,7 +92,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'affixes',
     name: 'Prefix / Suffix / Root Hint',
     description:
-      'See the word\'s component parts. Words assembled from Latin and Greek pieces often look complicated but spell predictably once you know what the pieces are — which is the whole point of this hint.',
+      'Check the word\'s parts — prefix, suffix, root. English looks chaotic, but it sometimes leaves clues.',
     icon: '🔠',
     cost: 2,
     unlockAt: 8,
@@ -103,7 +103,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'spellingPattern',
     name: 'Spelling Pattern Hint',
     description:
-      "A clue about this word's specific spelling pattern — a silent letter, a doubled consonant, a borrowed ending. English has many of these. This hint reveals which one is in play today.",
+      'Spot the specific trick: silent letter, double consonant, borrowed ending. Useful information, arriving a little late.',
     icon: '🧠',
     cost: 2,
     unlockAt: 10,
@@ -114,7 +114,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'origin',
     name: 'Origin Hint',
     description:
-      "See where the word came from. Words carry their history in their spelling, which is why borrowed words often look like they belong somewhere else.",
+      'See where the word came from. Some spellings make more sense once you check their passport.',
     icon: '🌍',
     cost: 2,
     unlockAt: 12,
@@ -125,7 +125,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'multipleAttempts',
     name: 'Multiple Attempts',
     description:
-      'A second attempt at this word becomes available. The first attempt remains on record. Only the final outcome counts.',
+      'Buy a second attempt. Mistakes are just information arriving rudely. Only the final result counts.',
     icon: '🎯',
     cost: 3,
     unlockAt: 14,
@@ -136,7 +136,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'vowels',
     name: 'Vowel Reveal',
     description:
-      'All the vowels appear. The consonants will not be participating at this time.',
+      'Reveal the vowels. The consonants can continue being mysterious.',
     icon: '🔤',
     cost: 3,
     unlockAt: 16,
@@ -147,7 +147,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'hangman',
     name: 'Hangman-Style Reveal',
     description:
-      'One letter is revealed. The bee chooses which one. Do not attempt to negotiate with the bee about this. The bee has a system.',
+      'One letter is revealed. The bee picks which one. Negotiation is not available.',
     icon: '🕵️',
     cost: 3,
     unlockAt: 18,
@@ -158,7 +158,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'quickPeek',
     name: 'Quick Peek',
     description:
-      'The complete word appears on screen for 1.5 seconds. Then it\'s gone. What your team does with those 1.5 seconds is entirely up to you.',
+      'The full word appears for 1.5 seconds. Then it leaves, like it has somewhere better to be.',
     icon: '🔍',
     cost: 4,
     unlockAt: 20,
@@ -169,7 +169,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'friendSub',
     name: 'Friend Substitution',
     description:
-      'Substitute a different teammate as speller. A change of perspective is sometimes what a word needs. The word doesn\'t care who spells it, as long as someone does.',
+      'Swap in a teammate as speller. Choose someone who looks unusually calm about this.',
     icon: '👥',
     cost: 4,
     unlockAt: 22,
@@ -180,7 +180,7 @@ export const BATTLE_POWERS: BattlePower[] = [
     id: 'skipWord',
     name: 'Skip Word',
     description:
-      'Skip this word entirely. No penalty, no points. It will reappear in the review session with no memory of being skipped. Words are professional about these things.',
+      'Skip this word. No penalty, no points. It will return in the review session, possibly with an attitude.',
     icon: '⏭️',
     cost: 5,
     unlockAt: 24,

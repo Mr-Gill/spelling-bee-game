@@ -410,7 +410,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
           <div className="bg-green-500/20 rounded-lg px-3 py-2">
             <span className="text-green-200 font-bold text-sm">📝 Sentence: </span>
             <span className="text-white text-sm italic">
-              "{sentenceText || 'No example sentence available. The word prefers to stand alone.'}"
+            "{sentenceText || 'No sentence available. The word prefers mystery.'}"
             </span>
           </div>
         )}
@@ -432,7 +432,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
                 ))}
               </span>
             ) : (
-              <span className="text-white/70 text-sm italic">No syllable breakdown is available for this word.</span>
+              <span className="text-white/70 text-sm italic">No syllable breakdown available. Try listening for the chunks.</span>
             )}
           </div>
         )}
@@ -441,7 +441,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
           <div className="bg-amber-500/20 rounded-lg px-3 py-2">
             <span className="text-amber-200 font-bold text-sm">📖 Definition: </span>
             <span className="text-white text-sm">
-              {definitionText || 'No definition available for this word. It has chosen mystery.'}
+              {definitionText || 'No definition available. The word\'s job description is missing.'}
             </span>
           </div>
         )}
@@ -450,7 +450,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
           <div className="bg-cyan-500/20 rounded-lg px-3 py-2">
             <span className="text-cyan-200 font-bold text-sm">🔊 Sound It Out: </span>
             <span className="text-white text-sm font-mono">
-              {soundItOutText || 'No sound-it-out hint is available for this word.'}
+              {soundItOutText || 'No sound-it-out hint available. Listen carefully.'}
             </span>
           </div>
         )}
@@ -471,7 +471,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
               </p>
             ) : null}
             {!prefixText && !suffixText && (
-              <p className="text-white/70 text-sm italic">No word-part hint is available for this word.</p>
+              <p className="text-white/70 text-sm italic">No word-part data available. This word is keeping its components private.</p>
             )}
           </div>
         )}
@@ -480,7 +480,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
           <div className="bg-violet-500/20 rounded-lg px-3 py-2">
             <span className="text-violet-200 font-bold text-sm">🧠 Spelling Pattern: </span>
             <span className="text-white text-sm">
-              {spellingPatternText || 'No spelling pattern hint is available for this word.'}
+              {spellingPatternText || 'No spelling pattern identified. The word is being difficult in a plain way.'}
             </span>
           </div>
         )}
@@ -489,7 +489,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
           <div className="bg-emerald-500/20 rounded-lg px-3 py-2">
             <span className="text-emerald-200 font-bold text-sm">🌍 Origin: </span>
             <span className="text-white text-sm">
-              {originText || 'No origin hint is available for this word.'}
+              {originText || 'No origin hint available. The word\'s passport is missing.'}
             </span>
           </div>
         )}
