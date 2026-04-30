@@ -63,6 +63,8 @@ test('warm-up practice is available before the main game', async ({ page }) => {
 test('setup presets save and load game options', async ({ page }) => {
   await page.goto('./');
 
+  // Open the collapsible presets panel first
+  await page.locator('summary').filter({ hasText: /Load \/ Save Setup/i }).click();
   await page.getByLabel(/Session Length/i).fill('12');
   await page.getByLabel(/Preset Name/i).fill('Friday groups');
   await page.getByRole('button', { name: 'Save', exact: true }).click();
