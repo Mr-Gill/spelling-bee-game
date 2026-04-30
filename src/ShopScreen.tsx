@@ -79,6 +79,7 @@ const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
   // Cooldown timers for help items
   const [cooldowns, setCooldowns] = React.useState<Record<string, number>>({});
   const [purchaseError, setPurchaseError] = React.useState('');
+  const purchaseErrorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [coins, setCoins] = React.useState(() => {
     if (typeof window === "undefined") return 0;
     const stored = localStorage.getItem("coins");
@@ -114,6 +115,26 @@ const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
     localStorage.setItem("equippedAvatar", currentAvatar);
   }, [currentAvatar]);
 
+  // Clear the purchase error timer on unmount
+  React.useEffect(() => {
+    return () => {
+      if (purchaseErrorTimer.current !== null) {
+        clearTimeout(purchaseErrorTimer.current);
+      }
+    };
+  }, []);
+
+  const showPurchaseError = (message: string) => {
+    if (purchaseErrorTimer.current !== null) {
+      clearTimeout(purchaseErrorTimer.current);
+    }
+    setPurchaseError(message);
+    purchaseErrorTimer.current = setTimeout(() => {
+      setPurchaseError('');
+      purchaseErrorTimer.current = null;
+    }, 3000);
+  };
+
   // Update cooldowns every second
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -135,15 +156,13 @@ const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
 
   const purchaseItem = (item: ShopItem) => {
     if (coins < item.price) {
-      setPurchaseError('Not enough coins. The bee suggests saving up.');
-      setTimeout(() => setPurchaseError(''), 3000);
+      showPurchaseError('Not enough coins. The bee suggests saving up.');
       return;
     }
     
     // Check cooldown for help items
     if (item.type === 'help' && cooldowns[item.id]) {
-      setPurchaseError('This one is resting. Try again in a moment.');
-      setTimeout(() => setPurchaseError(''), 3000);
+      showPurchaseError('This one is resting. Try again in a moment.');
       return;
     }
 

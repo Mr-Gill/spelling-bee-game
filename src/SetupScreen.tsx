@@ -1029,9 +1029,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               <h3 className="text-lg font-bold mb-2 text-yellow-300">💡 Hint Tips</h3>
               <ul className="list-disc list-inside space-y-1 text-gray-300">
                 <li><strong>Definition (−1 pt):</strong> What the word means — a quick, affordable clue</li>
-                <li><strong>Origin (−1 pt):</strong> Where the word came from — some spellings make more sense after checking their passport</li>
-                <li><strong>Example Sentence (−2 pts):</strong> See the word in context — a tiny window into the word's private life</li>
-                <li><strong>Reveal a Letter (−5 pts):</strong> Reveals one hidden letter — use it carefully</li>
+                <li><strong>Origin (−2 pts):</strong> Where the word came from — some spellings make more sense after checking their passport</li>
+                <li><strong>Sentence (−1 pt):</strong> See the word in context — a tiny window into the word&apos;s private life</li>
+                <li><strong>Hangman-Style Reveal (−3 pts):</strong> Reveals letters in a hangman-style pattern — use it carefully</li>
                 <li><strong>Swap Speller (−4 pts):</strong> Tag in a teammate for this word — team mode only</li>
               </ul>
             </div>

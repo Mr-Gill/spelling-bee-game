@@ -410,7 +410,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
           <div className="bg-green-500/20 rounded-lg px-3 py-2">
             <span className="text-green-200 font-bold text-sm">📝 Sentence: </span>
             <span className="text-white text-sm italic">
-            "{sentenceText || 'No sentence available. The word prefers mystery.'}"
+            {`"${sentenceText || 'No sentence available. The word prefers mystery.'}"`}
             </span>
           </div>
         )}

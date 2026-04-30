@@ -8,7 +8,7 @@ interface LeaderboardScreenProps {
 
 const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const storedData = localStorage.getItem('leaderboard');
@@ -26,11 +26,11 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ onBack }) => {
         .then((data: LeaderboardEntry[]) => {
           const sorted = data.sort((a, b) => b.score - a.score).slice(0, 10);
           setEntries(sorted);
-          setError('');
+          setError(false);
         })
         .catch(err => {
           console.error('Could not load default leaderboard', err);
-          setError('Failed to load leaderboard.');
+          setError(true);
         });
     }
   }, []);
