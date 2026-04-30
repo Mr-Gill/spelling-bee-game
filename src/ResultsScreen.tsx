@@ -96,7 +96,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({
       if (config?.soundEnabled ?? true) {
         applauseAudio.current.play().catch(() => { /* audio may be blocked */ });
       }
-      const prefersReducedMotion = window.matchMedia('(prefers-reduce-motion: reduce)').matches;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if ((config?.effectsEnabled ?? true) && !prefersReducedMotion) {
         launchConfetti();
       }
