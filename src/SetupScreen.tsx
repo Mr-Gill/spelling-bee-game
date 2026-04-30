@@ -484,7 +484,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       } else if (errMessage === 'PROXY_URL_MISSING') {
         directTokenHint = 'Add your AI proxy URL in AI connection settings.';
       } else if (errMessage === 'PROXY_URL_MISSING_WORKFLOW_OPENED') {
-        directTokenHint = 'No proxy URL set. Opened GitHub Actions workflow. Run it there, then refresh this page after deploy finishes.';
+        directTokenHint = 'No proxy URL set. Opened GitHub Actions workflow. Click "Run workflow" (top-right on that page), then refresh this page after deploy finishes.';
       } else if (errMessage.startsWith('PROXY_401') || errMessage.includes('AI proxy password is invalid')) {
         directTokenHint = 'Proxy password rejected. Check the shared password configured on the proxy server.';
       } else if (errMessage.startsWith('PROXY_404')) {

@@ -144,6 +144,12 @@ async function generateWordList(topicInput = 'general classroom vocabulary', cou
     }
   }
 
+  if (lastError && String(lastError.message || '').includes('404')) {
+    throw new Error(
+      'GitHub Models returned 404 for all candidate models. Check MODELS_TOKEN permissions (models:read), ensure GitHub Models is enabled for this repo/account, and verify billing/quota access.'
+    );
+  }
+
   throw lastError || new Error('Failed to generate word list');
 }
 
