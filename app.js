@@ -10873,8 +10873,8 @@ TOPIC: ${topic.trim() || "general classroom vocabulary"}
 N: ${Number.isFinite(count) && count > 0 ? count : 10}`;
 var PRESETS_STORAGE_KEY = "setupPresets";
 var GITHUB_MODELS_ENDPOINT = "https://models.github.ai/inference/chat/completions";
-var GITHUB_MODELS_MODEL = "openai/gpt-4.1";
-var GITHUB_MODELS_API_VERSION = "2026-03-10";
+var GITHUB_MODELS_MODEL = "openai/gpt-4.1-mini";
+var GITHUB_MODELS_API_VERSION = "2022-11-28";
 var AI_PROXY_URL = "http://localhost:3001/wordlist";
 var GITHUB_WORDLIST_WORKFLOW_URL = "https://github.com/Mr-Gill/spelling-bee-game/actions/workflows/generate-wordlist.yml";
 var getDefaultProxyUrl = () => {
@@ -11221,7 +11221,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onResume
       } else if (errMessage === "PROXY_URL_MISSING") {
         directTokenHint = "Add your AI proxy URL in AI connection settings.";
       } else if (errMessage === "PROXY_URL_MISSING_WORKFLOW_OPENED") {
-        directTokenHint = "No proxy URL set. Opened GitHub Actions workflow. Run it there, then refresh this page after deploy finishes.";
+        directTokenHint = 'No proxy URL set. Opened GitHub Actions workflow. Click "Run workflow" (top-right on that page), then refresh this page after deploy finishes.';
       } else if (errMessage.startsWith("PROXY_401") || errMessage.includes("AI proxy password is invalid")) {
         directTokenHint = "Proxy password rejected. Check the shared password configured on the proxy server.";
       } else if (errMessage.startsWith("PROXY_404")) {
