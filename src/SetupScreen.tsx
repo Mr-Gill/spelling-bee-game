@@ -280,10 +280,19 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     name: name.trim(), lives: 5, points: 5, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
   });
 
-  // Prevent javascript: protocol URLs from being used as image sources
+  // Only allow known-safe protocols for image src (guards against javascript:/data: XSS from localStorage)
   const safeAvatarUrl = (url: string | undefined, fallback: string): string => {
     if (!url) return fallback;
-    return /^javascript:/i.test(url) ? fallback : url;
+    try {
+      const parsed = new URL(url, window.location.href);
+      const safeProtocols = ['http:', 'https:', 'blob:'];
+      if (safeProtocols.includes(parsed.protocol)) return url;
+      if (parsed.protocol === 'data:' && url.startsWith('data:image/')) return url;
+    } catch {
+      // Relative path with no protocol — safe
+      if (!url.includes(':')) return url;
+    }
+    return fallback;
   };
 
   const addTeam = () => updateTeams([...teams, createParticipant('', 0)]);
