@@ -112,6 +112,16 @@ test('pasted CSV word lists start with the word hidden', async ({ page }) => {
   await expect(page.getByText('harmony', { exact: true })).toHaveCount(0);
 });
 
+test('word list templates are downloadable in supported filetypes', async ({ page }) => {
+  await page.goto('./');
+
+  for (const extension of ['CSV', 'TSV', 'TXT', 'JSON']) {
+    const link = page.getByRole('link', { name: `Download ${extension} Template` });
+    await expect(link).toBeVisible();
+    await expect(link).toHaveAttribute('href', new RegExp(`wordlists/template\\.${extension.toLowerCase()}$`));
+  }
+});
+
 test('randomised team names stay short during gameplay', async ({ page }) => {
   await page.goto('./');
   await page.getByRole('button', { name: /SOLO CHALLENGE/i }).click();

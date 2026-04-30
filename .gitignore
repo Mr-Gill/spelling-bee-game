@@ -39,6 +39,11 @@ yarn-error.log*
 .tmp/
 tmp/
 
+# Build artifacts / generated reports
+*.patch
+*.zip
+lighthouse-report.json
+
 # Common patterns
 .DS_Store
 Thumbs.db

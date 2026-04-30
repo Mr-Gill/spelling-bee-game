@@ -6,6 +6,7 @@ import { getMascotImage } from './utils/mascot';
 import { hasSavedGame, getSavedGameInfo, loadGameState, clearSavedGame } from './utils/gameStateManager';
 import { applyThemeClass, type ThemeName } from './utils/theme';
 import AccessibilitySettings from './components/AccessibilitySettings';
+import { getStudentDifficultyLevel } from './utils/studentProgress';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
@@ -91,6 +92,9 @@ interface SetupPreset {
 }
 
 const PRESETS_STORAGE_KEY = 'setupPresets';
+const GITHUB_MODELS_ENDPOINT = 'https://models.github.ai/inference/chat/completions';
+const GITHUB_MODELS_MODEL = 'openai/gpt-4.1';
+const GITHUB_MODELS_API_VERSION = '2026-03-10';
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
@@ -134,9 +138,19 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [includeMissedWords, setIncludeMissedWords] = useState(false);
   const [error, setError] = useState('');
   const bundledWordLists = [
+    { label: 'Template CSV', file: 'template.csv' },
+    { label: 'Template TSV', file: 'template.tsv' },
+    { label: 'Template TXT', file: 'template.txt' },
+    { label: 'Template JSON', file: 'template.json' },
     { label: 'Example JSON', file: 'example.json' },
     { label: 'Example CSV', file: 'example.csv' },
     { label: 'Example TSV', file: 'example.tsv' }
+  ];
+  const downloadableTemplates = [
+    { label: 'CSV', file: 'template.csv' },
+    { label: 'TSV', file: 'template.tsv' },
+    { label: 'TXT', file: 'template.txt' },
+    { label: 'JSON', file: 'template.json' },
   ];
   const [selectedBundledList, setSelectedBundledList] = useState('');
   const [students, setStudents] = useState<Participant[]>([]);
@@ -174,6 +188,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
   const [aiPrompt, setAiPrompt] = useState('');
+  const [aiToken, setAiToken] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    return sessionStorage.getItem('githubModelsToken') || '';
+  });
   
   // Saved game state
   const [savedGameAvailable, setSavedGameAvailable] = useState(false);
@@ -349,32 +367,79 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setAiPrompt(prompt);
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-      
-      const res = await fetch('http://localhost:3001/wordlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: wordCount, prompt }),
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      
-      if (!res.ok) throw new Error('Request failed');
-      const data = await res.json();
-      const generatedWords = Array.isArray(data)
-        ? data
-        : parseWordListUtil(String(data.wordList || data.csv || data.content || ''));
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+      let content = '';
+      const trimmedToken = aiToken.trim();
+      if (trimmedToken) {
+        sessionStorage.setItem('githubModelsToken', trimmedToken);
+        const res = await fetch(`${GITHUB_MODELS_ENDPOINT}?api-version=${GITHUB_MODELS_API_VERSION}`, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/vnd.github+json',
+            Authorization: `Bearer ${trimmedToken}`,
+            'Content-Type': 'application/json',
+            'X-GitHub-Api-Version': GITHUB_MODELS_API_VERSION,
+          },
+          body: JSON.stringify({
+            model: GITHUB_MODELS_MODEL,
+            messages: [
+              {
+                role: 'system',
+                content: 'You generate classroom spelling bee word lists. Return only the requested CSV text, with no markdown fences or commentary.',
+              },
+              { role: 'user', content: prompt },
+            ],
+            temperature: 0.8,
+            top_p: 1,
+            max_tokens: 3000,
+          }),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(errorText || `GitHub Models request failed: ${res.status}`);
+        }
+
+        const data = await res.json();
+        content = String(data?.choices?.[0]?.message?.content || '');
+      } else {
+        const res = await fetch('http://localhost:3001/wordlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: wordCount, prompt }),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(errorText || 'Request failed');
+        }
+
+        const data = await res.json();
+        content = String(data.wordList || data.csv || data.content || '');
+      }
+
+      const cleanContent = content.trim().replace(/^```(?:csv|json|tsv)?\s*/i, '').replace(/\s*```$/i, '').trim();
+      const generatedWords = parseWordListUtil(cleanContent);
       if (!Array.isArray(generatedWords) || generatedWords.length === 0) throw new Error('Invalid response');
       setParsedCustomWords(prev => [...prev, ...generatedWords]);
       setCustomWordListText('');
       setAiError(`Generated ${generatedWords.length} words. Total words: ${parsedCustomWords.length + generatedWords.length}`);
     } catch (err) {
+      const directTokenHint = aiToken.trim()
+        ? 'The GitHub Models request failed. Check that the token has models: read permission and that GitHub allows this browser request.'
+        : 'On GitHub Pages, paste a GitHub Models token for this session, or run the local AI server.';
       try {
         await navigator.clipboard?.writeText(prompt);
-        setAiError('AI service is not running here, so I copied the exact word-list prompt. Paste the AI CSV output into the box above.');
+        setAiError(`${directTokenHint} I copied the exact word-list prompt so you can paste AI CSV output into the box above.`);
       } catch {
-        setAiError('AI service is not running here. Use the template prompt below, then paste the AI CSV output into the box above.');
+        setAiError(`${directTokenHint} Use the template prompt below, then paste AI CSV output into the box above.`);
       }
     } finally {
       setAiLoading(false);
@@ -540,7 +605,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             setError('Please add at least two students for a custom game.');
             return;
         } else {
-             finalParticipants = trimmedStudents.map(s => ({...s, difficultyLevel: initialDifficulty}));
+             finalParticipants = trimmedStudents.map(s => ({
+               ...s,
+               difficultyLevel: getStudentDifficultyLevel(s.name, initialDifficulty)
+             }));
         }
     }
 
@@ -835,6 +903,19 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="# Words" />
                     <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
                 </div>
+                <div className="mt-3">
+                  <label htmlFor="github-models-token" className="block text-sm font-bold text-gray-200">GitHub Models Token for GitHub Pages</label>
+                  <input
+                    id="github-models-token"
+                    type="password"
+                    value={aiToken}
+                    onChange={e => setAiToken(e.target.value)}
+                    className="mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60"
+                    placeholder="Optional. Used only in this browser session."
+                    autoComplete="off"
+                  />
+                  <p className="mt-1 text-xs text-gray-300">Static GitHub Pages cannot store secrets. Leave this blank when using the local AI server.</p>
+                </div>
                 {aiError && <p className="text-yellow-200 mt-2">{aiError}</p>}
                 {aiPrompt && (
                   <details className="mt-3 rounded-xl bg-black/30 p-3 text-sm text-gray-100">
@@ -846,10 +927,17 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             <div className="mt-4 text-sm text-gray-300">
                 <p><strong>Format:</strong> use the exact CSV header: "word","syllables","definition","origin","example","prefix","suffix","pronunciation". Quote every field.</p>
             </div>
-            <div className="mt-2">
-              <a href="wordlists/example.csv" download className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
-                Download Template
-              </a>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {downloadableTemplates.map(template => (
+                <a
+                  key={template.file}
+                  href={`wordlists/${template.file}`}
+                  download
+                  className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                >
+                  Download {template.label} Template
+                </a>
+              ))}
             </div>
         </div>
         

@@ -38,7 +38,7 @@ import {
   getUnlockedPowerIds,
   type BattlePower,
 } from './utils/battleProgression';
-
+import { saveStudentProgress } from './utils/studentProgress';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
@@ -131,6 +131,13 @@ interface Feedback {
   type: string;
 }
 
+const MIN_DIFFICULTY_LEVEL = 0;
+const MAX_DIFFICULTY_LEVEL = 2;
+
+const clampDifficultyLevel = (level: number) => {
+  if (!Number.isFinite(level)) return MIN_DIFFICULTY_LEVEL;
+  return Math.max(MIN_DIFFICULTY_LEVEL, Math.min(MAX_DIFFICULTY_LEVEL, level));
+};
 
 const GameScreen: React.FC<GameScreenProps> = ({
   config,
@@ -150,6 +157,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [participants, setParticipants] = React.useState<Participant[]>(
     config.participants.map(p => ({
       ...p,
+      difficultyLevel: clampDifficultyLevel(p.difficultyLevel),
       attempted: 0,
       correct: 0,
       wordsAttempted: 0,
@@ -265,6 +273,11 @@ const GameScreen: React.FC<GameScreenProps> = ({
   }, [participants, shouldHideNames]);
 
   React.useEffect(() => {
+    if (config.gameMode !== 'individual') return;
+    participants.forEach(saveStudentProgress);
+  }, [participants, config.gameMode]);
+
+  React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!currentWord || isPaused) return;
       if (/^[a-zA-Z]$/.test(e.key)) {
@@ -313,7 +326,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   }, [participants, currentWord, currentParticipantIndex, timeLeft, letters, wordIndex, totalWordsUsed, missedWords, currentDifficulty]);
 
   const advanceToWord = (level: number) => {
-    const nextWord = selectNextWord(level);
+    const nextWord = selectNextWord(clampDifficultyLevel(level));
     if (nextWord) {
       setAttemptedParticipants(new Set());
       setExtraAttempt(false);
@@ -351,9 +364,11 @@ const GameScreen: React.FC<GameScreenProps> = ({
       if (index === currentParticipantIndex) {
         return {
           ...p,
+          attempted: p.attempted + 1,
+          wordsAttempted: p.wordsAttempted + 1,
           lives: p.lives - 1,
           streak: 0,
-          difficultyLevel: Math.max(0, p.difficultyLevel - config.progressionSpeed)
+          difficultyLevel: clampDifficultyLevel(p.difficultyLevel - config.progressionSpeed)
         };
       }
       return p;
@@ -376,6 +391,16 @@ const GameScreen: React.FC<GameScreenProps> = ({
         setFeedback({ message: 'The next team may now attempt this word.', type: 'info' });
         nextTurn();
         startTimer();
+      } else if (config.gameMode === 'individual') {
+        if (currentWord) {
+          setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
+          addReviewWord(currentWord);
+        }
+        setAttemptedParticipants(new Set());
+        setUsedHint(false);
+        const nextIndex = (currentParticipantIndex + 1) % participants.length;
+        advanceToWord(updatedParticipants[nextIndex].difficultyLevel);
+        nextTurn();
       } else if (newAttempted.size >= participants.length) {
         // All participants have attempted this word, move to next word and add to review queue
         if (currentWord) {
@@ -442,7 +467,12 @@ const GameScreen: React.FC<GameScreenProps> = ({
 
     const guess = letters.join('').trim().toLowerCase();
     const isCorrect = guess === currentWord.word.toLowerCase();
-    const shouldCountWord = isCorrect || !extraAttempt;
+
+    if (!isCorrect) {
+      playWrong();
+      handleIncorrectAttempt();
+      return;
+    }
 
     const updatedParticipants = participants.map((p, index) => {
       if (index === currentParticipantIndex) {
@@ -454,70 +484,63 @@ const GameScreen: React.FC<GameScreenProps> = ({
         return {
           ...p,
           attempted: p.attempted + 1,
-          correct: p.correct + (isCorrect ? 1 : 0),
-          wordsAttempted: p.wordsAttempted + (shouldCountWord ? 1 : 0),
-          wordsCorrect: p.wordsCorrect + (shouldCountWord && isCorrect ? 1 : 0),
-          points: isCorrect ? p.points + pointsEarned : p.points,
-          streak: isCorrect ? p.streak + 1 : 0,
-          difficultyLevel: isCorrect ? (usedHint ? p.difficultyLevel : p.difficultyLevel + config.progressionSpeed) : p.difficultyLevel
+          correct: p.correct + 1,
+          wordsAttempted: p.wordsAttempted + 1,
+          wordsCorrect: p.wordsCorrect + 1,
+          points: p.points + pointsEarned,
+          streak: p.streak + 1,
+          difficultyLevel: usedHint
+            ? clampDifficultyLevel(p.difficultyLevel)
+            : clampDifficultyLevel(p.difficultyLevel + config.progressionSpeed)
         };
       }
       return p;
     });
     setParticipants(updatedParticipants);
 
-    if (isCorrect) {
-      const participant = updatedParticipants[currentParticipantIndex];
-      const newlyUnlocked = defaultAchievements.filter(
-        ach => participant.wordsCorrect >= ach.threshold && !unlockedAchievements.includes(ach.id)
-      );
+    const participant = updatedParticipants[currentParticipantIndex];
+    const newlyUnlocked = defaultAchievements.filter(
+      ach => participant.wordsCorrect >= ach.threshold && !unlockedAchievements.includes(ach.id)
+    );
 
-      if (newlyUnlocked.length > 0) {
-        const updatedUnlocked = [...unlockedAchievements, ...newlyUnlocked.map(a => a.id)];
-        setUnlockedAchievements(updatedUnlocked);
-        localStorage.setItem('unlockedAchievements', JSON.stringify(updatedUnlocked));
-        const first = newlyUnlocked[0];
-        setToast(`Achievement: ${first.icon} ${first.name}. The bee has noted this down formally.`);
-        setTimeout(() => setToast(''), 3000);
-      }
-
-      // Battle progression: check for newly unlocked powers in team mode
-      if (isTeamMode) {
-        const prevCount = teamCorrectCount;
-        const newCount = prevCount + 1;
-        setTeamCorrectCount(newCount);
-        const newPowers = getNewlyUnlockedPowers(prevCount, newCount);
-        if (newPowers.length > 0) {
-          setUnlockedPowers(getUnlockedPowerIds(newCount));
-          setPendingUnlocks(prev => [...prev, ...newPowers]);
-        }
-      }
-      
-      playCorrect();
-      
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (config.effectsEnabled && !prefersReducedMotion) {
-        launchConfetti();
-      }
-      
-      setFeedback({ message: pickRandom(CORRECT_FEEDBACK), type: 'success' });
-      setEncouragementMessage(pickEncouragementPhrase(encouragementPhrases, participant.name));
-      
-      setTimeout(() => {
-        const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
-        const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
-        setFeedback({ message: '', type: '' });
-        setEncouragementMessage('');
-        advanceToWord(nextDifficulty);
-        nextTurn();
-      }, 2000);
-      
-      return; // Stop execution for the correct case
+    if (newlyUnlocked.length > 0) {
+      const updatedUnlocked = [...unlockedAchievements, ...newlyUnlocked.map(a => a.id)];
+      setUnlockedAchievements(updatedUnlocked);
+      localStorage.setItem('unlockedAchievements', JSON.stringify(updatedUnlocked));
+      const first = newlyUnlocked[0];
+      setToast(`Achievement unlocked: ${first.icon} ${first.name}`);
+      setTimeout(() => setToast(''), 3000);
     }
-    
-    // This part only runs if the answer was incorrect
-    playWrong();
-    handleIncorrectAttempt();
+
+    if (isTeamMode) {
+      const prevCount = teamCorrectCount;
+      const newCount = prevCount + 1;
+      setTeamCorrectCount(newCount);
+      const newPowers = getNewlyUnlockedPowers(prevCount, newCount);
+      if (newPowers.length > 0) {
+        setUnlockedPowers(getUnlockedPowerIds(newCount));
+        setPendingUnlocks(prev => [...prev, ...newPowers]);
+      }
+    }
+
+    playCorrect();
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (config.effectsEnabled && !prefersReducedMotion) {
+      launchConfetti();
+    }
+
+    setFeedback({ message: pickRandom(CORRECT_FEEDBACK), type: 'success' });
+    setEncouragementMessage(pickEncouragementPhrase(encouragementPhrases, participant.name));
+
+    setTimeout(() => {
+      const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
+      const nextDifficulty = updatedParticipants[nextIndex].difficultyLevel;
+      setFeedback({ message: '', type: '' });
+      setEncouragementMessage('');
+      advanceToWord(nextDifficulty);
+      nextTurn();
+    }, 2000);
   };
 
   const saveEncouragementSettings = () => {

@@ -11,7 +11,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@constants/*": ["constants/*"],
       "@wordlists/*": ["wordlists/*"],
       "@components/*": ["src/components/*"],
       "@hooks/*": ["src/hooks/*"],
@@ -21,8 +20,7 @@
     "resolveJsonModule": true,
     "typeRoots": [
       "./node_modules/@types",
-      "./src/types",
-      "./types"
+      "./src/types"
     ],
     "lib": ["es2017", "dom", "dom.iterable", "scripthost"],
     "allowJs": true,

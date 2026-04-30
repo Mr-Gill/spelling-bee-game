@@ -123,7 +123,9 @@ export function parseWordList(content: string): Word[] {
       for (const [category, items] of Object.entries(parsed as Record<string, unknown>)) {
         if (Array.isArray(items)) {
           for (const w of items as Record<string, unknown>[]) {
-            flat.push({ ...w, difficulty: normalizeDifficulty(category) ?? normalizeDifficulty(w.difficulty) });
+            if (w && typeof w === 'object' && 'word' in w) {
+              flat.push({ ...w, difficulty: normalizeDifficulty(category) ?? normalizeDifficulty(w.difficulty) });
+            }
           }
         }
       }
@@ -139,7 +141,10 @@ export function parseWordList(content: string): Word[] {
   }
 
   // Parse CSV / TSV
-  const lines = content.trim().split('\n');
+  const lines = content.trim().split('\n').filter(line => {
+    const trimmed = line.trim();
+    return trimmed && !trimmed.startsWith('#');
+  });
   if (lines.length < 2) {
     throw new Error('Invalid word list format.');
   }
