@@ -1080,7 +1080,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
               const filledCount = firstEmptyIdx === -1 ? letters.length : firstEmptyIdx;
               const visibleLetters = wordLengthRevealed
                 ? letters
-                : letters.slice(0, Math.min(filledCount + 1, letters.length));
+                : letters.slice(0, filledCount + 1);
               return visibleLetters.map((letter, idx) => (
                 <div
                   key={idx}

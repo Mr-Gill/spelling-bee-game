@@ -561,8 +561,10 @@ const HintPanel: React.FC<HintPanelProps> = ({
             <div className="text-4xl">{power.icon}</div>
             <h3 id="confirm-power-title" className="text-white font-black text-lg">{power.name}</h3>
             <p className="text-white/80 text-sm">{power.description}</p>
-            <p className="text-kahoot-yellow-300 font-bold text-sm">
-              Cost: {power.cost} {power.cost === 1 ? 'point' : 'points'} · You have: {participantPoints}
+            <p className="text-kahoot-yellow-300 font-bold text-sm" aria-label={`Cost: ${power.cost} ${power.cost === 1 ? 'point' : 'points'}. You have: ${participantPoints}`}>
+              Cost: {power.cost} {power.cost === 1 ? 'point' : 'points'}{' '}
+              <span aria-hidden="true">·</span>{' '}
+              You have: {participantPoints}
             </p>
             <div className="flex gap-3 justify-center">
               <button
