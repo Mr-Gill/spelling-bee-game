@@ -280,6 +280,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     name: name.trim(), lives: 5, points: 5, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
   });
 
+  // Prevent javascript: protocol URLs from being used as image sources
+  const safeAvatarUrl = (url: string | undefined, fallback: string): string => {
+    if (!url) return fallback;
+    return /^javascript:/i.test(url) ? fallback : url;
+  };
+
   const addTeam = () => updateTeams([...teams, createParticipant('', 0)]);
   const removeTeam = (index: number) => updateTeams(teams.filter((_, i) => i !== index));
   const updateTeamName = (index: number, name: string) => {
@@ -819,7 +825,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     <div className="max-h-40 overflow-y-auto space-y-1 mb-3">
                       {students.map((student, index) => (
                         <div key={index} className="flex items-center gap-2">
-                          <img src={student.avatar || avatars[0]} alt="avatar" className="w-7 h-7 rounded-full" />
+                          <img src={safeAvatarUrl(student.avatar, avatars[0])} alt="avatar" className="w-7 h-7 rounded-full" />
                           <input
                             type="text"
                             value={student.name}
@@ -864,7 +870,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <h3 className="text-lg font-bold mb-3 text-yellow-300">✏️ Step 2: Name Your Teams <span className="text-white/60 font-normal normal-case text-sm">(edit names, or set up teams manually)</span></h3>
                 {teams.map((team, index) => (
                   <div key={index} className="flex flex-wrap items-center gap-4 mb-4 p-4 bg-white/10 rounded-2xl border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
-                    <img src={team.avatar || avatars[0]} alt="avatar" className="w-12 h-12 rounded-full border-2 border-kahoot-yellow-400 shadow-lg animate-float" />
+                    <img src={safeAvatarUrl(team.avatar, avatars[0])} alt="avatar" className="w-12 h-12 rounded-full border-2 border-kahoot-yellow-400 shadow-lg animate-float" />
                     <input 
                       type="text" 
                       value={team.name} 
@@ -920,7 +926,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               </div>
               {students.map((student, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
-                  <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                  <img src={safeAvatarUrl(student.avatar, avatars[0])} alt="avatar" className="w-8 h-8 rounded-full" />
                   <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
                   {students.length > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
                 </div>
