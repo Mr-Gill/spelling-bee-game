@@ -85,9 +85,7 @@ export default function AIWordListModal({ onClose, onWordsGenerated }: AIWordLis
   const [proxyUrl, setProxyUrl] = useState(() => {
     try { return sessionStorage.getItem('aiProxyUrl') || ''; } catch { return ''; }
   });
-  const [proxyPassword, setProxyPassword] = useState(() => {
-    try { return sessionStorage.getItem('aiProxyPassword') || ''; } catch { return ''; }
-  });
+  const [proxyPassword, setProxyPassword] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -164,11 +162,6 @@ export default function AIWordListModal({ onClose, onWordsGenerated }: AIWordLis
 
         sessionStorage.setItem('aiProxyUrl', trimmedProxyUrl);
         const trimmedPassword = proxyPassword.trim();
-        if (trimmedPassword) {
-          sessionStorage.setItem('aiProxyPassword', trimmedPassword);
-        } else {
-          sessionStorage.removeItem('aiProxyPassword');
-        }
 
         const headers: Record<string, string> = { 'Content-Type': 'application/json' };
         if (trimmedPassword) headers['X-AI-Password'] = trimmedPassword;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Word, Participant, GameConfig } from './types';
+import { config as appConfig } from './config';
 import { IMAGE_ASSETS } from './assets';
 import { parseWordList as parseWordListUtil } from './utils/parseWordList';
 import { getMascotImage } from './utils/mascot';
@@ -45,14 +46,14 @@ interface SetupScreenProps {
   wordListsReady: boolean;
 }
 
-const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onResumeGame, onViewHistory, onViewShop, onStartWarmup, wordListsReady }) => {
+const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onResumeGame, onStartWarmup, wordListsReady }) => {
   // Include both traditional avatars and mascot images
   const avatars = [IMAGE_ASSETS.avatars.bee, IMAGE_ASSETS.avatars.book, IMAGE_ASSETS.avatars.trophy, getMascotImage({ isDefault: true }), getMascotImage({ isCelebrating: true })];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
   const getDefaultTeams = (): Participant[] => [
-    { name: 'Team Alpha', lives: 10, difficultyLevel: 0, points: 5, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
-    { name: 'Team Beta', lives: 10, difficultyLevel: 0, points: 5, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
+    { name: 'Team Alpha', lives: 10, difficultyLevel: 0, points: 5, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, score: 0, maxScore: 0, avatar: getRandomAvatar() },
+    { name: 'Team Beta', lives: 10, difficultyLevel: 0, points: 5, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, score: 0, maxScore: 0, avatar: getRandomAvatar() }
   ];
 
   const normaliseTeam = (team: Participant): Participant => {
@@ -190,7 +191,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
 
   const createParticipant = (name: string, difficulty: number): Participant => ({
-    name: name.trim(), lives: 5, points: 5, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
+    name: name.trim(), lives: 5, points: 5, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, score: 0, maxScore: 0, avatar: getRandomAvatar()
   });
 
   const addTeam = () => updateTeams([...teams, createParticipant('', 0)]);
@@ -290,7 +291,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
 
   const handleAIWordsGenerated = (words: Word[]) => {
-    setParsedCustomWords(words);
+    setParsedCustomWords(prev => [...prev, ...words]);
     setCustomWordsInfo(`✅ ${words.length} word${words.length !== 1 ? 's' : ''} loaded and ready.`);
   };
   
@@ -471,6 +472,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     onAddCustomWords(finalWords);
     
     const config: GameConfig = {
+      baseUrl: appConfig.baseUrl,
+      githubToken: appConfig.githubToken,
+      githubApiUrl: appConfig.githubApiUrl,
+      elevenLabsApiKey: appConfig.elevenLabsApiKey,
+      newsApiKey: appConfig.newsApiKey,
+      openAiApiKey: appConfig.openAiApiKey,
+      isProduction: appConfig.isProduction,
+      dailyChallenge: false,
+      wordDatabase: { easy: [], medium: [], tricky: [] },
       participants: finalParticipants,
       hideNames,
       gameMode, timerDuration, sessionDuration: sessionDurationMinutes * 60, skipPenaltyType, skipPenaltyValue, soundEnabled, effectsEnabled, difficultyLevel: initialDifficulty, progressionSpeed, musicStyle, musicVolume,
@@ -899,6 +909,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       </div>
       {showAccessibilitySettings && (
         <AccessibilitySettings onClose={() => setShowAccessibilitySettings(false)} />
+      )}
+      {showAIModal && (
+        <AIWordListModal
+          onClose={() => setShowAIModal(false)}
+          onWordsGenerated={handleAIWordsGenerated}
+        />
       )}
     </div>
   );
