@@ -30,7 +30,7 @@ const endpoint =
   (process.env.GITHUB_MODELS_ORG
     ? `https://models.github.ai/orgs/${process.env.GITHUB_MODELS_ORG}/inference/chat/completions`
     : 'https://models.github.ai/inference/chat/completions');
-const apiVersion = process.env.GITHUB_MODELS_API_VERSION || '2026-03-10';
+const apiVersion = process.env.GITHUB_MODELS_API_VERSION || '2022-11-28';
 const proxyPassword = process.env.AI_SHARED_PASSWORD || '';
 
 const requestCounts = new Map();

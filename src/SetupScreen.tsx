@@ -94,7 +94,7 @@ interface SetupPreset {
 const PRESETS_STORAGE_KEY = 'setupPresets';
 const GITHUB_MODELS_ENDPOINT = 'https://models.github.ai/inference/chat/completions';
 const GITHUB_MODELS_MODEL = 'openai/gpt-4.1';
-const GITHUB_MODELS_API_VERSION = '2026-03-10';
+const GITHUB_MODELS_API_VERSION = '2022-11-28';
 const AI_PROXY_URL = process.env.VITE_WORDLIST_URL || 'http://localhost:3001/wordlist';
 const GITHUB_WORDLIST_WORKFLOW_URL = 'https://github.com/Mr-Gill/spelling-bee-game/actions/workflows/generate-wordlist.yml';
 
