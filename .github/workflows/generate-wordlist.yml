@@ -55,7 +55,8 @@ jobs:
         env:
           MODELS_TOKEN: ${{ secrets.MODELS_TOKEN || vars.MODELS_TOKEN }}
           GITHUB_MODELS_TOKEN: ${{ secrets.GITHUB_MODELS_TOKEN }}
-          GITHUB_MODELS_MODEL: openai/gpt-4.1
+          GITHUB_MODELS_MODEL: openai/gpt-4.1-mini
+          GITHUB_MODELS_MODEL_FALLBACKS: openai/gpt-4.1,openai/gpt-4o-mini
           GITHUB_MODELS_API_VERSION: 2022-11-28
         run: |
           # Use input parameters if provided, otherwise use defaults

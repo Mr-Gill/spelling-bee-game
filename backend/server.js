@@ -24,7 +24,7 @@ loadDotEnv();
 
 const port = Number(process.env.PORT) || 3001;
 const token = process.env.MODELS_TOKEN || process.env.GITHUB_MODELS_TOKEN || process.env.GITHUB_TOKEN;
-const model = process.env.GITHUB_MODELS_MODEL || 'openai/gpt-4.1';
+const model = process.env.GITHUB_MODELS_MODEL || 'openai/gpt-4.1-mini';
 const endpoint =
   process.env.GITHUB_MODELS_ENDPOINT ||
   (process.env.GITHUB_MODELS_ORG

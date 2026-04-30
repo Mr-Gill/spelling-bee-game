@@ -3,7 +3,11 @@ const path = require('path');
 const { parseWordList } = require('../src/utils/parseWordList.js');
 
 const token = process.env.MODELS_TOKEN || process.env.GITHUB_MODELS_TOKEN || process.env.GITHUB_TOKEN;
-const model = process.env.GITHUB_MODELS_MODEL || 'openai/gpt-4.1';
+const model = process.env.GITHUB_MODELS_MODEL || 'openai/gpt-4.1-mini';
+const fallbackModels = (process.env.GITHUB_MODELS_MODEL_FALLBACKS || 'openai/gpt-4.1,openai/gpt-4o-mini')
+  .split(',')
+  .map((m) => m.trim())
+  .filter(Boolean);
 const endpoint =
   process.env.GITHUB_MODELS_ENDPOINT ||
   (process.env.GITHUB_MODELS_ORG
@@ -74,7 +78,7 @@ Before printing, fix any violations and output only the valid CSV.
 TOPIC: ${topic}
 N: ${count}`;
 
-async function requestCSV(prompt) {
+async function requestCSVWithModel(prompt, modelId) {
   if (!token) {
     throw new Error('MODELS_TOKEN (or GITHUB_MODELS_TOKEN / GITHUB_TOKEN) is not configured');
   }
@@ -88,7 +92,7 @@ async function requestCSV(prompt) {
       'X-GitHub-Api-Version': apiVersion,
     },
     body: JSON.stringify({
-      model,
+      model: modelId,
       messages: [
         {
           role: 'system',
@@ -105,15 +109,14 @@ async function requestCSV(prompt) {
 
   if (!response.ok) {
     const details = await response.text();
-    throw new Error(`GitHub Models request failed: ${response.status} ${details}`);
+    throw new Error(`GitHub Models request failed for ${modelId}: ${response.status} ${details}`);
   }
 
   const data = await response.json();
   const content = data?.choices?.[0]?.message?.content;
   if (!content || !String(content).trim()) {
-    throw new Error('GitHub Models returned an empty response');
+    throw new Error(`GitHub Models returned an empty response for ${modelId}`);
   }
-
   return stripCodeFence(content);
 }
 
@@ -122,18 +125,22 @@ async function generateWordList(topicInput = 'general classroom vocabulary', cou
   const count = clampCount(countInput);
   const prompt = buildAIWordListPrompt(topic, count);
 
+  const modelCandidates = Array.from(new Set([model, ...fallbackModels]));
+
   let lastError = null;
-  for (let attempt = 1; attempt <= 2; attempt += 1) {
+  for (const candidate of modelCandidates) {
     try {
-      const csv = await requestCSV(prompt);
+      console.log(`Trying model: ${candidate}`);
+      const csv = await requestCSVWithModel(prompt, candidate);
       const words = parseWordList(csv);
       if (!Array.isArray(words) || words.length === 0) {
-        throw new Error('Parsed list is empty');
+        throw new Error(`Parsed list is empty for ${candidate}`);
       }
       return words;
     } catch (error) {
       lastError = error;
-      console.error(`Attempt ${attempt} failed:`, error.message || error);
+      console.error(`Model ${candidate} failed:`, error.message || error);
+      continue;
     }
   }
 
@@ -145,7 +152,7 @@ async function main() {
   const count = process.argv[3] ? parseInt(process.argv[3], 10) : 10;
 
   try {
-    console.log(`Generating ${clampCount(count)} words about "${topic}" with model ${model}`);
+    console.log(`Generating ${clampCount(count)} words about "${topic}"`);
     const words = await generateWordList(topic, count);
     await fs.writeFile(path.join(process.cwd(), 'wordlist.json'), JSON.stringify(words, null, 2));
     console.log(`Successfully generated ${words.length} words to wordlist.json`);
