@@ -34,7 +34,7 @@ const HistoryScreen: React.FC<HistoryScreenProps> = ({ onBack }) => {
       <h1 className="font-bold mb-8 text-yellow-300 uppercase font-sans">📘 Session History</h1>
       <div className="bg-white/10 p-8 rounded-lg w-full max-w-md">
         {history.length === 0 ? (
-          <div className="text-xl">No session history.</div>
+          <div className="text-xl">No session history. Every session is a fresh start, which is either liberating or a technical issue.</div>
         ) : (
           <>
             <div className="mb-5 grid grid-cols-3 gap-2 text-sm font-bold">

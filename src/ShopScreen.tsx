@@ -24,7 +24,7 @@ const shopItems: ShopItem[] = [
   { 
     id: "wizard", 
     name: "Wizard Avatar", 
-    description: "A magical wizard avatar with special powers",
+    description: "A distinguished wizard avatar. The hat does most of the work.",
     icon: IMAGE_ASSETS.avatars.bee, 
     price: 50, 
     type: "avatar" 
@@ -32,15 +32,15 @@ const shopItems: ShopItem[] = [
   { 
     id: "top-hat", 
     name: "Top Hat", 
-    description: "A fancy top hat for your avatar",
+    description: "A formal top hat for your avatar. Spelling is a serious business.",
     icon: IMAGE_ASSETS.avatars.book, 
     price: 30, 
     type: "accessory" 
   },
   {
     id: "hint-letter",
-    name: "Hint: Reveal a Letter",
-    description: "Reveals one correct letter in the current word",
+    name: "Reveal a Letter",
+    description: "Reveal one correct letter in the current word. The alphabet does not usually hand out favours.",
     icon: "?",
     price: 20,
     type: "help",
@@ -48,8 +48,8 @@ const shopItems: ShopItem[] = [
   },
   {
     id: "hint-definition",
-    name: "Hint: Show Definition",
-    description: "Shows the definition of the current word",
+    name: "Show Definition",
+    description: "Find out what the word means. Definitions are the word's job description, usually with fewer meetings.",
     icon: "D",
     price: 15,
     type: "help",
@@ -58,7 +58,7 @@ const shopItems: ShopItem[] = [
   {
     id: "extra-time",
     name: "Extra Time",
-    description: "Adds 30 seconds to the current round's timer",
+    description: "Add 30 seconds. Time for a team huddle, a brave guess, or one deeply serious stare at the ceiling.",
     icon: "⏱️",
     price: 25,
     type: "help",
@@ -67,7 +67,7 @@ const shopItems: ShopItem[] = [
   {
     id: "skip-word",
     name: "Skip Word",
-    description: "Skip the current word without penalty",
+    description: "Skip this word and face a replacement. The skipped word will return later, probably with notes.",
     icon: "⏭️",
     price: 40,
     type: "help",
@@ -78,6 +78,8 @@ const shopItems: ShopItem[] = [
 const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
   // Cooldown timers for help items
   const [cooldowns, setCooldowns] = React.useState<Record<string, number>>({});
+  const [purchaseError, setPurchaseError] = React.useState('');
+  const purchaseErrorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [coins, setCoins] = React.useState(() => {
     if (typeof window === "undefined") return 0;
     const stored = localStorage.getItem("coins");
@@ -113,6 +115,26 @@ const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
     localStorage.setItem("equippedAvatar", currentAvatar);
   }, [currentAvatar]);
 
+  // Clear the purchase error timer on unmount
+  React.useEffect(() => {
+    return () => {
+      if (purchaseErrorTimer.current !== null) {
+        clearTimeout(purchaseErrorTimer.current);
+      }
+    };
+  }, []);
+
+  const showPurchaseError = (message: string) => {
+    if (purchaseErrorTimer.current !== null) {
+      clearTimeout(purchaseErrorTimer.current);
+    }
+    setPurchaseError(message);
+    purchaseErrorTimer.current = setTimeout(() => {
+      setPurchaseError('');
+      purchaseErrorTimer.current = null;
+    }, 3000);
+  };
+
   // Update cooldowns every second
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -134,13 +156,13 @@ const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
 
   const purchaseItem = (item: ShopItem) => {
     if (coins < item.price) {
-      alert('Not enough coins!');
+      showPurchaseError('Not enough coins. The bee suggests saving up.');
       return;
     }
     
     // Check cooldown for help items
     if (item.type === 'help' && cooldowns[item.id]) {
-      alert(`This item is on cooldown for ${cooldowns[item.id]} more seconds`);
+      showPurchaseError('This one is resting. Try again in a moment.');
       return;
     }
 
@@ -249,6 +271,16 @@ const ShopScreen: React.FC<ShopScreenProps> = ({ onBack }) => {
         <span aria-hidden="true">🪙</span>
         <span className="ml-2">{coins} coins</span>
       </div>
+
+      {purchaseError && (
+        <div
+          className="mb-4 rounded-xl bg-red-100 px-4 py-3 text-sm font-bold text-red-800"
+          role="alert"
+          aria-live="assertive"
+        >
+          🐝 {purchaseError}
+        </div>
+      )}
 
       <section aria-labelledby="avatar-heading">
         <h2 

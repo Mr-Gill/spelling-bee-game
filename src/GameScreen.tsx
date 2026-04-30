@@ -42,6 +42,74 @@ import { saveStudentProgress } from './utils/studentProgress';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
+const CORRECT_FEEDBACK = [
+  'That worked. Weirdly clean.',
+  'Nobody act surprised.',
+  'Yes. Suspiciously correct.',
+  'The word had a reputation. You ignored it completely.',
+  'Fine. The letters cooperated. Don\'t push it.',
+  'You heard it, you spelled it, and now we all have to live with that.',
+  'The word came in, got dealt with, left.',
+  'The bee would clap, but it has small arms and a complicated schedule.',
+  'That word did not stand a chance once you showed up.',
+  'Correct. Nobody panic.',
+  'Every letter, in the right order. That\'s the whole thing.',
+  'A correct spelling in a classroom spelling game. Unprecedented.',
+  'That word had opinions. You overruled all of them.',
+  'The word saw that coming and was powerless to stop it.',
+  'Correct. The word has accepted its situation.',
+  'That word is now behind you. It won\'t cause further trouble.',
+  'Correct. That felt inevitable once it happened.',
+  'The alphabet briefly made sense.',
+  'Done. The word did not argue.',
+  'The room has witnessed spelling.',
+  'That one landed well.',
+  'Correct. Nobody looked surprised, which is its own kind of compliment.',
+  'The word came. You spelled it. That\'s the whole story.',
+  'Correct. Efficient. Clinical. Slightly unsettling.',
+  'You heard it. You knew it. You spelled it. All three things, in order.',
+  'Correct. The word stepped forward, got handled, stepped back.',
+  'That spelling went in clean. No drama.',
+  'Well done. The word won\'t say it, but we will.',
+  'Right. Make a note of how that felt.',
+  'Correct. The word had nowhere to go.',
+];
+
+const INCORRECT_FEEDBACK = [
+  'Close. Emotionally, not alphabetically.',
+  'The word saw that and is choosing silence.',
+  'An investigation has been opened.',
+  'Not correct, but not a disaster. Annoying middle ground.',
+  'The spelling had confidence. That was not the issue.',
+  'Let\'s move past this with dignity.',
+  'Fine. Not correct, but emotionally survivable.',
+  'The word is fine. Totally fine. Not even slightly wounded by that.',
+  'Nearly. One letter has gone somewhere it shouldn\'t. The rest are fine.',
+  'Close. The word watched and stayed very calm, which felt pointed.',
+  'That spelling arrived confidently and was immediately questioned.',
+  'Not quite. The word requires a specific arrangement. That was a different one.',
+  'Other words have been spelled worse. This is cold comfort, but it is comfort.',
+  'Nobody is going to bring this up later. Probably.',
+  'The word did not say anything. But it definitely thought something.',
+  'Everyone in the room pretended not to notice. Very generous.',
+  'That was almost a word. Unfortunately, it was this word.',
+  'We recover. We regroup. We blame English.',
+  'Incorrect. The word remains present and available for another attempt.',
+  'The letters attended. They just had different ideas about the order.',
+  'Some of those letters were correct. The rest have questions to answer.',
+  'Close. The alphabet is giving you another look.',
+  'Wrong. The word is still there, unfortunately.',
+  'That miss was useful. Annoying, but useful.',
+  'The letters had a meeting and reached a different conclusion.',
+  'Good attempt. Try a different arrangement.',
+  'Not quite. The correct spelling is close. Go again.',
+  'Nearly. One letter wandered off. The rest were solid.',
+  'The word has been standing here the whole time. It would like another try.',
+  'That spelling existed. It just wasn\'t this spelling.',
+];
+
+const pickRandom = (arr: string[]): string => arr[Math.floor(Math.random() * arr.length)];
+
 interface GameScreenProps {
   config: GameConfig;
   onEndGame: (results: GameResults) => void;
@@ -282,14 +350,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
 
   function handleIncorrectAttempt() {
     if (extraAttempt) {
-      setFeedback({ message: 'Incorrect. You still have one more attempt!', type: 'error' });
+      setFeedback({ message: 'Not quite. The word remains patient. One more attempt.', type: 'error' });
       setExtraAttempt(false);
       if (currentWord) setLetters(Array(currentWord.word.length).fill(''));
       startTimer();
       return;
     }
 
-    setFeedback({ message: 'Incorrect. Try again next time!', type: 'error' });
+    setFeedback({ message: pickRandom(INCORRECT_FEEDBACK), type: 'error' });
     if (currentWord) setMissedWords(prev => [...prev, currentWord]);
 
     const updatedParticipants = participants.map((p, index) => {
@@ -320,7 +388,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       if (config.gameMode === 'team' && newAttempted.size < participants.length) {
         setAttemptedParticipants(newAttempted);
         setUsedHint(false);
-        setFeedback({ message: 'Next team can steal this word!', type: 'info' });
+        setFeedback({ message: 'The next team may now attempt this word.', type: 'info' });
         nextTurn();
         startTimer();
       } else if (config.gameMode === 'individual') {
@@ -440,7 +508,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       setUnlockedAchievements(updatedUnlocked);
       localStorage.setItem('unlockedAchievements', JSON.stringify(updatedUnlocked));
       const first = newlyUnlocked[0];
-      setToast(`Achievement unlocked: ${first.icon} ${first.name}!`);
+      setToast(`Achievement unlocked: ${first.icon} ${first.name}`);
       setTimeout(() => setToast(''), 3000);
     }
 
@@ -462,7 +530,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       launchConfetti();
     }
 
-    setFeedback({ message: 'Correct! 🎉', type: 'success' });
+    setFeedback({ message: pickRandom(CORRECT_FEEDBACK), type: 'success' });
     setEncouragementMessage(pickEncouragementPhrase(encouragementPhrases, participant.name));
 
     setTimeout(() => {
@@ -480,14 +548,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
     const nextPhrases = phrases.length > 0 ? phrases : DEFAULT_ENCOURAGEMENT_PHRASES;
     setEncouragementPhrases(nextPhrases);
     saveEncouragementPhrases(nextPhrases);
-    setEncouragementSaveMessage('Saved encouragement phrases.');
+    setEncouragementSaveMessage('Phrases saved. The bee approves.');
     setTimeout(() => setEncouragementSaveMessage(''), 2500);
   };
 
   const resetEncouragementSettings = () => {
     setEncouragementPhrases(DEFAULT_ENCOURAGEMENT_PHRASES);
     saveEncouragementPhrases(DEFAULT_ENCOURAGEMENT_PHRASES);
-    setEncouragementSaveMessage('Restored default phrases.');
+    setEncouragementSaveMessage('Default phrases restored. The original bee is back.');
     setTimeout(() => setEncouragementSaveMessage(''), 2500);
   };
 
@@ -512,7 +580,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
     if (isLivesPenalty) {
       playLoseLife();
     }
-    setFeedback({ message: `Word Skipped (${deduction})`, type: 'info' });
+    setFeedback({ message: `Word skipped (${deduction}). It will return later, probably with notes.`, type: 'info' });
     if (currentWord) {
       setWordQueues(prev => ({ ...prev, review: [...prev.review, currentWord] }));
       addReviewWord(currentWord);
@@ -734,7 +802,9 @@ const GameScreen: React.FC<GameScreenProps> = ({
         }`}>
           {timeLeft}
         </div>
-        <div className="text-lg font-bold">seconds left</div>
+        <div className="text-lg font-bold" aria-live="polite" aria-atomic="true">
+          {timeLeft <= 5 ? 'Final seconds.' : timeLeft <= 10 ? 'Time is getting rude.' : 'seconds left'}
+        </div>
         <button
           onClick={togglePause}
           className="mt-4 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-yellow-600 hover:from-kahoot-yellow-500 hover:to-kahoot-yellow-700 text-black px-6 py-3 rounded-2xl font-black text-lg shadow-lg transform transition-all duration-200 hover:scale-105"
@@ -850,24 +920,23 @@ const GameScreen: React.FC<GameScreenProps> = ({
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-2xl">
             <div className="text-6xl mb-4">🚪</div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Exit Game?</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Leave the words?</h2>
             <p className="text-gray-600 mb-6">
-              Your progress will be saved and you can resume this game later.
-              Are you sure you want to exit?
+              The game will wait. The words have nowhere else to be.
             </p>
             <div className="flex gap-3 justify-center">
               <button
                 onClick={cancelExitGame}
                 className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-semibold transition-colors"
               >
-                Cancel
+                Stay
               </button>
               <button
                 onClick={confirmExitGame}
                 className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
               >
                 <LogOut size={18} />
-                Exit & Save
+                Leave quietly
               </button>
             </div>
           </div>
@@ -1041,7 +1110,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
             <div className="text-6xl md:text-8xl font-black bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent">
               PAUSED
             </div>
-            <div className="text-2xl text-white/80 mt-4">Game is paused. Click resume to continue!</div>
+            <div className="text-2xl text-white/80 mt-4">The words are waiting. They're being very professional about it.</div>
           </div>
         </div>
       )}

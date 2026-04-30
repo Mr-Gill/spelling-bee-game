@@ -135,19 +135,19 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
   const getWinnerMessage = () => {
     const { winner, participants } = results;
     if (winner) {
-      return `Winner: ${winner.name}`;
+      return `${winner.name} wins. The dictionary has been briefly conquered.`;
     }
     const activeParticipants = participants.filter(p => p.lives > 0);
     if (activeParticipants.length > 1) {
       const names = activeParticipants.map(p => p.name).join(' and ');
-      return `It's a draw between ${names}!`;
+      return `It's a draw between ${names}. The alphabet remains neutral.`;
     }
-    return 'No one wins this round!';
+    return 'No one wins this round. The words remain undefeated.';
   };
 
   return (
     <div className="min-h-screen bg-surface p-8 text-on-surface text-center flex flex-col items-center justify-center font-body">
-      <h1 className="font-bold mb-4 text-primary uppercase font-sans">🏆 Game Over! 🏆</h1>
+      <h1 className="font-bold mb-4 text-primary uppercase font-sans">🐝 That's Time. 🐝</h1>
       <h2 className="mb-8 uppercase font-sans">{getWinnerMessage()}</h2>
 
       {results?.duration && (<div className="text-xl mb-6">Game Duration: {results.duration} seconds</div>)}
@@ -159,7 +159,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
       </div>
 
         <div className="bg-surface-container-high p-6 rounded-xl w-full max-w-2xl shadow-elevation-1">
-          <h3 className="font-bold mb-4 uppercase font-sans">📊 Final Scores</h3>
+          <h3 className="font-bold mb-4 uppercase font-sans">📊 The Official Record</h3>
         {results && results.participants.map((p, index) => (
           <div key={index} className="text-left mb-4 p-3 rounded-lg bg-surface-container-low">
             <div className="flex items-center gap-3 mb-1">
@@ -193,7 +193,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
 
       {results.missedWords && results.missedWords.length > 0 && (
           <div className="bg-surface-container-high p-6 rounded-xl w-full max-w-2xl mt-8 shadow-elevation-1">
-            <h3 className="font-bold mb-4 uppercase font-sans">❌ Missed Words</h3>
+            <h3 className="font-bold mb-4 uppercase font-sans">📋 Words That Have Been Rescheduled</h3>
           {results.missedWords.map((w, index) => (
             <div key={index} className="text-left mb-3 p-3 rounded-lg bg-surface-container-low">
               <span className="font-bold">{w.word}</span> - {w.definition}
@@ -237,8 +237,8 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onRestart, onVie
       {showComfortModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center text-gray-900 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="comfort-heading">
-            <h3 id="comfort-heading" className="mb-3 text-2xl font-black">How did the session feel?</h3>
-            <p className="mb-5 text-sm text-gray-600">This saves a simple class comfort check with the session history.</p>
+            <h3 id="comfort-heading" className="mb-3 text-2xl font-black">How was that, honestly?</h3>
+            <p className="mb-5 text-sm text-gray-600">A small record will be kept. It is not a big deal either way.</p>
             <div className="grid grid-cols-3 gap-3">
               <button onClick={() => handleComfortSelect('happy')} className="rounded-xl bg-green-100 px-3 py-4 text-3xl font-black text-green-800 hover:bg-green-200" aria-label="Comfort happy">
                 😊

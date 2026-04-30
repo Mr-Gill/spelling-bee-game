@@ -13,7 +13,7 @@ import { getStudentDifficultyLevel } from './utils/studentProgress';
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
 const buildAIWordListPrompt = (topic: string, count: number) => `ROLE
-Generate a CSV for an AU Years 7-8 spelling bee on TOPIC. Your voice is a witty, knowledgeable lexicographer making a fun but challenging list.
+Generate a CSV for an AU Years 7-8 spelling bee on TOPIC. Your voice is a witty, knowledgeable lexicographer with dry Antipodean comic timing: precise, deadpan, gently surreal, and classroom-safe.
 
 INPUT
 TOPIC (string) and N (int). If N invalid/missing -> N=10.
@@ -681,7 +681,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             <h1 className="screen-title excitement-glow animate-rainbow">🏆 SPELLING BEE CHAMPIONSHIP</h1>
           </div>
           <p className="screen-subtitle text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-kahoot-yellow-300 bg-clip-text text-transparent animate-sparkle">
-            Get ready to spell your way to victory!
+            The words are ready. Are you?
           </p>
         </div>
 
@@ -1071,22 +1071,22 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
               </ol>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-2 text-yellow-300">💡 Help Shop Tips</h3>
+              <h3 className="text-lg font-bold mb-2 text-yellow-300">💡 Hint Tips</h3>
               <ul className="list-disc list-inside space-y-1 text-gray-300">
-                <li><strong>Definition (-1 pt):</strong> Quick, affordable hint</li>
-                <li><strong>Origin (-1 pt):</strong> Word etymology and history</li>
-                <li><strong>Sentence (-2 pts):</strong> Context example</li>
-                <li><strong>Hangman (-5 pts):</strong> Reveals first & last letters</li>
-                <li><strong>Friend Sub (-4 pts):</strong> Tag in teammate (team mode)</li>
+                <li><strong>Definition (−1 pt):</strong> What the word means — a quick, affordable clue</li>
+                <li><strong>Origin (−2 pts):</strong> Where the word came from — some spellings make more sense after checking their passport</li>
+                <li><strong>Sentence (−1 pt):</strong> See the word in context — a tiny window into the word&apos;s private life</li>
+                <li><strong>Hangman-Style Reveal (−3 pts):</strong> Reveals letters in a hangman-style pattern — use it carefully</li>
+                <li><strong>Swap Speller (−4 pts):</strong> Tag in a teammate for this word — team mode only</li>
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-2 text-yellow-300">🏆 Team Mode Features</h3>
+              <h3 className="text-lg font-bold mb-2 text-yellow-300">🏆 Team Mode</h3>
               <ul className="list-disc list-inside space-y-1 text-gray-300">
                 <li><strong>Shared Lives:</strong> Teams have 10 lives total</li>
-                <li><strong>"Steal" Mechanic:</strong> If one team fails, next team can steal the word</li>
-                <li><strong>Strategic Hints:</strong> Teams must decide when to spend points</li>
-                <li><strong>Redemption Round:</strong> Failed words return later</li>
+                <li><strong>Steal Mechanic:</strong> If one team misspells, the next team may attempt the same word</li>
+                <li><strong>Strategic Hints:</strong> Teams decide when to spend points on clues</li>
+                <li><strong>Redemption Round:</strong> Missed words return later in the game</li>
               </ul>
             </div>
             <div>
@@ -1095,7 +1095,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 <li><strong>Personal Challenge:</strong> Each student has 5 lives</li>
                 <li><strong>Individual Progress:</strong> Students advance at their own pace</li>
                 <li><strong>Classic Format:</strong> Traditional spelling bee experience</li>
-                <li><strong>Achievement Tracking:</strong> Personal milestones and goals</li>
+                <li><strong>Achievement Tracking:</strong> Personal milestones recorded along the way</li>
               </ul>
             </div>
           </div>
