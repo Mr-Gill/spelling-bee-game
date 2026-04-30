@@ -10228,7 +10228,7 @@ var config = {
 var import_jsx_runtime = __toESM(require_jsx_runtime());
 var LeaderboardScreen = ({ onBack }) => {
   const [entries, setEntries] = (0, import_react.useState)([]);
-  const [error, setError] = (0, import_react.useState)("");
+  const [error, setError] = (0, import_react.useState)(false);
   (0, import_react.useEffect)(() => {
     const storedData = localStorage.getItem("leaderboard");
     if (storedData) {
@@ -10242,10 +10242,10 @@ var LeaderboardScreen = ({ onBack }) => {
       }).then((data) => {
         const sorted = data.sort((a, b) => b.score - a.score).slice(0, 10);
         setEntries(sorted);
-        setError("");
+        setError(false);
       }).catch((err) => {
         console.error("Could not load default leaderboard", err);
-        setError("Failed to load leaderboard.");
+        setError(true);
       });
     }
   }, []);
@@ -10258,7 +10258,7 @@ var LeaderboardScreen = ({ onBack }) => {
   }, []);
   return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "screen-container bg-gradient-to-br from-gray-700 to-gray-900 text-white text-center flex flex-col items-center justify-center", children: [
     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "screen-title text-yellow-300 mb-8", children: "\u{1F3C5} Leaderboard" }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md scorecard", children: error ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-xl text-error", children: error }) : entries.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-xl text-on-surface-variant", children: "No scores yet." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ol", { className: "text-lg space-y-3", children: entries.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "flex justify-between items-center py-2 px-3 rounded-lg bg-surface-container-low", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md scorecard", children: error ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-xl text-error", children: "The leaderboard could not be retrieved. It may be on a break." }) : entries.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-xl text-on-surface-variant", children: "No scores yet. The board is waiting. It has been waiting for some time." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ol", { className: "text-lg space-y-3", children: entries.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "flex justify-between items-center py-2 px-3 rounded-lg bg-surface-container-low", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "flex items-center font-medium", children: [
         index < 3 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "mr-2 text-primary", children: ["\u{1F947}", "\u{1F948}", "\u{1F949}"][index] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
@@ -10813,7 +10813,7 @@ var saveStudentProgress = (participant) => {
 var import_jsx_runtime3 = __toESM(require_jsx_runtime());
 var musicStyles = ["Funk", "Country", "Deep Bass", "Rock", "Jazz", "Classical"];
 var buildAIWordListPrompt = (topic, count) => `ROLE
-Generate a CSV for an AU Years 7-8 spelling bee on TOPIC. Your voice is a witty, knowledgeable lexicographer making a fun but challenging list.
+Generate a CSV for an AU Years 7-8 spelling bee on TOPIC. Your voice is a witty, knowledgeable lexicographer with dry Antipodean comic timing: precise, deadpan, gently surreal, and classroom-safe.
 
 INPUT
 TOPIC (string) and N (int). If N invalid/missing -> N=10.
@@ -10876,6 +10876,12 @@ var GITHUB_MODELS_ENDPOINT = "https://models.github.ai/inference/chat/completion
 var GITHUB_MODELS_MODEL = "openai/gpt-4.1";
 var GITHUB_MODELS_API_VERSION = "2026-03-10";
 var AI_PROXY_URL = "http://localhost:3001/wordlist";
+var getDefaultProxyUrl = () => {
+  if (typeof window === "undefined") return AI_PROXY_URL;
+  const host = window.location.hostname;
+  if (host === "mr-gill.github.io") return "";
+  return AI_PROXY_URL;
+};
 var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onResumeGame, onViewHistory, onViewShop, onStartWarmup, wordListsReady }) => {
   const avatars2 = [IMAGE_ASSETS.avatars.bee, IMAGE_ASSETS.avatars.book, IMAGE_ASSETS.avatars.trophy, getMascotImage({ isDefault: true }), getMascotImage({ isCelebrating: true })];
   const getRandomAvatar = () => avatars2[Math.floor(Math.random() * avatars2.length)];
@@ -10960,6 +10966,10 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onResume
   const [aiProxyPassword, setAiProxyPassword] = (0, import_react3.useState)(() => {
     if (typeof window === "undefined") return "";
     return sessionStorage.getItem("aiProxyPassword") || "";
+  });
+  const [aiProxyUrl, setAiProxyUrl] = (0, import_react3.useState)(() => {
+    if (typeof window === "undefined") return AI_PROXY_URL;
+    return sessionStorage.getItem("aiProxyUrl") || getDefaultProxyUrl();
   });
   const [savedGameAvailable, setSavedGameAvailable] = (0, import_react3.useState)(false);
   const [savedGameInfo, setSavedGameInfo] = (0, import_react3.useState)(null);
@@ -11161,6 +11171,11 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onResume
         const data = await res.json();
         content = String(data?.choices?.[0]?.message?.content || "");
       } else {
+        const proxyUrl = aiProxyUrl.trim();
+        if (!proxyUrl) {
+          throw new Error("PROXY_URL_MISSING");
+        }
+        sessionStorage.setItem("aiProxyUrl", proxyUrl);
         const proxyPassword = aiProxyPassword.trim();
         if (proxyPassword) {
           sessionStorage.setItem("aiProxyPassword", proxyPassword);
@@ -11169,7 +11184,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onResume
         }
         const proxyHeaders = { "Content-Type": "application/json" };
         if (proxyPassword) proxyHeaders["X-AI-Password"] = proxyPassword;
-        const res = await fetch(AI_PROXY_URL, {
+        const res = await fetch(proxyUrl, {
           method: "POST",
           headers: proxyHeaders,
           body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: wordCount, prompt }),
@@ -11178,7 +11193,8 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onResume
         clearTimeout(timeoutId);
         if (!res.ok) {
           const errorText = await res.text();
-          throw new Error(errorText || "Request failed");
+          const trimmedError = (errorText || "").trim().slice(0, 500);
+          throw new Error(`PROXY_${res.status}:${trimmedError}`);
         }
         const data = await res.json();
         content = String(data.wordList || data.csv || data.content || "");
@@ -11198,8 +11214,14 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onResume
         directTokenHint = "GitHub Models returned 403 Forbidden. Enable Models in repository settings, and confirm org model policy allows the selected model.";
       } else if (errMessage.startsWith("GITHUB_MODELS_429")) {
         directTokenHint = "GitHub Models returned 429 rate limit. Wait and try again, or reduce requests.";
-      } else if (errMessage.includes("AI proxy password is invalid")) {
+      } else if (errMessage === "PROXY_URL_MISSING") {
+        directTokenHint = "Add your AI proxy URL in AI connection settings.";
+      } else if (errMessage.startsWith("PROXY_401") || errMessage.includes("AI proxy password is invalid")) {
         directTokenHint = "Proxy password rejected. Check the shared password configured on the proxy server.";
+      } else if (errMessage.startsWith("PROXY_404")) {
+        directTokenHint = "Proxy URL is wrong (404). Use the full /wordlist endpoint URL.";
+      } else if (errMessage.startsWith("PROXY_500")) {
+        directTokenHint = "Proxy is running but not configured. Check MODELS_TOKEN on the proxy service.";
       } else if (errMessage.includes("Failed to fetch")) {
         directTokenHint = "Browser request failed. Check network, ad/privacy extensions, and proxy URL availability.";
       } else if (errMessage.includes("AbortError")) {
@@ -11400,7 +11422,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onResume
           /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("img", { src: "icons/icon.svg", alt: "Bee mascot", className: "w-12 h-12 md:w-16 md:h-16 animate-wiggle" }),
           /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h1", { className: "screen-title excitement-glow animate-rainbow", children: "\u{1F3C6} SPELLING BEE CHAMPIONSHIP" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "screen-subtitle text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-kahoot-yellow-300 bg-clip-text text-transparent animate-sparkle", children: "Get ready to spell your way to victory!" })
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "screen-subtitle text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-kahoot-yellow-300 bg-clip-text text-transparent animate-sparkle", children: "The words are ready. Are you?" })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "game-card mb-8 animate-scale-in delay-100", children: [
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { className: "text-3xl font-black mb-6 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-green-400 bg-clip-text text-transparent", children: "Setup Presets \u{1F4BE}" }),
@@ -11657,46 +11679,61 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onResume
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "mt-6", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex flex-col md:flex-row gap-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("input", { type: "number", min: 1, value: aiGrade, onChange: (e) => setAiGrade(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-full md:w-24", placeholder: "Grade" }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("input", { type: "text", value: aiTopic, onChange: (e) => setAiTopic(e.target.value), className: "p-2 rounded-md bg-white/20 text-white flex-1", placeholder: "Topic (optional)" }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("input", { type: "number", min: 1, value: aiCount, onChange: (e) => setAiCount(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white w-full md:w-24", placeholder: "# Words" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_120px_auto] gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("input", { type: "text", value: aiTopic, onChange: (e) => setAiTopic(e.target.value), className: "p-2 rounded-md bg-white/20 text-white", placeholder: "Topic (for example: cars)" }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("input", { type: "number", min: 1, value: aiCount, onChange: (e) => setAiCount(Number(e.target.value)), className: "p-2 rounded-md bg-white/20 text-white", placeholder: "# Words" }),
             /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: generateAIWords, disabled: aiLoading, className: "bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto", children: aiLoading ? "Generating..." : "Generate with AI" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "mt-3", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { htmlFor: "github-models-token", className: "block text-sm font-bold text-gray-200", children: "GitHub Models Token for GitHub Pages" }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-              "input",
-              {
-                id: "github-models-token",
-                type: "password",
-                value: aiToken,
-                onChange: (e) => setAiToken(e.target.value),
-                className: "mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60",
-                placeholder: "Optional. Used only in this browser session.",
-                autoComplete: "off"
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "mt-1 text-xs text-gray-300", children: "Static GitHub Pages cannot store secrets. Leave this blank when using a password-protected AI proxy." })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "mt-3", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { htmlFor: "ai-proxy-password", className: "block text-sm font-bold text-gray-200", children: "AI Proxy Password (optional)" }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-              "input",
-              {
-                id: "ai-proxy-password",
-                type: "password",
-                value: aiProxyPassword,
-                onChange: (e) => setAiProxyPassword(e.target.value),
-                className: "mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60",
-                placeholder: "Shared password for your AI proxy",
-                autoComplete: "off"
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("p", { className: "mt-1 text-xs text-gray-300", children: [
-              "Proxy URL: ",
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("code", { children: AI_PROXY_URL })
-            ] })
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("details", { className: "mt-3 rounded-xl bg-black/20 p-3 text-sm text-gray-100", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("summary", { className: "cursor-pointer font-bold", children: "AI connection settings" }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "mt-3 grid grid-cols-1 gap-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { htmlFor: "ai-proxy-url", className: "block text-sm font-bold text-gray-200", children: "AI Proxy URL" }),
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+                  "input",
+                  {
+                    id: "ai-proxy-url",
+                    type: "url",
+                    value: aiProxyUrl,
+                    onChange: (e) => setAiProxyUrl(e.target.value),
+                    className: "mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60",
+                    placeholder: "https://your-proxy.example.com/wordlist",
+                    autoComplete: "off"
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { htmlFor: "ai-proxy-password", className: "block text-sm font-bold text-gray-200", children: "AI Proxy Password (optional)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+                  "input",
+                  {
+                    id: "ai-proxy-password",
+                    type: "password",
+                    value: aiProxyPassword,
+                    onChange: (e) => setAiProxyPassword(e.target.value),
+                    className: "mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60",
+                    placeholder: "Shared password for your AI proxy",
+                    autoComplete: "off"
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { htmlFor: "github-models-token", className: "block text-sm font-bold text-gray-200", children: "GitHub Models Token (fallback)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+                  "input",
+                  {
+                    id: "github-models-token",
+                    type: "password",
+                    value: aiToken,
+                    onChange: (e) => setAiToken(e.target.value),
+                    className: "mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60",
+                    placeholder: "Optional. Browser session only.",
+                    autoComplete: "off"
+                  }
+                )
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "mt-2 text-xs text-gray-300", children: "Recommended: leave token blank and use proxy URL + password." })
           ] }),
           aiError && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "text-yellow-200 mt-2", children: aiError }),
           aiPrompt && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("details", { className: "mt-3 rounded-xl bg-black/30 p-3 text-sm text-gray-100", children: [
@@ -11808,48 +11845,48 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onResume
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { className: "text-lg font-bold mb-2 text-yellow-300", children: "\u{1F4A1} Help Shop Tips" }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { className: "text-lg font-bold mb-2 text-yellow-300", children: "\u{1F4A1} Hint Tips" }),
             /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("ul", { className: "list-disc list-inside space-y-1 text-gray-300", children: [
               /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("li", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Definition (-1 pt):" }),
-                " Quick, affordable hint"
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Definition (\u22121 pt):" }),
+                " What the word means \u2014 a quick, affordable clue"
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("li", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Origin (-1 pt):" }),
-                " Word etymology and history"
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Origin (\u22122 pts):" }),
+                " Where the word came from \u2014 some spellings make more sense after checking their passport"
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("li", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Sentence (-2 pts):" }),
-                " Context example"
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Sentence (\u22121 pt):" }),
+                " See the word in context \u2014 a tiny window into the word's private life"
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("li", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Hangman (-5 pts):" }),
-                " Reveals first & last letters"
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Hangman-Style Reveal (\u22123 pts):" }),
+                " Reveals letters in a hangman-style pattern \u2014 use it carefully"
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("li", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Friend Sub (-4 pts):" }),
-                " Tag in teammate (team mode)"
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Swap Speller (\u22124 pts):" }),
+                " Tag in a teammate for this word \u2014 team mode only"
               ] })
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { className: "text-lg font-bold mb-2 text-yellow-300", children: "\u{1F3C6} Team Mode Features" }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { className: "text-lg font-bold mb-2 text-yellow-300", children: "\u{1F3C6} Team Mode" }),
             /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("ul", { className: "list-disc list-inside space-y-1 text-gray-300", children: [
               /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("li", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Shared Lives:" }),
                 " Teams have 10 lives total"
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("li", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: '"Steal" Mechanic:' }),
-                " If one team fails, next team can steal the word"
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Steal Mechanic:" }),
+                " If one team misspells, the next team may attempt the same word"
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("li", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Strategic Hints:" }),
-                " Teams must decide when to spend points"
+                " Teams decide when to spend points on clues"
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("li", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Redemption Round:" }),
-                " Failed words return later"
+                " Missed words return later in the game"
               ] })
             ] })
           ] }),
@@ -11870,7 +11907,7 @@ var SetupScreen = ({ onStartGame, onAddCustomWords, onViewAchievements, onResume
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("li", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Achievement Tracking:" }),
-                " Personal milestones and goals"
+                " Personal milestones recorded along the way"
               ] })
             ] })
           ] })
@@ -12318,7 +12355,7 @@ var BATTLE_POWERS = [
   {
     id: "sentence",
     name: "Sentence Hint",
-    description: "See the word used in a real sentence. Understanding the context helps you connect meaning to spelling.",
+    description: "See the word in a full sentence. Context helps when the word is acting innocent.",
     icon: "\u{1F4DD}",
     cost: 1,
     unlockAt: 0
@@ -12326,7 +12363,7 @@ var BATTLE_POWERS = [
   {
     id: "syllables",
     name: "Syllable Breakdown",
-    description: "Break the word into smaller sound chunks. Spell one part at a time instead of guessing the whole word.",
+    description: "Break the word into chunks. Long words are less frightening when handled one piece at a time.",
     icon: "\u{1F9E9}",
     cost: 1,
     unlockAt: 0
@@ -12334,7 +12371,7 @@ var BATTLE_POWERS = [
   {
     id: "wordLength",
     name: "Word Length Hint",
-    description: "See how many letters are in the word. Knowing the length helps you plan your spelling from the start.",
+    description: "See how many letters you're dealing with. The word can't hide its length.",
     icon: "\u{1F522}",
     cost: 1,
     unlockAt: 0
@@ -12343,7 +12380,7 @@ var BATTLE_POWERS = [
   {
     id: "definition",
     name: "Definition Hint",
-    description: "See what the word means. Understanding the meaning helps you connect it to how it's spelled.",
+    description: "Find out what the word means. Knowing the meaning and knowing the spelling are different skills \u2014 but they talk to each other.",
     icon: "\u{1F4D6}",
     cost: 1,
     unlockAt: 2
@@ -12352,7 +12389,7 @@ var BATTLE_POWERS = [
   {
     id: "extraTime",
     name: "Extra Time",
-    description: "Add 15 seconds to the timer! Use this when your team needs more thinking time. Once per word.",
+    description: "Add 15 seconds. Enough time for a team huddle and one dramatic stare at the ceiling.",
     icon: "\u23F1\uFE0F",
     cost: 2,
     unlockAt: 4
@@ -12361,7 +12398,7 @@ var BATTLE_POWERS = [
   {
     id: "soundItOut",
     name: "Sound It Out Hint",
-    description: "Get the phonetic breakdown of the word. Hearing each sound helps your team spell it correctly.",
+    description: "See every sound in the word written out. Some words sound exactly like they're spelled. Others have been misleading people for centuries.",
     icon: "\u{1F50A}",
     cost: 2,
     unlockAt: 6
@@ -12370,7 +12407,7 @@ var BATTLE_POWERS = [
   {
     id: "affixes",
     name: "Prefix / Suffix / Root Hint",
-    description: "See the word broken into its parts \u2014 prefix, root, and suffix. Word structure reveals spelling patterns.",
+    description: "Check the word's parts \u2014 prefix, suffix, root. English looks chaotic, but it sometimes leaves clues.",
     icon: "\u{1F520}",
     cost: 2,
     unlockAt: 8
@@ -12379,7 +12416,7 @@ var BATTLE_POWERS = [
   {
     id: "spellingPattern",
     name: "Spelling Pattern Hint",
-    description: "Get a clue about the word's spelling pattern \u2014 like a silent letter, double consonant, or special ending.",
+    description: "Spot the specific trick: silent letter, double consonant, borrowed ending. Useful information, arriving a little late.",
     icon: "\u{1F9E0}",
     cost: 2,
     unlockAt: 10
@@ -12388,7 +12425,7 @@ var BATTLE_POWERS = [
   {
     id: "origin",
     name: "Origin Hint",
-    description: "Find out where the word comes from. A word's language of origin often explains why it's spelled the way it is.",
+    description: "See where the word came from. Some spellings make more sense once you check their passport.",
     icon: "\u{1F30D}",
     cost: 2,
     unlockAt: 12
@@ -12397,7 +12434,7 @@ var BATTLE_POWERS = [
   {
     id: "multipleAttempts",
     name: "Multiple Attempts",
-    description: "Get one extra chance to spell the word. Use it wisely \u2014 your team only gets one bonus attempt per word.",
+    description: "Buy a second attempt. Mistakes are just information arriving rudely. Only the final result counts.",
     icon: "\u{1F3AF}",
     cost: 3,
     unlockAt: 14
@@ -12406,7 +12443,7 @@ var BATTLE_POWERS = [
   {
     id: "vowels",
     name: "Vowel Reveal",
-    description: "All vowels in the word are revealed! Use this to narrow down the spelling when the consonants are the hard part.",
+    description: "Reveal the vowels. The consonants can continue being mysterious.",
     icon: "\u{1F524}",
     cost: 3,
     unlockAt: 16
@@ -12415,7 +12452,7 @@ var BATTLE_POWERS = [
   {
     id: "hangman",
     name: "Hangman-Style Reveal",
-    description: "One hidden letter is revealed at random. If vowels are already shown, a consonant will be chosen first.",
+    description: "One letter is revealed. The bee picks which one. Negotiation is not available.",
     icon: "\u{1F575}\uFE0F",
     cost: 3,
     unlockAt: 18
@@ -12424,7 +12461,7 @@ var BATTLE_POWERS = [
   {
     id: "quickPeek",
     name: "Quick Peek",
-    description: "The full word flashes on screen for 1.5 seconds! Your team must memorise it and spell it from memory. Once per word.",
+    description: "The full word appears for 1.5 seconds. Then it leaves, like it has somewhere better to be.",
     icon: "\u{1F50D}",
     cost: 4,
     unlockAt: 20
@@ -12433,7 +12470,7 @@ var BATTLE_POWERS = [
   {
     id: "friendSub",
     name: "Friend Substitution",
-    description: "Swap the current speller with a teammate. A fresh perspective can make all the difference!",
+    description: "Swap in a teammate as speller. Choose someone who looks unusually calm about this.",
     icon: "\u{1F465}",
     cost: 4,
     unlockAt: 22
@@ -12442,7 +12479,7 @@ var BATTLE_POWERS = [
   {
     id: "skipWord",
     name: "Skip Word",
-    description: "Skip this word and move on \u2014 no life lost, but no points earned either. The word is saved for review.",
+    description: "Skip this word. No penalty, no points. It will return in the review session, possibly with an attitude.",
     icon: "\u23ED\uFE0F",
     cost: 5,
     unlockAt: 24
@@ -12528,7 +12565,7 @@ var HintPanel = ({
   if (!word) {
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex", children: [
       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "flex-shrink-0", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("svg", { className: "h-5 w-5 text-yellow-400", viewBox: "0 0 20 20", fill: "currentColor", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("path", { fillRule: "evenodd", d: "M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z", clipRule: "evenodd" }) }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "ml-3", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-sm text-yellow-700", children: "No word selected. Please wait for the next word." }) })
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "ml-3", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-sm text-yellow-700", children: "No word selected. The next word is on its way." }) })
     ] }) });
   }
   const sentenceText = word.example || "";
@@ -12701,7 +12738,7 @@ var HintPanel = ({
       "\u26A0\uFE0F ",
       validationMsg
     ] }),
-    !hasAttemptedCurrentWord && unlockedPowers && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: `text-xs text-center font-bold ${hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT ? "text-red-300" : "text-white/60"}`, children: hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT ? "\u{1F6AB} Hint limit reached \u2014 make a spelling attempt first!" : `\u{1F4A1} Hints used before attempt: ${hintsBeforeAttempt} / ${MAX_HINTS_BEFORE_ATTEMPT}` }),
+    !hasAttemptedCurrentWord && unlockedPowers && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: `text-xs text-center font-bold ${hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT ? "text-red-300" : "text-white/60"}`, children: hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT ? "\u{1F41D} Hint limit reached \u2014 the bee says: attempt the word first." : `\u{1F4A1} Hints used before attempt: ${hintsBeforeAttempt} / ${MAX_HINTS_BEFORE_ATTEMPT}` }),
     revealedLetters.some((r) => r) && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-3xl font-mono text-center tracking-widest py-1", children: word.word.split("").map((ch, i) => {
       if (!/[a-zA-Z]/.test(ch)) return ch;
       return revealedLetters[i] ? ch : "_";
@@ -12720,11 +12757,7 @@ var HintPanel = ({
       ] }),
       showSentence && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-green-500/20 rounded-lg px-3 py-2", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-green-200 font-bold text-sm", children: "\u{1F4DD} Sentence: " }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "text-white text-sm italic", children: [
-          '"',
-          sentenceText || "No sentence hint is available for this word.",
-          '"'
-        ] })
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm italic", children: `"${sentenceText || "No sentence available. The word prefers mystery."}"` })
       ] }),
       showSyllables && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-yellow-500/20 rounded-lg px-3 py-2", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-yellow-200 font-bold text-sm", children: "\u{1F9E9} Syllables: " }),
@@ -12737,15 +12770,15 @@ var HintPanel = ({
             children: syl
           },
           i
-        )) }) : /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white/70 text-sm italic", children: "No syllable breakdown is available for this word." })
+        )) }) : /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white/70 text-sm italic", children: "No syllable breakdown available. Try listening for the chunks." })
       ] }),
       showDefinition && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-amber-500/20 rounded-lg px-3 py-2", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-amber-200 font-bold text-sm", children: "\u{1F4D6} Definition: " }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm", children: definitionText || "No definition is available for this word." })
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm", children: definitionText || "No definition available. The word's job description is missing." })
       ] }),
       showSoundItOut && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-cyan-500/20 rounded-lg px-3 py-2", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-cyan-200 font-bold text-sm", children: "\u{1F50A} Sound It Out: " }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm font-mono", children: soundItOutText || "No sound-it-out hint is available for this word." })
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm font-mono", children: soundItOutText || "No sound-it-out hint available. Listen carefully." })
       ] }),
       showAffixes && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-orange-500/20 rounded-lg px-3 py-2 space-y-1", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-orange-200 font-bold text-sm block", children: "\u{1F520} Word Parts:" }),
@@ -12769,15 +12802,15 @@ var HintPanel = ({
             '"'
           ] })
         ] }) : null,
-        !prefixText && !suffixText && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-white/70 text-sm italic", children: "No word-part hint is available for this word." })
+        !prefixText && !suffixText && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-white/70 text-sm italic", children: "No word-part data available. This word is keeping its components private." })
       ] }),
       showSpellingPattern && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-violet-500/20 rounded-lg px-3 py-2", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-violet-200 font-bold text-sm", children: "\u{1F9E0} Spelling Pattern: " }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm", children: spellingPatternText || "No spelling pattern hint is available for this word." })
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm", children: spellingPatternText || "No spelling pattern identified. The word is being difficult in a plain way." })
       ] }),
       showOrigin && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-emerald-500/20 rounded-lg px-3 py-2", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-emerald-200 font-bold text-sm", children: "\u{1F30D} Origin: " }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm", children: originText || "No origin hint is available for this word." })
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-white text-sm", children: originText || "No origin hint available. The word's passport is missing." })
       ] })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-wrap gap-2 justify-center pt-1", children: [
@@ -13203,29 +13236,29 @@ var HelpShop = ({ onClose, coins, onPurchase }) => {
   const helpItems = [
     {
       id: "reveal-letter",
-      name: "Reveal Letter",
-      description: "Reveals one random letter in the current word",
+      name: "Reveal a Letter",
+      description: "Reveal one letter. The alphabet is offering limited cooperation.",
       cost: 10,
       icon: "\u{1F524}"
     },
     {
       id: "show-definition",
       name: "Show Definition",
-      description: "Displays the definition of the current word",
+      description: "Find out what the word means. A definition is the word's job description.",
       cost: 15,
       icon: "\u{1F4D6}"
     },
     {
       id: "add-time",
       name: "Add Time",
-      description: "Adds 30 seconds to the timer",
+      description: "Add 30 seconds. Time for a huddle, a brave guess, or one very serious stare.",
       cost: 20,
       icon: "\u23F1\uFE0F"
     },
     {
       id: "skip-word",
       name: "Skip Word",
-      description: "Skips to the next word",
+      description: "Skip this word. It will return later, possibly with notes.",
       cost: 25,
       icon: "\u23ED\uFE0F"
     }
@@ -13274,11 +13307,36 @@ var HelpShop = ({ onClose, coins, onPurchase }) => {
 var import_jsx_runtime12 = __toESM(require_jsx_runtime());
 var ENCOURAGEMENT_STORAGE_KEY = "encouragementPhrases";
 var DEFAULT_ENCOURAGEMENT_PHRASES = [
-  "Great spelling, {name}!",
-  "That one landed beautifully.",
-  "Sharp work. Keep going.",
-  "Nice focus, {name}.",
-  "You earned that one."
+  "{name} looked at that word like it owed them money.",
+  "{name} didn't even hesitate. That's the worrying part.",
+  "{name} and the alphabet briefly understood each other.",
+  "{name} handled that word with unnecessary confidence.",
+  "{name} made the spelling look planned.",
+  "{name} approached that spelling with suspicious calm.",
+  "That word didn't stand a chance once {name} showed up.",
+  "{name} made eye contact with the alphabet and won.",
+  "{name} handled that word like they had been expecting it personally.",
+  "Correct. {name} did not flinch once during that whole word.",
+  "{name} spelled that without the word putting up a fight.",
+  "{name} recognised that word on sight. The word had no time to object.",
+  "Sharp work, {name}. Even the word looked slightly taken aback.",
+  "{name} walked up to that word and sorted it out.",
+  "{name} approached that word with the calm of someone who had already won.",
+  "Well spelled. {name} didn't make a production of it.",
+  "The word showed up. {name} was ready. That's the whole story.",
+  "{name} has demonstrated an above-average arrangement of letters.",
+  "{name} showed up, spelled a word, made it look easy.",
+  "{name} and that word had a conversation, and {name} won it.",
+  "{name} spotted exactly where the letters needed to go.",
+  "{name} made a series of specific letter choices. They were all correct.",
+  "That word thought it was difficult. {name} disagreed.",
+  "{name} did not guess. {name} knew.",
+  "{name} handled that word like it was a minor inconvenience.",
+  "The word tried to make things complicated. {name} was not interested.",
+  "{name} committed to that spelling with concerning certainty. Correctly.",
+  "Well done, {name}. The word came in and left without causing trouble.",
+  "{name} looked at the letters and put them somewhere correct.",
+  "{name} saw that word coming from a long way off."
 ];
 var normaliseEncouragementPhrases = (value) => value.split("\n").map((phrase) => phrase.trim()).filter(Boolean);
 var loadEncouragementPhrases = () => {
@@ -13502,7 +13560,7 @@ var BattlePowerUnlock = ({ power, onDismiss }) => {
       "aria-labelledby": "power-unlock-title",
       children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "relative bg-gradient-to-br from-purple-700 via-indigo-700 to-blue-700 rounded-3xl p-8 max-w-sm w-full mx-4 text-white shadow-2xl text-center animate-bounce-in", children: [
         /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "absolute -inset-1 rounded-3xl bg-gradient-to-r from-kahoot-yellow-400 via-kahoot-red-400 to-kahoot-yellow-400 opacity-60 blur-sm -z-10" }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-xs font-black uppercase tracking-widest text-kahoot-yellow-300 mb-2", children: "\u{1F513} Power Unlocked!" }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-xs font-black uppercase tracking-widest text-kahoot-yellow-300 mb-2", children: "\u{1F41D} New Power. The hive approved it." }),
         /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-7xl my-4 animate-wiggle select-none", children: power.icon }),
         /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
           "h2",
@@ -13526,14 +13584,14 @@ var BattlePowerUnlock = ({ power, onDismiss }) => {
             onClick: onDismiss,
             className: "w-full py-3 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-yellow-500 hover:from-kahoot-yellow-500 hover:to-kahoot-yellow-600 text-black font-black text-lg rounded-2xl shadow-lg transform transition-all duration-200 hover:scale-105",
             autoFocus: true,
-            children: "\u{1F680} Unlock!"
+            children: "Got it. Let's go."
           }
         ),
         /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "mt-4 h-1 w-full bg-white/20 rounded-full overflow-hidden", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "h-full bg-kahoot-yellow-400 rounded-full animate-[shrink_8s_linear_forwards]" }) }),
         /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { className: "mt-1 text-white/50 text-xs", children: [
-          "Auto-dismisses in ",
+          "The bee will move on in ",
           AUTO_DISMISS_DURATION_MS / 1e3,
-          " seconds"
+          " seconds."
         ] })
       ] })
     }
@@ -13544,6 +13602,71 @@ var BattlePowerUnlock_default = BattlePowerUnlock;
 // src/GameScreen.tsx
 var import_jsx_runtime16 = __toESM(require_jsx_runtime());
 var musicStyles2 = ["Funk", "Country", "Deep Bass", "Rock", "Jazz", "Classical"];
+var CORRECT_FEEDBACK = [
+  "That worked. Weirdly clean.",
+  "Nobody act surprised.",
+  "Yes. Suspiciously correct.",
+  "The word had a reputation. You ignored it completely.",
+  "Fine. The letters cooperated. Don't push it.",
+  "You heard it, you spelled it, and now we all have to live with that.",
+  "The word came in, got dealt with, left.",
+  "The bee would clap, but it has small arms and a complicated schedule.",
+  "That word did not stand a chance once you showed up.",
+  "Correct. Nobody panic.",
+  "Every letter, in the right order. That's the whole thing.",
+  "A correct spelling in a classroom spelling game. Unprecedented.",
+  "That word had opinions. You overruled all of them.",
+  "The word saw that coming and was powerless to stop it.",
+  "Correct. The word has accepted its situation.",
+  "That word is now behind you. It won't cause further trouble.",
+  "Correct. That felt inevitable once it happened.",
+  "The alphabet briefly made sense.",
+  "Done. The word did not argue.",
+  "The room has witnessed spelling.",
+  "That one landed well.",
+  "Correct. Nobody looked surprised, which is its own kind of compliment.",
+  "The word came. You spelled it. That's the whole story.",
+  "Correct. Efficient. Clinical. Slightly unsettling.",
+  "You heard it. You knew it. You spelled it. All three things, in order.",
+  "Correct. The word stepped forward, got handled, stepped back.",
+  "That spelling went in clean. No drama.",
+  "Well done. The word won't say it, but we will.",
+  "Right. Make a note of how that felt.",
+  "Correct. The word had nowhere to go."
+];
+var INCORRECT_FEEDBACK = [
+  "Close. Emotionally, not alphabetically.",
+  "The word saw that and is choosing silence.",
+  "An investigation has been opened.",
+  "Not correct, but not a disaster. Annoying middle ground.",
+  "The spelling had confidence. That was not the issue.",
+  "Let's move past this with dignity.",
+  "Fine. Not correct, but emotionally survivable.",
+  "The word is fine. Totally fine. Not even slightly wounded by that.",
+  "Nearly. One letter has gone somewhere it shouldn't. The rest are fine.",
+  "Close. The word watched and stayed very calm, which felt pointed.",
+  "That spelling arrived confidently and was immediately questioned.",
+  "Not quite. The word requires a specific arrangement. That was a different one.",
+  "Other words have been spelled worse. This is cold comfort, but it is comfort.",
+  "Nobody is going to bring this up later. Probably.",
+  "The word did not say anything. But it definitely thought something.",
+  "Everyone in the room pretended not to notice. Very generous.",
+  "That was almost a word. Unfortunately, it was this word.",
+  "We recover. We regroup. We blame English.",
+  "Incorrect. The word remains present and available for another attempt.",
+  "The letters attended. They just had different ideas about the order.",
+  "Some of those letters were correct. The rest have questions to answer.",
+  "Close. The alphabet is giving you another look.",
+  "Wrong. The word is still there, unfortunately.",
+  "That miss was useful. Annoying, but useful.",
+  "The letters had a meeting and reached a different conclusion.",
+  "Good attempt. Try a different arrangement.",
+  "Not quite. The correct spelling is close. Go again.",
+  "Nearly. One letter wandered off. The rest were solid.",
+  "The word has been standing here the whole time. It would like another try.",
+  "That spelling existed. It just wasn't this spelling."
+];
+var pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 var MIN_DIFFICULTY_LEVEL2 = 0;
 var MAX_DIFFICULTY_LEVEL2 = 2;
 var clampDifficultyLevel2 = (level) => {
@@ -13735,13 +13858,13 @@ var GameScreen = ({
   };
   function handleIncorrectAttempt() {
     if (extraAttempt) {
-      setFeedback({ message: "Incorrect. You still have one more attempt!", type: "error" });
+      setFeedback({ message: "Not quite. The word remains patient. One more attempt.", type: "error" });
       setExtraAttempt(false);
       if (currentWord) setLetters(Array(currentWord.word.length).fill(""));
       startTimer();
       return;
     }
-    setFeedback({ message: "Incorrect. Try again next time!", type: "error" });
+    setFeedback({ message: pickRandom(INCORRECT_FEEDBACK), type: "error" });
     if (currentWord) setMissedWords((prev) => [...prev, currentWord]);
     const updatedParticipants = participants.map((p, index) => {
       if (index === currentParticipantIndex) {
@@ -13766,7 +13889,7 @@ var GameScreen = ({
       if (config2.gameMode === "team" && newAttempted.size < participants.length) {
         setAttemptedParticipants(newAttempted);
         setUsedHint(false);
-        setFeedback({ message: "Next team can steal this word!", type: "info" });
+        setFeedback({ message: "The next team may now attempt this word.", type: "info" });
         nextTurn();
         startTimer();
       } else if (config2.gameMode === "individual") {
@@ -13873,7 +13996,7 @@ var GameScreen = ({
       setUnlockedAchievements(updatedUnlocked);
       localStorage.setItem("unlockedAchievements", JSON.stringify(updatedUnlocked));
       const first = newlyUnlocked[0];
-      setToast(`Achievement unlocked: ${first.icon} ${first.name}!`);
+      setToast(`Achievement unlocked: ${first.icon} ${first.name}`);
       setTimeout(() => setToast(""), 3e3);
     }
     if (isTeamMode) {
@@ -13891,7 +14014,7 @@ var GameScreen = ({
     if (config2.effectsEnabled && !prefersReducedMotion) {
       launchConfetti();
     }
-    setFeedback({ message: "Correct! \u{1F389}", type: "success" });
+    setFeedback({ message: pickRandom(CORRECT_FEEDBACK), type: "success" });
     setEncouragementMessage(pickEncouragementPhrase(encouragementPhrases, participant.name));
     setTimeout(() => {
       const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
@@ -13907,13 +14030,13 @@ var GameScreen = ({
     const nextPhrases = phrases.length > 0 ? phrases : DEFAULT_ENCOURAGEMENT_PHRASES;
     setEncouragementPhrases(nextPhrases);
     saveEncouragementPhrases(nextPhrases);
-    setEncouragementSaveMessage("Saved encouragement phrases.");
+    setEncouragementSaveMessage("Phrases saved. The bee approves.");
     setTimeout(() => setEncouragementSaveMessage(""), 2500);
   };
   const resetEncouragementSettings = () => {
     setEncouragementPhrases(DEFAULT_ENCOURAGEMENT_PHRASES);
     saveEncouragementPhrases(DEFAULT_ENCOURAGEMENT_PHRASES);
-    setEncouragementSaveMessage("Restored default phrases.");
+    setEncouragementSaveMessage("Default phrases restored. The original bee is back.");
     setTimeout(() => setEncouragementSaveMessage(""), 2500);
   };
   const skipWord = () => {
@@ -13931,7 +14054,7 @@ var GameScreen = ({
     if (isLivesPenalty) {
       playLoseLife();
     }
-    setFeedback({ message: `Word Skipped (${deduction})`, type: "info" });
+    setFeedback({ message: `Word skipped (${deduction}). It will return later, probably with notes.`, type: "info" });
     if (currentWord) {
       setWordQueues((prev) => ({ ...prev, review: [...prev.review, currentWord] }));
       addReviewWord(currentWord);
@@ -14113,7 +14236,7 @@ var GameScreen = ({
     encouragementMessage && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(EncouragementBanner_default, { message: encouragementMessage }),
     /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "absolute top-8 right-8 text-center z-50 game-card", children: [
       /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: `text-6xl md:text-8xl font-black mb-2 transition-all duration-300 ${timeLeft <= 10 ? "text-kahoot-red-500 animate-pulse scale-110" : timeLeft <= 20 ? "text-kahoot-yellow-500 animate-bounce" : "text-kahoot-green-500"}`, children: timeLeft }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-lg font-bold", children: "seconds left" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-lg font-bold", "aria-live": "polite", "aria-atomic": "true", children: timeLeft <= 5 ? "Final seconds." : timeLeft <= 10 ? "Time is getting rude." : "seconds left" }),
       /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         "button",
         {
@@ -14246,15 +14369,15 @@ var GameScreen = ({
     ),
     showExitConfirm && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "fixed inset-0 bg-black/70 flex items-center justify-center z-50", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-2xl", children: [
       /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-6xl mb-4", children: "\u{1F6AA}" }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { className: "text-2xl font-bold text-gray-800 mb-4", children: "Exit Game?" }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "text-gray-600 mb-6", children: "Your progress will be saved and you can resume this game later. Are you sure you want to exit?" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { className: "text-2xl font-bold text-gray-800 mb-4", children: "Leave the words?" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "text-gray-600 mb-6", children: "The game will wait. The words have nowhere else to be." }),
       /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex gap-3 justify-center", children: [
         /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
             onClick: cancelExitGame,
             className: "px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-semibold transition-colors",
-            children: "Cancel"
+            children: "Stay"
           }
         ),
         /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
@@ -14264,7 +14387,7 @@ var GameScreen = ({
             className: "px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-colors flex items-center gap-2",
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(LogOut, { size: 18 }),
-              "Exit & Save"
+              "Leave quietly"
             ]
           }
         )
@@ -14433,7 +14556,7 @@ var GameScreen = ({
     isPaused && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-40", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "text-center animate-scale-in", children: [
       /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-8xl md:text-9xl font-black text-white mb-4 animate-pulse", children: "\u23F8\uFE0F" }),
       /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-6xl md:text-8xl font-black bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-red-400 bg-clip-text text-transparent", children: "PAUSED" }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-2xl text-white/80 mt-4", children: "Game is paused. Click resume to continue!" })
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-2xl text-white/80 mt-4", children: "The words are waiting. They're being very professional about it." })
     ] }) })
   ] });
 };
@@ -14682,17 +14805,17 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
   const getWinnerMessage = () => {
     const { winner, participants } = results;
     if (winner) {
-      return `Winner: ${winner.name}`;
+      return `${winner.name} wins. The dictionary has been briefly conquered.`;
     }
     const activeParticipants = participants.filter((p) => p.lives > 0);
     if (activeParticipants.length > 1) {
       const names = activeParticipants.map((p) => p.name).join(" and ");
-      return `It's a draw between ${names}!`;
+      return `It's a draw between ${names}. The alphabet remains neutral.`;
     }
-    return "No one wins this round!";
+    return "No one wins this round. The words remain undefeated.";
   };
   return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "min-h-screen bg-surface p-8 text-on-surface text-center flex flex-col items-center justify-center font-body", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h1", { className: "font-bold mb-4 text-primary uppercase font-sans", children: "\u{1F3C6} Game Over! \u{1F3C6}" }),
+    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h1", { className: "font-bold mb-4 text-primary uppercase font-sans", children: "\u{1F41D} That's Time. \u{1F41D}" }),
     /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h2", { className: "mb-8 uppercase font-sans", children: getWinnerMessage() }),
     results?.duration && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "text-xl mb-6", children: [
       "Game Duration: ",
@@ -14709,7 +14832,7 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
       isBestScore && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-tertiary font-bold ml-2", children: "New High Score!" })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "bg-surface-container-high p-6 rounded-xl w-full max-w-2xl shadow-elevation-1", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { className: "font-bold mb-4 uppercase font-sans", children: "\u{1F4CA} Final Scores" }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { className: "font-bold mb-4 uppercase font-sans", children: "\u{1F4CA} The Official Record" }),
       results && results.participants.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "text-left mb-4 p-3 rounded-lg bg-surface-container-low", children: [
         /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-3 mb-1", children: [
           /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
@@ -14752,7 +14875,7 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
       ] })
     ] }),
     results.missedWords && results.missedWords.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "bg-surface-container-high p-6 rounded-xl w-full max-w-2xl mt-8 shadow-elevation-1", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { className: "font-bold mb-4 uppercase font-sans", children: "\u274C Missed Words" }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { className: "font-bold mb-4 uppercase font-sans", children: "\u{1F4CB} Words That Have Been Rescheduled" }),
       results.missedWords.map((w, index) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "text-left mb-3 p-3 rounded-lg bg-surface-container-low", children: [
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "font-bold", children: w.word }),
         " - ",
@@ -14795,8 +14918,8 @@ var ResultsScreen = ({ results, onRestart, onViewLeaderboard }) => {
       )
     ] }),
     showComfortModal && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "w-full max-w-md rounded-2xl bg-white p-6 text-center text-gray-900 shadow-2xl", role: "dialog", "aria-modal": "true", "aria-labelledby": "comfort-heading", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { id: "comfort-heading", className: "mb-3 text-2xl font-black", children: "How did the session feel?" }),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "mb-5 text-sm text-gray-600", children: "This saves a simple class comfort check with the session history." }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { id: "comfort-heading", className: "mb-3 text-2xl font-black", children: "How was that, honestly?" }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "mb-5 text-sm text-gray-600", children: "A small record will be kept. It is not a big deal either way." }),
       /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "grid grid-cols-3 gap-3", children: [
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => handleComfortSelect("happy"), className: "rounded-xl bg-green-100 px-3 py-4 text-3xl font-black text-green-800 hover:bg-green-200", "aria-label": "Comfort happy", children: "\u{1F60A}" }),
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => handleComfortSelect("okay"), className: "rounded-xl bg-yellow-100 px-3 py-4 text-3xl font-black text-yellow-800 hover:bg-yellow-200", "aria-label": "Comfort okay", children: "\u{1F610}" }),
@@ -14815,27 +14938,27 @@ var import_react20 = __toESM(require_react());
 var achievements = {
   firstWin: {
     title: "First Victory",
-    description: "Win your first game",
+    description: "Win your first game. The dictionary has been briefly put in its place.",
     icon: "/spelling-bee-game/img/achievements/first-win.svg"
   },
   perfectGame: {
     title: "Perfect Game",
-    description: "Complete a game with no mistakes",
+    description: "Complete a game without a single mistake. The words never saw it coming.",
     icon: "/spelling-bee-game/img/achievements/perfect-game.svg"
   },
   speedDemon: {
     title: "Speed Demon",
-    description: "Complete a game in under 2 minutes",
+    description: "Complete a game in under two minutes. The words had no time to prepare.",
     icon: "/spelling-bee-game/img/achievements/speed-demon.svg"
   },
   wordMaster: {
     title: "Word Master",
-    description: "Spell 100 words correctly",
+    description: "Spell 100 words correctly. The alphabet is quietly impressed.",
     icon: "/spelling-bee-game/img/achievements/word-master.svg"
   },
   dailyStreak: {
     title: "Daily Streak",
-    description: "Complete daily challenges for 7 days in a row",
+    description: 'Seven daily challenges in a row. The word today is "commitment".',
     icon: "/spelling-bee-game/img/achievements/daily-streak.svg"
   }
 };
@@ -14898,7 +15021,7 @@ var HistoryScreen = ({ onBack }) => {
   }, {});
   return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8 text-white text-center flex flex-col items-center justify-center font-body", children: [
     /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h1", { className: "font-bold mb-8 text-yellow-300 uppercase font-sans", children: "\u{1F4D8} Session History" }),
-    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md", children: history.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "text-xl", children: "No session history." }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
+    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "bg-white/10 p-8 rounded-lg w-full max-w-md", children: history.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "text-xl", children: "No session history. Every session is a fresh start, which is either liberating or a technical issue." }) : /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "mb-5 grid grid-cols-3 gap-2 text-sm font-bold", children: [
         /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "rounded-lg bg-green-500/20 p-2", children: [
           "\u{1F60A} ",
@@ -14979,7 +15102,7 @@ var shopItems = [
   {
     id: "wizard",
     name: "Wizard Avatar",
-    description: "A magical wizard avatar with special powers",
+    description: "A distinguished wizard avatar. The hat does most of the work.",
     icon: IMAGE_ASSETS.avatars.bee,
     price: 50,
     type: "avatar"
@@ -14987,15 +15110,15 @@ var shopItems = [
   {
     id: "top-hat",
     name: "Top Hat",
-    description: "A fancy top hat for your avatar",
+    description: "A formal top hat for your avatar. Spelling is a serious business.",
     icon: IMAGE_ASSETS.avatars.book,
     price: 30,
     type: "accessory"
   },
   {
     id: "hint-letter",
-    name: "Hint: Reveal a Letter",
-    description: "Reveals one correct letter in the current word",
+    name: "Reveal a Letter",
+    description: "Reveal one correct letter in the current word. The alphabet does not usually hand out favours.",
     icon: "?",
     price: 20,
     type: "help",
@@ -15003,8 +15126,8 @@ var shopItems = [
   },
   {
     id: "hint-definition",
-    name: "Hint: Show Definition",
-    description: "Shows the definition of the current word",
+    name: "Show Definition",
+    description: "Find out what the word means. Definitions are the word's job description, usually with fewer meetings.",
     icon: "D",
     price: 15,
     type: "help",
@@ -15013,7 +15136,7 @@ var shopItems = [
   {
     id: "extra-time",
     name: "Extra Time",
-    description: "Adds 30 seconds to the current round's timer",
+    description: "Add 30 seconds. Time for a team huddle, a brave guess, or one deeply serious stare at the ceiling.",
     icon: "\u23F1\uFE0F",
     price: 25,
     type: "help",
@@ -15022,7 +15145,7 @@ var shopItems = [
   {
     id: "skip-word",
     name: "Skip Word",
-    description: "Skip the current word without penalty",
+    description: "Skip this word and face a replacement. The skipped word will return later, probably with notes.",
     icon: "\u23ED\uFE0F",
     price: 40,
     type: "help",
@@ -15031,6 +15154,8 @@ var shopItems = [
 ];
 var ShopScreen = ({ onBack }) => {
   const [cooldowns, setCooldowns] = import_react23.default.useState({});
+  const [purchaseError, setPurchaseError] = import_react23.default.useState("");
+  const purchaseErrorTimer = (0, import_react23.useRef)(null);
   const [coins, setCoins] = import_react23.default.useState(() => {
     if (typeof window === "undefined") return 0;
     const stored = localStorage.getItem("coins");
@@ -15062,6 +15187,23 @@ var ShopScreen = ({ onBack }) => {
     localStorage.setItem("equippedAvatar", currentAvatar);
   }, [currentAvatar]);
   import_react23.default.useEffect(() => {
+    return () => {
+      if (purchaseErrorTimer.current !== null) {
+        clearTimeout(purchaseErrorTimer.current);
+      }
+    };
+  }, []);
+  const showPurchaseError = (message) => {
+    if (purchaseErrorTimer.current !== null) {
+      clearTimeout(purchaseErrorTimer.current);
+    }
+    setPurchaseError(message);
+    purchaseErrorTimer.current = setTimeout(() => {
+      setPurchaseError("");
+      purchaseErrorTimer.current = null;
+    }, 3e3);
+  };
+  import_react23.default.useEffect(() => {
     const timer = setInterval(() => {
       setCooldowns((prevCooldowns) => {
         const updated = { ...prevCooldowns };
@@ -15080,11 +15222,11 @@ var ShopScreen = ({ onBack }) => {
   }, []);
   const purchaseItem = (item) => {
     if (coins < item.price) {
-      alert("Not enough coins!");
+      showPurchaseError("Not enough coins. The bee suggests saving up.");
       return;
     }
     if (item.type === "help" && cooldowns[item.id]) {
-      alert(`This item is on cooldown for ${cooldowns[item.id]} more seconds`);
+      showPurchaseError("This one is resting. Try again in a moment.");
       return;
     }
     const newCoins = coins - item.price;
@@ -15186,6 +15328,18 @@ var ShopScreen = ({ onBack }) => {
             ]
           }
         ),
+        purchaseError && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
+          "div",
+          {
+            className: "mb-4 rounded-xl bg-red-100 px-4 py-3 text-sm font-bold text-red-800",
+            role: "alert",
+            "aria-live": "assertive",
+            children: [
+              "\u{1F41D} ",
+              purchaseError
+            ]
+          }
+        ),
         /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("section", { "aria-labelledby": "avatar-heading", children: [
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
             "h2",
@@ -15265,6 +15419,28 @@ var ShopScreen_default = ShopScreen;
 // src/PracticeScreen.tsx
 var import_react24 = __toESM(require_react());
 var import_jsx_runtime23 = __toESM(require_jsx_runtime());
+var CORRECT_PRACTICE_FEEDBACK = [
+  "Correct. That's the one.",
+  "Right. Now do it again with the next word.",
+  "Yes. That's how it feels when it goes right. Remember that.",
+  "The word came quietly. Good.",
+  "Practice is doing its job.",
+  "That one landed. Keep going.",
+  "Right. On to the next.",
+  "Correct. Nice and clean.",
+  "Good. The word never had a chance."
+];
+var INCORRECT_PRACTICE_FEEDBACK = [
+  "Not yet. The word is still here. Try again.",
+  "Try again. That's what practice is for.",
+  "Close. Listen again and have another go.",
+  "Not quite. The word is patient. Use that.",
+  "Nearly. One more listen.",
+  "Not this time. The word is not alarmed. Go again.",
+  "That miss was useful. Annoying, but useful.",
+  "Try again. The word hasn't gone anywhere."
+];
+var pickFromPool = (arr) => arr[Math.floor(Math.random() * arr.length)];
 var pickWord = (words, previousWord) => {
   if (words.length === 0) return null;
   if (words.length === 1) return words[0];
@@ -15307,12 +15483,12 @@ var PracticeScreen = ({ words, onBack, reviewWords = [] }) => {
     if (answer.trim().toLowerCase() === currentWord.word.toLowerCase()) {
       rescheduleReviewWord(currentWord, true);
       setCorrectCount((count) => count + 1);
-      setFeedback("Correct. Nice warm-up.");
+      setFeedback(pickFromPool(CORRECT_PRACTICE_FEEDBACK));
       window.setTimeout(moveToNextWord, 700);
       return;
     }
     rescheduleReviewWord(currentWord, false);
-    setFeedback("Not quite. Listen again and have another go.");
+    setFeedback(pickFromPool(INCORRECT_PRACTICE_FEEDBACK));
     speak(currentWord.word);
   };
   return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "min-h-screen bg-gradient-to-br from-emerald-700 via-sky-800 to-indigo-900 p-6 text-white font-body", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "mx-auto flex min-h-[calc(100vh-3rem)] max-w-4xl flex-col items-center justify-center text-center", children: [
@@ -15369,7 +15545,7 @@ var PracticeScreen = ({ words, onBack, reviewWords = [] }) => {
         }
       ),
       feedback && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "mt-5 text-xl font-bold text-yellow-200", role: "status", children: feedback })
-    ] }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "w-full max-w-2xl rounded-3xl border border-white/20 bg-black/30 p-6 shadow-2xl", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "text-xl font-bold", children: "Words are still loading. Head back and try again in a moment." }) }),
+    ] }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "w-full max-w-2xl rounded-3xl border border-white/20 bg-black/30 p-6 shadow-2xl", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "text-xl font-bold", children: "The words are still arriving. They know where to go." }) }),
     /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "mt-8 flex flex-col items-center gap-4 sm:flex-row", children: [
       /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "rounded-2xl bg-white/10 px-5 py-3 font-bold", children: [
         "Correct in warm-up: ",
