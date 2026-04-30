@@ -2,9 +2,52 @@
 @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@700&family=Inclusive+Sans:wght@400;700&display=swap');
 
 :root {
-  --primary-color: var(--color-primary);
-  --text-color: var(--color-text);
-  --bg-color: var(--color-bg);
+  /* Primary colours */
+  --primary:        #4f46e5;
+  --primary-dark:   #4338ca;
+  --secondary:      #7c3aed;
+
+  /* Aliases expected by the old system */
+  --primary-color:  var(--primary);
+  --color-primary:  var(--primary);
+  --color-text:     #1f2937;
+  --color-bg:       transparent;
+  --text-color:     var(--color-text);
+  --bg-color:       var(--color-bg);
+  --text:           var(--color-text);
+
+  /* Surface colours */
+  --card-bg:        rgba(255, 255, 255, 0.9);
+  --border:         rgba(255, 255, 255, 0.2);
+
+  /* Dark-mode surface colours */
+  --dark-bg:        #1a1a2e;
+  --dark-card-bg:   #16213e;
+  --dark-text:      #e2e8f0;
+
+  /* Border radii */
+  --radius-sm:  0.25rem;
+  --radius-md:  0.5rem;
+  --radius-lg:  1rem;
+
+  /* Spacing */
+  --spacing-xs:  0.25rem;
+  --spacing-sm:  0.5rem;
+  --spacing-md:  1rem;
+  --spacing-lg:  1.5rem;
+  --spacing-xl:  2rem;
+
+  /* Shadows */
+  --shadow:    0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  /* Global transition */
+  --transition: all 0.2s ease;
+
+  /* Success / danger */
+  --success: #10b981;
+  --danger:  #ef4444;
+  --warning: #f59e0b;
 }
 
 *,
@@ -20,8 +63,7 @@ body {
   padding: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
   overflow-x: hidden;
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  /* background and colour are set by tailwind.css; do not override here */
 }
 
 /* Typography */

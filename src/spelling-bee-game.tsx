@@ -39,9 +39,12 @@ const SpellingBeeGame = () => {
   const [gameResults, setGameResults] = useState<any>(null);
   const [customWords, setCustomWords] = useState<GameConfig['wordDatabase']>({ easy: [], medium: [], tricky: [] });
   const [wordDatabase, setWordDatabase] = useState<GameConfig['wordDatabase']>({ easy: [], medium: [], tricky: [] });
-  const [musicStyle, setMusicStyle] = useState('Funk');
-  const [musicVolume, setMusicVolume] = useState(0.5);
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [musicStyle, setMusicStyle] = useState(() => localStorage.getItem('musicStyle') ?? 'Funk');
+  const [musicVolume, setMusicVolume] = useState(() => {
+    const stored = parseFloat(localStorage.getItem('musicVolume') ?? '0.5');
+    return Number.isFinite(stored) ? stored : 0.5;
+  });
+  const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem('soundEnabled') !== 'false');
   const [isMusicPlaying, setIsMusicPlaying] = useState(true);
 
   // Helper function to convert WordListWord to Word type
@@ -248,6 +251,11 @@ const SpellingBeeGame = () => {
         onViewShop={() => handleViewShop()}
         onStartWarmup={handleStartWarmup}
         wordListsReady={wordListsReady}
+        isMusicPlaying={isMusicPlaying}
+        onToggleMusicPlaying={handleToggleMusicPlaying}
+        onSoundEnabledChange={handleSoundEnabledChange}
+        onMusicStyleChange={setMusicStyle}
+        onMusicVolumeChange={setMusicVolume}
       />
     );
   }
