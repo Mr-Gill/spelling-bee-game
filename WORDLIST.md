@@ -39,10 +39,10 @@ To use the in-app **Generate with AI** button locally:
 npm install
 
 # Start the GitHub Models proxy server
-GITHUB_MODELS_TOKEN=your_token_here npm run ai:server
+MODELS_TOKEN=your_token_here npm run ai:server
 ```
 
-The token needs the `models: read` permission. The server listens on `http://localhost:3001/wordlist`, which is what the setup screen calls.
+The token needs the `models: read` permission. The server expects `MODELS_TOKEN` (with fallback support for `GITHUB_MODELS_TOKEN` and `GITHUB_TOKEN`) and listens on `http://localhost:3001/wordlist`.
 
 Optional proxy security:
 
@@ -53,7 +53,7 @@ AI_SHARED_PASSWORD=choose-a-shared-password
 If `AI_SHARED_PASSWORD` is set, clients must send that value in `X-AI-Password`.
 
 On GitHub Pages, the app cannot use repository secrets because it is static. Recommended pattern:
-1. Deploy a small proxy with `GITHUB_MODELS_TOKEN` server-side.
+1. Deploy a small proxy with `MODELS_TOKEN` server-side.
 2. Set `VITE_WORDLIST_URL` to that proxy endpoint at build time.
 3. Use the setup screen's **AI Proxy Password** field (if enabled on proxy).
 
@@ -61,7 +61,7 @@ Fallback: paste a fine-grained GitHub token with `models: read` into the setup s
 
 Quick setup:
 1. Enable **Models** in the repository settings.
-2. Configure proxy env token (`GITHUB_MODELS_TOKEN`) and optional proxy password (`AI_SHARED_PASSWORD`).
+2. Configure proxy env token (`MODELS_TOKEN`) and optional proxy password (`AI_SHARED_PASSWORD`).
 3. Set `VITE_WORDLIST_URL` to proxy endpoint, deploy, then generate a small list first (10 words).
 
 If it fails:

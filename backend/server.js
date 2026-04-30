@@ -23,7 +23,7 @@ const loadDotEnv = () => {
 loadDotEnv();
 
 const port = Number(process.env.PORT) || 3001;
-const token = process.env.GITHUB_MODELS_TOKEN || process.env.GITHUB_TOKEN;
+const token = process.env.MODELS_TOKEN || process.env.GITHUB_MODELS_TOKEN || process.env.GITHUB_TOKEN;
 const model = process.env.GITHUB_MODELS_MODEL || 'openai/gpt-4.1';
 const endpoint =
   process.env.GITHUB_MODELS_ENDPOINT ||
@@ -101,7 +101,10 @@ const checkProxyPassword = (req) => {
 
 const generateWordList = async (prompt) => {
   if (!token) {
-    throw Object.assign(new Error('GITHUB_MODELS_TOKEN or GITHUB_TOKEN is not configured'), { status: 500 });
+    throw Object.assign(
+      new Error('MODELS_TOKEN (or GITHUB_MODELS_TOKEN / GITHUB_TOKEN) is not configured'),
+      { status: 500 }
+    );
   }
 
   const response = await fetch(`${endpoint}?api-version=${apiVersion}`, {

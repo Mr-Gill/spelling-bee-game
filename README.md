@@ -393,10 +393,10 @@ Whether you're teaching phonics to elementary students, vocabulary to middle sch
 Run a local server that uses GitHub Models to generate word lists:
 
 ```
-GITHUB_MODELS_TOKEN=your_token_here npm run ai:server
+MODELS_TOKEN=your_token_here npm run ai:server
 ```
 
-The server expects `GITHUB_MODELS_TOKEN` or `GITHUB_TOKEN` with the `models: read` permission. By default it calls `https://models.github.ai/inference/chat/completions` with `openai/gpt-4.1`.
+The server expects `MODELS_TOKEN` (or `GITHUB_MODELS_TOKEN` / `GITHUB_TOKEN`) with the `models: read` permission. By default it calls `https://models.github.ai/inference/chat/completions` with `openai/gpt-4.1`.
 
 Optional settings:
 
@@ -410,7 +410,7 @@ PORT=3001
 Then use **Generate with AI** in the setup screen. With token field left blank, the frontend posts to `VITE_WORDLIST_URL` (default `http://localhost:3001/wordlist`) and sends the optional **AI Proxy Password** header.
 
 On GitHub Pages, there is no server that can safely hold a secret. Recommended setup:
-1. Host a small AI proxy with `GITHUB_MODELS_TOKEN` in server env.
+1. Host a small AI proxy with `MODELS_TOKEN` in server env.
 2. Set `AI_SHARED_PASSWORD` on that proxy.
 3. Build/deploy with `VITE_WORDLIST_URL=https://your-proxy.example.com/wordlist`.
 4. In the app, leave token blank and enter **AI Proxy Password** once per browser session.
@@ -421,7 +421,7 @@ Fallback setup: paste a fine-grained GitHub token with `models: read` into the *
 
 If **Generate with AI** fails on the live site, check these in order:
 
-1. Prefer proxy mode: configure proxy env `GITHUB_MODELS_TOKEN` (+ optional `AI_SHARED_PASSWORD`) and set `VITE_WORDLIST_URL` in your build.
+1. Prefer proxy mode: configure proxy env `MODELS_TOKEN` (+ optional `AI_SHARED_PASSWORD`) and set `VITE_WORDLIST_URL` in your build.
 2. In GitHub repository settings, open **Models** and enable Models for this repository.
 3. In setup, leave token blank and enter proxy password (if required).
 4. Try a small generation first (for example, 10 words) to confirm auth.
