@@ -56,7 +56,7 @@ test('teacher can customise encouragement phrases', async ({ page }) => {
 
   await page.getByRole('textbox', { name: 'Encouragement phrases' }).fill('Brilliant, {name}!');
   await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.getByText('Saved encouragement phrases.')).toBeVisible();
+  await expect(page.getByText('Phrases saved. The bee approves.')).toBeVisible();
 
   const stored = await page.evaluate(() => localStorage.getItem('encouragementPhrases'));
   expect(stored).toBe(JSON.stringify(['Brilliant, {name}!']));
