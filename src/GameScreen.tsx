@@ -42,6 +42,9 @@ import { saveStudentProgress } from './utils/studentProgress';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
+/** Duration (ms) the individual-mode hint nudge banner stays visible. */
+const HINT_NUDGE_DURATION_MS = 7000;
+
 const CORRECT_FEEDBACK = [
   'That worked. Weirdly clean.',
   'Nobody act surprised.',
@@ -211,6 +214,8 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [hintSummary, setHintSummary] = React.useState('');
 
   // Individual-mode hint nudge: shown once per session when ≥2 words completed without any hint
+  // totalWordsCompleted read value unused: we only use the functional setter (prev => prev + 1)
+  // to avoid stale-closure bugs inside advanceToWord. The state exists solely for its counter.
   const [, setTotalWordsCompleted] = React.useState(0);
   const [hasEverUsedHint, setHasEverUsedHint] = React.useState(false);
   const [showHintNudge, setShowHintNudge] = React.useState(false);
@@ -383,7 +388,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
           if (next === 2 || next === 3) {
             setShowHintNudge(true);
             if (hintNudgeTimerRef.current) clearTimeout(hintNudgeTimerRef.current);
-            hintNudgeTimerRef.current = setTimeout(() => setShowHintNudge(false), 7000);
+            hintNudgeTimerRef.current = setTimeout(() => setShowHintNudge(false), HINT_NUDGE_DURATION_MS);
           }
           return next;
         });

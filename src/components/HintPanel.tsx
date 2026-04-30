@@ -54,6 +54,9 @@ const ONCE_PER_WORD = new Set(['extraTime', 'multipleAttempts', 'vowels', 'quick
 /** Maximum number of hints a team may use before their first attempt on a word. */
 const MAX_HINTS_BEFORE_ATTEMPT = 2;
 
+/** Duration (ms) before the first-word onboarding banner auto-dismisses. */
+const ONBOARDING_AUTO_DISMISS_MS = 10000;
+
 /** Duration (ms) the Quick Peek word flash stays visible. */
 const QUICK_PEEK_DURATION_MS = 1500;
 
@@ -161,7 +164,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
   // Auto-dismiss the onboarding banner after 10 seconds
   useEffect(() => {
     if (!showOnboarding) return;
-    onboardingTimerRef.current = setTimeout(() => dismissOnboarding(), 10000);
+    onboardingTimerRef.current = setTimeout(() => dismissOnboarding(), ONBOARDING_AUTO_DISMISS_MS);
     return () => {
       if (onboardingTimerRef.current) clearTimeout(onboardingTimerRef.current);
     };
