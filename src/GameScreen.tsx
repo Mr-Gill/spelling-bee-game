@@ -169,6 +169,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [showWord, setShowWord] = React.useState(false);
   const [showPhonics, setShowPhonics] = React.useState(false);
   const [usedHint, setUsedHint] = React.useState(false);
+  const [wordLengthRevealed, setWordLengthRevealed] = React.useState(false);
   const [letters, setLetters] = React.useState<string[]>([]);
   const [feedback, setFeedback] = React.useState<Feedback>({ message: '', type: '' });
   const [encouragementMessage, setEncouragementMessage] = React.useState('');
@@ -262,6 +263,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   React.useEffect(() => {
     if (currentWord) {
       setLetters(Array.from({ length: currentWord.word.length }, () => ''));
+      setWordLengthRevealed(false);
       publishTeamDisplayWord(currentWord.word);
       setShowPhonics(false);
       setShowWord(false);
@@ -1065,25 +1067,37 @@ const GameScreen: React.FC<GameScreenProps> = ({
             hasAttemptedCurrentWord={attemptedParticipants.has(currentParticipantIndex)}
             onAddTime={() => addTimeToTimer(15)}
             onSkipWord={skipWordFree}
+            onWordLengthRevealed={() => setWordLengthRevealed(true)}
           />
           {showPhonics && currentWord.phonemes && (
             <PhonicsBreakdown phonemes={currentWord.phonemes} />
           )}
-          <div className="flex gap-3 justify-center mb-8 px-4">
-            {letters.map((letter, idx) => (
-              <div
-                key={idx}
-                className={`w-16 h-20 text-5xl font-black flex items-center justify-center rounded-2xl border-4 transition-all duration-300 transform ${
-                  letter
-                    ? letter.toLowerCase() === currentWord.word[idx].toLowerCase()
-                      ? 'bg-gradient-to-br from-kahoot-green-400 to-kahoot-green-600 border-kahoot-green-300 text-white scale-110 animate-bounce shadow-2xl'
-                      : 'bg-gradient-to-br from-kahoot-red-400 to-kahoot-red-600 border-kahoot-red-300 text-white animate-shake'
-                    : 'bg-white/20 border-white/40 text-white hover:bg-white/30'
-                }`}
-              >
-                {letter.toUpperCase()}
-              </div>
-            ))}
+          <div className="flex gap-3 justify-center mb-8 px-4 flex-wrap">
+            {(() => {
+              // When the Word Length hint has NOT been purchased, only show filled
+              // boxes plus one empty "cursor" box — so the total count isn't given away.
+              const firstEmptyIdx = letters.findIndex(l => l === '');
+              const filledCount = firstEmptyIdx === -1 ? letters.length : firstEmptyIdx;
+              const visibleLetters = wordLengthRevealed
+                ? letters
+                : letters.slice(0, Math.min(filledCount + 1, letters.length));
+              return visibleLetters.map((letter, idx) => (
+                <div
+                  key={idx}
+                  className={`w-16 h-20 text-5xl font-black flex items-center justify-center rounded-2xl border-4 transition-all duration-300 transform ${
+                    letter
+                      ? letter.toLowerCase() === currentWord.word[idx].toLowerCase()
+                        ? 'bg-gradient-to-br from-kahoot-green-400 to-kahoot-green-600 border-kahoot-green-300 text-white scale-110 animate-bounce shadow-2xl'
+                        : 'bg-gradient-to-br from-kahoot-red-400 to-kahoot-red-600 border-kahoot-red-300 text-white animate-shake'
+                      : idx === filledCount
+                        ? 'bg-white/30 border-white/70 text-white animate-pulse'
+                        : 'bg-white/20 border-white/40 text-white hover:bg-white/30'
+                  }`}
+                >
+                  {letter.toUpperCase()}
+                </div>
+              ));
+            })()}
           </div>
           <OnScreenKeyboard
             onLetter={handleVirtualLetter}
