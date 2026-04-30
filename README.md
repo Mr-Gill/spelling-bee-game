@@ -403,25 +403,32 @@ Optional settings:
 ```
 GITHUB_MODELS_MODEL=openai/gpt-4.1
 GITHUB_MODELS_ORG=your-org-login
+AI_SHARED_PASSWORD=choose-a-shared-password
 PORT=3001
 ```
 
-Then use **Generate with AI** in the setup screen. The frontend posts to `http://localhost:3001/wordlist`.
+Then use **Generate with AI** in the setup screen. With token field left blank, the frontend posts to `VITE_WORDLIST_URL` (default `http://localhost:3001/wordlist`) and sends the optional **AI Proxy Password** header.
 
-On GitHub Pages, there is no server that can safely hold a secret. To generate directly from the static page, paste a fine-grained GitHub token with `models: read` into the **GitHub Models Token** field in setup. The token is kept only in browser `sessionStorage` and is not committed or built into the app.
+On GitHub Pages, there is no server that can safely hold a secret. Recommended setup:
+1. Host a small AI proxy with `GITHUB_MODELS_TOKEN` in server env.
+2. Set `AI_SHARED_PASSWORD` on that proxy.
+3. Build/deploy with `VITE_WORDLIST_URL=https://your-proxy.example.com/wordlist`.
+4. In the app, leave token blank and enter **AI Proxy Password** once per browser session.
+
+Fallback setup: paste a fine-grained GitHub token with `models: read` into the **GitHub Models Token** field in setup. This stores token in browser `sessionStorage` only.
 
 ### GitHub Pages AI Checklist
 
 If **Generate with AI** fails on the live site, check these in order:
 
-1. In GitHub repository settings, open **Models** and enable Models for this repository.
-2. Create a fine-grained token with **models: read** permission.
-3. Paste the token into **GitHub Models Token for GitHub Pages** in setup.
+1. Prefer proxy mode: configure proxy env `GITHUB_MODELS_TOKEN` (+ optional `AI_SHARED_PASSWORD`) and set `VITE_WORDLIST_URL` in your build.
+2. In GitHub repository settings, open **Models** and enable Models for this repository.
+3. In setup, leave token blank and enter proxy password (if required).
 4. Try a small generation first (for example, 10 words) to confirm auth.
 
 Common errors:
 
-- `401 Unauthorized`: token is invalid or missing `models: read`.
+- `401 Unauthorized`: token invalid/missing `models: read`, or proxy password rejected.
 - `403 Forbidden`: Models is not enabled for the repo, or org policy blocks the selected model.
 - `429`: rate limit reached; wait and retry.
 

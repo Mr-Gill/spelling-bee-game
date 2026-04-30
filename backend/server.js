@@ -31,6 +31,7 @@ const endpoint =
     ? `https://models.github.ai/orgs/${process.env.GITHUB_MODELS_ORG}/inference/chat/completions`
     : 'https://models.github.ai/inference/chat/completions');
 const apiVersion = process.env.GITHUB_MODELS_API_VERSION || '2026-03-10';
+const proxyPassword = process.env.AI_SHARED_PASSWORD || '';
 
 const requestCounts = new Map();
 const WINDOW_MS = 60 * 1000;
@@ -48,7 +49,7 @@ const sendJson = (res, status, data) => {
   res.writeHead(status, {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-AI-Password',
     'Content-Type': 'application/json',
   });
   res.end(JSON.stringify(data));
@@ -90,6 +91,12 @@ const checkRateLimit = (req) => {
   entry.count += 1;
   requestCounts.set(ip, entry);
   return entry.count <= MAX_REQUESTS;
+};
+
+const checkProxyPassword = (req) => {
+  if (!proxyPassword) return true;
+  const provided = req.headers['x-ai-password'];
+  return typeof provided === 'string' && provided === proxyPassword;
 };
 
 const generateWordList = async (prompt) => {
@@ -138,6 +145,10 @@ const generateWordList = async (prompt) => {
 };
 
 const handleGenerate = async (req, res) => {
+  if (!checkProxyPassword(req)) {
+    return sendJson(res, 401, { error: 'AI proxy password is invalid' });
+  }
+
   if (!checkRateLimit(req)) {
     return sendJson(res, 429, { error: 'Too many requests, please try again later.' });
   }
@@ -165,6 +176,7 @@ const server = http.createServer(async (req, res) => {
         model,
         endpoint,
         tokenConfigured: Boolean(token),
+        passwordProtected: Boolean(proxyPassword),
       });
     }
 
@@ -184,4 +196,5 @@ server.listen(port, () => {
   console.log(`GitHub Models endpoint: ${endpoint}`);
   console.log(`GitHub Models model: ${model}`);
   console.log(`GitHub Models token configured: ${token ? 'yes' : 'no'}`);
+  console.log(`AI proxy password configured: ${proxyPassword ? 'yes' : 'no'}`);
 });

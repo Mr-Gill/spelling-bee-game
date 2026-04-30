@@ -95,6 +95,7 @@ const PRESETS_STORAGE_KEY = 'setupPresets';
 const GITHUB_MODELS_ENDPOINT = 'https://models.github.ai/inference/chat/completions';
 const GITHUB_MODELS_MODEL = 'openai/gpt-4.1';
 const GITHUB_MODELS_API_VERSION = '2026-03-10';
+const AI_PROXY_URL = process.env.VITE_WORDLIST_URL || 'http://localhost:3001/wordlist';
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
@@ -191,6 +192,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [aiToken, setAiToken] = useState(() => {
     if (typeof window === 'undefined') return '';
     return sessionStorage.getItem('githubModelsToken') || '';
+  });
+  const [aiProxyPassword, setAiProxyPassword] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    return sessionStorage.getItem('aiProxyPassword') || '';
   });
   
   // Saved game state
@@ -408,9 +413,19 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         const data = await res.json();
         content = String(data?.choices?.[0]?.message?.content || '');
       } else {
-        const res = await fetch('http://localhost:3001/wordlist', {
+        const proxyPassword = aiProxyPassword.trim();
+        if (proxyPassword) {
+          sessionStorage.setItem('aiProxyPassword', proxyPassword);
+        } else {
+          sessionStorage.removeItem('aiProxyPassword');
+        }
+
+        const proxyHeaders: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (proxyPassword) proxyHeaders['X-AI-Password'] = proxyPassword;
+
+        const res = await fetch(AI_PROXY_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: proxyHeaders,
           body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: wordCount, prompt }),
           signal: controller.signal
         });
@@ -436,7 +451,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       const errMessage = err instanceof Error ? err.message : String(err || '');
       let directTokenHint = aiToken.trim()
         ? 'The GitHub Models request failed.'
-        : 'On GitHub Pages, paste a GitHub Models token for this session, or run the local AI server.';
+        : 'Use a proxy URL with server-side token env, then enter proxy password if required.';
 
       if (errMessage.startsWith('GITHUB_MODELS_401')) {
         directTokenHint = 'GitHub Models returned 401 Unauthorized. Use a fresh token with models: read permission.';
@@ -444,8 +459,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         directTokenHint = 'GitHub Models returned 403 Forbidden. Enable Models in repository settings, and confirm org model policy allows the selected model.';
       } else if (errMessage.startsWith('GITHUB_MODELS_429')) {
         directTokenHint = 'GitHub Models returned 429 rate limit. Wait and try again, or reduce requests.';
+      } else if (errMessage.includes('AI proxy password is invalid')) {
+        directTokenHint = 'Proxy password rejected. Check the shared password configured on the proxy server.';
       } else if (errMessage.includes('Failed to fetch')) {
-        directTokenHint = 'Browser request failed. Check network, ad/privacy extensions, and that GitHub Models is reachable from this browser.';
+        directTokenHint = 'Browser request failed. Check network, ad/privacy extensions, and proxy URL availability.';
       } else if (errMessage.includes('AbortError')) {
         directTokenHint = 'Request timed out after 30 seconds. Try again or reduce requested word count.';
       }
@@ -929,7 +946,20 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     placeholder="Optional. Used only in this browser session."
                     autoComplete="off"
                   />
-                  <p className="mt-1 text-xs text-gray-300">Static GitHub Pages cannot store secrets. Leave this blank when using the local AI server.</p>
+                  <p className="mt-1 text-xs text-gray-300">Static GitHub Pages cannot store secrets. Leave this blank when using a password-protected AI proxy.</p>
+                </div>
+                <div className="mt-3">
+                  <label htmlFor="ai-proxy-password" className="block text-sm font-bold text-gray-200">AI Proxy Password (optional)</label>
+                  <input
+                    id="ai-proxy-password"
+                    type="password"
+                    value={aiProxyPassword}
+                    onChange={e => setAiProxyPassword(e.target.value)}
+                    className="mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60"
+                    placeholder="Shared password for your AI proxy"
+                    autoComplete="off"
+                  />
+                  <p className="mt-1 text-xs text-gray-300">Proxy URL: <code>{AI_PROXY_URL}</code></p>
                 </div>
                 {aiError && <p className="text-yellow-200 mt-2">{aiError}</p>}
                 {aiPrompt && (
