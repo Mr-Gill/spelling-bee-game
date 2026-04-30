@@ -280,14 +280,16 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     name: name.trim(), lives: 5, points: 5, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
   });
 
-  // Only allow known-safe protocols for image src (guards against javascript:/data: XSS from localStorage)
+  // Only allow known-safe protocols for image src (guards against javascript:/data: XSS from localStorage).
+  // SVG data URIs are excluded because inline SVG can execute JavaScript via onload handlers.
   const safeAvatarUrl = (url: string | undefined, fallback: string): string => {
     if (!url) return fallback;
     try {
       const parsed = new URL(url, window.location.href);
       const safeProtocols = ['http:', 'https:', 'blob:'];
       if (safeProtocols.includes(parsed.protocol)) return url;
-      if (parsed.protocol === 'data:' && url.startsWith('data:image/')) return url;
+      const safeDataPrefixes = ['data:image/png', 'data:image/jpeg', 'data:image/gif', 'data:image/webp'];
+      if (parsed.protocol === 'data:' && safeDataPrefixes.some(p => url.startsWith(p))) return url;
     } catch {
       // Relative path with no protocol — safe
       if (!url.includes(':')) return url;
