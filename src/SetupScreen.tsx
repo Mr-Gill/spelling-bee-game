@@ -97,6 +97,13 @@ const GITHUB_MODELS_MODEL = 'openai/gpt-4.1';
 const GITHUB_MODELS_API_VERSION = '2026-03-10';
 const AI_PROXY_URL = process.env.VITE_WORDLIST_URL || 'http://localhost:3001/wordlist';
 
+const getDefaultProxyUrl = () => {
+  if (typeof window === 'undefined') return AI_PROXY_URL;
+  const host = window.location.hostname;
+  if (host === 'mr-gill.github.io') return '';
+  return AI_PROXY_URL;
+};
+
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
   onAddCustomWords: (words: Word[]) => void;
@@ -196,6 +203,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [aiProxyPassword, setAiProxyPassword] = useState(() => {
     if (typeof window === 'undefined') return '';
     return sessionStorage.getItem('aiProxyPassword') || '';
+  });
+  const [aiProxyUrl, setAiProxyUrl] = useState(() => {
+    if (typeof window === 'undefined') return AI_PROXY_URL;
+    return sessionStorage.getItem('aiProxyUrl') || getDefaultProxyUrl();
   });
   
   // Saved game state
@@ -413,6 +424,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         const data = await res.json();
         content = String(data?.choices?.[0]?.message?.content || '');
       } else {
+        const proxyUrl = aiProxyUrl.trim();
+        if (!proxyUrl) {
+          throw new Error('PROXY_URL_MISSING');
+        }
+        sessionStorage.setItem('aiProxyUrl', proxyUrl);
+
         const proxyPassword = aiProxyPassword.trim();
         if (proxyPassword) {
           sessionStorage.setItem('aiProxyPassword', proxyPassword);
@@ -423,7 +440,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         const proxyHeaders: Record<string, string> = { 'Content-Type': 'application/json' };
         if (proxyPassword) proxyHeaders['X-AI-Password'] = proxyPassword;
 
-        const res = await fetch(AI_PROXY_URL, {
+        const res = await fetch(proxyUrl, {
           method: 'POST',
           headers: proxyHeaders,
           body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: wordCount, prompt }),
@@ -434,7 +451,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
         if (!res.ok) {
           const errorText = await res.text();
-          throw new Error(errorText || 'Request failed');
+          const trimmedError = (errorText || '').trim().slice(0, 500);
+          throw new Error(`PROXY_${res.status}:${trimmedError}`);
         }
 
         const data = await res.json();
@@ -459,8 +477,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         directTokenHint = 'GitHub Models returned 403 Forbidden. Enable Models in repository settings, and confirm org model policy allows the selected model.';
       } else if (errMessage.startsWith('GITHUB_MODELS_429')) {
         directTokenHint = 'GitHub Models returned 429 rate limit. Wait and try again, or reduce requests.';
-      } else if (errMessage.includes('AI proxy password is invalid')) {
+      } else if (errMessage === 'PROXY_URL_MISSING') {
+        directTokenHint = 'Add your AI proxy URL in AI connection settings.';
+      } else if (errMessage.startsWith('PROXY_401') || errMessage.includes('AI proxy password is invalid')) {
         directTokenHint = 'Proxy password rejected. Check the shared password configured on the proxy server.';
+      } else if (errMessage.startsWith('PROXY_404')) {
+        directTokenHint = 'Proxy URL is wrong (404). Use the full /wordlist endpoint URL.';
+      } else if (errMessage.startsWith('PROXY_500')) {
+        directTokenHint = 'Proxy is running but not configured. Check MODELS_TOKEN on the proxy service.';
       } else if (errMessage.includes('Failed to fetch')) {
         directTokenHint = 'Browser request failed. Check network, ad/privacy extensions, and proxy URL availability.';
       } else if (errMessage.includes('AbortError')) {
@@ -929,38 +953,53 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
             </div>
             <div className="mt-6">
-                <div className="flex flex-col md:flex-row gap-2">
-                    <input type="number" min={1} value={aiGrade} onChange={e => setAiGrade(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="Grade" />
-                    <input type="text" value={aiTopic} onChange={e => setAiTopic(e.target.value)} className="p-2 rounded-md bg-white/20 text-white flex-1" placeholder="Topic (optional)" />
-                    <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white w-full md:w-24" placeholder="# Words" />
+                <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_120px_auto] gap-2">
+                    <input type="text" value={aiTopic} onChange={e => setAiTopic(e.target.value)} className="p-2 rounded-md bg-white/20 text-white" placeholder="Topic (for example: cars)" />
+                    <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white" placeholder="# Words" />
                     <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
                 </div>
-                <div className="mt-3">
-                  <label htmlFor="github-models-token" className="block text-sm font-bold text-gray-200">GitHub Models Token for GitHub Pages</label>
-                  <input
-                    id="github-models-token"
-                    type="password"
-                    value={aiToken}
-                    onChange={e => setAiToken(e.target.value)}
-                    className="mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60"
-                    placeholder="Optional. Used only in this browser session."
-                    autoComplete="off"
-                  />
-                  <p className="mt-1 text-xs text-gray-300">Static GitHub Pages cannot store secrets. Leave this blank when using a password-protected AI proxy.</p>
-                </div>
-                <div className="mt-3">
-                  <label htmlFor="ai-proxy-password" className="block text-sm font-bold text-gray-200">AI Proxy Password (optional)</label>
-                  <input
-                    id="ai-proxy-password"
-                    type="password"
-                    value={aiProxyPassword}
-                    onChange={e => setAiProxyPassword(e.target.value)}
-                    className="mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60"
-                    placeholder="Shared password for your AI proxy"
-                    autoComplete="off"
-                  />
-                  <p className="mt-1 text-xs text-gray-300">Proxy URL: <code>{AI_PROXY_URL}</code></p>
-                </div>
+                <details className="mt-3 rounded-xl bg-black/20 p-3 text-sm text-gray-100">
+                  <summary className="cursor-pointer font-bold">AI connection settings</summary>
+                  <div className="mt-3 grid grid-cols-1 gap-3">
+                    <div>
+                      <label htmlFor="ai-proxy-url" className="block text-sm font-bold text-gray-200">AI Proxy URL</label>
+                      <input
+                        id="ai-proxy-url"
+                        type="url"
+                        value={aiProxyUrl}
+                        onChange={e => setAiProxyUrl(e.target.value)}
+                        className="mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60"
+                        placeholder="https://your-proxy.example.com/wordlist"
+                        autoComplete="off"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="ai-proxy-password" className="block text-sm font-bold text-gray-200">AI Proxy Password (optional)</label>
+                      <input
+                        id="ai-proxy-password"
+                        type="password"
+                        value={aiProxyPassword}
+                        onChange={e => setAiProxyPassword(e.target.value)}
+                        className="mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60"
+                        placeholder="Shared password for your AI proxy"
+                        autoComplete="off"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="github-models-token" className="block text-sm font-bold text-gray-200">GitHub Models Token (fallback)</label>
+                      <input
+                        id="github-models-token"
+                        type="password"
+                        value={aiToken}
+                        onChange={e => setAiToken(e.target.value)}
+                        className="mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60"
+                        placeholder="Optional. Browser session only."
+                        autoComplete="off"
+                      />
+                    </div>
+                  </div>
+                  <p className="mt-2 text-xs text-gray-300">Recommended: leave token blank and use proxy URL + password.</p>
+                </details>
                 {aiError && <p className="text-yellow-200 mt-2">{aiError}</p>}
                 {aiPrompt && (
                   <details className="mt-3 rounded-xl bg-black/30 p-3 text-sm text-gray-100">
