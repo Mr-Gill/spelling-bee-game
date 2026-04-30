@@ -409,6 +409,11 @@ PORT=3001
 
 Then use **Generate with AI** in the setup screen. With token field left blank, the frontend posts to `VITE_WORDLIST_URL` (default `http://localhost:3001/wordlist`) and sends the optional **AI Proxy Password** header.
 
+GitHub-only option (no proxy URL):
+1. Keep `MODELS_TOKEN` in repository secrets/variables.
+2. Run **Generate and Deploy Word List** from GitHub Actions.
+3. Refresh the GitHub Pages app after the workflow finishes.
+
 On GitHub Pages, there is no server that can safely hold a secret. Recommended setup:
 1. Host a small AI proxy with `MODELS_TOKEN` in server env.
 2. Set `AI_SHARED_PASSWORD` on that proxy.
@@ -423,7 +428,9 @@ If **Generate with AI** fails on the live site, check these in order:
 
 1. Prefer proxy mode: configure proxy env `MODELS_TOKEN` (+ optional `AI_SHARED_PASSWORD`) and set `VITE_WORDLIST_URL` in your build.
 2. In GitHub repository settings, open **Models** and enable Models for this repository.
-3. In setup, leave token blank and enter proxy password (if required).
+3. In setup, either:
+   - enter proxy URL + optional password, or
+   - use **Generate in GitHub Actions** (no proxy).
 4. Try a small generation first (for example, 10 words) to confirm auth.
 
 Common errors:

@@ -1,148 +1,160 @@
 const fs = require('fs').promises;
 const path = require('path');
+const { parseWordList } = require('../src/utils/parseWordList.js');
 
-// Static word list with educational words
-const STATIC_WORDS = [
-  {
-    "word": "education",
-    "syllables": ["ed", "u", "ca", "tion"],
-    "definition": "The process of receiving or giving systematic instruction, especially at a school or university.",
-    "origin": "Latin 'educatio', from 'educare' meaning 'to bring up, rear, educate'.",
-    "example": "The school is committed to providing quality education to all its students.",
-    "prefix": "",
-    "suffix": "-tion",
-    "pronunciation": "ej-oo-KAY-shun"
-  },
-  {
-    "word": "spelling",
-    "syllables": ["spell", "ing"],
-    "definition": "The process of writing or naming the letters of a word.",
-    "origin": "Old English 'spellian' meaning 'to tell, speak, utter'.",
-    "example": "She won first place in the school spelling competition.",
-    "prefix": "",
-    "suffix": "-ing",
-    "pronunciation": "SPEL-ing"
-  },
-  {
-    "word": "vocabulary",
-    "syllables": ["vo", "cab", "u", "lar", "y"],
-    "definition": "The body of words used in a particular language or known to a particular person.",
-    "origin": "Late Latin 'vocabularium', from Latin 'vocabulum' meaning 'name, word'.",
-    "example": "Reading regularly helps to expand your vocabulary.",
-    "prefix": "",
-    "suffix": "-ary",
-    "pronunciation": "voh-KAB-yuh-lair-ee"
-  },
-  {
-    "word": "mathematics",
-    "syllables": ["math", "e", "mat", "ics"],
-    "definition": "The abstract science of number, quantity, and space.",
-    "origin": "From Greek 'mathēmatikē' meaning 'mathematical, scientific'.",
-    "example": "She excelled in mathematics and won several awards.",
-    "prefix": "",
-    "suffix": "-ics",
-    "pronunciation": "math-uh-MAT-iks"
-  },
-  {
-    "word": "science",
-    "syllables": ["sci", "ence"],
-    "definition": "The systematic study of the structure and behavior of the physical and natural world.",
-    "origin": "From Latin 'scientia' meaning 'knowledge'.",
-    "example": "The science fair showcased many innovative student projects.",
-    "prefix": "",
-    "suffix": "-ence",
-    "pronunciation": "SY-uhns"
-  },
-  {
-    "word": "literature",
-    "syllables": ["lit", "er", "a", "ture"],
-    "definition": "Written works, especially those considered of superior or lasting artistic merit.",
-    "origin": "From Latin 'litteratura' meaning 'writing, grammar'.",
-    "example": "She studied English literature in college.",
-    "prefix": "",
-    "suffix": "-ture",
-    "pronunciation": "LIT-er-uh-cher"
-  },
-  {
-    "word": "history",
-    "syllables": ["his", "to", "ry"],
-    "definition": "The study of past events, particularly in human affairs.",
-    "origin": "From Greek 'historia' meaning 'inquiry, knowledge acquired by investigation'.",
-    "example": "We learned about ancient civilizations in history class.",
-    "prefix": "",
-    "suffix": "-story",
-    "pronunciation": "HIS-tuh-ree"
-  },
-  {
-    "word": "geography",
-    "syllables": ["ge", "og", "ra", "phy"],
-    "definition": "The study of the physical features of the earth and its atmosphere.",
-    "origin": "From Greek 'geographia' meaning 'earth description'.",
-    "example": "We're studying European geography this semester.",
-    "prefix": "geo-",
-    "suffix": "-graphy",
-    "pronunciation": "jee-OG-ruh-fee"
-  },
-  {
-    "word": "biology",
-    "syllables": ["bi", "ol", "o", "gy"],
-    "definition": "The study of living organisms, divided into many specialized fields.",
-    "origin": "From Greek 'bios' (life) + 'logia' (study of).",
-    "example": "Biology class taught us about the human body and ecosystems.",
-    "prefix": "bio-",
-    "suffix": "-logy",
-    "pronunciation": "by-OL-uh-jee"
-  },
-  {
-    "word": "chemistry",
-    "syllables": ["chem", "is", "try"],
-    "definition": "The branch of science that deals with the identification of substances.",
-    "origin": "From Greek 'khemeia' meaning 'art of alloying metals'.",
-    "example": "We conducted experiments in chemistry lab.",
-    "prefix": "",
-    "suffix": "-try",
-    "pronunciation": "KEM-uh-stree"
+const token = process.env.MODELS_TOKEN || process.env.GITHUB_MODELS_TOKEN || process.env.GITHUB_TOKEN;
+const model = process.env.GITHUB_MODELS_MODEL || 'openai/gpt-4.1';
+const endpoint =
+  process.env.GITHUB_MODELS_ENDPOINT ||
+  (process.env.GITHUB_MODELS_ORG
+    ? `https://models.github.ai/orgs/${process.env.GITHUB_MODELS_ORG}/inference/chat/completions`
+    : 'https://models.github.ai/inference/chat/completions');
+const apiVersion = process.env.GITHUB_MODELS_API_VERSION || '2026-03-10';
+
+const stripCodeFence = (content) =>
+  String(content || '')
+    .trim()
+    .replace(/^```(?:csv|json|tsv)?\s*/i, '')
+    .replace(/\s*```$/i, '')
+    .trim();
+
+const clampCount = (value) => {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 10;
+  if (n < 1) return 1;
+  if (n > 50) return 50;
+  return Math.floor(n);
+};
+
+const buildAIWordListPrompt = (topic, count) => `ROLE
+Generate a CSV for an AU Years 7-8 spelling bee on TOPIC. Your voice is a witty, knowledgeable lexicographer making a fun but challenging list.
+
+INPUT
+TOPIC (string) and N (int). If N invalid/missing -> N=10.
+
+OUTPUT (CSV ONLY)
+
+One CSV. No preface, no code fences, no blank lines.
+
+Header EXACTLY: "word","syllables","definition","origin","example","prefix","suffix","pronunciation"
+
+Then exactly N rows.
+
+ASCII only; straight quotes (").
+
+Quote every field.
+
+The syllables field is a JSON string of a string array.
+
+CORRECT: "[\\"har\\",\\"mo\\",\\"ny\\"]"
+
+CONTENT
+
+AU/UK spelling. At least 70% headwords clearly fit TOPIC (others closely related).
+
+Difficulty: about 30% 1-2 syllables (foundational), about 50% 2-3 (core), about 20% 4+ (stretch).
+
+Minima when N>=10: at least 3 one-syllable; at least 3 with 4+ syllables; at least 3 with prefixes; at least 3 with suffixes.
+
+Definition: 10-18 words; witty, accurate, student-friendly.
+
+Origin: Real and specific (e.g., Latin; Greek; Old French via Latin). No jokes or speculation.
+
+Example: 12-25 words; exactly one sentence; vividly funny or gently surreal.
+
+Prefix/Suffix: Include only productive, meaningful derivational affixes.
+
+Pronunciation: Hyphenated with PRIMARY stress in CAPS (e.g., par-muh-ZAN, mot-suh-REL-uh).
+
+One-syllable exception: write the syllable in CAPS (e.g., TRAM).
+
+VALIDATION (silent)
+Before printing, fix any violations and output only the valid CSV.
+
+TOPIC: ${topic}
+N: ${count}`;
+
+async function requestCSV(prompt) {
+  if (!token) {
+    throw new Error('MODELS_TOKEN (or GITHUB_MODELS_TOKEN / GITHUB_TOKEN) is not configured');
   }
-];
 
-async function generateWordList(topic = 'general', count = 5) {
+  const response = await fetch(`${endpoint}?api-version=${apiVersion}`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/vnd.github+json',
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'X-GitHub-Api-Version': apiVersion,
+    },
+    body: JSON.stringify({
+      model,
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You generate classroom spelling bee word lists. Return only the requested CSV text, with no markdown fences or commentary.',
+        },
+        { role: 'user', content: prompt },
+      ],
+      temperature: 0.8,
+      top_p: 1,
+      max_tokens: 3000,
+    }),
+  });
+
+  if (!response.ok) {
+    const details = await response.text();
+    throw new Error(`GitHub Models request failed: ${response.status} ${details}`);
+  }
+
+  const data = await response.json();
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content || !String(content).trim()) {
+    throw new Error('GitHub Models returned an empty response');
+  }
+
+  return stripCodeFence(content);
+}
+
+async function generateWordList(topicInput = 'general classroom vocabulary', countInput = 10) {
+  const topic = String(topicInput || 'general classroom vocabulary').trim() || 'general classroom vocabulary';
+  const count = clampCount(countInput);
+  const prompt = buildAIWordListPrompt(topic, count);
+
+  let lastError = null;
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    try {
+      const csv = await requestCSV(prompt);
+      const words = parseWordList(csv);
+      if (!Array.isArray(words) || words.length === 0) {
+        throw new Error('Parsed list is empty');
+      }
+      return words;
+    } catch (error) {
+      lastError = error;
+      console.error(`Attempt ${attempt} failed:`, error.message || error);
+    }
+  }
+
+  throw lastError || new Error('Failed to generate word list');
+}
+
+async function main() {
+  const topic = process.argv[2] || 'general classroom vocabulary';
+  const count = process.argv[3] ? parseInt(process.argv[3], 10) : 10;
+
   try {
-    // Filter words by topic if specified
-    let words = STATIC_WORDS;
-    if (topic && topic !== 'general') {
-      const topicLower = topic.toLowerCase();
-      words = STATIC_WORDS.filter(word => 
-        word.word.toLowerCase().includes(topicLower) ||
-        word.definition.toLowerCase().includes(topicLower) ||
-        word.origin.toLowerCase().includes(topicLower)
-      );
-    }
-    
-    // Limit the number of words
-    words = words.slice(0, Math.min(count, words.length));
-    
-    // If we don't have enough words, duplicate some to reach the requested count
-    while (words.length < count) {
-      words = words.concat(STATIC_WORDS.slice(0, Math.min(count - words.length, STATIC_WORDS.length)));
-    }
-
-    // Save to file
-    await fs.writeFile(
-      path.join(process.cwd(), 'wordlist.json'),
-      JSON.stringify(words, null, 2)
-    );
-    
-    console.log(`Successfully generated ${words.length} words`);
-    return words;
+    console.log(`Generating ${clampCount(count)} words about "${topic}" with model ${model}`);
+    const words = await generateWordList(topic, count);
+    await fs.writeFile(path.join(process.cwd(), 'wordlist.json'), JSON.stringify(words, null, 2));
+    console.log(`Successfully generated ${words.length} words to wordlist.json`);
   } catch (error) {
-    console.error('Error generating word list:', error);
+    console.error('Error generating word list:', error.message || error);
     process.exit(1);
   }
 }
 
-// Get command line arguments
-const topic = process.argv[2] || 'general';
-const count = parseInt(process.argv[3] || '10', 10);
-
-// Generate the word list
-generateWordList(topic, count);
+if (require.main === module) {
+  main();
+}

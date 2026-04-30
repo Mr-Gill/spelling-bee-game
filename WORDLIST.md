@@ -57,12 +57,19 @@ On GitHub Pages, the app cannot use repository secrets because it is static. Rec
 2. Set `VITE_WORDLIST_URL` to that proxy endpoint at build time.
 3. Use the setup screen's **AI Proxy Password** field (if enabled on proxy).
 
+GitHub-only pattern (no proxy URL):
+1. Set `MODELS_TOKEN` in repository secrets/variables.
+2. Run the **Generate and Deploy Word List** workflow from the Actions tab.
+3. Refresh the live app after workflow deploy completes.
+
 Fallback: paste a fine-grained GitHub token with `models: read` into the setup screen's **GitHub Models Token** field. It is stored only in `sessionStorage` for the current browser session.
 
 Quick setup:
 1. Enable **Models** in the repository settings.
-2. Configure proxy env token (`MODELS_TOKEN`) and optional proxy password (`AI_SHARED_PASSWORD`).
-3. Set `VITE_WORDLIST_URL` to proxy endpoint, deploy, then generate a small list first (10 words).
+2. Choose one:
+   - Proxy mode: configure `MODELS_TOKEN` and optional `AI_SHARED_PASSWORD`, then set `VITE_WORDLIST_URL`.
+   - GitHub-only mode: use Actions workflow generator (no proxy URL).
+3. Generate a small list first (10 words).
 
 If it fails:
 - `401`: token invalid/missing `models: read`, or proxy password invalid.

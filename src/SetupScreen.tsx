@@ -96,6 +96,7 @@ const GITHUB_MODELS_ENDPOINT = 'https://models.github.ai/inference/chat/completi
 const GITHUB_MODELS_MODEL = 'openai/gpt-4.1';
 const GITHUB_MODELS_API_VERSION = '2026-03-10';
 const AI_PROXY_URL = process.env.VITE_WORDLIST_URL || 'http://localhost:3001/wordlist';
+const GITHUB_WORDLIST_WORKFLOW_URL = 'https://github.com/Mr-Gill/spelling-bee-game/actions/workflows/generate-wordlist.yml';
 
 const getDefaultProxyUrl = () => {
   if (typeof window === 'undefined') return AI_PROXY_URL;
@@ -426,7 +427,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       } else {
         const proxyUrl = aiProxyUrl.trim();
         if (!proxyUrl) {
-          throw new Error('PROXY_URL_MISSING');
+          if (typeof window !== 'undefined') {
+            window.open(GITHUB_WORDLIST_WORKFLOW_URL, '_blank', 'noopener,noreferrer');
+          }
+          throw new Error('PROXY_URL_MISSING_WORKFLOW_OPENED');
         }
         sessionStorage.setItem('aiProxyUrl', proxyUrl);
 
@@ -479,6 +483,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         directTokenHint = 'GitHub Models returned 429 rate limit. Wait and try again, or reduce requests.';
       } else if (errMessage === 'PROXY_URL_MISSING') {
         directTokenHint = 'Add your AI proxy URL in AI connection settings.';
+      } else if (errMessage === 'PROXY_URL_MISSING_WORKFLOW_OPENED') {
+        directTokenHint = 'No proxy URL set. Opened GitHub Actions workflow. Run it there, then refresh this page after deploy finishes.';
       } else if (errMessage.startsWith('PROXY_401') || errMessage.includes('AI proxy password is invalid')) {
         directTokenHint = 'Proxy password rejected. Check the shared password configured on the proxy server.';
       } else if (errMessage.startsWith('PROXY_404')) {
@@ -957,6 +963,17 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                     <input type="text" value={aiTopic} onChange={e => setAiTopic(e.target.value)} className="p-2 rounded-md bg-white/20 text-white" placeholder="Topic (for example: cars)" />
                     <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white" placeholder="# Words" />
                     <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
+                </div>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-300">
+                  <a
+                    href={GITHUB_WORDLIST_WORKFLOW_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="rounded bg-white/20 px-2 py-1 font-bold text-white hover:bg-white/30"
+                  >
+                    Generate in GitHub Actions
+                  </a>
+                  <span>Use this when you do not have a proxy URL.</span>
                 </div>
                 <details className="mt-3 rounded-xl bg-black/20 p-3 text-sm text-gray-100">
                   <summary className="cursor-pointer font-bold">AI connection settings</summary>
