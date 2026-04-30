@@ -410,6 +410,21 @@ Then use **Generate with AI** in the setup screen. The frontend posts to `http:/
 
 On GitHub Pages, there is no server that can safely hold a secret. To generate directly from the static page, paste a fine-grained GitHub token with `models: read` into the **GitHub Models Token** field in setup. The token is kept only in browser `sessionStorage` and is not committed or built into the app.
 
+### GitHub Pages AI Checklist
+
+If **Generate with AI** fails on the live site, check these in order:
+
+1. In GitHub repository settings, open **Models** and enable Models for this repository.
+2. Create a fine-grained token with **models: read** permission.
+3. Paste the token into **GitHub Models Token for GitHub Pages** in setup.
+4. Try a small generation first (for example, 10 words) to confirm auth.
+
+Common errors:
+
+- `401 Unauthorized`: token is invalid or missing `models: read`.
+- `403 Forbidden`: Models is not enabled for the repo, or org policy blocks the selected model.
+- `429`: rate limit reached; wait and retry.
+
 <div align="center">
 
 **Built with ❤️ for educators by educators**

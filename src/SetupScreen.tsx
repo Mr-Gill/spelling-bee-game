@@ -401,7 +401,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
 
         if (!res.ok) {
           const errorText = await res.text();
-          throw new Error(errorText || `GitHub Models request failed: ${res.status}`);
+          const trimmedError = (errorText || '').trim().slice(0, 500);
+          throw new Error(`GITHUB_MODELS_${res.status}:${trimmedError}`);
         }
 
         const data = await res.json();
@@ -432,9 +433,23 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       setCustomWordListText('');
       setAiError(`Generated ${generatedWords.length} words. Total words: ${parsedCustomWords.length + generatedWords.length}`);
     } catch (err) {
-      const directTokenHint = aiToken.trim()
-        ? 'The GitHub Models request failed. Check that the token has models: read permission and that GitHub allows this browser request.'
+      const errMessage = err instanceof Error ? err.message : String(err || '');
+      let directTokenHint = aiToken.trim()
+        ? 'The GitHub Models request failed.'
         : 'On GitHub Pages, paste a GitHub Models token for this session, or run the local AI server.';
+
+      if (errMessage.startsWith('GITHUB_MODELS_401')) {
+        directTokenHint = 'GitHub Models returned 401 Unauthorized. Use a fresh token with models: read permission.';
+      } else if (errMessage.startsWith('GITHUB_MODELS_403')) {
+        directTokenHint = 'GitHub Models returned 403 Forbidden. Enable Models in repository settings, and confirm org model policy allows the selected model.';
+      } else if (errMessage.startsWith('GITHUB_MODELS_429')) {
+        directTokenHint = 'GitHub Models returned 429 rate limit. Wait and try again, or reduce requests.';
+      } else if (errMessage.includes('Failed to fetch')) {
+        directTokenHint = 'Browser request failed. Check network, ad/privacy extensions, and that GitHub Models is reachable from this browser.';
+      } else if (errMessage.includes('AbortError')) {
+        directTokenHint = 'Request timed out after 30 seconds. Try again or reduce requested word count.';
+      }
+
       try {
         await navigator.clipboard?.writeText(prompt);
         setAiError(`${directTokenHint} I copied the exact word-list prompt so you can paste AI CSV output into the box above.`);

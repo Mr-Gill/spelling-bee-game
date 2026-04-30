@@ -46,6 +46,16 @@ The token needs the `models: read` permission. The server listens on `http://loc
 
 On GitHub Pages, the app cannot use repository secrets because it is a static site. Paste a fine-grained GitHub token with `models: read` into the setup screen's **GitHub Models Token** field to generate directly from the browser. The token is stored only in `sessionStorage` for the current browser session.
 
+Quick setup:
+1. Enable **Models** in the repository settings.
+2. Create a fine-grained token with `models: read`.
+3. Paste the token into setup and generate a small list first (10 words).
+
+If it fails:
+- `401`: token invalid or missing `models: read`.
+- `403`: repository/org Models access not enabled for the selected model.
+- `429`: rate limit reached; wait and retry.
+
 Optional environment variables:
 
 ```bash
