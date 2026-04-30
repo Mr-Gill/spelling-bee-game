@@ -720,7 +720,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         aria-label="Hidden input for keyboard capture"
       />
       {toast && (
-        <div className="fixed top-4 right-4 bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-white px-6 py-3 rounded-2xl shadow-2xl z-50 animate-bounce-in font-bold">
+        <div className="fixed top-4 right-4 bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-gray-900 px-6 py-3 rounded-2xl shadow-2xl z-50 animate-bounce-in font-bold">
           🎉 {toast}
         </div>
       )}
@@ -776,7 +776,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       {feedback.message && (
         <div className={`fixed top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-black px-8 py-4 rounded-3xl z-50 animate-bounce-in shadow-2xl ${
           feedback.type === 'success' 
-            ? 'bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-white' 
+            ? 'bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-gray-900' 
             : feedback.type === 'error' 
             ? 'bg-gradient-to-r from-kahoot-red-500 to-kahoot-red-600 text-white animate-shake' 
             : 'bg-gradient-to-r from-kahoot-blue-500 to-kahoot-blue-600 text-white'
