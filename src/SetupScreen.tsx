@@ -766,15 +766,17 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           <div className="flex flex-col md:flex-row justify-center gap-6">
             <button 
               onClick={() => setGameMode('team')} 
-              className={`team-selector ${gameMode === 'team' ? 'game-mode-active' : ''} animate-glow`}
+              className={`team-selector ${gameMode === 'team' ? 'game-mode-active' : ''} animate-glow flex flex-col items-center gap-1`}
             >
-              👥 TEAM BATTLE
+              <span>👥 TEAM BATTLE</span>
+              <span className="text-xs font-normal normal-case opacity-80 max-w-48">Teams compete and steal words from each other — 10 shared lives per team</span>
             </button>
             <button 
               onClick={() => setGameMode('individual')} 
-              className={`individual-selector ${gameMode === 'individual' ? 'game-mode-active' : ''} animate-glow`}
+              className={`individual-selector ${gameMode === 'individual' ? 'game-mode-active' : ''} animate-glow flex flex-col items-center gap-1`}
             >
-              🧑‍🎓 SOLO CHALLENGE
+              <span>🧑‍🎓 SOLO CHALLENGE</span>
+              <span className="text-xs font-normal normal-case opacity-80 max-w-48">Each student spells independently — 5 lives each, own pace</span>
             </button>
           </div>
         </div>
