@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
+import CountdownScreen from './CountdownScreen';
 import LeaderboardScreen from './LeaderboardScreen';
 import SetupScreen from './SetupScreen';
 import GameScreen from './GameScreen';
@@ -36,6 +37,7 @@ const SpellingBeeGame = () => {
 
   const [gameState, setGameState] = useState('setup');
   const [gameConfig, setGameConfig] = useState<GameConfig | null>(null);
+  const [pendingGameConfig, setPendingGameConfig] = useState<GameConfig | null>(null);
   const [gameResults, setGameResults] = useState<any>(null);
   const [customWords, setCustomWords] = useState<GameConfig['wordDatabase']>({ easy: [], medium: [], tricky: [] });
   const [wordDatabase, setWordDatabase] = useState<GameConfig['wordDatabase']>({ easy: [], medium: [], tricky: [] });
@@ -134,12 +136,12 @@ const SpellingBeeGame = () => {
         tricky: [...wordDatabase.tricky, ...customWords.tricky],
       };
     }
-    setGameConfig({ ...config, wordDatabase: finalWordDatabase });
+    setPendingGameConfig({ ...config, wordDatabase: finalWordDatabase });
     setSoundEnabled(config.soundEnabled);
     setMusicStyle(config.musicStyle);
     setMusicVolume(config.musicVolume);
     setIsMusicPlaying(true);
-    setGameState('playing');
+    setGameState('countdown');
   };
 
   const handleEndGame = (results: any) => {
@@ -248,6 +250,17 @@ const SpellingBeeGame = () => {
         onViewShop={() => handleViewShop()}
         onStartWarmup={handleStartWarmup}
         wordListsReady={wordListsReady}
+      />
+    );
+  }
+  if (gameState === 'countdown') {
+    return (
+      <CountdownScreen
+        onDone={() => {
+          setGameConfig(pendingGameConfig);
+          setPendingGameConfig(null);
+          setGameState('playing');
+        }}
       />
     );
   }

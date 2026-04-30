@@ -718,7 +718,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         <div className="floating-particle top-1/2 left-1/2 delay-500"></div>
       </div>
       
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto relative z-10 pb-28">
         {/* Header with excitement */}
         <div className="text-center mb-12 animate-bounce-in">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -730,11 +730,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
           </p>
         </div>
 
-        <div className="game-card mb-8 animate-scale-in delay-100">
-          <h2 className="text-3xl font-black mb-6 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-green-400 bg-clip-text text-transparent">
-            Setup Presets 💾
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto_auto_auto] gap-3 items-end">
+        <details className="game-card mb-8 animate-scale-in delay-100">
+          <summary className="cursor-pointer text-2xl font-black select-none">💾 Load / Save Setup</summary>
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-[1fr_1fr_auto_auto_auto] gap-3 items-end">
             <div>
               <label htmlFor="preset-name" className="block mb-2 font-bold">Preset Name</label>
               <input
@@ -771,7 +769,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             </button>
           </div>
           {presetMessage && <p className="mt-3 text-sm text-yellow-200" role="status">{presetMessage}</p>}
-        </div>
+        </details>
 
         {/* Game Mode Selection - Kahoot Style */}
         <div className="game-card mb-8 animate-scale-in delay-200">
@@ -792,6 +790,16 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
             >
               <span>🧑‍🎓 SOLO CHALLENGE</span>
               <span className="text-xs font-normal normal-case opacity-80 max-w-48">Each student spells independently — 5 lives each, own pace</span>
+            </button>
+          </div>
+          {/* Quick Game — no roster required */}
+          <div className="mt-6 pt-5 border-t border-white/20 text-center">
+            <p className="text-white/70 text-sm mb-3">No roster? Jump straight in with random words:</p>
+            <button
+              onClick={() => handleStart(true)}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-kahoot-red-400 to-kahoot-red-600 hover:from-kahoot-red-500 hover:to-kahoot-red-700 text-white px-6 py-3 rounded-2xl text-xl font-black shadow-lg transform transition-all duration-300 hover:scale-105 border-2 border-white/20 animate-glow"
+            >
+              ⚡ Quick Game — random words, no setup needed
             </button>
           </div>
         </div>
