@@ -22,6 +22,11 @@ import { getDueReviewWords } from './utils/reviewQueue';
 // Import types
 import type { GameConfig, Word } from './types';
 
+/** Default music style used when no value is stored in localStorage. */
+const DEFAULT_MUSIC_STYLE = 'Funk';
+/** Default music volume (0–1). */
+const DEFAULT_MUSIC_VOLUME = 0.5;
+
 // --- Main App Component ---
 const SpellingBeeGame = () => {
   if (typeof window !== 'undefined') {
@@ -39,10 +44,10 @@ const SpellingBeeGame = () => {
   const [gameResults, setGameResults] = useState<any>(null);
   const [customWords, setCustomWords] = useState<GameConfig['wordDatabase']>({ easy: [], medium: [], tricky: [] });
   const [wordDatabase, setWordDatabase] = useState<GameConfig['wordDatabase']>({ easy: [], medium: [], tricky: [] });
-  const [musicStyle, setMusicStyle] = useState(() => localStorage.getItem('musicStyle') ?? 'Funk');
+  const [musicStyle, setMusicStyle] = useState(() => localStorage.getItem('musicStyle') ?? DEFAULT_MUSIC_STYLE);
   const [musicVolume, setMusicVolume] = useState(() => {
-    const stored = parseFloat(localStorage.getItem('musicVolume') ?? '0.5');
-    return Number.isFinite(stored) ? stored : 0.5;
+    const stored = parseFloat(localStorage.getItem('musicVolume') ?? String(DEFAULT_MUSIC_VOLUME));
+    return Number.isFinite(stored) ? stored : DEFAULT_MUSIC_VOLUME;
   });
   const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem('soundEnabled') !== 'false');
   const [isMusicPlaying, setIsMusicPlaying] = useState(true);

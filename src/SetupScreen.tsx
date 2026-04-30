@@ -255,15 +255,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   useEffect(() => {
     localStorage.setItem('soundEnabled', String(soundEnabled));
     onSoundEnabledChange?.(soundEnabled);
-  }, [soundEnabled]);
+  }, [soundEnabled, onSoundEnabledChange]);
   useEffect(() => {
     localStorage.setItem('musicStyle', musicStyle);
     onMusicStyleChange?.(musicStyle);
-  }, [musicStyle]);
+  }, [musicStyle, onMusicStyleChange]);
   useEffect(() => {
     localStorage.setItem('musicVolume', String(musicVolume));
     onMusicVolumeChange?.(musicVolume);
-  }, [musicVolume]);
+  }, [musicVolume, onMusicVolumeChange]);
 
   // Check for saved games on component mount
   useEffect(() => {
