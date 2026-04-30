@@ -300,6 +300,10 @@ const SpellingBeeGame = () => {
         config={gameConfig}
         onRestart={handleRestart}
         onViewLeaderboard={handleViewLeaderboard}
+        isMusicPlaying={isMusicPlaying}
+        onToggleMusicPlaying={handleToggleMusicPlaying}
+        soundEnabled={soundEnabled}
+        onSoundEnabledChange={handleSoundEnabledChange}
       />
     );
   }
