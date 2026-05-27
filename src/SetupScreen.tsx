@@ -291,6 +291,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
 
   const handleAIWordsGenerated = (words: Word[]) => {
+    setCustomWordListText('');
     setParsedCustomWords(prev => [...prev, ...words]);
     setCustomWordsInfo(`✅ ${words.length} word${words.length !== 1 ? 's' : ''} loaded and ready.`);
   };

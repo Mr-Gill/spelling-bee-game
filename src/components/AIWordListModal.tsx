@@ -79,9 +79,7 @@ type ModalStep = 'form' | 'result';
 export default function AIWordListModal({ onClose, onWordsGenerated }: AIWordListModalProps) {
   const [topic, setTopic] = useState('');
   const [count, setCount] = useState(10);
-  const [token, setToken] = useState(() => {
-    try { return sessionStorage.getItem('githubModelsToken') || ''; } catch { return ''; }
-  });
+  const [token, setToken] = useState('');
   const [proxyUrl, setProxyUrl] = useState(() => {
     try { return sessionStorage.getItem('aiProxyUrl') || ''; } catch { return ''; }
   });
@@ -116,7 +114,6 @@ export default function AIWordListModal({ onClose, onWordsGenerated }: AIWordLis
       const trimmedToken = token.trim();
 
       if (trimmedToken) {
-        sessionStorage.setItem('githubModelsToken', trimmedToken);
         const res = await fetch(
           `${GITHUB_MODELS_ENDPOINT}?api-version=${GITHUB_MODELS_API_VERSION}`,
           {
@@ -216,9 +213,7 @@ export default function AIWordListModal({ onClose, onWordsGenerated }: AIWordLis
       } else if (message.startsWith('GITHUB_MODELS_429')) {
         setError('Rate limit reached (429). Please wait a few minutes and try again.');
       } else if (message === 'NO_TOKEN_NO_PROXY') {
-        setError(
-          'Please enter a GitHub Models token above to generate word lists directly in your browser.'
-        );
+        setError('Please enter a GitHub Models token or configure a proxy URL.');
       } else if (message.startsWith('PROXY_401')) {
         setError('Proxy password rejected. Check the shared password on your proxy server.');
       } else if (message.startsWith('PROXY_404')) {
@@ -330,8 +325,7 @@ export default function AIWordListModal({ onClose, onWordsGenerated }: AIWordLis
                   htmlFor="ai-token-input"
                   className="block text-sm font-semibold text-gray-700 mb-1"
                 >
-                  GitHub Models Token{' '}
-                  <span className="text-red-500" aria-hidden="true">*</span>
+                  GitHub Models Token
                 </label>
                 <input
                   id="ai-token-input"
@@ -343,7 +337,7 @@ export default function AIWordListModal({ onClose, onWordsGenerated }: AIWordLis
                   autoComplete="off"
                 />
                 <p className="mt-1.5 text-xs text-gray-500">
-                  A free GitHub personal access token is required.{' '}
+                  Add a GitHub personal access token, or leave this blank and use a proxy URL below.{' '}
                   <a
                     href={GITHUB_PAT_URL}
                     target="_blank"
@@ -352,7 +346,7 @@ export default function AIWordListModal({ onClose, onWordsGenerated }: AIWordLis
                   >
                     Create one here <ExternalLink className="w-3 h-3" aria-hidden="true" />
                   </a>
-                  . Stored in this browser tab only.
+                  .
                 </p>
               </div>
 
@@ -407,7 +401,7 @@ export default function AIWordListModal({ onClose, onWordsGenerated }: AIWordLis
                       />
                     </div>
                     <p className="text-xs text-gray-500">
-                      If a proxy URL is set, it will be used instead of the direct token.
+                      Proxy is used when no direct token is provided.
                     </p>
                   </div>
                 )}
