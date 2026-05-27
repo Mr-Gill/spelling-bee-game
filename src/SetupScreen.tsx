@@ -230,6 +230,23 @@ const SetupScreen: React.FC<SetupScreenProps> = ({
     name: name.trim(), lives: 5, points: 5, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, score: 0, maxScore: 0, avatar: getRandomAvatar()
   });
 
+  // Only allow known-safe protocols for image src (guards against javascript:/data: XSS from localStorage).
+  // SVG data URIs are excluded because inline SVG can execute JavaScript via onload handlers.
+  const safeAvatarUrl = (url: string | undefined, fallback: string): string => {
+    if (!url) return fallback;
+    try {
+      const parsed = new URL(url, window.location.href);
+      const safeProtocols = ['http:', 'https:', 'blob:'];
+      if (safeProtocols.includes(parsed.protocol)) return url;
+      const safeDataPrefixes = ['data:image/png', 'data:image/jpeg', 'data:image/gif', 'data:image/webp'];
+      if (parsed.protocol === 'data:' && safeDataPrefixes.some(p => url.startsWith(p))) return url;
+    } catch {
+      // Relative path with no protocol — safe
+      if (!url.includes(':')) return url;
+    }
+    return fallback;
+  };
+
   const addTeam = () => updateTeams([...teams, createParticipant('', 0)]);
   const removeTeam = (index: number) => updateTeams(teams.filter((_, i) => i !== index));
   const updateTeamName = (index: number, name: string) => {
@@ -301,6 +318,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({
         return participant;
       });
     updateTeams(newTeams);
+    updateStudents([]);
     setRandomizeError('');
   };
   
@@ -536,7 +554,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({
         <div className="floating-particle top-1/2 left-1/2 delay-500"></div>
       </div>
       
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto relative z-10 pb-28">
         {/* Header with excitement */}
         <div className="text-center mb-12 animate-bounce-in">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -548,11 +566,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({
           </p>
         </div>
 
-        <div className="game-card mb-8 animate-scale-in delay-100">
-          <h2 className="text-3xl font-black mb-6 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-green-400 bg-clip-text text-transparent">
-            Setup Presets 💾
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto_auto_auto] gap-3 items-end">
+        <details className="game-card mb-8 animate-scale-in delay-100">
+          <summary className="cursor-pointer text-2xl font-black select-none">💾 Load / Save Setup</summary>
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-[1fr_1fr_auto_auto_auto] gap-3 items-end">
             <div>
               <label htmlFor="preset-name" className="block mb-2 font-bold">Preset Name</label>
               <input
@@ -589,7 +605,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({
             </button>
           </div>
           {presetMessage && <p className="mt-3 text-sm text-yellow-200" role="status">{presetMessage}</p>}
-        </div>
+        </details>
 
         {/* Game Mode Selection - Kahoot Style */}
         <div className="game-card mb-8 animate-scale-in delay-200">
@@ -599,15 +615,27 @@ const SetupScreen: React.FC<SetupScreenProps> = ({
           <div className="flex flex-col md:flex-row justify-center gap-6">
             <button 
               onClick={() => setGameMode('team')} 
-              className={`team-selector ${gameMode === 'team' ? 'game-mode-active' : ''} animate-glow`}
+              className={`team-selector ${gameMode === 'team' ? 'game-mode-active' : ''} animate-glow flex flex-col items-center gap-1`}
             >
-              👥 TEAM BATTLE
+              <span>👥 TEAM BATTLE</span>
+              <span className="text-xs font-normal normal-case opacity-80 max-w-48">Teams compete and steal words from each other — 10 shared lives per team</span>
             </button>
             <button 
               onClick={() => setGameMode('individual')} 
-              className={`individual-selector ${gameMode === 'individual' ? 'game-mode-active' : ''} animate-glow`}
+              className={`individual-selector ${gameMode === 'individual' ? 'game-mode-active' : ''} animate-glow flex flex-col items-center gap-1`}
             >
-              🧑‍🎓 SOLO CHALLENGE
+              <span>🧑‍🎓 SOLO CHALLENGE</span>
+              <span className="text-xs font-normal normal-case opacity-80 max-w-48">Each student spells independently — 5 lives each, own pace</span>
+            </button>
+          </div>
+          {/* Quick Game — no roster required */}
+          <div className="mt-6 pt-5 border-t border-white/20 text-center">
+            <p className="text-white/70 text-sm mb-3">No roster? Jump straight in with random words:</p>
+            <button
+              onClick={() => handleStart(true)}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-kahoot-red-400 to-kahoot-red-600 hover:from-kahoot-red-500 hover:to-kahoot-red-700 text-white px-6 py-3 rounded-2xl text-xl font-black shadow-lg transform transition-all duration-300 hover:scale-105 border-2 border-white/20 animate-glow"
+            >
+              ⚡ Quick Game — random words, no setup needed
             </button>
           </div>
         </div>
@@ -619,39 +647,114 @@ const SetupScreen: React.FC<SetupScreenProps> = ({
           </h2>
           {gameMode === 'team' ? (
             <>
-              {teams.map((team, index) => (
-                <div key={index} className="flex flex-wrap items-center gap-4 mb-4 p-4 bg-white/10 rounded-2xl border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
-                  <img src={team.avatar || avatars[0]} alt="avatar" className="w-12 h-12 rounded-full border-2 border-kahoot-yellow-400 shadow-lg animate-float" />
-                  <input 
-                    type="text" 
-                    value={team.name} 
-                    onChange={e => updateTeamName(index, e.target.value)} 
-                    placeholder={`Team ${index + 1} Name`} 
-                    className="min-w-48 flex-grow p-3 rounded-xl bg-white/20 text-white placeholder-white/70 font-semibold text-lg border border-white/30 focus:border-kahoot-yellow-400 focus:ring-2 focus:ring-kahoot-yellow-300 transition-all duration-200" 
+              {/* Step 1: Import class list */}
+              <div className="mb-6 p-4 bg-white/10 rounded-2xl border border-white/20">
+                <h3 className="text-lg font-bold mb-3 text-yellow-300">📋 Step 1: Import Class List <span className="text-white/60 font-normal normal-case text-sm">(optional — paste names to auto-generate teams)</span></h3>
+                <div className="flex gap-4 mb-3">
+                  <input
+                    type="text"
+                    value={studentName}
+                    onChange={e => setStudentName(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && addStudent()}
+                    className="flex-grow p-2 rounded-md bg-white/20 text-white"
+                    placeholder="Add student name"
                   />
-                  {teams.length > 1 && (
-                    <button 
-                      onClick={() => removeTeam(index)} 
-                      className="px-4 py-2 bg-gradient-to-r from-kahoot-red-500 to-kahoot-red-600 hover:from-kahoot-red-600 hover:to-kahoot-red-700 text-white font-bold rounded-xl transition-all duration-200 transform hover:scale-105"
-                    >
-                      Remove
-                    </button>
-                  )}
-                  {team.roster && team.roster.length > 0 && (
-                    <div className="min-w-0 flex-1 text-sm text-white/75 md:max-w-md">
-                      <div className="truncate">
-                        {team.roster.join(', ')}
-                      </div>
-                    </div>
-                  )}
+                  <button onClick={addStudent} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Add</button>
                 </div>
-              ))}
-              <button 
-                onClick={addTeam} 
-                className="mt-4 bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 hover:from-kahoot-green-600 hover:to-kahoot-green-700 text-white font-bold px-6 py-3 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg"
-              >
-                ➕ Add Team
-              </button>
+                <div className="mb-3">
+                  <textarea
+                    value={bulkStudentText}
+                    onChange={e => setBulkStudentText(e.target.value)}
+                    className="w-full p-2 rounded-md bg-white/20 text-white mb-2"
+                    placeholder="Or paste a full class list — one name per line, or comma-separated"
+                    rows={3}
+                  />
+                  <button onClick={addBulkStudents} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold">Import Names</button>
+                  {bulkStudentError && <p className="text-red-300 mt-2">{bulkStudentError}</p>}
+                </div>
+                {students.length > 0 && (
+                  <>
+                    <p className="text-white/70 text-sm mb-2">{students.length} student{students.length !== 1 ? 's' : ''} imported</p>
+                    <div className="max-h-40 overflow-y-auto space-y-1 mb-3">
+                      {students.map((student, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <img src={safeAvatarUrl(student.avatar, avatars[0])} alt="avatar" className="w-7 h-7 rounded-full" />
+                          <input
+                            type="text"
+                            value={student.name}
+                            onChange={e => updateStudentName(index, e.target.value)}
+                            placeholder="Student name"
+                            className="flex-grow p-1.5 rounded-md bg-white/20 text-white text-sm"
+                          />
+                          <button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded text-sm">✕</button>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+                <div>
+                  <h4 className="font-bold mb-2 text-white/90">🎲 Generate Teams from List</h4>
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <input
+                      type="number"
+                      min={1}
+                      value={randomTeamCount || ''}
+                      onChange={e => { setRandomTeamCount(Number(e.target.value)); setRandomTeamSize(0); }}
+                      placeholder="Number of teams"
+                      className="p-2 rounded-md bg-white/20 text-white flex-grow"
+                    />
+                    <span className="text-white/70">or</span>
+                    <input
+                      type="number"
+                      min={1}
+                      value={randomTeamSize || ''}
+                      onChange={e => { setRandomTeamSize(Number(e.target.value)); setRandomTeamCount(0); }}
+                      placeholder="Team size"
+                      className="p-2 rounded-md bg-white/20 text-white flex-grow"
+                    />
+                    <button onClick={randomizeTeams} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded font-bold">Generate Teams</button>
+                  </div>
+                  {randomizeError && <p className="text-red-300">{randomizeError}</p>}
+                </div>
+              </div>
+
+              {/* Step 2: Team editor */}
+              <div>
+                <h3 className="text-lg font-bold mb-3 text-yellow-300">✏️ Step 2: Name Your Teams <span className="text-white/60 font-normal normal-case text-sm">(edit names, or set up teams manually)</span></h3>
+                {teams.map((team, index) => (
+                  <div key={index} className="flex flex-wrap items-center gap-4 mb-4 p-4 bg-white/10 rounded-2xl border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
+                    <img src={safeAvatarUrl(team.avatar, avatars[0])} alt="avatar" className="w-12 h-12 rounded-full border-2 border-kahoot-yellow-400 shadow-lg animate-float" />
+                    <input 
+                      type="text" 
+                      value={team.name} 
+                      onChange={e => updateTeamName(index, e.target.value)} 
+                      placeholder={`Team ${index + 1} Name`} 
+                      className="min-w-48 flex-grow p-3 rounded-xl bg-white/20 text-white placeholder-white/70 font-semibold text-lg border border-white/30 focus:border-kahoot-yellow-400 focus:ring-2 focus:ring-kahoot-yellow-300 transition-all duration-200" 
+                    />
+                    {teams.length > 1 && (
+                      <button 
+                        onClick={() => removeTeam(index)} 
+                        className="px-4 py-2 bg-gradient-to-r from-kahoot-red-500 to-kahoot-red-600 hover:from-kahoot-red-600 hover:to-kahoot-red-700 text-white font-bold rounded-xl transition-all duration-200 transform hover:scale-105"
+                      >
+                        Remove
+                      </button>
+                    )}
+                    {team.roster && team.roster.length > 0 && (
+                      <div className="min-w-0 flex-1 text-sm text-white/75 md:max-w-md">
+                        <div className="truncate">
+                          {team.roster.join(', ')}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                <button 
+                  onClick={addTeam} 
+                  className="mt-2 bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 hover:from-kahoot-green-600 hover:to-kahoot-green-700 text-white font-bold px-6 py-3 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg"
+                >
+                  ➕ Add Team
+                </button>
+              </div>
             </>
           ) : (
             <>
@@ -676,7 +779,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({
               </div>
               {students.map((student, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
-                  <img src={student.avatar || avatars[0]} alt="avatar" className="w-8 h-8 rounded-full" />
+                  <img src={safeAvatarUrl(student.avatar, avatars[0])} alt="avatar" className="w-8 h-8 rounded-full" />
                   <input type="text" value={student.name} onChange={e => updateStudentName(index, e.target.value)} placeholder="Student name" className="flex-grow p-2 rounded-md bg-white/20 text-white" />
                   {students.length > 0 && (<button onClick={() => removeStudent(index)} className="px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Remove</button>)}
                 </div>
