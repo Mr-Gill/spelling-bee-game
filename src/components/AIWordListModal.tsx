@@ -362,7 +362,7 @@ export default function AIWordListModal({ onClose, onWordsGenerated }: AIWordLis
                     className={`w-3 h-3 transition-transform ${showAdvanced ? 'rotate-180' : ''}`}
                     aria-hidden="true"
                   />
-                  Advanced: use a proxy server instead of a direct token
+                  Advanced: configure a proxy fallback
                 </button>
                 {showAdvanced && (
                   <div className="mt-3 space-y-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -401,7 +401,8 @@ export default function AIWordListModal({ onClose, onWordsGenerated }: AIWordLis
                       />
                     </div>
                     <p className="text-xs text-gray-500">
-                      Proxy is used when no direct token is provided.
+                      If you enter a token above, it will be used directly. Proxy settings are
+                      only used when the token field is left blank.
                     </p>
                   </div>
                 )}
