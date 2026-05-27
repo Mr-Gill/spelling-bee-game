@@ -257,7 +257,15 @@ const SpellingBeeGame = () => {
     return (
       <CountdownScreen
         onDone={() => {
-          setGameConfig(pendingGameConfig);
+          const nextGameConfig = pendingGameConfig;
+
+          if (!nextGameConfig) {
+            setPendingGameConfig(null);
+            setGameState('setup');
+            return;
+          }
+
+          setGameConfig(nextGameConfig);
           setPendingGameConfig(null);
           setGameState('playing');
         }}
