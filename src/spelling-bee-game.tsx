@@ -284,7 +284,7 @@ const SpellingBeeGame = () => {
     ];
     return <PracticeScreen words={practiceWords} reviewWords={reviewWords} onBack={handleBackToSetup} />;
   }
-  if (gameState === 'playing') {
+  if (gameState === 'playing' && gameConfig) {
     return (
       <GameScreen
         config={gameConfig}
