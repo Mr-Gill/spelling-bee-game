@@ -93,7 +93,8 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({
   useEffect(() => {
     // Play sound and show confetti if there's a winner and effects are enabled
     if (results.winner) {
-      if (config?.soundEnabled ?? true) {
+      const isSoundEnabled = soundEnabled ?? config?.soundEnabled ?? true;
+      if (isSoundEnabled) {
         applauseAudio.current.play().catch(() => { /* audio may be blocked */ });
       }
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -101,7 +102,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({
         launchConfetti();
       }
     }
-  }, [results.winner, config?.soundEnabled, config?.effectsEnabled]);
+  }, [results.winner, soundEnabled, config?.soundEnabled, config?.effectsEnabled]);
 
   const handleExport = () => {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(results, null, 2));

@@ -12,6 +12,8 @@ import { getStudentDifficultyLevel } from './utils/studentProgress';
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
+const DEFAULT_MUSIC_STYLE = 'Funk';
+const DEFAULT_MUSIC_VOLUME = 0.5;
 
 const buildAIWordListPrompt = (topic: string, count: number) => `ROLE
 Generate a CSV for an AU Years 7-8 spelling bee on TOPIC. Your voice is a witty, knowledgeable lexicographer with dry Antipodean comic timing: precise, deadpan, gently surreal, and classroom-safe.
@@ -184,8 +186,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => localStorage.getItem('soundEnabled') !== 'false');
   const [effectsEnabled, setEffectsEnabled] = useState(true);
-  const [musicStyle, setMusicStyle] = useState<string>(() => localStorage.getItem('musicStyle') ?? 'Funk');
-  const [musicVolume, setMusicVolume] = useState<number>(() => parseFloat(localStorage.getItem('musicVolume') ?? '1'));
+  const [musicStyle, setMusicStyle] = useState<string>(() => localStorage.getItem('musicStyle') ?? DEFAULT_MUSIC_STYLE);
+  const [musicVolume, setMusicVolume] = useState<number>(() => {
+    const storedVolume = parseFloat(localStorage.getItem('musicVolume') ?? String(DEFAULT_MUSIC_VOLUME));
+    return Number.isFinite(storedVolume) ? storedVolume : DEFAULT_MUSIC_VOLUME;
+  });
   const [initialDifficulty, setInitialDifficulty] = useState(0);
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState<ThemeName>('light');
