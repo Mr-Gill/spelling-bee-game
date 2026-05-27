@@ -14,6 +14,7 @@ import useMusic from './utils/useMusic';
 import { applyThemeClass } from './utils/theme';
 import { applyAccessibilitySettings } from './components/AccessibilitySettings';
 import { audioManager } from './utils/audio.ts';
+import { DEFAULT_MUSIC_STYLE, DEFAULT_MUSIC_VOLUME } from './constants/audioDefaults';
 import { AudioProvider } from './AudioContext';
 import { HelpSystemProvider } from './contexts/HelpSystemContext';
 import { getWordList, clearWordListCache, type Word as WordListWord } from './services/wordlistService';
@@ -21,11 +22,6 @@ import { getDueReviewWords } from './utils/reviewQueue';
 
 // Import types
 import type { GameConfig, Word } from './types';
-
-/** Default music style used when no value is stored in localStorage. */
-const DEFAULT_MUSIC_STYLE = 'Funk';
-/** Default music volume (0–1). */
-const DEFAULT_MUSIC_VOLUME = 0.5;
 
 // --- Main App Component ---
 const SpellingBeeGame = () => {

@@ -8,12 +8,11 @@ import { hasSavedGame, getSavedGameInfo, loadGameState, clearSavedGame } from '.
 import { applyThemeClass, type ThemeName } from './utils/theme';
 import AccessibilitySettings from './components/AccessibilitySettings';
 import { getStudentDifficultyLevel } from './utils/studentProgress';
+import { DEFAULT_MUSIC_STYLE, DEFAULT_MUSIC_VOLUME } from './constants/audioDefaults';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
-const DEFAULT_MUSIC_STYLE = 'Funk';
-const DEFAULT_MUSIC_VOLUME = 0.5;
 
 const buildAIWordListPrompt = (topic: string, count: number) => `ROLE
 Generate a CSV for an AU Years 7-8 spelling bee on TOPIC. Your voice is a witty, knowledgeable lexicographer with dry Antipodean comic timing: precise, deadpan, gently surreal, and classroom-safe.
@@ -630,8 +629,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setSkipPenaltyValue(preset.skipPenaltyValue ?? 1);
     setSoundEnabled(preset.soundEnabled !== false);
     setEffectsEnabled(preset.effectsEnabled !== false);
-    setMusicStyle(preset.musicStyle || 'Funk');
-    setMusicVolume(typeof preset.musicVolume === 'number' ? preset.musicVolume : 1);
+    setMusicStyle(preset.musicStyle || DEFAULT_MUSIC_STYLE);
+    setMusicVolume(typeof preset.musicVolume === 'number' ? preset.musicVolume : DEFAULT_MUSIC_VOLUME);
     setInitialDifficulty(preset.initialDifficulty || 0);
     setProgressionSpeed(preset.progressionSpeed || 1);
     const normalizedTheme = applyThemeClass(preset.theme || 'light');
