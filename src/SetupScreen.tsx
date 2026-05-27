@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { Word, Participant, GameConfig } from './types';
+import { config as appConfig } from './config';
 import { IMAGE_ASSETS } from './assets';
 import { parseWordList as parseWordListUtil } from './utils/parseWordList';
 import { getMascotImage } from './utils/mascot';
@@ -9,70 +10,11 @@ import { applyThemeClass, type ThemeName } from './utils/theme';
 import AccessibilitySettings from './components/AccessibilitySettings';
 import { getStudentDifficultyLevel } from './utils/studentProgress';
 import { DEFAULT_MUSIC_STYLE, DEFAULT_MUSIC_VOLUME } from './constants/audioDefaults';
+import AIWordListModal from './components/AIWordListModal';
 
 // Gather available music styles.
 // This is hardcoded as a workaround for build tools that don't support `import.meta.glob`.
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
-
-const buildAIWordListPrompt = (topic: string, count: number) => `ROLE
-Generate a CSV for an AU Years 7-8 spelling bee on TOPIC. Your voice is a witty, knowledgeable lexicographer with dry Antipodean comic timing: precise, deadpan, gently surreal, and classroom-safe.
-
-INPUT
-TOPIC (string) and N (int). If N invalid/missing -> N=10.
-
-OUTPUT (CSV ONLY)
-
-One CSV. No preface, no code fences, no blank lines.
-
-Header EXACTLY: "word","syllables","definition","origin","example","prefix","suffix","pronunciation"
-
-Then exactly N rows.
-
-ASCII only; straight quotes (").
-
-Quote every field.
-
-The syllables field is a JSON string of a string array.
-
-CORRECT: "[\\"har\\",\\"mo\\",\\"ny\\"]"
-
-INCORRECT: [""har"",""mo"",""ny""]
-
-CONTENT
-
-AU/UK spelling. At least 70% headwords clearly fit TOPIC (others closely related).
-
-Difficulty: about 30% 1-2 syllables (foundational), about 50% 2-3 (core), about 20% 4+ (stretch).
-
-Minima when N>=10: at least 3 one-syllable; at least 3 with 4+ syllables; at least 3 with prefixes; at least 3 with suffixes.
-
-Definition: 10-18 words; witty, accurate, student-friendly. Define by job, ingredients, effect, or an unexpected sensation (not flowery/abstract).
-
-Origin: Real and specific (e.g., Latin; Greek; Old French via Latin). No jokes or speculation.
-
-Example: 12-25 words; exactly one sentence; vividly funny or gently surreal. Bee humour only in examples and in at most floor(N/2) rows.
-
-Bee headwords: Bee words appear only in examples unless TOPIC is bees.
-
-Prefix/Suffix: Include only productive, meaningful derivational affixes (e.g., "re-" in "remake", "-tion" in "creation").
-
-Do not treat compounds as suffixes (e.g., laneway, skyline -> suffix="").
-
-Do not invent prefixes from stems (e.g., federation != "fed-").
-
-Only include a prefix if it carries its usual meaning in the headword (e.g., "im-" in "impossible").
-
-Pronunciation: Hyphenated with PRIMARY stress in CAPS (e.g., par-muh-ZAN, mot-suh-REL-uh).
-
-One-syllable exception: write the syllable in CAPS (e.g., TRAM).
-
-Headwords: standard dictionary items; no brands or proper names (unless TOPIC explicitly requires them - then at most 1 such row).
-
-VALIDATION (silent)
-Before printing, fix any violations and output only the valid CSV. Per-row checks: non-empty fields; definition 10-18 words; example 12-25 words; syllables is a JSON string with backslash-escaped inner quotes; real origin; derivational prefix/suffix only; pronunciation format obeyed. After N rows: counts satisfied (one-syllable, 4+ syllables, prefixes, suffixes), at least 70% on-topic, bee examples at most floor(N/2), ASCII-only, no blank lines. If any check fails, regenerate offending rows and re-validate.
-
-TOPIC: ${topic.trim() || 'general classroom vocabulary'}
-N: ${Number.isFinite(count) && count > 0 ? count : 10}`;
 
 interface SetupPreset {
   gameMode: 'team' | 'individual';
@@ -94,18 +36,6 @@ interface SetupPreset {
 }
 
 const PRESETS_STORAGE_KEY = 'setupPresets';
-const GITHUB_MODELS_ENDPOINT = 'https://models.github.ai/inference/chat/completions';
-const GITHUB_MODELS_MODEL = 'openai/gpt-4.1-mini';
-const GITHUB_MODELS_API_VERSION = '2022-11-28';
-const AI_PROXY_URL = process.env.VITE_WORDLIST_URL || 'http://localhost:3001/wordlist';
-const GITHUB_WORDLIST_WORKFLOW_URL = 'https://github.com/Mr-Gill/spelling-bee-game/actions/workflows/generate-wordlist.yml';
-
-const getDefaultProxyUrl = () => {
-  if (typeof window === 'undefined') return AI_PROXY_URL;
-  const host = window.location.hostname;
-  if (host === 'mr-gill.github.io') return '';
-  return AI_PROXY_URL;
-};
 
 interface SetupScreenProps {
   onStartGame: (config: GameConfig) => void;
@@ -128,14 +58,26 @@ interface SetupScreenProps {
   onMusicVolumeChange?: (volume: number) => void;
 }
 
-const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onResumeGame, onViewHistory, onViewShop, onStartWarmup, wordListsReady, isMusicPlaying, onToggleMusicPlaying, onSoundEnabledChange, onMusicStyleChange, onMusicVolumeChange }) => {
+const SetupScreen: React.FC<SetupScreenProps> = ({
+  onStartGame,
+  onAddCustomWords,
+  onViewAchievements,
+  onResumeGame,
+  onStartWarmup,
+  wordListsReady,
+  isMusicPlaying,
+  onToggleMusicPlaying,
+  onSoundEnabledChange,
+  onMusicStyleChange,
+  onMusicVolumeChange,
+}) => {
   // Include both traditional avatars and mascot images
   const avatars = [IMAGE_ASSETS.avatars.bee, IMAGE_ASSETS.avatars.book, IMAGE_ASSETS.avatars.trophy, getMascotImage({ isDefault: true }), getMascotImage({ isCelebrating: true })];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
 
   const getDefaultTeams = (): Participant[] => [
-    { name: 'Team Alpha', lives: 10, difficultyLevel: 0, points: 5, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() },
-    { name: 'Team Beta', lives: 10, difficultyLevel: 0, points: 5, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar() }
+    { name: 'Team Alpha', lives: 10, difficultyLevel: 0, points: 5, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, score: 0, maxScore: 0, avatar: getRandomAvatar() },
+    { name: 'Team Beta', lives: 10, difficultyLevel: 0, points: 5, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, score: 0, maxScore: 0, avatar: getRandomAvatar() }
   ];
 
   const normaliseTeam = (team: Participant): Participant => {
@@ -206,24 +148,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [selectedPreset, setSelectedPreset] = useState('');
   const [presetName, setPresetName] = useState('');
   const [presetMessage, setPresetMessage] = useState('');
-  const [aiGrade, setAiGrade] = useState(5);
-  const [aiTopic, setAiTopic] = useState('');
-  const [aiCount, setAiCount] = useState(10);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState('');
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [aiToken, setAiToken] = useState(() => {
-    if (typeof window === 'undefined') return '';
-    return sessionStorage.getItem('githubModelsToken') || '';
-  });
-  const [aiProxyPassword, setAiProxyPassword] = useState(() => {
-    if (typeof window === 'undefined') return '';
-    return sessionStorage.getItem('aiProxyPassword') || '';
-  });
-  const [aiProxyUrl, setAiProxyUrl] = useState(() => {
-    if (typeof window === 'undefined') return AI_PROXY_URL;
-    return sessionStorage.getItem('aiProxyUrl') || getDefaultProxyUrl();
-  });
+  const [showAIModal, setShowAIModal] = useState(false);
+  const [customWordsInfo, setCustomWordsInfo] = useState('');
   
   // Saved game state
   const [savedGameAvailable, setSavedGameAvailable] = useState(false);
@@ -301,7 +227,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   };
 
   const createParticipant = (name: string, difficulty: number): Participant => ({
-    name: name.trim(), lives: 5, points: 5, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, avatar: getRandomAvatar()
+    name: name.trim(), lives: 5, points: 5, difficultyLevel: difficulty, streak: 0, attempted: 0, correct: 0, wordsAttempted: 0, wordsCorrect: 0, score: 0, maxScore: 0, avatar: getRandomAvatar()
   });
 
   const addTeam = () => updateTeams([...teams, createParticipant('', 0)]);
@@ -400,136 +326,10 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
   };
 
-  const generateAIWords = async () => {
-    setAiLoading(true);
-    setAiError('');
-    const wordCount = Math.min(Math.max(1, Number(aiCount) || 10), 50);
-    const prompt = buildAIWordListPrompt(aiTopic, wordCount);
-    setAiPrompt(prompt);
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000);
-
-      let content = '';
-      const trimmedToken = aiToken.trim();
-      if (trimmedToken) {
-        sessionStorage.setItem('githubModelsToken', trimmedToken);
-        const res = await fetch(`${GITHUB_MODELS_ENDPOINT}?api-version=${GITHUB_MODELS_API_VERSION}`, {
-          method: 'POST',
-          headers: {
-            Accept: 'application/vnd.github+json',
-            Authorization: `Bearer ${trimmedToken}`,
-            'Content-Type': 'application/json',
-            'X-GitHub-Api-Version': GITHUB_MODELS_API_VERSION,
-          },
-          body: JSON.stringify({
-            model: GITHUB_MODELS_MODEL,
-            messages: [
-              {
-                role: 'system',
-                content: 'You generate classroom spelling bee word lists. Return only the requested CSV text, with no markdown fences or commentary.',
-              },
-              { role: 'user', content: prompt },
-            ],
-            temperature: 0.8,
-            top_p: 1,
-            max_tokens: 3000,
-          }),
-          signal: controller.signal,
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!res.ok) {
-          const errorText = await res.text();
-          const trimmedError = (errorText || '').trim().slice(0, 500);
-          throw new Error(`GITHUB_MODELS_${res.status}:${trimmedError}`);
-        }
-
-        const data = await res.json();
-        content = String(data?.choices?.[0]?.message?.content || '');
-      } else {
-        const proxyUrl = aiProxyUrl.trim();
-        if (!proxyUrl) {
-          if (typeof window !== 'undefined') {
-            window.open(GITHUB_WORDLIST_WORKFLOW_URL, '_blank', 'noopener,noreferrer');
-          }
-          throw new Error('PROXY_URL_MISSING_WORKFLOW_OPENED');
-        }
-        sessionStorage.setItem('aiProxyUrl', proxyUrl);
-
-        const proxyPassword = aiProxyPassword.trim();
-        if (proxyPassword) {
-          sessionStorage.setItem('aiProxyPassword', proxyPassword);
-        } else {
-          sessionStorage.removeItem('aiProxyPassword');
-        }
-
-        const proxyHeaders: Record<string, string> = { 'Content-Type': 'application/json' };
-        if (proxyPassword) proxyHeaders['X-AI-Password'] = proxyPassword;
-
-        const res = await fetch(proxyUrl, {
-          method: 'POST',
-          headers: proxyHeaders,
-          body: JSON.stringify({ grade: aiGrade, topic: aiTopic, count: wordCount, prompt }),
-          signal: controller.signal
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!res.ok) {
-          const errorText = await res.text();
-          const trimmedError = (errorText || '').trim().slice(0, 500);
-          throw new Error(`PROXY_${res.status}:${trimmedError}`);
-        }
-
-        const data = await res.json();
-        content = String(data.wordList || data.csv || data.content || '');
-      }
-
-      const cleanContent = content.trim().replace(/^```(?:csv|json|tsv)?\s*/i, '').replace(/\s*```$/i, '').trim();
-      const generatedWords = parseWordListUtil(cleanContent);
-      if (!Array.isArray(generatedWords) || generatedWords.length === 0) throw new Error('Invalid response');
-      setParsedCustomWords(prev => [...prev, ...generatedWords]);
-      setCustomWordListText('');
-      setAiError(`Generated ${generatedWords.length} words. Total words: ${parsedCustomWords.length + generatedWords.length}`);
-    } catch (err) {
-      const errMessage = err instanceof Error ? err.message : String(err || '');
-      let directTokenHint = aiToken.trim()
-        ? 'The GitHub Models request failed.'
-        : 'Use a proxy URL with server-side token env, then enter proxy password if required.';
-
-      if (errMessage.startsWith('GITHUB_MODELS_401')) {
-        directTokenHint = 'GitHub Models returned 401 Unauthorized. Use a fresh token with models: read permission.';
-      } else if (errMessage.startsWith('GITHUB_MODELS_403')) {
-        directTokenHint = 'GitHub Models returned 403 Forbidden. Enable Models in repository settings, and confirm org model policy allows the selected model.';
-      } else if (errMessage.startsWith('GITHUB_MODELS_429')) {
-        directTokenHint = 'GitHub Models returned 429 rate limit. Wait and try again, or reduce requests.';
-      } else if (errMessage === 'PROXY_URL_MISSING') {
-        directTokenHint = 'Add your AI proxy URL in AI connection settings.';
-      } else if (errMessage === 'PROXY_URL_MISSING_WORKFLOW_OPENED') {
-        directTokenHint = 'No proxy URL set. Opened GitHub Actions workflow. Click "Run workflow" (top-right on that page), then refresh this page after deploy finishes.';
-      } else if (errMessage.startsWith('PROXY_401') || errMessage.includes('AI proxy password is invalid')) {
-        directTokenHint = 'Proxy password rejected. Check the shared password configured on the proxy server.';
-      } else if (errMessage.startsWith('PROXY_404')) {
-        directTokenHint = 'Proxy URL is wrong (404). Use the full /wordlist endpoint URL.';
-      } else if (errMessage.startsWith('PROXY_500')) {
-        directTokenHint = 'Proxy is running but not configured. Check MODELS_TOKEN on the proxy service.';
-      } else if (errMessage.includes('Failed to fetch')) {
-        directTokenHint = 'Browser request failed. Check network, ad/privacy extensions, and proxy URL availability.';
-      } else if (errMessage.includes('AbortError')) {
-        directTokenHint = 'Request timed out after 30 seconds. Try again or reduce requested word count.';
-      }
-
-      try {
-        await navigator.clipboard?.writeText(prompt);
-        setAiError(`${directTokenHint} I copied the exact word-list prompt so you can paste AI CSV output into the box above.`);
-      } catch {
-        setAiError(`${directTokenHint} Use the template prompt below, then paste AI CSV output into the box above.`);
-      }
-    } finally {
-      setAiLoading(false);
-    }
+  const handleAIWordsGenerated = (words: Word[]) => {
+    setCustomWordListText('');
+    setParsedCustomWords(prev => [...prev, ...words]);
+    setCustomWordsInfo(`✅ ${words.length} word${words.length !== 1 ? 's' : ''} loaded and ready.`);
   };
   
   useEffect(() => {
@@ -709,6 +509,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     onAddCustomWords(finalWords);
     
     const config: GameConfig = {
+      baseUrl: appConfig.baseUrl,
+      githubToken: appConfig.githubToken,
+      githubApiUrl: appConfig.githubApiUrl,
+      elevenLabsApiKey: appConfig.elevenLabsApiKey,
+      newsApiKey: appConfig.newsApiKey,
+      openAiApiKey: appConfig.openAiApiKey,
+      isProduction: appConfig.isProduction,
+      dailyChallenge: false,
+      wordDatabase: { easy: [], medium: [], tricky: [] },
       participants: finalParticipants,
       hideNames,
       gameMode, timerDuration, sessionDuration: sessionDurationMinutes * 60, skipPenaltyType, skipPenaltyValue, soundEnabled, effectsEnabled, difficultyLevel: initialDifficulty, progressionSpeed, musicStyle, musicVolume,
@@ -1005,70 +814,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                 </div>
             </div>
             <div className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_120px_auto] gap-2">
-                    <input type="text" value={aiTopic} onChange={e => setAiTopic(e.target.value)} className="p-2 rounded-md bg-white/20 text-white" placeholder="Topic (for example: cars)" />
-                    <input type="number" min={1} value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="p-2 rounded-md bg-white/20 text-white" placeholder="# Words" />
-                    <button onClick={generateAIWords} disabled={aiLoading} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full md:w-auto">{aiLoading ? 'Generating...' : 'Generate with AI'}</button>
-                </div>
-                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-300">
-                  <a
-                    href={GITHUB_WORDLIST_WORKFLOW_URL}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="rounded bg-white/20 px-2 py-1 font-bold text-white hover:bg-white/30"
-                  >
-                    Generate in GitHub Actions
-                  </a>
-                  <span>Use this when you do not have a proxy URL.</span>
-                </div>
-                <details className="mt-3 rounded-xl bg-black/20 p-3 text-sm text-gray-100">
-                  <summary className="cursor-pointer font-bold">AI connection settings</summary>
-                  <div className="mt-3 grid grid-cols-1 gap-3">
-                    <div>
-                      <label htmlFor="ai-proxy-url" className="block text-sm font-bold text-gray-200">AI Proxy URL</label>
-                      <input
-                        id="ai-proxy-url"
-                        type="url"
-                        value={aiProxyUrl}
-                        onChange={e => setAiProxyUrl(e.target.value)}
-                        className="mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60"
-                        placeholder="https://your-proxy.example.com/wordlist"
-                        autoComplete="off"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="ai-proxy-password" className="block text-sm font-bold text-gray-200">AI Proxy Password (optional)</label>
-                      <input
-                        id="ai-proxy-password"
-                        type="password"
-                        value={aiProxyPassword}
-                        onChange={e => setAiProxyPassword(e.target.value)}
-                        className="mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60"
-                        placeholder="Shared password for your AI proxy"
-                        autoComplete="off"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="github-models-token" className="block text-sm font-bold text-gray-200">GitHub Models Token (fallback)</label>
-                      <input
-                        id="github-models-token"
-                        type="password"
-                        value={aiToken}
-                        onChange={e => setAiToken(e.target.value)}
-                        className="mt-1 w-full rounded-md bg-white/20 p-2 text-white placeholder-white/60"
-                        placeholder="Optional. Browser session only."
-                        autoComplete="off"
-                      />
-                    </div>
-                  </div>
-                  <p className="mt-2 text-xs text-gray-300">Recommended: leave token blank and use proxy URL + password.</p>
-                </details>
-                {aiError && <p className="text-yellow-200 mt-2">{aiError}</p>}
-                {aiPrompt && (
-                  <details className="mt-3 rounded-xl bg-black/30 p-3 text-sm text-gray-100">
-                    <summary className="cursor-pointer font-bold">AI prompt</summary>
-                    <textarea readOnly value={aiPrompt} className="mt-3 min-h-40 w-full rounded-lg bg-white/90 p-3 text-xs text-gray-900" />
-                  </details>
+                <button
+                  type="button"
+                  onClick={() => setShowAIModal(true)}
+                  className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition-colors"
+                >
+                  🤖 Generate AI Word List
+                </button>
+                {customWordsInfo && (
+                  <p className="mt-2 text-green-300 text-sm">{customWordsInfo}</p>
                 )}
             </div>
             <div className="mt-4 text-sm text-gray-300">
@@ -1214,6 +968,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
       </div>
       {showAccessibilitySettings && (
         <AccessibilitySettings onClose={() => setShowAccessibilitySettings(false)} />
+      )}
+      {showAIModal && (
+        <AIWordListModal
+          onClose={() => setShowAIModal(false)}
+          onWordsGenerated={handleAIWordsGenerated}
+        />
       )}
     </div>
   );
