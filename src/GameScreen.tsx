@@ -42,6 +42,9 @@ import { saveStudentProgress } from './utils/studentProgress';
 
 const musicStyles = ['Funk', 'Country', 'Deep Bass', 'Rock', 'Jazz', 'Classical'];
 
+/** Duration (ms) the individual-mode hint nudge banner stays visible. */
+const HINT_NUDGE_DURATION_MS = 7000;
+
 const CORRECT_FEEDBACK = [
   'That worked. Weirdly clean.',
   'Nobody act surprised.',
@@ -169,6 +172,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [showWord, setShowWord] = React.useState(false);
   const [showPhonics, setShowPhonics] = React.useState(false);
   const [usedHint, setUsedHint] = React.useState(false);
+  const [wordLengthRevealed, setWordLengthRevealed] = React.useState(false);
   const [letters, setLetters] = React.useState<string[]>([]);
   const [feedback, setFeedback] = React.useState<Feedback>({ message: '', type: '' });
   const [encouragementMessage, setEncouragementMessage] = React.useState('');
@@ -203,6 +207,22 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [wordIndex, setWordIndex] = React.useState(initialGameState?.currentWordIndex || 0);
   const [totalWordsUsed, setTotalWordsUsed] = React.useState(initialGameState?.totalWordsUsed || 0);
   const shouldHideNames = Boolean(config.hideNames);
+
+  // Hint tracking: record which hints were purchased for the current word
+  const [hintsUsedThisWord, setHintsUsedThisWord] = React.useState<Array<{ icon: string; cost: number }>>([]);
+  // Brief summary line shown in the feedback area after each word
+  const [hintSummary, setHintSummary] = React.useState('');
+
+  // Individual-mode hint nudge: shown once per session when ≥2 words completed without any hint
+  // totalWordsCompleted read value unused: we only use the functional setter (prev => prev + 1)
+  // to avoid stale-closure bugs inside advanceToWord. The state exists solely for its counter.
+  const [, setTotalWordsCompleted] = React.useState(0);
+  const [hasEverUsedHint, setHasEverUsedHint] = React.useState(false);
+  const [showHintNudge, setShowHintNudge] = React.useState(false);
+  const hintNudgeTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Dialog-pause: pause the word timer while the hint confirmation dialog is open
+  const [pausedByHintDialog, setPausedByHintDialog] = React.useState(false);
 
   // Battle progression (team mode only): tracks collective correct answers to drive power unlocks.
   // In individual mode, unlockedPowers stays empty — HintPanel treats undefined/empty differently:
@@ -251,6 +271,24 @@ const GameScreen: React.FC<GameScreenProps> = ({
     }
   };
 
+  /** Called by HintPanel when the power-confirmation dialog opens. */
+  const handleHintDialogOpen = () => {
+    if (!isPaused) {
+      pauseTimer();
+      pauseSessionTimer();
+      setPausedByHintDialog(true);
+    }
+  };
+
+  /** Called by HintPanel when the power-confirmation dialog closes (confirm or cancel). */
+  const handleHintDialogClose = () => {
+    if (pausedByHintDialog) {
+      resumeTimer();
+      resumeSessionTimer();
+      setPausedByHintDialog(false);
+    }
+  };
+
   React.useEffect(() => {
     if (localStorage.getItem('teacherMode') === 'true') {
       document.body.classList.add('teacher-mode');
@@ -262,6 +300,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   React.useEffect(() => {
     if (currentWord) {
       setLetters(Array.from({ length: currentWord.word.length }, () => ''));
+      setWordLengthRevealed(false);
       publishTeamDisplayWord(currentWord.word);
       setShowPhonics(false);
       setShowWord(false);
@@ -334,11 +373,26 @@ const GameScreen: React.FC<GameScreenProps> = ({
       setUsedHint(false);
       setShowWord(false);
       setLetters(Array(nextWord.word.length).fill(''));
+      setHintsUsedThisWord([]);
+      setHintSummary('');
       if (hiddenInputRef.current) {
         hiddenInputRef.current.focus();
       }
       speak(nextWord.word);
       startTimer();
+
+      // Individual-mode hint nudge: show once on word 2 or 3 if no hints ever used
+      if (!isTeamMode && !hasEverUsedHint) {
+        setTotalWordsCompleted(prev => {
+          const next = prev + 1;
+          if (next === 2 || next === 3) {
+            setShowHintNudge(true);
+            if (hintNudgeTimerRef.current) clearTimeout(hintNudgeTimerRef.current);
+            hintNudgeTimerRef.current = setTimeout(() => setShowHintNudge(false), HINT_NUDGE_DURATION_MS);
+          }
+          return next;
+        });
+      }
     } else {
       onEndGameWithMissedWords();
     }
@@ -359,6 +413,13 @@ const GameScreen: React.FC<GameScreenProps> = ({
 
     setFeedback({ message: pickRandom(INCORRECT_FEEDBACK), type: 'error' });
     if (currentWord) setMissedWords(prev => [...prev, currentWord]);
+
+    // Post-word hint summary
+    if (hintsUsedThisWord.length > 0) {
+      const totalHintCost = hintsUsedThisWord.reduce((s, h) => s + h.cost, 0);
+      const icons = hintsUsedThisWord.map(h => h.icon).join(' ');
+      setHintSummary(`Hints used: ${icons} · −${totalHintCost}pt`);
+    }
 
     const updatedParticipants = participants.map((p, index) => {
       if (index === currentParticipantIndex) {
@@ -532,6 +593,13 @@ const GameScreen: React.FC<GameScreenProps> = ({
 
     setFeedback({ message: pickRandom(CORRECT_FEEDBACK), type: 'success' });
     setEncouragementMessage(pickEncouragementPhrase(encouragementPhrases, participant.name));
+
+    // Post-word hint summary
+    if (hintsUsedThisWord.length > 0) {
+      const totalHintCost = hintsUsedThisWord.reduce((s, h) => s + h.cost, 0);
+      const icons = hintsUsedThisWord.map(h => h.icon).join(' ');
+      setHintSummary(`Hints used: ${icons} · −${totalHintCost}pt`);
+    }
 
     setTimeout(() => {
       const nextIndex = (currentParticipantIndex + 1) % updatedParticipants.length;
@@ -720,7 +788,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         aria-label="Hidden input for keyboard capture"
       />
       {toast && (
-        <div className="fixed top-4 right-4 bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-white px-6 py-3 rounded-2xl shadow-2xl z-50 animate-bounce-in font-bold">
+        <div className="fixed top-4 right-4 bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-gray-900 px-6 py-3 rounded-2xl shadow-2xl z-50 animate-bounce-in font-bold">
           🎉 {toast}
         </div>
       )}
@@ -776,7 +844,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       {feedback.message && (
         <div className={`fixed top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-black px-8 py-4 rounded-3xl z-50 animate-bounce-in shadow-2xl ${
           feedback.type === 'success' 
-            ? 'bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-white' 
+            ? 'bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-gray-900' 
             : feedback.type === 'error' 
             ? 'bg-gradient-to-r from-kahoot-red-500 to-kahoot-red-600 text-white animate-shake' 
             : 'bg-gradient-to-r from-kahoot-blue-500 to-kahoot-blue-600 text-white'
@@ -784,11 +852,29 @@ const GameScreen: React.FC<GameScreenProps> = ({
         >
           {feedback.type === 'success' ? '🎉 ' : feedback.type === 'error' ? '💥 ' : '🎯 '}
           {feedback.message}
+          {hintSummary && (
+            <p className="mt-2 text-base font-bold opacity-80">{hintSummary}</p>
+          )}
         </div>
       )}
 
       {encouragementMessage && (
         <EncouragementBanner message={encouragementMessage} />
+      )}
+
+      {/* Individual-mode hint nudge */}
+      {showHintNudge && (
+        <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-yellow-400/90 text-black px-5 py-3 rounded-2xl shadow-xl animate-bounce-in text-sm font-bold max-w-xs text-center">
+          <span className="text-2xl flex-shrink-0">📖</span>
+          <span>Stuck? Try the <strong>Sentence</strong> or <strong>Syllables</strong> hint below — costs just 1 point!</span>
+          <button
+            onClick={() => { setShowHintNudge(false); if (hintNudgeTimerRef.current) clearTimeout(hintNudgeTimerRef.current); }}
+            className="flex-shrink-0 text-black/60 hover:text-black text-lg font-black leading-none"
+            aria-label="Dismiss hint suggestion"
+          >
+            ✕
+          </button>
+        </div>
       )}
 
       {/* Exciting Timer Display */}
@@ -823,80 +909,95 @@ const GameScreen: React.FC<GameScreenProps> = ({
           Accessibility
         </button>
       </div>
-      <div className="absolute bottom-8 left-8 bg-black/50 p-4 rounded-lg z-50 flex flex-col gap-2">
-        <div className="flex items-center gap-2">
+      <div className="absolute bottom-6 left-6 z-50 flex flex-col gap-2">
+        {/* Tool buttons row */}
+        <div className="bg-black/60 backdrop-blur-sm rounded-2xl border border-white/20 px-3 py-2 flex items-center gap-1.5 shadow-2xl">
           <button
             onClick={() => setIsHelpOpen(true)}
-            className="bg-yellow-300 text-black p-2 rounded"
+            className="bg-kahoot-yellow-400 hover:bg-kahoot-yellow-300 text-black p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label="Open help shop"
+            title="Help Shop"
           >
             ❓
           </button>
           <button
             onClick={() => setShowEncouragementSettings(true)}
-            className="bg-yellow-300 text-black p-2 rounded"
+            className="bg-white/20 hover:bg-white/35 text-white p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label="Edit encouragement phrases"
-            title="Edit encouragement phrases"
+            title="Encouragement phrases"
           >
             <MessageCircle size={16} />
           </button>
+          <div className="w-px h-6 bg-white/20 mx-0.5 shrink-0" />
           <button
             onClick={onToggleMusicPlaying}
-            className="bg-yellow-300 text-black p-2 rounded"
+            className="bg-white/20 hover:bg-white/35 text-white p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label={isMusicPlaying ? 'Pause music' : 'Play music'}
+            title={isMusicPlaying ? 'Pause music' : 'Play music'}
           >
             {isMusicPlaying ? <Pause size={16} /> : <Play size={16} />}
           </button>
           <button
             onClick={() => onSoundEnabledChange(!soundEnabled)}
-            className="bg-yellow-300 text-black p-2 rounded"
+            className="bg-white/20 hover:bg-white/35 text-white p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label={soundEnabled ? 'Mute audio' : 'Unmute audio'}
+            title={soundEnabled ? 'Mute all audio' : 'Unmute all audio'}
           >
             {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
           </button>
+          <div className="w-px h-6 bg-white/20 mx-0.5 shrink-0" />
           <button
             onClick={handleExitGame}
-            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded transition-colors"
+            className="bg-red-500/70 hover:bg-red-500 text-white p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label="Exit game"
-            title="Exit and save game"
+            title="Save and exit"
           >
             <LogOut size={16} />
           </button>
           <button
             onClick={() => window.open(`${window.location.pathname}?team=1`, '_blank', 'noopener,noreferrer')}
-            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition-colors"
+            className="bg-blue-500/70 hover:bg-blue-500 text-white p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label="Open team display"
-            title="Open team display"
+            title="Team display"
           >
             📺
           </button>
           <button
             onClick={() => window.open(`${window.location.pathname}?scoreboard=1`, '_blank', 'noopener,noreferrer')}
-            className="bg-green-500 hover:bg-green-600 text-white p-2 rounded transition-colors"
+            className="bg-green-500/70 hover:bg-green-500 text-white p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label="Open scoreboard display"
-            title="Open scoreboard display"
+            title="Scoreboard"
           >
             🏆
           </button>
         </div>
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step={0.01}
-          value={musicVolume}
-          onChange={e => onMusicVolumeChange(parseFloat(e.target.value))}
-          className="w-32"
-        />
-        <select
-          value={musicStyle}
-          onChange={e => onMusicStyleChange(e.target.value)}
-          className="text-black rounded p-1"
-        >
-          {musicStyles.map(style => (
-            <option key={style} value={style}>{style}</option>
-          ))}
-        </select>
+        {/* Music controls row */}
+        <div className="bg-black/60 backdrop-blur-sm rounded-2xl border border-white/20 px-3 py-2 flex items-center gap-2 shadow-2xl">
+          <span className="text-white/50 text-xs font-black uppercase tracking-wide select-none shrink-0">🎵</span>
+          <VolumeX size={12} className="text-white/40 shrink-0" />
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.01}
+            value={musicVolume}
+            onChange={e => onMusicVolumeChange(parseFloat(e.target.value))}
+            className="w-20 cursor-pointer accent-yellow-400"
+            aria-label="Music volume"
+            title={`Volume: ${Math.round(musicVolume * 100)}%`}
+          />
+          <Volume2 size={14} className="text-white/40 shrink-0" />
+          <select
+            value={musicStyle}
+            onChange={e => onMusicStyleChange(e.target.value)}
+            className="bg-white/10 text-white rounded-xl border border-white/20 px-2 py-1 text-sm font-bold w-28 shrink-0 cursor-pointer"
+            aria-label="Music style"
+          >
+            {musicStyles.map(style => (
+              <option key={style} value={style} className="text-black bg-white">{style}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {isHelpOpen && (
@@ -1060,30 +1161,50 @@ const GameScreen: React.FC<GameScreenProps> = ({
             isTeamMode={isTeamMode}
             showWord={showWord}
             onHintUsed={() => setUsedHint(true)}
+            onHintUsedWithId={(_id, icon, cost) => {
+              setHintsUsedThisWord(prev => [...prev, { icon, cost }]);
+              setHasEverUsedHint(true);
+              setShowHintNudge(false);
+              if (hintNudgeTimerRef.current) clearTimeout(hintNudgeTimerRef.current);
+            }}
             onExtraAttempt={() => setExtraAttempt(true)}
             unlockedPowers={isTeamMode ? unlockedPowers : undefined}
             hasAttemptedCurrentWord={attemptedParticipants.has(currentParticipantIndex)}
             onAddTime={() => addTimeToTimer(15)}
             onSkipWord={skipWordFree}
+            onWordLengthRevealed={() => setWordLengthRevealed(true)}
+            onRequestPause={handleHintDialogOpen}
+            onReleasePause={handleHintDialogClose}
           />
           {showPhonics && currentWord.phonemes && (
             <PhonicsBreakdown phonemes={currentWord.phonemes} />
           )}
-          <div className="flex gap-3 justify-center mb-8 px-4">
-            {letters.map((letter, idx) => (
-              <div
-                key={idx}
-                className={`w-16 h-20 text-5xl font-black flex items-center justify-center rounded-2xl border-4 transition-all duration-300 transform ${
-                  letter
-                    ? letter.toLowerCase() === currentWord.word[idx].toLowerCase()
-                      ? 'bg-gradient-to-br from-kahoot-green-400 to-kahoot-green-600 border-kahoot-green-300 text-white scale-110 animate-bounce shadow-2xl'
-                      : 'bg-gradient-to-br from-kahoot-red-400 to-kahoot-red-600 border-kahoot-red-300 text-white animate-shake'
-                    : 'bg-white/20 border-white/40 text-white hover:bg-white/30'
-                }`}
-              >
-                {letter.toUpperCase()}
-              </div>
-            ))}
+          <div className="flex gap-3 justify-center mb-8 px-4 flex-wrap">
+            {(() => {
+              // When the Word Length hint has NOT been purchased, only show filled
+              // boxes plus one empty "cursor" box — so the total count isn't given away.
+              const firstEmptyIdx = letters.findIndex(l => l === '');
+              const filledCount = firstEmptyIdx === -1 ? letters.length : firstEmptyIdx;
+              const visibleLetters = wordLengthRevealed
+                ? letters
+                : letters.slice(0, filledCount + 1);
+              return visibleLetters.map((letter, idx) => (
+                <div
+                  key={idx}
+                  className={`w-16 h-20 text-5xl font-black flex items-center justify-center rounded-2xl border-4 transition-all duration-300 transform ${
+                    letter
+                      ? letter.toLowerCase() === currentWord.word[idx].toLowerCase()
+                        ? 'bg-gradient-to-br from-kahoot-green-400 to-kahoot-green-600 border-kahoot-green-300 text-white scale-110 animate-bounce shadow-2xl'
+                        : 'bg-gradient-to-br from-kahoot-red-400 to-kahoot-red-600 border-kahoot-red-300 text-white animate-shake'
+                      : idx === filledCount
+                        ? 'bg-white/30 border-white/70 text-white animate-pulse'
+                        : 'bg-white/20 border-white/40 text-white hover:bg-white/30'
+                  }`}
+                >
+                  {letter.toUpperCase()}
+                </div>
+              ));
+            })()}
           </div>
           <OnScreenKeyboard
             onLetter={handleVirtualLetter}

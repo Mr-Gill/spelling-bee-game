@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { Word, Participant, GameConfig } from './types';
 import { config as appConfig } from './config';
 import { IMAGE_ASSETS } from './assets';
@@ -8,6 +9,7 @@ import { hasSavedGame, getSavedGameInfo, loadGameState, clearSavedGame } from '.
 import { applyThemeClass, type ThemeName } from './utils/theme';
 import AccessibilitySettings from './components/AccessibilitySettings';
 import { getStudentDifficultyLevel } from './utils/studentProgress';
+import { DEFAULT_MUSIC_STYLE, DEFAULT_MUSIC_VOLUME } from './constants/audioDefaults';
 import AIWordListModal from './components/AIWordListModal';
 
 // Gather available music styles.
@@ -44,9 +46,31 @@ interface SetupScreenProps {
   onViewShop?: () => void;
   onStartWarmup?: () => void;
   wordListsReady: boolean;
+  /** Whether the background music is currently playing (controlled by parent). */
+  isMusicPlaying?: boolean;
+  /** Toggle background music on/off (controlled by parent). */
+  onToggleMusicPlaying?: () => void;
+  /** Called by SetupScreen when the user changes the sound-enabled checkbox. */
+  onSoundEnabledChange?: (enabled: boolean) => void;
+  /** Called when the user changes the music style so the live track updates. */
+  onMusicStyleChange?: (style: string) => void;
+  /** Called when the user changes the music volume so the live track updates. */
+  onMusicVolumeChange?: (volume: number) => void;
 }
 
-const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords, onViewAchievements, onResumeGame, onStartWarmup, wordListsReady }) => {
+const SetupScreen: React.FC<SetupScreenProps> = ({
+  onStartGame,
+  onAddCustomWords,
+  onViewAchievements,
+  onResumeGame,
+  onStartWarmup,
+  wordListsReady,
+  isMusicPlaying,
+  onToggleMusicPlaying,
+  onSoundEnabledChange,
+  onMusicStyleChange,
+  onMusicVolumeChange,
+}) => {
   // Include both traditional avatars and mascot images
   const avatars = [IMAGE_ASSETS.avatars.bee, IMAGE_ASSETS.avatars.book, IMAGE_ASSETS.avatars.trophy, getMascotImage({ isDefault: true }), getMascotImage({ isCelebrating: true })];
   const getRandomAvatar = () => avatars[Math.floor(Math.random() * avatars.length)];
@@ -103,8 +127,11 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
   const [skipPenaltyValue, setSkipPenaltyValue] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => localStorage.getItem('soundEnabled') !== 'false');
   const [effectsEnabled, setEffectsEnabled] = useState(true);
-  const [musicStyle, setMusicStyle] = useState<string>(() => localStorage.getItem('musicStyle') ?? 'Funk');
-  const [musicVolume, setMusicVolume] = useState<number>(() => parseFloat(localStorage.getItem('musicVolume') ?? '1'));
+  const [musicStyle, setMusicStyle] = useState<string>(() => localStorage.getItem('musicStyle') ?? DEFAULT_MUSIC_STYLE);
+  const [musicVolume, setMusicVolume] = useState<number>(() => {
+    const storedVolume = parseFloat(localStorage.getItem('musicVolume') ?? String(DEFAULT_MUSIC_VOLUME));
+    return Number.isFinite(storedVolume) ? storedVolume : DEFAULT_MUSIC_VOLUME;
+  });
   const [initialDifficulty, setInitialDifficulty] = useState(0);
   const [progressionSpeed, setProgressionSpeed] = useState(1);
   const [theme, setTheme] = useState<ThemeName>('light');
@@ -155,9 +182,18 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     }
   }, []);
 
-  useEffect(() => localStorage.setItem('soundEnabled', String(soundEnabled)), [soundEnabled]);
-  useEffect(() => localStorage.setItem('musicStyle', musicStyle), [musicStyle]);
-  useEffect(() => localStorage.setItem('musicVolume', String(musicVolume)), [musicVolume]);
+  useEffect(() => {
+    localStorage.setItem('soundEnabled', String(soundEnabled));
+    onSoundEnabledChange?.(soundEnabled);
+  }, [soundEnabled, onSoundEnabledChange]);
+  useEffect(() => {
+    localStorage.setItem('musicStyle', musicStyle);
+    onMusicStyleChange?.(musicStyle);
+  }, [musicStyle, onMusicStyleChange]);
+  useEffect(() => {
+    localStorage.setItem('musicVolume', String(musicVolume));
+    onMusicVolumeChange?.(musicVolume);
+  }, [musicVolume, onMusicVolumeChange]);
 
   // Check for saved games on component mount
   useEffect(() => {
@@ -393,8 +429,8 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
     setSkipPenaltyValue(preset.skipPenaltyValue ?? 1);
     setSoundEnabled(preset.soundEnabled !== false);
     setEffectsEnabled(preset.effectsEnabled !== false);
-    setMusicStyle(preset.musicStyle || 'Funk');
-    setMusicVolume(typeof preset.musicVolume === 'number' ? preset.musicVolume : 1);
+    setMusicStyle(preset.musicStyle || DEFAULT_MUSIC_STYLE);
+    setMusicVolume(typeof preset.musicVolume === 'number' ? preset.musicVolume : DEFAULT_MUSIC_VOLUME);
     setInitialDifficulty(preset.initialDifficulty || 0);
     setProgressionSpeed(preset.progressionSpeed || 1);
     const normalizedTheme = applyThemeClass(preset.theme || 'light');
@@ -727,10 +763,32 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
                         {musicStyles.map(style => (<option key={style} value={style}>{style}</option>))}
                     </select>
                 </div>
-                <div>
+                <div className="mb-4">
                     <label className="block mb-2">Volume: {Math.round(musicVolume * 100)}%</label>
                     <input type="range" min={0} max={1} step={0.01} value={musicVolume} onChange={e => setMusicVolume(parseFloat(e.target.value))} className="w-full" />
                 </div>
+                {onToggleMusicPlaying && (
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      type="button"
+                      onClick={onToggleMusicPlaying}
+                      className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg font-semibold transition-all"
+                      aria-label={isMusicPlaying ? 'Pause music' : 'Play music'}
+                    >
+                      {isMusicPlaying ? <Pause size={16} /> : <Play size={16} />}
+                      {isMusicPlaying ? 'Pause' : 'Play'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSoundEnabled(!soundEnabled)}
+                      className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg font-semibold transition-all"
+                      aria-label={soundEnabled ? 'Mute all audio' : 'Unmute all audio'}
+                    >
+                      {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+                      {soundEnabled ? 'Mute' : 'Unmute'}
+                    </button>
+                  </div>
+                )}
             </div>
         </div>
         

@@ -73,7 +73,7 @@ interface EncouragementBannerProps {
 
 const EncouragementBanner: React.FC<EncouragementBannerProps> = ({ message }) => (
   <div
-    className="fixed left-1/2 top-[34%] z-50 -translate-x-1/2 rounded-2xl bg-white px-6 py-3 text-center text-xl font-black text-kahoot-purple-700 shadow-2xl ring-4 ring-kahoot-yellow-300 animate-bounce-in"
+    className="fixed left-1/2 top-[34%] z-50 -translate-x-1/2 rounded-2xl bg-white px-6 py-3 text-center text-xl font-black text-purple-800 shadow-2xl ring-4 ring-kahoot-yellow-300 animate-bounce-in"
     role="status"
     aria-live="polite"
   >

@@ -29,6 +29,14 @@ interface HintPanelProps {
   onAddTime?: () => void;
   /** Skips the current word without deducting lives. */
   onSkipWord?: () => void;
+  /** Called when the Word Length hint has been successfully purchased, so the letter boxes can be revealed. */
+  onWordLengthRevealed?: () => void;
+  /** Called when the confirmation dialog opens so the parent can pause the word timer. */
+  onRequestPause?: () => void;
+  /** Called when the confirmation dialog closes (confirm or cancel) so the parent can resume the word timer. */
+  onReleasePause?: () => void;
+  /** Called whenever a hint is successfully activated, with its ID, display icon, and point cost. */
+  onHintUsedWithId?: (id: string, icon: string, cost: number) => void;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -45,6 +53,9 @@ const ONCE_PER_WORD = new Set(['extraTime', 'multipleAttempts', 'vowels', 'quick
 
 /** Maximum number of hints a team may use before their first attempt on a word. */
 const MAX_HINTS_BEFORE_ATTEMPT = 2;
+
+/** Duration (ms) before the first-word onboarding banner auto-dismisses. */
+const ONBOARDING_AUTO_DISMISS_MS = 10000;
 
 /** Duration (ms) the Quick Peek word flash stays visible. */
 const QUICK_PEEK_DURATION_MS = 1500;
@@ -84,6 +95,10 @@ const HintPanel: React.FC<HintPanelProps> = ({
   hasAttemptedCurrentWord = false,
   onAddTime,
   onSkipWord,
+  onWordLengthRevealed,
+  onRequestPause,
+  onReleasePause,
+  onHintUsedWithId,
 }) => {
   // ── Display states (revealed hint content) ──────────────────────────────────
   const [showSentence, setShowSentence] = useState(false);
@@ -112,6 +127,18 @@ const HintPanel: React.FC<HintPanelProps> = ({
   const [validationMsg, setValidationMsg] = useState('');
   const validationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // ── Onboarding banner (shown once ever, stored in localStorage) ────────────
+  const [showOnboarding, setShowOnboarding] = useState(
+    () => !localStorage.getItem('hasSeenHintIntro')
+  );
+  const onboardingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ── Power confirmation ───────────────────────────────────────────────────────
+  /** ID of the power awaiting confirmation before its points are spent. */
+  const [pendingPowerId, setPendingPowerId] = useState<string | null>(null);
+  /** Handler to invoke once the player confirms the pending power. */
+  const pendingHandlerRef = useRef<(() => void) | null>(null);
+
   // ── Reset on word change ────────────────────────────────────────────────────
   useEffect(() => {
     if (!word) return;
@@ -128,9 +155,27 @@ const HintPanel: React.FC<HintPanelProps> = ({
     setHintsBeforeAttempt(0);
     setUsedOncePowers(new Set());
     setValidationMsg('');
+    setPendingPowerId(null);
+    pendingHandlerRef.current = null;
     if (quickPeekTimer.current) clearTimeout(quickPeekTimer.current);
     if (validationTimer.current) clearTimeout(validationTimer.current);
   }, [word]);
+
+  // Auto-dismiss the onboarding banner after 10 seconds
+  useEffect(() => {
+    if (!showOnboarding) return;
+    onboardingTimerRef.current = setTimeout(() => dismissOnboarding(), ONBOARDING_AUTO_DISMISS_MS);
+    return () => {
+      if (onboardingTimerRef.current) clearTimeout(onboardingTimerRef.current);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showOnboarding]);
+
+  const dismissOnboarding = () => {
+    setShowOnboarding(false);
+    localStorage.setItem('hasSeenHintIntro', '1');
+    if (onboardingTimerRef.current) clearTimeout(onboardingTimerRef.current);
+  };
 
   if (!word) {
     return (
@@ -207,6 +252,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
     // All checks passed — deduct cost and record usage
     spendPoints(participantIndex, cost);
     onHintUsed();
+    const power = BATTLE_POWERS.find(p => p.id === powerId);
+    if (power) onHintUsedWithId?.(powerId, power.icon, power.cost);
 
     if (countAsHint && unlockedPowers && !hasAttemptedCurrentWord) {
       setHintsBeforeAttempt(prev => prev + 1);
@@ -216,6 +263,54 @@ const HintPanel: React.FC<HintPanelProps> = ({
     }
 
     return true;
+  };
+
+  /**
+   * Queues a power for confirmation before spending points.
+   * Runs pre-lock checks (unlocked, affordable, once-per-word) immediately so
+   * errors appear without opening the dialog; only opens the dialog when valid.
+   */
+  const requestPower = (id: string, execute: () => void) => {
+    const cost = getPowerCost(id);
+
+    if (participantPoints < cost) {
+      showValidation(
+        `Not enough points — this hint costs ${cost} point${cost === 1 ? '' : 's'} and you have ${participantPoints}.`
+      );
+      return;
+    }
+
+    if (ONCE_PER_WORD.has(id) && usedOncePowers.has(id)) {
+      showValidation('You have already used this power for this word.');
+      return;
+    }
+
+    if (unlockedPowers && !hasAttemptedCurrentWord && hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT) {
+      const countAsHint = id !== 'skipWord';
+      if (countAsHint) {
+        showValidation(
+          `You can only use ${MAX_HINTS_BEFORE_ATTEMPT} hints before your first attempt. Make a spelling attempt first!`
+        );
+        return;
+      }
+    }
+
+    pendingHandlerRef.current = execute;
+    setPendingPowerId(id);
+    onRequestPause?.();
+  };
+
+  const confirmPower = () => {
+    pendingHandlerRef.current?.();
+    pendingHandlerRef.current = null;
+    setPendingPowerId(null);
+    onReleasePause?.();
+  };
+
+  const cancelPower = () => {
+    pendingHandlerRef.current = null;
+    setPendingPowerId(null);
+    onReleasePause?.();
   };
 
   // ── Power handlers ───────────────────────────────────────────────────────────
@@ -236,6 +331,7 @@ const HintPanel: React.FC<HintPanelProps> = ({
     if (!isPowerUnlocked('wordLength') || showWordLength) return;
     if (!tryUsePower('wordLength')) return;
     setShowWordLength(true);
+    onWordLengthRevealed?.();
   };
 
   const handleDefinition = () => {
@@ -346,6 +442,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
   const btnOrange = `${btnBase} bg-orange-500 hover:bg-orange-600 text-white disabled:opacity-40`;
   const btnTeal = `${btnBase} bg-teal-500 hover:bg-teal-600 text-white disabled:opacity-40`;
   const btnRed = `${btnBase} bg-red-500 hover:bg-red-600 text-white disabled:opacity-40`;
+  /** Style for once-per-word powers that have already been used this word. */
+  const btnUsed = `${btnBase} bg-white/10 text-white/40 cursor-default`;
 
   const canAfford = (id: string) => participantPoints >= getPowerCost(id);
   const isOnceUsed = (id: string) => ONCE_PER_WORD.has(id) && usedOncePowers.has(id);
@@ -368,6 +466,24 @@ const HintPanel: React.FC<HintPanelProps> = ({
         </div>
       )}
 
+      {/* ── Onboarding banner (first visit only) ────────────────────────── */}
+      {showOnboarding && (
+        <div className="flex items-start gap-3 bg-yellow-400/20 border border-yellow-400/50 rounded-xl px-4 py-3" role="status">
+          <span className="text-2xl flex-shrink-0" aria-hidden="true">💡</span>
+          <div className="flex-1 text-sm text-yellow-100">
+            <strong className="block font-black text-yellow-300 mb-0.5">Hint powers available!</strong>
+            You have starter hints below. Tap any to read what it does before spending points.
+          </div>
+          <button
+            onClick={dismissOnboarding}
+            className="flex-shrink-0 text-yellow-300/70 hover:text-yellow-200 text-lg leading-none font-bold"
+            aria-label="Dismiss hint introduction"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* ── Validation / error message ───────────────────────────────────── */}
       {validationMsg && (
         <div className="bg-red-500/20 border border-red-400/50 rounded-lg px-3 py-2 text-sm text-red-200 font-medium" role="alert">
@@ -377,10 +493,25 @@ const HintPanel: React.FC<HintPanelProps> = ({
 
       {/* ── Hint limit indicator (team mode, before first attempt) ──────── */}
       {!hasAttemptedCurrentWord && unlockedPowers && (
-        <div className={`text-xs text-center font-bold ${hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT ? 'text-red-300' : 'text-white/60'}`}>
-          {hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT
-            ? '🐝 Hint limit reached — the bee says: attempt the word first.'
-            : `💡 Hints used before attempt: ${hintsBeforeAttempt} / ${MAX_HINTS_BEFORE_ATTEMPT}`}
+        <div className="flex flex-col items-center gap-1">
+          <div className="flex gap-1.5" aria-hidden="true">
+            {Array.from({ length: MAX_HINTS_BEFORE_ATTEMPT }, (_, i) => (
+              <span
+                key={i}
+                className={`w-3.5 h-3.5 rounded-full transition-colors duration-200 ${
+                  i < hintsBeforeAttempt ? 'bg-red-400' : 'bg-white/30'
+                }`}
+              />
+            ))}
+          </div>
+          <span
+            className={`text-xs font-bold ${hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT ? 'text-red-300' : 'text-white/60'}`}
+            aria-live="polite"
+          >
+            {hintsBeforeAttempt >= MAX_HINTS_BEFORE_ATTEMPT
+              ? '🐝 Hint limit reached — attempt the word first.'
+              : `💡 ${hintsBeforeAttempt}/${MAX_HINTS_BEFORE_ATTEMPT} hints used before attempt`}
+          </span>
         </div>
       )}
 
@@ -397,7 +528,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
       {/* ── Purchased hint content ───────────────────────────────────────── */}
       <div className="space-y-2">
         {showWordLength && (
-          <div className="bg-blue-500/20 rounded-lg px-3 py-2">
+          <div className="relative bg-blue-500/20 rounded-lg px-3 py-2">
+            <span className="absolute top-1 right-2 text-xs text-blue-300/60 font-bold" aria-hidden="true">−{getPowerCost('wordLength')}pt</span>
             <span className="text-blue-200 font-bold text-sm">🔢 Word Length: </span>
             <span className="text-white text-sm">
               This word has <strong>{wordLengthCount}</strong> letter{wordLengthCount === 1 ? '' : 's'}.
@@ -407,7 +539,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
         )}
 
         {showSentence && (
-          <div className="bg-green-500/20 rounded-lg px-3 py-2">
+          <div className="relative bg-green-500/20 rounded-lg px-3 py-2">
+            <span className="absolute top-1 right-2 text-xs text-green-300/60 font-bold" aria-hidden="true">−{getPowerCost('sentence')}pt</span>
             <span className="text-green-200 font-bold text-sm">📝 Sentence: </span>
             <span className="text-white text-sm italic">
             {`"${sentenceText || 'No sentence available. The word prefers mystery.'}"`}
@@ -416,7 +549,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
         )}
 
         {showSyllables && (
-          <div className="bg-yellow-500/20 rounded-lg px-3 py-2">
+          <div className="relative bg-yellow-500/20 rounded-lg px-3 py-2">
+            <span className="absolute top-1 right-2 text-xs text-yellow-300/60 font-bold" aria-hidden="true">−{getPowerCost('syllables')}pt</span>
             <span className="text-yellow-200 font-bold text-sm">🧩 Syllables: </span>
             {syllableText ? (
               <span className="text-white text-sm">
@@ -438,7 +572,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
         )}
 
         {showDefinition && (
-          <div className="bg-amber-500/20 rounded-lg px-3 py-2">
+          <div className="relative bg-amber-500/20 rounded-lg px-3 py-2">
+            <span className="absolute top-1 right-2 text-xs text-amber-300/60 font-bold" aria-hidden="true">−{getPowerCost('definition')}pt</span>
             <span className="text-amber-200 font-bold text-sm">📖 Definition: </span>
             <span className="text-white text-sm">
               {definitionText || 'No definition available. The word\'s job description is missing.'}
@@ -447,7 +582,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
         )}
 
         {showSoundItOut && (
-          <div className="bg-cyan-500/20 rounded-lg px-3 py-2">
+          <div className="relative bg-cyan-500/20 rounded-lg px-3 py-2">
+            <span className="absolute top-1 right-2 text-xs text-cyan-300/60 font-bold" aria-hidden="true">−{getPowerCost('soundItOut')}pt</span>
             <span className="text-cyan-200 font-bold text-sm">🔊 Sound It Out: </span>
             <span className="text-white text-sm font-mono">
               {soundItOutText || 'No sound-it-out hint available. Listen carefully.'}
@@ -456,7 +592,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
         )}
 
         {showAffixes && (
-          <div className="bg-orange-500/20 rounded-lg px-3 py-2 space-y-1">
+          <div className="relative bg-orange-500/20 rounded-lg px-3 py-2 space-y-1">
+            <span className="absolute top-1 right-2 text-xs text-orange-300/60 font-bold" aria-hidden="true">−{getPowerCost('affixes')}pt</span>
             <span className="text-orange-200 font-bold text-sm block">🔠 Word Parts:</span>
             {prefixText ? (
               <p className="text-white text-sm">
@@ -477,7 +614,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
         )}
 
         {showSpellingPattern && (
-          <div className="bg-violet-500/20 rounded-lg px-3 py-2">
+          <div className="relative bg-violet-500/20 rounded-lg px-3 py-2">
+            <span className="absolute top-1 right-2 text-xs text-violet-300/60 font-bold" aria-hidden="true">−{getPowerCost('spellingPattern')}pt</span>
             <span className="text-violet-200 font-bold text-sm">🧠 Spelling Pattern: </span>
             <span className="text-white text-sm">
               {spellingPatternText || 'No spelling pattern identified. The word is being difficult in a plain way.'}
@@ -486,7 +624,8 @@ const HintPanel: React.FC<HintPanelProps> = ({
         )}
 
         {showOrigin && (
-          <div className="bg-emerald-500/20 rounded-lg px-3 py-2">
+          <div className="relative bg-emerald-500/20 rounded-lg px-3 py-2">
+            <span className="absolute top-1 right-2 text-xs text-emerald-300/60 font-bold" aria-hidden="true">−{getPowerCost('origin')}pt</span>
             <span className="text-emerald-200 font-bold text-sm">🌍 Origin: </span>
             <span className="text-white text-sm">
               {originText || 'No origin hint available. The word\'s passport is missing.'}
@@ -495,94 +634,152 @@ const HintPanel: React.FC<HintPanelProps> = ({
         )}
       </div>
 
+      {/* ── Power confirmation dialog ────────────────────────────────────── */}
+      {pendingPowerId && (() => {
+        const power = BATTLE_POWERS.find(p => p.id === pendingPowerId);
+        if (!power) return null;
+        return (
+          <div className="bg-black/60 border border-white/30 rounded-2xl p-4 text-center space-y-3" role="dialog" aria-modal="true" aria-labelledby="confirm-power-title">
+            <div className="text-4xl">{power.icon}</div>
+            <h3 id="confirm-power-title" className="text-white font-black text-lg">{power.name}</h3>
+            <p className="text-white/80 text-sm">{power.description}</p>
+            <p className="text-kahoot-yellow-300 font-bold text-sm" aria-label={`Cost: ${power.cost} ${power.cost === 1 ? 'point' : 'points'}. You have: ${participantPoints}`}>
+              Cost: {power.cost} {power.cost === 1 ? 'point' : 'points'}{' '}
+              <span aria-hidden="true">·</span>{' '}
+              You have: {participantPoints}
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={confirmPower}
+                autoFocus
+                className="flex-1 py-2 bg-gradient-to-r from-kahoot-yellow-400 to-kahoot-yellow-500 hover:from-kahoot-yellow-500 hover:to-kahoot-yellow-600 text-black font-black rounded-xl transition-all duration-200 hover:scale-105"
+              >
+                Use it (−{power.cost}pt)
+              </button>
+              <button
+                onClick={cancelPower}
+                className="flex-1 py-2 bg-white/20 hover:bg-white/30 text-white font-bold rounded-xl transition-all duration-200"
+              >
+                Never mind
+              </button>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* ── Available power buttons ──────────────────────────────────────── */}
+      {!pendingPowerId && (
       <div className="flex flex-wrap gap-2 justify-center pt-1">
 
         {/* Starter powers (unlockAt: 0) */}
         {isPowerUnlocked('sentence') && !showSentence && (
-          <button onClick={handleSentence} disabled={!canAfford('sentence')} className={btnPrimary}>
+          <button onClick={() => requestPower('sentence', handleSentence)} disabled={!canAfford('sentence')} className={btnPrimary}>
             📝 Sentence <span className="opacity-70 text-xs">(-{getPowerCost('sentence')})</span>
           </button>
         )}
         {isPowerUnlocked('syllables') && !showSyllables && (
-          <button onClick={handleSyllables} disabled={!canAfford('syllables')} className={btnPrimary}>
+          <button onClick={() => requestPower('syllables', handleSyllables)} disabled={!canAfford('syllables')} className={btnPrimary}>
             🧩 Syllables <span className="opacity-70 text-xs">(-{getPowerCost('syllables')})</span>
           </button>
         )}
         {isPowerUnlocked('wordLength') && !showWordLength && (
-          <button onClick={handleWordLength} disabled={!canAfford('wordLength')} className={btnPrimary}>
+          <button onClick={() => requestPower('wordLength', handleWordLength)} disabled={!canAfford('wordLength')} className={btnPrimary}>
             🔢 Word Length <span className="opacity-70 text-xs">(-{getPowerCost('wordLength')})</span>
           </button>
         )}
 
         {/* Definition */}
         {isPowerUnlocked('definition') && !showDefinition && (
-          <button onClick={handleDefinition} disabled={!canAfford('definition')} className={btnPrimary}>
+          <button onClick={() => requestPower('definition', handleDefinition)} disabled={!canAfford('definition')} className={btnPrimary}>
             📖 Definition <span className="opacity-70 text-xs">(-{getPowerCost('definition')})</span>
           </button>
         )}
 
         {/* Extra Time (once per word) */}
-        {isPowerUnlocked('extraTime') && !isOnceUsed('extraTime') && (
-          <button onClick={handleExtraTime} disabled={!canAfford('extraTime')} className={btnBlue}>
-            ⏱️ +15s <span className="opacity-70 text-xs">(-{getPowerCost('extraTime')})</span>
-          </button>
+        {isPowerUnlocked('extraTime') && (
+          isOnceUsed('extraTime') ? (
+            <button disabled className={btnUsed} aria-label="Extra Time already used this word">
+              ⏱️ +15s <span className="text-xs ml-1">✓ used</span>
+            </button>
+          ) : (
+            <button onClick={() => requestPower('extraTime', handleExtraTime)} disabled={!canAfford('extraTime')} className={btnBlue}>
+              ⏱️ +15s <span className="opacity-70 text-xs">(-{getPowerCost('extraTime')})</span>
+            </button>
+          )
         )}
 
         {/* Sound It Out */}
         {isPowerUnlocked('soundItOut') && !showSoundItOut && (
-          <button onClick={handleSoundItOut} disabled={!canAfford('soundItOut')} className={btnBlue}>
+          <button onClick={() => requestPower('soundItOut', handleSoundItOut)} disabled={!canAfford('soundItOut')} className={btnBlue}>
             🔊 Sound It Out <span className="opacity-70 text-xs">(-{getPowerCost('soundItOut')})</span>
           </button>
         )}
 
         {/* Affixes */}
         {isPowerUnlocked('affixes') && !showAffixes && (
-          <button onClick={handleAffixes} disabled={!canAfford('affixes')} className={btnOrange}>
+          <button onClick={() => requestPower('affixes', handleAffixes)} disabled={!canAfford('affixes')} className={btnOrange}>
             🔠 Word Parts <span className="opacity-70 text-xs">(-{getPowerCost('affixes')})</span>
           </button>
         )}
 
         {/* Spelling Pattern */}
         {isPowerUnlocked('spellingPattern') && !showSpellingPattern && (
-          <button onClick={handleSpellingPattern} disabled={!canAfford('spellingPattern')} className={btnPurple}>
+          <button onClick={() => requestPower('spellingPattern', handleSpellingPattern)} disabled={!canAfford('spellingPattern')} className={btnPurple}>
             🧠 Pattern <span className="opacity-70 text-xs">(-{getPowerCost('spellingPattern')})</span>
           </button>
         )}
 
         {/* Origin */}
         {isPowerUnlocked('origin') && !showOrigin && (
-          <button onClick={handleOrigin} disabled={!canAfford('origin')} className={btnTeal}>
+          <button onClick={() => requestPower('origin', handleOrigin)} disabled={!canAfford('origin')} className={btnTeal}>
             🌍 Origin <span className="opacity-70 text-xs">(-{getPowerCost('origin')})</span>
           </button>
         )}
 
         {/* Multiple Attempts (once per word) */}
-        {isPowerUnlocked('multipleAttempts') && !isOnceUsed('multipleAttempts') && (
-          <button onClick={handleMultipleAttempts} disabled={!canAfford('multipleAttempts')} className={btnPink}>
-            🎯 Multiple Attempts <span className="opacity-70 text-xs">(-{getPowerCost('multipleAttempts')})</span>
-          </button>
+        {isPowerUnlocked('multipleAttempts') && (
+          isOnceUsed('multipleAttempts') ? (
+            <button disabled className={btnUsed} aria-label="Multiple Attempts already used this word">
+              🎯 Multiple Attempts <span className="text-xs ml-1">✓ used</span>
+            </button>
+          ) : (
+            <button onClick={() => requestPower('multipleAttempts', handleMultipleAttempts)} disabled={!canAfford('multipleAttempts')} className={btnPink}>
+              🎯 Multiple Attempts <span className="opacity-70 text-xs">(-{getPowerCost('multipleAttempts')})</span>
+            </button>
+          )
         )}
 
         {/* Vowel Reveal (once per word) */}
-        {isPowerUnlocked('vowels') && !isOnceUsed('vowels') && (
-          <button onClick={handleVowelReveal} disabled={!canAfford('vowels')} className={btnPurple}>
-            🔤 Vowel Reveal <span className="opacity-70 text-xs">(-{getPowerCost('vowels')})</span>
-          </button>
+        {isPowerUnlocked('vowels') && (
+          isOnceUsed('vowels') ? (
+            <button disabled className={btnUsed} aria-label="Vowel Reveal already used this word">
+              🔤 Vowel Reveal <span className="text-xs ml-1">✓ used</span>
+            </button>
+          ) : (
+            <button onClick={() => requestPower('vowels', handleVowelReveal)} disabled={!canAfford('vowels')} className={btnPurple}>
+              🔤 Vowel Reveal <span className="opacity-70 text-xs">(-{getPowerCost('vowels')})</span>
+            </button>
+          )
         )}
 
         {/* Hangman Reveal */}
         {isPowerUnlocked('hangman') && (
-          <button onClick={handleHangmanReveal} disabled={!canAfford('hangman')} className={btnBlue}>
+          <button onClick={() => requestPower('hangman', handleHangmanReveal)} disabled={!canAfford('hangman')} className={btnBlue}>
             🕵️ Reveal Letter <span className="opacity-70 text-xs">(-{getPowerCost('hangman')})</span>
           </button>
         )}
 
         {/* Quick Peek (once per word) */}
-        {isPowerUnlocked('quickPeek') && !isOnceUsed('quickPeek') && (
-          <button onClick={handleQuickPeek} disabled={!canAfford('quickPeek')} className={btnOrange}>
-            🔍 Quick Peek <span className="opacity-70 text-xs">(-{getPowerCost('quickPeek')})</span>
-          </button>
+        {isPowerUnlocked('quickPeek') && (
+          isOnceUsed('quickPeek') ? (
+            <button disabled className={btnUsed} aria-label="Quick Peek already used this word">
+              🔍 Quick Peek <span className="text-xs ml-1">✓ used</span>
+            </button>
+          ) : (
+            <button onClick={() => requestPower('quickPeek', handleQuickPeek)} disabled={!canAfford('quickPeek')} className={btnOrange}>
+              🔍 Quick Peek <span className="opacity-70 text-xs">(-{getPowerCost('quickPeek')})</span>
+            </button>
+          )
         )}
 
         {/* Friend Substitution */}
@@ -594,11 +791,12 @@ const HintPanel: React.FC<HintPanelProps> = ({
 
         {/* Skip Word */}
         {isPowerUnlocked('skipWord') && (
-          <button onClick={handleSkipWord} disabled={!canAfford('skipWord')} className={btnRed}>
+          <button onClick={() => requestPower('skipWord', handleSkipWord)} disabled={!canAfford('skipWord')} className={btnRed}>
             ⏭️ Skip Word <span className="opacity-70 text-xs">(-{getPowerCost('skipWord')})</span>
           </button>
         )}
       </div>
+      )}
 
       {/* ── Locked powers strip ──────────────────────────────────────────── */}
       {unlockedPowers && lockedPowers.length > 0 && (
@@ -610,8 +808,9 @@ const HintPanel: React.FC<HintPanelProps> = ({
             {lockedPowers.slice(0, 6).map((p, i) => (
               <div
                 key={p.id}
-                className="flex flex-col items-center gap-0.5 opacity-50 max-w-[60px]"
+                className="flex flex-col items-center gap-0.5 opacity-50 max-w-[60px] cursor-help"
                 aria-label={`${p.name} — locked. Unlocks after ${p.unlockAt} correct answer${p.unlockAt === 1 ? '' : 's'}. Costs ${p.cost} point${p.cost === 1 ? '' : 's'}. ${p.description}`}
+                title={`${p.name}: ${p.description} Unlocks at ${p.unlockAt} correct answers · ${p.cost}pt`}
               >
                 <span className="text-xl grayscale" aria-hidden="true">{p.icon}</span>
                 <span className="text-xs text-white/60 text-center leading-tight">
