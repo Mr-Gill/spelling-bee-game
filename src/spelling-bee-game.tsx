@@ -14,6 +14,7 @@ import useMusic from './utils/useMusic';
 import { applyThemeClass } from './utils/theme';
 import { applyAccessibilitySettings } from './components/AccessibilitySettings';
 import { audioManager } from './utils/audio.ts';
+import { DEFAULT_MUSIC_STYLE, DEFAULT_MUSIC_VOLUME } from './constants/audioDefaults';
 import { AudioProvider } from './AudioContext';
 import { HelpSystemProvider } from './contexts/HelpSystemContext';
 import { getWordList, clearWordListCache, type Word as WordListWord } from './services/wordlistService';
@@ -39,9 +40,12 @@ const SpellingBeeGame = () => {
   const [gameResults, setGameResults] = useState<any>(null);
   const [customWords, setCustomWords] = useState<GameConfig['wordDatabase']>({ easy: [], medium: [], tricky: [] });
   const [wordDatabase, setWordDatabase] = useState<GameConfig['wordDatabase']>({ easy: [], medium: [], tricky: [] });
-  const [musicStyle, setMusicStyle] = useState('Funk');
-  const [musicVolume, setMusicVolume] = useState(0.5);
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [musicStyle, setMusicStyle] = useState(() => localStorage.getItem('musicStyle') ?? DEFAULT_MUSIC_STYLE);
+  const [musicVolume, setMusicVolume] = useState(() => {
+    const stored = parseFloat(localStorage.getItem('musicVolume') ?? String(DEFAULT_MUSIC_VOLUME));
+    return Number.isFinite(stored) ? stored : DEFAULT_MUSIC_VOLUME;
+  });
+  const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem('soundEnabled') !== 'false');
   const [isMusicPlaying, setIsMusicPlaying] = useState(true);
 
   // Helper function to convert WordListWord to Word type
@@ -248,6 +252,11 @@ const SpellingBeeGame = () => {
         onViewShop={() => handleViewShop()}
         onStartWarmup={handleStartWarmup}
         wordListsReady={wordListsReady}
+        isMusicPlaying={isMusicPlaying}
+        onToggleMusicPlaying={handleToggleMusicPlaying}
+        onSoundEnabledChange={handleSoundEnabledChange}
+        onMusicStyleChange={setMusicStyle}
+        onMusicVolumeChange={setMusicVolume}
       />
     );
   }
@@ -287,6 +296,10 @@ const SpellingBeeGame = () => {
         config={gameConfig}
         onRestart={handleRestart}
         onViewLeaderboard={handleViewLeaderboard}
+        isMusicPlaying={isMusicPlaying}
+        onToggleMusicPlaying={handleToggleMusicPlaying}
+        soundEnabled={soundEnabled}
+        onSoundEnabledChange={handleSoundEnabledChange}
       />
     );
   }

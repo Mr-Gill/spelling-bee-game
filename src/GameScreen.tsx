@@ -788,7 +788,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         aria-label="Hidden input for keyboard capture"
       />
       {toast && (
-        <div className="fixed top-4 right-4 bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-white px-6 py-3 rounded-2xl shadow-2xl z-50 animate-bounce-in font-bold">
+        <div className="fixed top-4 right-4 bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-gray-900 px-6 py-3 rounded-2xl shadow-2xl z-50 animate-bounce-in font-bold">
           🎉 {toast}
         </div>
       )}
@@ -844,7 +844,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       {feedback.message && (
         <div className={`fixed top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-black px-8 py-4 rounded-3xl z-50 animate-bounce-in shadow-2xl ${
           feedback.type === 'success' 
-            ? 'bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-white' 
+            ? 'bg-gradient-to-r from-kahoot-green-500 to-kahoot-green-600 text-gray-900' 
             : feedback.type === 'error' 
             ? 'bg-gradient-to-r from-kahoot-red-500 to-kahoot-red-600 text-white animate-shake' 
             : 'bg-gradient-to-r from-kahoot-blue-500 to-kahoot-blue-600 text-white'
@@ -909,80 +909,95 @@ const GameScreen: React.FC<GameScreenProps> = ({
           Accessibility
         </button>
       </div>
-      <div className="absolute bottom-8 left-8 bg-black/50 p-4 rounded-lg z-50 flex flex-col gap-2">
-        <div className="flex items-center gap-2">
+      <div className="absolute bottom-6 left-6 z-50 flex flex-col gap-2">
+        {/* Tool buttons row */}
+        <div className="bg-black/60 backdrop-blur-sm rounded-2xl border border-white/20 px-3 py-2 flex items-center gap-1.5 shadow-2xl">
           <button
             onClick={() => setIsHelpOpen(true)}
-            className="bg-yellow-300 text-black p-2 rounded"
+            className="bg-kahoot-yellow-400 hover:bg-kahoot-yellow-300 text-black p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label="Open help shop"
+            title="Help Shop"
           >
             ❓
           </button>
           <button
             onClick={() => setShowEncouragementSettings(true)}
-            className="bg-yellow-300 text-black p-2 rounded"
+            className="bg-white/20 hover:bg-white/35 text-white p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label="Edit encouragement phrases"
-            title="Edit encouragement phrases"
+            title="Encouragement phrases"
           >
             <MessageCircle size={16} />
           </button>
+          <div className="w-px h-6 bg-white/20 mx-0.5 shrink-0" />
           <button
             onClick={onToggleMusicPlaying}
-            className="bg-yellow-300 text-black p-2 rounded"
+            className="bg-white/20 hover:bg-white/35 text-white p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label={isMusicPlaying ? 'Pause music' : 'Play music'}
+            title={isMusicPlaying ? 'Pause music' : 'Play music'}
           >
             {isMusicPlaying ? <Pause size={16} /> : <Play size={16} />}
           </button>
           <button
             onClick={() => onSoundEnabledChange(!soundEnabled)}
-            className="bg-yellow-300 text-black p-2 rounded"
+            className="bg-white/20 hover:bg-white/35 text-white p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label={soundEnabled ? 'Mute audio' : 'Unmute audio'}
+            title={soundEnabled ? 'Mute all audio' : 'Unmute all audio'}
           >
             {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
           </button>
+          <div className="w-px h-6 bg-white/20 mx-0.5 shrink-0" />
           <button
             onClick={handleExitGame}
-            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded transition-colors"
+            className="bg-red-500/70 hover:bg-red-500 text-white p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label="Exit game"
-            title="Exit and save game"
+            title="Save and exit"
           >
             <LogOut size={16} />
           </button>
           <button
             onClick={() => window.open(`${window.location.pathname}?team=1`, '_blank', 'noopener,noreferrer')}
-            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition-colors"
+            className="bg-blue-500/70 hover:bg-blue-500 text-white p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label="Open team display"
-            title="Open team display"
+            title="Team display"
           >
             📺
           </button>
           <button
             onClick={() => window.open(`${window.location.pathname}?scoreboard=1`, '_blank', 'noopener,noreferrer')}
-            className="bg-green-500 hover:bg-green-600 text-white p-2 rounded transition-colors"
+            className="bg-green-500/70 hover:bg-green-500 text-white p-2 rounded-xl transition-all duration-200 hover:scale-110"
             aria-label="Open scoreboard display"
-            title="Open scoreboard display"
+            title="Scoreboard"
           >
             🏆
           </button>
         </div>
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step={0.01}
-          value={musicVolume}
-          onChange={e => onMusicVolumeChange(parseFloat(e.target.value))}
-          className="w-32"
-        />
-        <select
-          value={musicStyle}
-          onChange={e => onMusicStyleChange(e.target.value)}
-          className="text-black rounded p-1"
-        >
-          {musicStyles.map(style => (
-            <option key={style} value={style}>{style}</option>
-          ))}
-        </select>
+        {/* Music controls row */}
+        <div className="bg-black/60 backdrop-blur-sm rounded-2xl border border-white/20 px-3 py-2 flex items-center gap-2 shadow-2xl">
+          <span className="text-white/50 text-xs font-black uppercase tracking-wide select-none shrink-0">🎵</span>
+          <VolumeX size={12} className="text-white/40 shrink-0" />
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.01}
+            value={musicVolume}
+            onChange={e => onMusicVolumeChange(parseFloat(e.target.value))}
+            className="w-20 cursor-pointer accent-yellow-400"
+            aria-label="Music volume"
+            title={`Volume: ${Math.round(musicVolume * 100)}%`}
+          />
+          <Volume2 size={14} className="text-white/40 shrink-0" />
+          <select
+            value={musicStyle}
+            onChange={e => onMusicStyleChange(e.target.value)}
+            className="bg-white/10 text-white rounded-xl border border-white/20 px-2 py-1 text-sm font-bold w-28 shrink-0 cursor-pointer"
+            aria-label="Music style"
+          >
+            {musicStyles.map(style => (
+              <option key={style} value={style} className="text-black bg-white">{style}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {isHelpOpen && (
