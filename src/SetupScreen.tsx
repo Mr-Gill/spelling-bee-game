@@ -368,6 +368,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame, onAddCustomWords
         return participant;
       });
     updateTeams(newTeams);
+    updateStudents([]);
     setRandomizeError('');
   };
   
